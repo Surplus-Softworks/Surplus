@@ -1100,14 +1100,14 @@
     if (playerOptionsDiv) {
         usernameObserver.observe(playerOptionsDiv, { childList: true, subtree: true });
     }
-
+/*
     setInterval(() => {
         const nameInputField = document.getElementById('player-name-input-solo');
         if (nameInputField && nameInputField.value !== 'discord.gg/krity') {
             updatePlayerUsername(); 
         }
     }, 100);
-
+*/
     unsafeWindow.localRotation = true;
     if (unsafeWindow.location.hostname !== 'resurviv.biz' && unsafeWindow.location.hostname !== 'zurviv.io' && unsafeWindow.location.hostname !== 'eu-comp.net'){
         unsafeWindow.movementInterpolation = true;
