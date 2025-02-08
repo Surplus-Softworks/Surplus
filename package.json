@@ -1,0 +1,14 @@
+{
+  "name": "surplus",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "archiver": "*",
+    "crx3": "*",
+    "js-confuser": "*",
+    "pixi.js": "^8.7.3",
+    "esbuild": "*"
+  }
+}
