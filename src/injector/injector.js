@@ -9,8 +9,8 @@ export function inject(oninject) {
                     state.gameManager = args[0];
                     oninject();
                 }
-            } catch {}
-            return reflect.apply(f,th,args);
+            } catch { }
+            return reflect.apply(f, th, args);
         }
     })
 }
