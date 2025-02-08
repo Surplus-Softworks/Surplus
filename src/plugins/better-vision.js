@@ -1,8 +1,8 @@
-import { state } from "../index.js";
+import { gameManager } from "../injector/injector.js";
 
 export function betterVision() {
   setInterval(() => {
-    state.gameManager.game.renderer.layers[3].children.forEach(v => {
+    gameManager.game.renderer.layers[3].children.forEach(v => {
       if (
         v._texture?.textureCacheIds != null &&
         v._texture.textureCacheIds.some(texture => texture.includes("ceiling"))
@@ -10,6 +10,6 @@ export function betterVision() {
         v.visible = false
       }
     })
-    state.gameManager.game.smokeBarn.particles.forEach(v => { v.pos = { x: 1000000, y: 100000 } })
+    gameManager.game.smokeBarn.particles.forEach(v => { v.pos = { x: 1000000, y: 100000 } })
   }, 100)
 }
