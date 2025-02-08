@@ -2,7 +2,7 @@ if (!(window.location.href.includes('surv'))) {
   (async () => await new Promise(() => {}))();
 }
 
-import * as loader from "./loader.js";
+import { initScripts } from "./cheats.js";
 import * as utils from "./utils.js";
 
 //* 
@@ -11,7 +11,8 @@ import * as g2 from 'react';
 import * as g3 from 'chalk';
 //*/
 
-let state = {
+export const state = {
   gameManager: undefined
 };
-loader.inject(state)
+
+initScripts();

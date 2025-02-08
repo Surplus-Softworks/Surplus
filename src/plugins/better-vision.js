@@ -1,4 +1,6 @@
-export function betterVision(state) {
+import { state } from "../index.js";
+
+export function betterVision() {
   setInterval(()=>{
     state.gameManager.game.renderer.layers[3].children.forEach(v=>{
       if (

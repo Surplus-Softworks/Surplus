@@ -1,4 +1,6 @@
-export function infiniteZoom(state) {
+import { state } from "../index.js";
+
+export function infiniteZoom() {
   window.addEventListener('wheel', function(event) {
     let zoom = state.gameManager.game.activePlayer.localData.zoom;
     if (event.deltaY > 0) {

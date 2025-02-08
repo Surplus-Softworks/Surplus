@@ -1,10 +1,10 @@
-import fs from "fs"
-import { obfuscate } from "js-confuser"
-import { exec } from "child_process"
-import { promisify } from "util"
-import path from "path"
-import crx3 from "crx3"
-import esbuild from 'esbuild';
+const fs = require("fs");
+const { obfuscate } = require("js-confuser");
+const { exec } = require("child_process")
+const { promisify } = require("util");
+const path = require("path");
+const crx3 = require("crx3");
+const esbuild = require("esbuild");
 
 const error = console.error;
 console.error = function (...args) {
@@ -33,7 +33,7 @@ async function copyExtension() {
   await execPromise('xcopy /E /I extension prod\\extension\\')
 }
 
-async function bundleJS() {
+async function bundleJS(release = false) {
   esbuild.build({
     entryPoints: ['./src/index.js'],  
     bundle: true,                     
@@ -43,44 +43,49 @@ async function bundleJS() {
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'
+
     const code = fs.readFileSync(inputFilePath, 'utf-8')
-  
-    const result = await obfuscate(code, {
-      target: 'browser',
-      compact: true,
-      hexadecimalNumbers: true,
-      deadCode: 1,
-      identifierGenerator: 'zeroWidth',
-      minify: true,
-      movedDeclarations: true,
-      renameVariables: true,
-      stringConcealing: true,
-      astScrambler: true,
-      preserveFunctionLength: true,
-      renameLabels: true,
-      objectExtraction: true,
-      variableMasking: true,
-      lock: {
-        integrity: true,
-        selfDefending: true,
-        tamperProtection: true,
-        countermeasures: '',
-      },
-      dispatcher: 1,
-      shuffle: true,
-      calculator: true,
-      opaquePredicates: 1,
-      stringEncoding: true,
-      stringSplitting: true,
-      stringCompression: true,
-      duplicateLiteralsRemoval: true,
-      flatten: true,
-      pack: true,
-    })
-    fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n \`//Copyright © Surplus Softworks.\ntrust me, you will not get anywhere bro!\``)
+
+    if (release) {
+      const result = await obfuscate(code, {
+        target: 'browser',
+        compact: true,
+        hexadecimalNumbers: true,
+        deadCode: 1,
+        identifierGenerator: 'zeroWidth',
+        minify: true,
+        movedDeclarations: true,
+        renameVariables: true,
+        stringConcealing: true,
+        astScrambler: true,
+        preserveFunctionLength: true,
+        renameLabels: true,
+        objectExtraction: true,
+        variableMasking: true,
+        lock: {
+          integrity: true,
+          selfDefending: true,
+          tamperProtection: true,
+          countermeasures: '',
+        },
+        dispatcher: 1,
+        shuffle: true,
+        calculator: true,
+        opaquePredicates: 1,
+        stringEncoding: true,
+        stringSplitting: true,
+        stringCompression: true,
+        duplicateLiteralsRemoval: true,
+        flatten: true,
+        pack: true,
+      });
+      fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n// Copyright © Surplus Softworks.\n// trust me, you will not get anywhere bro!`)
+    } else {
+      fs.writeFileSync(outputFilePath, `(function() { ${code} })();\n//Copyright © Surplus Softworks.`)
+    }
+    
     const extensionDir = path.resolve('prod/extension')
     const crxOutputPath = path.resolve('prod/Surplus.crx')
-  `hye`
     crx3([extensionDir], {
       keyPath:null,
       crxPath: crxOutputPath,
@@ -90,14 +95,16 @@ async function bundleJS() {
   });
 }
 
-async function build() {
+async function build(argv) {
   try {
     await clear().then(async ()=>{
       await copyExtension().then(async ()=>{
-        await bundleJS()
+        await bundleJS(argv.some(v=>v.toLowerCase()=="release"))
       })
     })
-  } catch {}
+  } catch(err) {
+    console.log(err);
+  }
 }
 
-build()
+build(process.argv.slice(2))
