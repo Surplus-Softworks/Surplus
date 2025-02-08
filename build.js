@@ -77,30 +77,26 @@ async function bundleJS() {
       flatten: true,
       pack: true,
     })
-    fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n// trust me, you won't get anywhere bro!\n//Copyright © Surplus Softworks LLC.`)
-  });
-}
-
-async function packageCRX() {
-  const extensionDir = path.resolve('prod/extension')
-  const crxOutputPath = path.resolve('prod/Surplus.crx')
-
-  crx3([extensionDir], {
-    keyPath:null,
-    crxPath: crxOutputPath,
-  }).then(()=>{
-    fs.renameSync(crxOutputPath, 'prod/Surplus.zip');
-  }).catch()
-
+    fs.writeFileSync(outputFilePath, `\n//Copyright © Surplus Softworks.\n(function() { ${result.code} })();\n\\trust me, you will not get anywhere bro!`)
+    const extensionDir = path.resolve('prod/extension')
+    const crxOutputPath = path.resolve('prod/Surplus.crx')
   
+    crx3([extensionDir], {
+      keyPath:null,
+      crxPath: crxOutputPath,
+    }).then(()=>{
+      fs.renameSync(crxOutputPath, 'prod/Surplus.zip');
+    }).catch()
+  });
 }
 
 async function build() {
   try {
-    await clear()
-    await copyExtension()
-    await bundleJS()
-    await packageCRX()
+    await clear().then(async ()=>{
+      await copyExtension().then(async ()=>{
+        await bundleJS()
+      })
+    })
   } catch {}
 }
 
