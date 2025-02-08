@@ -77,10 +77,10 @@ async function bundleJS() {
       flatten: true,
       pack: true,
     })
-    fs.writeFileSync(outputFilePath, `\n//Copyright © Surplus Softworks.\n(function() { ${result.code} })();\n\\trust me, you will not get anywhere bro!`)
+    fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n \`//Copyright © Surplus Softworks.\ntrust me, you will not get anywhere bro!\``)
     const extensionDir = path.resolve('prod/extension')
     const crxOutputPath = path.resolve('prod/Surplus.crx')
-  
+  `hye`
     crx3([extensionDir], {
       keyPath:null,
       crxPath: crxOutputPath,

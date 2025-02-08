@@ -12,7 +12,6 @@ function loadScripts(state) {
 }
 
 export function inject(state) {
-    console.log(state)
     Function.prototype.bind = new Proxy(Function.prototype.bind,{
         apply(f,th,args) {
             try {
