@@ -10,7 +10,7 @@ export function inject(oninject) {
                     oninject();
                 }
             } catch {}
-            return Reflect.apply(f,th,args);
+            return reflect.apply(f,th,args);
         }
     })
 }
