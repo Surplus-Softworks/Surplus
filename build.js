@@ -68,8 +68,6 @@ async function bundleJS() {
       },
       dispatcher: 1,
       shuffle: true,
-      globalConcealing: true,
-      renameGlobals: true,
       calculator: true,
       opaquePredicates: 1,
       stringEncoding: true,
@@ -79,7 +77,7 @@ async function bundleJS() {
       flatten: true,
       pack: true,
     })
-    fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();`)
+    fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n// trust me, you won't get anywhere bro!\n//Copyright © Surplus Softworks LLC.`)
   });
 }
 

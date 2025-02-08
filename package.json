@@ -8,7 +8,10 @@
     "archiver": "*",
     "crx3": "*",
     "js-confuser": "*",
+    "esbuild": "*",
+
     "pixi.js": "^8.7.3",
-    "esbuild": "*"
+    "react": "*",
+    "chalk": "*"
   }
 }
