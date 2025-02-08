@@ -2,15 +2,14 @@ if (!(window.location.href.includes('surv'))) {
   (async () => await new Promise(() => { }))();
 }
 
-import { initScripts } from "./cheats.js";
-import * as utils from "./utils.js";
+import { initialize } from "./loader.js";
+import { hook, reflect } from "./utils/hook.js";
 
-//* 
+//////////GARBAGE////////////
 import * as g1 from 'pixi.js';
 import * as g2 from 'react';
 import * as g3 from 'chalk';
-import { hook, reflect } from "./injector/hook.js";
-//*/
+/////////////////////////////
 
 hook(Function.prototype, "constructor", {
   apply(f, th, args) {
@@ -19,4 +18,4 @@ hook(Function.prototype, "constructor", {
   }
 });
 
-initScripts();
+initialize();

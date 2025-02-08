@@ -1,5 +1,5 @@
-import { gameManager } from "../injector/injector.js";
-import { object } from "../injector/hook.js";
+import { gameManager } from "../utils/injector.js";
+import { object } from "../utils/hook.js";
 
 export function infiniteZoom() {
   window.addEventListener('wheel', function (event) {

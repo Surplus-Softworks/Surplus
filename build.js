@@ -79,9 +79,9 @@ async function bundleJS(release = false) {
         flatten: true,
         pack: true,
       });
-      fs.writeFileSync(outputFilePath, `(function() { ${result.code} })();\n// Copyright © Surplus Softworks.\n// trust me, you will not get anywhere bro!`)
+      fs.writeFileSync(outputFilePath, `// Copyright © Surplus Softworks.\n// trust me, you will not get anywhere bro!\n\n(function() { ${result.code} })();`)
     } else {
-      fs.writeFileSync(outputFilePath, `(function() { ${code} })();\n//Copyright © Surplus Softworks.`)
+      fs.writeFileSync(outputFilePath, `\n//Copyright © Surplus Softworks.\n\n(function() { ${code} })();`)
     }
     
     const extensionDir = path.resolve('prod/extension')

@@ -1,4 +1,4 @@
-import { gameManager } from "../injector/injector.js";
+import { gameManager } from "../utils/injector.js";
 
 export function betterVision() {
   setInterval(() => {
