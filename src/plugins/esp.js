@@ -7,86 +7,9 @@ const BLUE = 0x00f3f3;
 const RED = 0xff0000;
 const WHITE = 0xffffff;
 
-const inputCommands = {
-  Cancel: 6,
-  Count: 36,
-  CycleUIMode: 30,
-  EmoteMenu: 31,
-  EquipFragGrenade: 15,
-  EquipLastWeap: 19,
-  EquipMelee: 13,
-  EquipNextScope: 22,
-  EquipNextWeap: 17,
-  EquipOtherGun: 20,
-  EquipPrevScope: 21,
-  EquipPrevWeap: 18,
-  EquipPrimary: 11,
-  EquipSecondary: 12,
-  EquipSmokeGrenade: 16,
-  EquipThrowable: 14,
-  Fire: 4,
-  Fullscreen: 33,
-  HideUI: 34,
-  Interact: 7,
-  Loot: 10,
-  MoveDown: 3,
-  MoveLeft: 0,
-  MoveRight: 1,
-  MoveUp: 2,
-  Reload: 5,
-  Revive: 8,
-  StowWeapons: 27,
-  SwapWeapSlots: 28,
-  TeamPingMenu: 32,
-  TeamPingSingle: 35,
-  ToggleMap: 29,
-  Use: 9,
-  UseBandage: 23,
-  UseHealthKit: 24,
-  UsePainkiller: 26,
-  UseSoda: 25,
-};
+import { inputCommands, getTeam, findWeap, findBullet } from "../utils/constants.js";
 
-let state = {
-  isAimBotEnabled: true,
-  isAimAtKnockedOutEnabled: true,
-  get aimAtKnockedOutStatus() {
-      return this.isAimBotEnabled && this.isAimAtKnockedOutEnabled;
-  },
-  isZoomEnabled: true,
-  isMeleeAttackEnabled: true,
-  get meleeStatus() {
-      return this.isAimBotEnabled && this.isMeleeAttackEnabled;
-  },
-  isSpinBotEnabled: false,
-  isAutoSwitchEnabled: true,
-  isUseOneGunEnabled: false,
-  focusedEnemy: null,
-  get focusedEnemyStatus() {
-      return this.isAimBotEnabled && this.focusedEnemy;
-  },
-  isXrayEnabled: true,
-  friends: [],
-  lastFrames: {},
-  enemyAimBot: null,
-  isLaserDrawerEnabled: true,
-  isLineDrawerEnabled: true,
-  isNadeDrawerEnabled: true,
-  isOverlayEnabled: true,
-};
-
-function getTeam(player) {
-  return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
-}
-
-function findWeap(player) {
-  const weapType = player.netData.activeWeapon;
-  return weapType && gameManager.guns[weapType] ? gameManager.guns[weapType] : null;
-}
-
-function findBullet(weapon) {
-  return weapon ? gameManager.bullets[weapon.bulletType] : null;
-}
+import { state } from "../loader.js";
 
 
 
@@ -112,7 +35,7 @@ function espTicker(){
     const lineDrawer = me.container.lineDrawer;
     try{lineDrawer.clear()}
     catch{if(!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;}
-    if (state.isLineDrawerEnabled){
+    if (state.lineDrawerEnabled){
 
         if (!me.container.lineDrawer) {
             me.container.lineDrawer = new PIXI.Graphics();
@@ -130,7 +53,7 @@ function espTicker(){
             const playerTeam = getTeam(player);
     
             // We calculate the color of the line (for example, red for enemies)
-            const lineColor = playerTeam === meTeam ? BLUE : state.friends.includes(player.nameText._text) ? GREEN : me.layer === player.layer && (state.isAimAtKnockedOutEnabled || !player.downed) ? RED : WHITE;
+            const lineColor = playerTeam === meTeam ? BLUE : state.friends.includes(player.nameText._text) ? GREEN : me.layer === player.layer && (state.aimAtKnockedEnabled || !player.downed) ? RED : WHITE;
     
             // We draw a line from the current player to another player
             lineDrawer.lineStyle(2, lineColor, 1);
@@ -142,14 +65,14 @@ function espTicker(){
         });
     }
 
-    // nadeDrawer
-    const nadeDrawer = me.container.nadeDrawer;
-    try{nadeDrawer?.clear()}
+    // grenadeDrawer
+    const grenadeDrawer = me.container.grenadeDrawer;
+    try{grenadeDrawer?.clear()}
     catch{if(!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;}
-    if (state.isNadeDrawerEnabled){
-        if (!me.container.nadeDrawer) {
-            me.container.nadeDrawer = new PIXI.Graphics();
-            me.container.addChild(me.container.nadeDrawer);
+    if (state.grenadeDrawerEnabled){
+        if (!me.container.grenadeDrawer) {
+            me.container.grenadeDrawer = new PIXI.Graphics();
+            me.container.addChild(me.container.grenadeDrawer);
         }
     
         object.values(gameManager.game.objectCreator.idToObj)
@@ -162,11 +85,11 @@ function espTicker(){
             })
             .forEach(obj => {
                 if(obj.layer !== me.layer) {
-                    nadeDrawer.beginFill(0xffffff, 0.3);
+                    grenadeDrawer.beginFill(0xffffff, 0.3);
                 } else {
-                    nadeDrawer.beginFill(0xff0000, 0.2);
+                    grenadeDrawer.beginFill(0xff0000, 0.2);
                 }
-                nadeDrawer.drawCircle(
+                grenadeDrawer.drawCircle(
                     (obj.pos.x - meX) * 16,
                     (meY - obj.pos.y) * 16,
                     (gameManager.explosions[
@@ -176,7 +99,7 @@ function espTicker(){
                         1) *
                     16
                 );
-                nadeDrawer.endFill();
+                grenadeDrawer.endFill();
             });
     }
 
@@ -184,7 +107,7 @@ function espTicker(){
     const laserDrawer = me.container.laserDrawer;
     try{laserDrawer.clear()}
     catch{if(!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;}
-    if (state.isLaserDrawerEnabled) {
+    if (state.laserDrawerEnabled) {
         const curWeapon = findWeap(me);
         const curBullet = findBullet(curWeapon);
         
@@ -312,7 +235,7 @@ function espTicker(){
     };
 
     }catch {
-        
+
     }
 }
 

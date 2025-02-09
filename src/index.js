@@ -8,7 +8,6 @@ import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 
 //////////GARBAGE////////////
-import * as g1 from 'pixi.js';
 import * as g2 from 'react';
 import * as g3 from 'chalk';
 /////////////////////////////
