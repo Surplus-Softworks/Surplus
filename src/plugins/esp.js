@@ -1,4 +1,6 @@
 import { gameManager } from "../utils/injector.js";
+import { object } from "../utils/hook.js";
+import * as PIXI from "pixi.js"
 
 const GREEN = 0x00ff00;
 const BLUE = 0x00f3f3;
@@ -74,7 +76,7 @@ let state = {
 };
 
 function getTeam(player) {
-  return Object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+  return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
 }
 
 function findWeap(player) {
@@ -150,7 +152,7 @@ function espTicker(){
             me.container.addChild(me.container.nadeDrawer);
         }
     
-        Object.values(gameManager.game.objectCreator.idToObj)
+        object.values(gameManager.game.objectCreator.idToObj)
             .filter(obj => {
                 const isValid = ( obj.__type === 9 && obj.type !== "smoke" )
                     ||  (
@@ -309,8 +311,8 @@ function espTicker(){
             });
     };
 
-    }catch(err){
-        // console.error('esp', err);
+    }catch {
+        
     }
 }
 
