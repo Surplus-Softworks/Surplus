@@ -88,7 +88,7 @@ function findBullet(weapon) {
 
 
 
-export function esp(){
+function espTicker(){
     const pixi = gameManager.game.pixi; 
     const me = gameManager.game.activePlayer;
     const players = gameManager.game.playerBarn.playerPool.pool;
@@ -312,4 +312,8 @@ export function esp(){
     }catch(err){
         // console.error('esp', err);
     }
+}
+
+export function esp() {
+    gameManager.game.pixi._ticker.add(espTicker);
 }
