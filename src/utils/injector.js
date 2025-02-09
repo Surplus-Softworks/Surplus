@@ -8,6 +8,7 @@ export function inject(oninject) {
             try {
                 if (args[0]?.nameInput != null) {
                     gameManager = args[0];
+                    window.g=gameManager
                     oninject();
                 }
             } catch { }

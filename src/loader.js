@@ -1,10 +1,12 @@
 import { betterVision } from "./plugins/better-vision.js";
 import { infiniteZoom } from "./plugins/infinite-zoom.js";
+import { esp } from "./plugins/esp.js";
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 
 function loadPlugins() {
   betterVision();
+  setTimeout(()=>{esp()},1000)
 }
 
 function loadStaticPlugins() {
