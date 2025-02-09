@@ -1,4 +1,3 @@
-import { state } from "../index.js";
 import { hook, reflect } from "./hook.js";
 
 export let gameManager;

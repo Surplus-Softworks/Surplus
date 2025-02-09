@@ -3,15 +3,12 @@ import { infiniteZoom } from "./plugins/infinite-zoom.js";
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 
-const loaded = false;
-
 function loadPlugins() {
-  if (!loaded) {
-    infiniteZoom();
-  }
   betterVision();
-  
-  loaded = true;
+}
+
+function loadStaticPlugins() {
+  infiniteZoom();
 }
 
 function attach() {
@@ -24,5 +21,6 @@ function attach() {
 }
 
 export function initialize() {
+  loadStaticPlugins()
   inject(attach);
 }

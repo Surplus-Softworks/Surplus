@@ -2,6 +2,8 @@ if (!(window.location.href.includes('surv'))) {
   (async () => await new Promise(() => { }))();
 }
 
+window.log = console.log
+
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 
