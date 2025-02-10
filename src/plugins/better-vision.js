@@ -12,9 +12,12 @@ export function betterVision() {
     })
     gameManager.game.smokeBarn.particles.forEach(v => { v.pos = { x: 1000000, y: 100000 } })
     gameManager.game.map.obstaclePool.pool.forEach(obstacle => {
-      if (['bush', 'tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = 0.55
+      if (['tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) {
+        obstacle.sprite.alpha = 0.55;
       };
+      if (['bush'].some(substring => obstacle.type.includes(substring))) {
+        obstacle.sprite.alpha = 0;
+      }
     });
   }, 100)
 }

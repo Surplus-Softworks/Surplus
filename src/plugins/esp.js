@@ -1,6 +1,5 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
-import * as PIXI from "pixi.js";
 
 import { 
     inputCommands, 
@@ -12,7 +11,7 @@ import {
     throwable 
 } from "../utils/constants.js";
 
-import { state } from "../loader.js";
+import { settings } from "../loader.js";
 
 const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;
@@ -28,6 +27,14 @@ function espTicker() {
     
     if (!pixi || me?.container == undefined) return;
 
+    let Graphics;
+    for (const child of gameManager.pixi.stage.children) {
+      if (child.lineStyle) {
+          Graphics = child.constructor;
+          break;
+      }
+    } 
+
     const meX = me.pos.x;
     const meY = me.pos.y;
     const myTeam = getTeam(me);
@@ -40,9 +47,9 @@ function espTicker() {
             if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
         }
 
-        if (state.lineDrawerEnabled) {
+        if (settings.lineDrawerEnabled) {
             if (!me.container.lineDrawer) {
-                me.container.lineDrawer = new PIXI.Graphics();
+                me.container.lineDrawer = new Graphics();
                 me.container.addChild(me.container.lineDrawer);
             }
 
@@ -54,9 +61,9 @@ function espTicker() {
                 const playerTeam = getTeam(player);
                 const lineColor = playerTeam === myTeam
                     ? BLUE
-                    : state.friends.includes(player.nameText._text)
+                    : settings.friends.includes(player.nameText._text)
                         ? GREEN
-                        : me.layer === player.layer && (state.aimAtKnockedEnabled || !player.downed)
+                        : me.layer === player.layer && (settings.aimAtKnockedEnabled || !player.downed)
                             ? RED
                             : WHITE;
 
@@ -73,9 +80,9 @@ function espTicker() {
             if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
         }
 
-        if (state.grenadeDrawerEnabled) {
+        if (settings.grenadeDrawerEnabled) {
             if (!me.container.grenadeDrawer) {
-                me.container.grenadeDrawer = new PIXI.Graphics();
+                me.container.grenadeDrawer = new Graphics();
                 me.container.addChild(me.container.grenadeDrawer);
             }
 
@@ -99,12 +106,12 @@ function espTicker() {
             if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
         }
 
-        if (state.laserDrawerEnabled) {
+        if (settings.laserDrawerEnabled) {
             const curWeapon = findWeap(me);
             const curBullet = findBullet(curWeapon);
 
             if (!me.container.laserDrawer) {
-                me.container.laserDrawer = new PIXI.Graphics();
+                me.container.laserDrawer = new Graphics();
                 me.container.addChildAt(me.container.laserDrawer, 0);
             }
 
@@ -112,10 +119,10 @@ function espTicker() {
                 const { pos: acPlayerPos } = acPlayer;
                 const dateNow = performance.now();
 
-                if (!(acPlayer.__id in state.lastFrames)) state.lastFrames[acPlayer.__id] = [];
-                state.lastFrames[acPlayer.__id].push([dateNow, { ...acPlayerPos }]);
-                if (state.lastFrames[acPlayer.__id].length > 30) state.lastFrames[acPlayer.__id].shift();
-                if (state.lastFrames[acPlayer.__id].length < 30) return;
+                if (!(acPlayer.__id in settings.lastFrames)) settings.lastFrames[acPlayer.__id] = [];
+                settings.lastFrames[acPlayer.__id].push([dateNow, { ...acPlayerPos }]);
+                if (settings.lastFrames[acPlayer.__id].length > 30) settings.lastFrames[acPlayer.__id].shift();
+                if (settings.lastFrames[acPlayer.__id].length < 30) return;
 
                 let atan;
                 if (acPlayer === me && !lastAimPos) {
