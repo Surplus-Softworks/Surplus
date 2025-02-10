@@ -1,4 +1,5 @@
-import { hook, reflect, object } from "./hook";
+import { hook, reflect, object } from "./hook.js";
+import { gameManager } from "./injector.js";
 
 export const inputCommands = {
     Cancel: 6,
