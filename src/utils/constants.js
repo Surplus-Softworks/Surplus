@@ -1,4 +1,4 @@
-import { hook, reflect } from "./hook";
+import { hook, reflect, object } from "./hook";
 
 export const inputCommands = {
     Cancel: 6,
