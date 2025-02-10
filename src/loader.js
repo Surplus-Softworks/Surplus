@@ -51,7 +51,7 @@ export const state = {
     return this.aimbotEnabled && this.focusedEnemy;
   },
   xrayEnabled: true,
-  whitelist: [],
+  friends: [],
   lastFrames: {},
   enemyAimbot: null,
   laserDrawerEnabled: true,
