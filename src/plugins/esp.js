@@ -11,8 +11,6 @@ import { inputCommands, getTeam, findWeap, findBullet, objects, explosions, thro
 
 import { state } from "../loader.js";
 
-const log = console.log;
-
 function espTicker() {
     const pixi = gameManager.game.pixi;
     const me = gameManager.game.activePlayer;
