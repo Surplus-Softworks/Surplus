@@ -5,7 +5,7 @@ export function betterVision() {
     gameManager.game.renderer.layers[3].children.forEach(v => {
       if (
         v._texture?.textureCacheIds != null &&
-        v._texture.textureCacheIds.some(texture => texture.includes("ceiling"))
+        v._texture.textureCacheIds.some(texture => texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05") || texture.includes("map-snow-"))
       ) {
         v.visible = false
       }
