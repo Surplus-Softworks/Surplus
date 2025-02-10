@@ -154,8 +154,8 @@ function espTicker() {
                     if (acPlayer == me && (!(lastAimPos) || (lastAimPos) && !(gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire)))) {
                         //local rotation
                         atan = Math.atan2(
-                            gameManager.game.input.mousePos.y - gameManager.innerHeight / 2,
-                            gameManager.game.input.mousePos.x - gameManager.innerWidth / 2,
+                            gameManager.game.input.mousePos.y - innerHeight / 2,
+                            gameManager.game.input.mousePos.x - innerWidth / 2,
                         );
                     } else if (acPlayer == me && (lastAimPos) && (gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
                         const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos.x, y: acPlayer.pos.y })
