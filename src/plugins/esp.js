@@ -2,6 +2,8 @@ import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
 import * as PIXI from "pixi.js"
 
+let lastAimPos; // TODO: change this to import from aimbot plugin
+
 const GREEN = 0x00ff00;
 const BLUE = 0x00f3f3;
 const RED = 0xff0000;
@@ -137,8 +139,8 @@ function espTicker() {
                 const deltaTime = (dateNow - state.lastFrames[acPlayer.__id][0][0]) / 1000; // Time since last frame in seconds
 
                 const acPlayerVelocity = {
-                    x: (acPlayerPos._x - state.lastFrames[acPlayer.__id][0][1]._x) / deltaTime,
-                    y: (acPlayerPos._y - state.lastFrames[acPlayer.__id][0][1]._y) / deltaTime,
+                    x: (acPlayerPos.x - state.lastFrames[acPlayer.__id][0][1].x) / deltaTime,
+                    y: (acPlayerPos.y - state.lastFrames[acPlayer.__id][0][1].y) / deltaTime,
                 };
 
                 let lasic = {};
@@ -149,17 +151,17 @@ function espTicker() {
                     lasic.active = true;
                     lasic.range = curBullet.distance * 16.25;
                     let atan;
-                    if (acPlayer == me && (!(gameManager.lastAimPos) || (gameManager.lastAimPos) && !(gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire)))) {
+                    if (acPlayer == me && (!(lastAimPos) || (lastAimPos) && !(gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire)))) {
                         //local rotation
                         atan = Math.atan2(
-                            gameManager.game.input.mousePos._y - gameManager.innerHeight / 2,
-                            gameManager.game.input.mousePos._x - gameManager.innerWidth / 2,
+                            gameManager.game.input.mousePos.y - gameManager.innerHeight / 2,
+                            gameManager.game.input.mousePos.x - gameManager.innerWidth / 2,
                         );
-                    } else if (acPlayer == me && (gameManager.lastAimPos) && (gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
-                        const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos._x, y: acPlayer.pos._y })
+                    } else if (acPlayer == me && (lastAimPos) && (gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
+                        const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos.x, y: acPlayer.pos.y })
                         atan = Math.atan2(
-                            playerPointToScreen.y - gameManager.lastAimPos.clientY,
-                            playerPointToScreen.x - gameManager.lastAimPos.clientX
+                            playerPointToScreen.y - lastAimPos.clientY,
+                            playerPointToScreen.x - lastAimPos.clientX
                         )
                             -
                             Math.PI;
@@ -186,8 +188,8 @@ function espTicker() {
                 }
 
                 const center = {
-                    x: (acPlayerPos._x - me.pos._x) * 16,
-                    y: (me.pos._y - acPlayerPos._y) * 16,
+                    x: (acPlayerPos.x - me.pos.x) * 16,
+                    y: (me.pos.y - acPlayerPos.y) * 16,
                 };
                 const radius = lasic.range;
                 let angleFrom = lasic.direction - lasic.angle;
