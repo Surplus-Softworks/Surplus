@@ -41,19 +41,6 @@ export const inputCommands = {
     UseSoda: 25,
 };
 
-export function getTeam(player) {
-    return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
-}
-
-export function findWeap(player) {
-    const weapType = player.netData.activeWeapon;
-    return weapType && gameManager.guns[weapType] ? gameManager.guns[weapType] : null;
-}
-
-export function findBullet(weapon) {
-    return weapon ? gameManager.bullets[weapon.bulletType] : null;
-}
-
 export let bullets, explosions, guns, throwable, objects;
 
 hook(Object, "keys", {
@@ -77,3 +64,16 @@ hook(Object, "keys", {
         return reflect.apply(f, th, args);
     }
 });
+
+export function getTeam(player) {
+    return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+}
+
+export function findWeap(player) {
+    const weapType = player.netData.activeWeapon;
+    return weapType && guns[weapType] ? guns[weapType] : null;
+}
+
+export function findBullet(weapon) {
+    return weapon ? bullets[weapon.bulletType] : null;
+}
