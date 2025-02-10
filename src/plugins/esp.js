@@ -1,74 +1,78 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
-import * as PIXI from "pixi.js"
+import * as PIXI from "pixi.js";
 
-let lastAimPos; // TODO: change this to import from aimbot plugin
-
-const GREEN = 0x00ff00;
-const BLUE = 0x00f3f3;
-const RED = 0xff0000;
-const WHITE = 0xffffff;
-
-import { inputCommands, getTeam, findWeap, findBullet, objects, explosions, throwable } from "../utils/constants.js";
+import { 
+    inputCommands, 
+    getTeam, 
+    findWeap, 
+    findBullet, 
+    objects, 
+    explosions, 
+    throwable 
+} from "../utils/constants.js";
 
 import { state } from "../loader.js";
+
+const GREEN = 0x399d37;
+const BLUE = 0x3a88f4;
+const RED = 0xdc3734;
+const WHITE = 0xffffff;
+
+let lastAimPos;
 
 function espTicker() {
     const pixi = gameManager.game.pixi;
     const me = gameManager.game.activePlayer;
     const players = gameManager.game.playerBarn.playerPool.pool;
-
-    // We check if there is an object of Pixi, otherwise we create a new
-    if (!pixi || me?.container == undefined) {
-        // console.error("PIXI object not found in game.");
-        return;
-    }
+    
+    if (!pixi || me?.container == undefined) return;
 
     const meX = me.pos.x;
     const meY = me.pos.y;
-
-    const meTeam = getTeam(me);
+    const myTeam = getTeam(me);
 
     try {
-
-        // lineDrawer
         const lineDrawer = me.container.lineDrawer;
-        try { lineDrawer.clear() }
-        catch { if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return; }
-        if (state.lineDrawerEnabled) {
+        try {
+            lineDrawer.clear();
+        } catch {
+            if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
+        }
 
+        if (state.lineDrawerEnabled) {
             if (!me.container.lineDrawer) {
                 me.container.lineDrawer = new PIXI.Graphics();
                 me.container.addChild(me.container.lineDrawer);
             }
 
-            // For each player
-            players.forEach((player) => {
-                // We miss inactive or dead players
+            players.forEach(player => {
                 if (!player.active || player.netData.dead || me.__id == player.__id) return;
 
                 const playerX = player.pos.x;
                 const playerY = player.pos.y;
-
                 const playerTeam = getTeam(player);
+                const lineColor = playerTeam === myTeam
+                    ? BLUE
+                    : state.friends.includes(player.nameText._text)
+                        ? GREEN
+                        : me.layer === player.layer && (state.aimAtKnockedEnabled || !player.downed)
+                            ? RED
+                            : WHITE;
 
-                // We calculate the color of the line (for example, red for enemies)
-                const lineColor = playerTeam === meTeam ? BLUE : state.friends.includes(player.nameText._text) ? GREEN : me.layer === player.layer && (state.aimAtKnockedEnabled || !player.downed) ? RED : WHITE;
-
-                // We draw a line from the current player to another player
                 lineDrawer.lineStyle(2, lineColor, 1);
-                lineDrawer.moveTo(0, 0); // Container Container Center
-                lineDrawer.lineTo(
-                    (playerX - meX) * 16,
-                    (meY - playerY) * 16
-                );
+                lineDrawer.moveTo(0, 0);
+                lineDrawer.lineTo((playerX - meX) * 16, (meY - playerY) * 16);
             });
         }
 
-        // grenadeDrawer
         const grenadeDrawer = me.container.grenadeDrawer;
-        try { grenadeDrawer?.clear() }
-        catch { if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return; }
+        try {
+            grenadeDrawer?.clear();
+        } catch {
+            if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
+        }
+
         if (state.grenadeDrawerEnabled) {
             if (!me.container.grenadeDrawer) {
                 me.container.grenadeDrawer = new PIXI.Graphics();
@@ -76,37 +80,25 @@ function espTicker() {
             }
 
             object.values(gameManager.game.objectCreator.idToObj)
-                .filter(obj => {
-                    const isValid = (obj.__type === 9 && obj.type !== "smoke")
-                        || (
-                            obj.smokeEmitter &&
-                            objects[obj.type].explosion);
-                    return isValid;
-                })
+                .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || (obj.smokeEmitter && objects[obj.type].explosion))
                 .forEach(obj => {
-                    if (obj.layer !== me.layer) {
-                        grenadeDrawer.beginFill(0xffffff, 0.3);
-                    } else {
-                        grenadeDrawer.beginFill(0xff0000, 0.2);
-                    }
+                    grenadeDrawer.beginFill(obj.layer !== me.layer ? 0xffffff : 0xff0000, obj.layer !== me.layer ? 0.3 : 0.2);
                     grenadeDrawer.drawCircle(
                         (obj.pos.x - meX) * 16,
                         (meY - obj.pos.y) * 16,
-                        (explosions[
-                            throwable[obj.type]?.explosionType ||
-                            objects[obj.type].explosion
-                        ].rad.max +
-                            1) *
-                        16
+                        (explosions[throwable[obj.type]?.explosionType || objects[obj.type].explosion].rad.max + 1) * 16
                     );
                     grenadeDrawer.endFill();
                 });
         }
 
-        // flashlightDrawer(laserDrawer)
         const laserDrawer = me.container.laserDrawer;
-        try { laserDrawer.clear() }
-        catch { if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return; }
+        try {
+            laserDrawer.clear();
+        } catch {
+            if (!gameManager.game?.ws || gameManager.game?.activePlayer?.netData?.dead) return;
+        }
+
         if (state.laserDrawerEnabled) {
             const curWeapon = findWeap(me);
             const curBullet = findBullet(curWeapon);
@@ -116,127 +108,53 @@ function espTicker() {
                 me.container.addChildAt(me.container.laserDrawer, 0);
             }
 
-            function laserPointer(
-                curBullet,
-                curWeapon,
-                acPlayer,
-                color = 0x0000ff,
-                opacity = 0.3,
-            ) {
-                const { pos: acPlayerPos, posOld: acPlayerPosOld } = acPlayer;
-
+            function laserPointer(curBullet, curWeapon, acPlayer, color = 0x0000ff, opacity = 0.1) {
+                const { pos: acPlayerPos } = acPlayer;
                 const dateNow = performance.now();
 
                 if (!(acPlayer.__id in state.lastFrames)) state.lastFrames[acPlayer.__id] = [];
                 state.lastFrames[acPlayer.__id].push([dateNow, { ...acPlayerPos }]);
-
+                if (state.lastFrames[acPlayer.__id].length > 30) state.lastFrames[acPlayer.__id].shift();
                 if (state.lastFrames[acPlayer.__id].length < 30) return;
 
-                if (state.lastFrames[acPlayer.__id].length > 30) {
-                    state.lastFrames[acPlayer.__id].shift();
+                let atan;
+                if (acPlayer === me && !lastAimPos) {
+                    atan = Math.atan2(
+                        gameManager.game.input.mousePos.y - innerHeight / 2,
+                        gameManager.game.input.mousePos.x - innerWidth / 2
+                    );
+                } else {
+                    atan = Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
                 }
 
-                const deltaTime = (dateNow - state.lastFrames[acPlayer.__id][0][0]) / 1000; // Time since last frame in seconds
-
-                const acPlayerVelocity = {
-                    x: (acPlayerPos.x - state.lastFrames[acPlayer.__id][0][1].x) / deltaTime,
-                    y: (acPlayerPos.y - state.lastFrames[acPlayer.__id][0][1].y) / deltaTime,
+                const lasic = {
+                    active: !!curBullet,
+                    range: curBullet ? curBullet.distance * 16.25 : 0,
+                    direction: atan,
+                    angle: curBullet ? ((curWeapon.shotSpread) * 0.01745329252) / 2 : 0
                 };
 
-                let lasic = {};
-
-                let isMoving = !!(acPlayerVelocity.x || acPlayerVelocity.y);
-
-                if (curBullet) {
-                    lasic.active = true;
-                    lasic.range = curBullet.distance * 16.25;
-                    let atan;
-                    if (acPlayer == me && (!(lastAimPos) || (lastAimPos) && !(gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire)))) {
-                        //local rotation
-                        atan = Math.atan2(
-                            gameManager.game.input.mousePos.y - innerHeight / 2,
-                            gameManager.game.input.mousePos.x - innerWidth / 2,
-                        );
-                    } else if (acPlayer == me && (lastAimPos) && (gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
-                        const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos.x, y: acPlayer.pos.y })
-                        atan = Math.atan2(
-                            playerPointToScreen.y - lastAimPos.clientY,
-                            playerPointToScreen.x - lastAimPos.clientX
-                        )
-                            -
-                            Math.PI;
-                    } else {
-                        atan = Math.atan2(
-                            acPlayer.dir.x,
-                            acPlayer.dir.y
-                        )
-                            -
-                            Math.PI / 2;
-                    }
-                    lasic.direction = atan;
-                    lasic.angle =
-                        ((curWeapon.shotSpread +
-                            (isMoving ? curWeapon.moveSpread : 0)) *
-                            0.01745329252) /
-                        2;
-                } else {
-                    lasic.active = false;
-                }
-
-                if (!lasic.active) {
-                    return;
-                }
+                if (!lasic.active) return;
 
                 const center = {
                     x: (acPlayerPos.x - me.pos.x) * 16,
-                    y: (me.pos.y - acPlayerPos.y) * 16,
+                    y: (me.pos.y - acPlayerPos.y) * 16
                 };
-                const radius = lasic.range;
-                let angleFrom = lasic.direction - lasic.angle;
-                let angleTo = lasic.direction + lasic.angle;
-                angleFrom =
-                    angleFrom > Math.PI * 2
-                        ? angleFrom - Math.PI * 2
-                        : angleFrom < 0
-                            ? angleFrom + Math.PI * 2
-                            : angleFrom;
-                angleTo =
-                    angleTo > Math.PI * 2
-                        ? angleTo - Math.PI * 2
-                        : angleTo < 0
-                            ? angleTo + Math.PI * 2
-                            : angleTo;
                 laserDrawer.beginFill(color, opacity);
                 laserDrawer.moveTo(center.x, center.y);
-                laserDrawer.arc(center.x, center.y, radius, angleFrom, angleTo);
+                laserDrawer.arc(center.x, center.y, lasic.range, lasic.direction - lasic.angle, lasic.direction + lasic.angle);
                 laserDrawer.lineTo(center.x, center.y);
                 laserDrawer.endFill();
             }
 
+            laserPointer(curBullet, curWeapon, me);
 
-            laserPointer(
-                curBullet,
-                curWeapon,
-                me,
-            );
-
-            players
-                .filter(player => player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && getTeam(player) != meTeam)
+            players.filter(player => player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && getTeam(player) !== myTeam)
                 .forEach(enemy => {
-                    const enemyWeapon = findWeap(enemy);
-                    laserPointer(
-                        findBullet(enemyWeapon),
-                        enemyWeapon,
-                        enemy,
-                        "0",
-                        0.2,
-                    )
+                    laserPointer(findBullet(findWeap(enemy)), findWeap(enemy), enemy, "0", 0.2);
                 });
-        };
-
-    } catch {
-
-    }
+        }
+    } catch {}
 }
 
 export function esp() {
