@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         (XENOs)FREE HACKS 1.1
+// @name         Survev-kr1tyHack
 // @namespace    https://github.com/Drino955/survev-kr1tyhack
-// @version      1.1
-// @description  xray, tracer, better zoom, smoke/obstacle opacity, autoloot, player names...
-// @author       kr1tyTeam/Xeno
+// @version      0.3
+// @description  Aimbot, xray, tracer, better zoom, smoke/obstacle opacity, autoloot, player names...
+// @author       kr1tyTeam
 // @license      GPL3
 // @match        *://survev.io/*
 // @match        *://resurviv.biz/*
@@ -25,1641 +25,2076 @@
 // @downloadURL  https://raw.githubusercontent.com/Drino955/survev-kr1tyhack/main/kr1tyhack.user.js
 // @supportURL   https://github.com/Drino955/survev-kr1tyhack/issues
 // ==/UserScript==
+
 (function () {
     'use strict';
-  
-    function f() {
-      const v = "This extension is not supported, install the \"Tamperokey Legacy MV2\", NOT \"TamperMonkey\"!!!\n    And check that you have not installed the script for \"Tampermonkey\", the script needs to be installed ONLY for \"Tamperokey Legacy MV2\"!!!";
-      alert(v);
-      unsafeWindow.stop();
-      document.write(v);
+
+    function alertMsgAndcleanPage(){
+        const not_supported_msg = `This extension is not supported, install the "Tamperokey Legacy MV2", NOT "TamperMonkey"!!!
+    And check that you have not installed the script for "Tampermonkey", the script needs to be installed ONLY for "Tamperokey Legacy MV2"!!!`;
+
+        alert(not_supported_msg);
+        unsafeWindow.stop();
+        document.write(not_supported_msg);
     }
-    if (typeof GM_info !== "undefined" && GM_info.scriptHandler === "Tampermonkey") {
-      if (GM_info.version <= "5.1.1" || GM_info.userAgentData.brands[0].brand == "Firefox") {
-        console.log("The script is launched at Tampermonkey Legacy");
-      } else {
-        f();
-      }
-    } else {
-      console.log("The script is not launched at Tampermonkey");
-      f();
-    }
-    const v2 = 65280;
-    const v3 = 62451;
-    const v4 = 16711680;
-    const v5 = 16777215;
-    const v6 = GM_info.script.version;
-    const v7 = "newFeaturesShown_" + v6;
-    const vGM_getValue = GM_getValue(v7, false);
-    if (!vGM_getValue) {
-      const v8 = "\n        <strong style=\"font-size:20px;display:block;\">🚀 Exciting Updates in Xeno Hack:</strong><br>\n        📢 Join our <a href=\"https://discord.gg/NCGUAmDM2p\" target=\"_blank\">Discord</a> to keep up with the latest announcements, updates, and more! Remember, this is the free version without aimbot. If you would like to upgrade to the paid version with aimbot, join our Discord and reach out to an admin so we can get you updated! HACKERS UNITE!<br>\n   ";
-      const v9 = document.createElement("div");
-      v9.style.position = "fixed";
-      v9.style.top = "0";
-      v9.style.left = "0";
-      v9.style.width = "100%";
-      v9.style.height = "100%";
-      v9.style.backgroundColor = "rgba(0, 0, 0, 0.75)";
-      v9.style.zIndex = "999";
-      const v10 = document.createElement("div");
-      v10.innerHTML = v8;
-      v10.style.position = "fixed";
-      v10.style.top = "50%";
-      v10.style.left = "50%";
-      v10.style.transform = "translate(-50%, -50%)";
-      v10.style.backgroundColor = "rgb(20, 20, 20)";
-      v10.style.color = "#fff";
-      v10.style.padding = "20px";
-      v10.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.5)";
-      v10.style.zIndex = "1000";
-      v10.style.borderRadius = "10px";
-      v10.style.maxWidth = "500px";
-      v10.style.width = "80%";
-      v10.style.textAlign = "center";
-      v10.style.fontSize = "17px";
-      v10.style.overflow = "auto";
-      v10.style.maxHeight = "90%";
-      v10.style.margin = "10px";
-      const v11 = document.createElement("button");
-      v11.textContent = "Close";
-      v11.style.margin = "20px auto 0 auto";
-      v11.style.padding = "10px 20px";
-      v11.style.border = "none";
-      v11.style.backgroundColor = "#007bff";
-      v11.style.color = "#fff";
-      v11.style.borderRadius = "5px";
-      v11.style.cursor = "pointer";
-      v11.style.display = "block";
-      v11.addEventListener("click", () => {
-        document.body.removeChild(v10);
-        document.body.removeChild(v9);
-        GM_setValue(v7, true);
-      });
-      v10.appendChild(v11);
-      document.body.appendChild(v9);
-      document.body.appendChild(v10);
-    }
-    let v12 = {
-      isAimBotEnabled: false,
-      isAimAtKnockedOutEnabled: true,
-      get aimAtKnockedOutStatus() {
-        return this.isAimBotEnabled && this.isAimAtKnockedOutEnabled;
-      },
-      isZoomEnabled: true,
-      isMeleeAttackEnabled: true,
-      get meleeStatus() {
-        return this.isAimBotEnabled && this.isMeleeAttackEnabled;
-      },
-      isSpinBotEnabled: true,
-      isAutoSwitchEnabled: true,
-      isUseOneGunEnabled: false,
-      focusedEnemy: null,
-      get focusedEnemyStatus() {
-        return this.isAimBotEnabled && this.focusedEnemy;
-      },
-      isXrayEnabled: true,
-      friends: [],
-      lastFrames: {},
-      enemyAimBot: null,
-      isLaserDrawerEnabled: true,
-      isLineDrawerEnabled: true,
-      isNadeDrawerEnabled: true,
-      isOverlayEnabled: true
-    };
-    function f2(p) {
-      return Object.keys(game.playerBarn.teamInfo).find(p2 => game.playerBarn.teamInfo[p2].playerIds.includes(p.__id));
-    }
-    function f3(p3) {
-      const v13 = p3.netData.activeWeapon;
-      if (v13 && unsafeWindow.guns[v13]) {
-        return unsafeWindow.guns[v13];
-      } else {
-        return null;
-      }
-    }
-    function f4(p4) {
-      if (p4) {
-        return unsafeWindow.bullets[p4.bulletType];
-      } else {
-        return null;
-      }
-    }
-    const v14 = document.createElement("div");
-    v14.className = "Xeno-overlay-broken";
-    const v15 = document.createElement("h3");
-    v15.className = "Xeno-title-broken";
-    v15.innerText = "XENO 1.0";
-    const v16 = document.createElement("div");
-    v16.className = "aimbotDot-broken";
-    function f5() {
-      v14.innerHTML = "";
-      const v17 = [["[Z] Zoom:", v12.isZoomEnabled, v12.isZoomEnabled ? "ON" : "OFF"]];
-      v17.forEach((p5, p6) => {
-        let [v18, v19, v20] = p5;
-        const v21 = v18 + " " + v20;
-        const v22 = document.createElement("p");
-        v22.className = "kr1ty-control";
-        v22.style.opacity = v19 ? 1 : 0.5;
-        v22.textContent = v21;
-        v14.appendChild(v22);
-      });
-    }
-    function f6() {
-      v12.isOverlayEnabled = !v12.isOverlayEnabled;
-      v14.style.display = v12.isOverlayEnabled ? "block" : "none";
-    }
-    document.querySelector("#ui-game").append(v14);
-    document.querySelector("#ui-top-left").insertBefore(v15, document.querySelector("#ui-top-left").firstChild);
-    document.querySelector("#ui-game").append(v16);
-    function f7() {
-      v12.isMeleeAttackEnabled = !v12.isMeleeAttackEnabled;
-      if (v12.isMeleeAttackEnabled) {
-        return;
-      }
-      unsafeWindow.aimTouchMoveDir = null;
-    }
-    function f8(p7, p8) {
-      if (!p7 || !p8) {
-        console.log("Missing enemy or player data");
-        return null;
-      }
-      const {
-        pos: _0x11e5fe
-      } = p7;
-      const {
-        pos: _0x48f06f
-      } = p8;
-      const v23 = performance.now();
-      if (!(p7.__id in v12.lastFrames)) {
-        v12.lastFrames[p7.__id] = [];
-      }
-      v12.lastFrames[p7.__id].push([v23, {
-        ..._0x11e5fe
-      }]);
-      if (v12.lastFrames[p7.__id].length < 30) {
-        console.log("Insufficient data for prediction, using current position");
-        return unsafeWindow.game.camera.pointToScreen({
-          x: _0x11e5fe._x,
-          y: _0x11e5fe._y
-        });
-      }
-      if (v12.lastFrames[p7.__id].length > 30) {
-        v12.lastFrames[p7.__id].shift();
-      }
-      const v24 = (v23 - v12.lastFrames[p7.__id][0][0]) / 1000;
-      const v25 = {
-        x: (_0x11e5fe._x - v12.lastFrames[p7.__id][0][1]._x) / v24,
-        y: (_0x11e5fe._y - v12.lastFrames[p7.__id][0][1]._y) / v24
-      };
-      const vF3 = f3(p8);
-      const vF4 = f4(vF3);
-      let v26;
-      if (!vF4) {
-        v26 = 1000;
-      } else {
-        v26 = vF4.speed;
-      }
-      const v27 = v25.x;
-      const v28 = v25.y;
-      const v29 = _0x11e5fe._x - _0x48f06f._x;
-      const v30 = _0x11e5fe._y - _0x48f06f._y;
-      const vV26 = v26;
-      const v31 = vV26 ** 2 - v27 ** 2 - v28 ** 2;
-      const v32 = (v27 * v29 + v28 * v30) * -2;
-      const v33 = -(v29 ** 2) - v30 ** 2;
-      let v34;
-      if (Math.abs(v31) < 0.000001) {
-        console.log("Linear solution bullet speed is much greater than velocity");
-        v34 = -v33 / v32;
-      } else {
-        const v35 = v32 ** 2 - v31 * 4 * v33;
-        if (v35 < 0) {
-          console.log("No solution, shooting at current position");
-          return unsafeWindow.game.camera.pointToScreen({
-            x: _0x11e5fe._x,
-            y: _0x11e5fe._y
-          });
-        }
-        const v36 = Math.sqrt(v35);
-        const v37 = (-v32 - v36) / (v31 * 2);
-        const v38 = (-v32 + v36) / (v31 * 2);
-        v34 = Math.min(v37, v38) > 0 ? Math.min(v37, v38) : Math.max(v37, v38);
-      }
-      if (v34 < 0) {
-        console.log("Negative time, shooting at current position");
-        return unsafeWindow.game.camera.pointToScreen({
-          x: _0x11e5fe._x,
-          y: _0x11e5fe._y
-        });
-      }
-      const v39 = {
-        x: _0x11e5fe._x + v27 * v34,
-        y: _0x11e5fe._y + v28 * v34
-      };
-      return unsafeWindow.game.camera.pointToScreen(v39);
-    }
-    function f9(p9, p10) {
-      const v40 = p10._x - p9._x;
-      const v41 = p10._y - p9._y;
-      return Math.atan2(v41, v40);
-    }
-    function f10(p11, p12 = {}, p13 = "") {
-      const v42 = document.createElement(p11);
-      Object.assign(v42.style, p12);
-      v42.innerHTML = p13;
-      return v42;
-    }
-    function f11() {
-      const v43 = vF10.querySelectorAll("div[data-stateName]");
-      v43.forEach(p14 => {
-        const v44 = p14.getAttribute("data-stateName");
-        const v45 = p14.getAttribute("data-role");
-        const v46 = v12[v44];
-        p14.style.color = v46 && v45 === "sub" ? "#a8a922" : v46 ? "white" : "#3e3e3e";
-      });
-    }
-    function f12(p15, p16, p17, p18 = "sup") {
-      let v47;
-      if (p18 === "sup") {
-        v47 = f10("div", {
-          fontFamily: "Open Sans, sans-serif",
-          fontSize: "18px",
-          color: "white",
-          textAlign: "left",
-          cursor: "pointer"
-        }, p15);
-      } else if (p18 === "sub") {
-        v47 = f10("div", {
-          fontFamily: "Open Sans, sans-serif",
-          fontSize: "16px",
-          color: "#a8a922",
-          textAlign: "left",
-          paddingLeft: "14px",
-          cursor: "pointer"
-        }, p15);
-      } else {
-        throw new Error("Invalid role specified for feature button");
-      }
-      v47.setAttribute("data-stateName", p17);
-      v47.setAttribute("data-role", p18);
-      v47.addEventListener("click", () => {
-        p16();
-        f5();
-        f11();
-      });
-      return v47;
-    }
-    const vF10 = f10("div", {
-      maxWidth: "400px",
-      maxHeight: "400px",
-      width: "30%",
-      height: "60%",
-      overflow: "auto",
-      backgroundColor: "#010302",
-      borderRadius: "10px",
-      position: "fixed",
-      left: "15px",
-      top: "50%",
-      transform: "translateY(-50%)",
-      display: "none",
-      zIndex: 2147483646,
-      userSelect: "none",
-      transition: "transform 0.2s ease-in-out"
-    });
-    vF10.addEventListener("mouseenter", () => {
-      unsafeWindow.game.inputBinds.menuHovered = true;
-    });
-    vF10.addEventListener("mouseleave", () => {
-      unsafeWindow.game.inputBinds.menuHovered = false;
-    });
-    const vF102 = f10("div", {
-      width: "100%",
-      backgroundColor: "#3e3e3e"
-    });
-    const vF103 = f10("div", {
-      fontFamily: "Open Sans, sans-serif",
-      fontSize: "18px",
-      color: "white",
-      textAlign: "left",
-      padding: "10px 20px",
-      lineHeight: "100%"
-    }, "Xeno hack 1.0");
-    vF102.appendChild(vF103);
-    const vF104 = f10("div", {
-      padding: "12px 20px",
-      color: "white",
-      fontFamily: "Open Sans, sans-serif"
-    });
-    const vF12 = f12("Tracers", () => {
-      v12.isLineDrawerEnabled = !v12.isLineDrawerEnabled;
-      v12.isNadeDrawerEnabled = !v12.isNadeDrawerEnabled;
-      v12.isLaserDrawerEnabled = !v12.isLaserDrawerEnabled;
-    }, "isLineDrawerEnabled");
-    const vF122 = f12("Flashlight", () => {
-      v12.isLaserDrawerEnabled = !v12.isLaserDrawerEnabled;
-    }, "isLaserDrawerEnabled", "sub");
-    const vF123 = f12("Zoom", () => {
-      v12.isZoomEnabled = !v12.isZoomEnabled;
-    }, "isZoomEnabled");
-    const vF124 = f12("Aim at Downed", () => {
-      v12.isAimAtKnockedOutEnabled = !v12.isAimAtKnockedOutEnabled;
-    }, "aimAtKnockedOutStatus", "sub");
-    const vF125 = f12("Melee Attack", f7, "meleeStatus", "sub");
-    const vF126 = f12("SpinBot", () => {}, "isSpinBotEnabled");
-    const vF127 = f12("UseOneGun", () => {
-      v12.isUseOneGunEnabled = !v12.isUseOneGunEnabled;
-    }, "isUseOneGunEnabled");
-    const vF128 = f12("Overlay", f6, "isOverlayEnabled");
-    vF10.appendChild(vF102);
-    vF104.appendChild(vF124);
-    vF104.appendChild(vF125);
-    vF104.appendChild(vF123);
-    vF104.appendChild(vF12);
-    vF104.appendChild(vF122);
-    vF104.appendChild(vF126);
-    vF104.appendChild(vF127);
-    vF104.appendChild(vF128);
-    vF10.appendChild(vF104);
-    document.body.appendChild(vF10);
-    f11();
-    function f13() {
-      const v48 = document.getElementById("ui-game-menu");
-      if (v48) {
-        const v49 = v48.style.display;
-        vF10.style.display = v49;
-      }
-    }
-    const v50 = new MutationObserver(f13);
-    const v51 = document.getElementById("ui-game-menu");
-    if (v51) {
-      v50.observe(v51, {
-        attributes: true,
-        attributeFilter: ["style"]
-      });
-    }
-    const vF105 = f10("style");
-    vF105.innerHTML = "\n@keyframes fadeIn {\n    0% { opacity: 0; }\n    100% { opacity: 1; }\n}";
-    document.head.appendChild(vF105);
-    class C {
-      constructor() {
-        this.lastFrameTime = performance.now();
-        this.frameCount = 0;
-        this.fps = 0;
-        this.kills = 0;
-        this.setAnimationFrameCallback();
-        if (unsafeWindow.location.hostname !== "resurviv.biz" && unsafeWindow.location.hostname !== "zurviv.io" && unsafeWindow.location.hostname !== "eu-comp.net") {
-          this.initCounter("fpsCounter");
-          this.initCounter("pingCounter");
-          this.initCounter("killsCounter");
-        }
-        this.initMenu();
-        this.initRules();
-        this.setupWeaponBorderHandler();
-      }
-      initCounter(p19) {
-        this[p19] = document.createElement("div");
-        this[p19].id = p19;
-        Object.assign(this[p19].style, {
-          color: "white",
-          backgroundColor: "rgba(0, 0, 0, 0.2)",
-          padding: "5px 10px",
-          marginTop: "10px",
-          borderRadius: "5px",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "14px",
-          zIndex: "10000",
-          pointerEvents: "none"
-        });
-        const v52 = document.getElementById("ui-top-left");
-        if (v52) {
-          v52.appendChild(this[p19]);
-        }
-      }
-      setAnimationFrameCallback() {
-        this.animationFrameCallback = p20 => setTimeout(p20, 1);
-      }
-      getKills() {
-        const v53 = document.querySelector(".ui-player-kills.js-ui-player-kills");
-        if (v53) {
-          const vParseInt = parseInt(v53.textContent, 10);
-          if (isNaN(vParseInt)) {
-            return 0;
-          } else {
-            return vParseInt;
-          }
-        }
-        return 0;
-      }
-      startPingTest() {
-        const v54 = unsafeWindow.location.href;
-        const v55 = /\/#\w+/.test(v54);
-        const v56 = document.getElementById("team-server-select");
-        const v57 = document.getElementById("server-select-main");
-        const v58 = v55 && v56 ? v56.value : v57 ? v57.value : null;
-        if (v58 && v58 !== this.currentServer) {
-          this.currentServer = v58;
-          this.resetPing();
-          let v59 = unsafeWindow.servers;
-          if (!v59) {
-            return;
-          }
-          const v60 = v59.find(p21 => v58.toUpperCase() === p21.region.toUpperCase());
-          if (v60) {
-            this.pingTest = new C2(v60);
-            this.pingTest.startPingTest();
-          } else {
-            this.resetPing();
-          }
-        }
-      }
-      resetPing() {
-        if (this.pingTest && this.pingTest.test.ws) {
-          this.pingTest.test.ws.close();
-          this.pingTest.test.ws = null;
-        }
-        this.pingTest = null;
-      }
-      updateHealthBars() {
-        const v61 = document.querySelectorAll("#ui-health-container");
-        v61.forEach(p22 => {
-          const v62 = p22.querySelector("#ui-health-actual");
-          if (v62) {
-            const v63 = Math.round(parseFloat(v62.style.width));
-            let v64 = p22.querySelector(".health-text");
-            if (!v64) {
-              v64 = document.createElement("span");
-              v64.classList.add("health-text");
-              Object.assign(v64.style, {
-                width: "100%",
-                textAlign: "center",
-                marginTop: "5px",
-                color: "#333",
-                fontSize: "20px",
-                fontWeight: "bold",
-                position: "absolute",
-                zIndex: "10"
-              });
-              p22.appendChild(v64);
-            }
-            v64.textContent = v63 + "%";
-          }
-        });
-      }
-      updateBoostBars() {
-        const v65 = document.querySelector("#ui-boost-counter");
-        if (v65) {
-          const v66 = v65.querySelectorAll(".ui-boost-base .ui-bar-inner");
-          let v67 = 0;
-          const v68 = [25, 25, 40, 10];
-          v66.forEach((p23, p24) => {
-            const vParseFloat = parseFloat(p23.style.width);
-            if (!isNaN(vParseFloat)) {
-              v67 += vParseFloat * (v68[p24] / 100);
-            }
-          });
-          const v69 = Math.round(v67);
-          let v70 = v65.querySelector(".boost-display");
-          if (!v70) {
-            v70 = document.createElement("div");
-            v70.classList.add("boost-display");
-            Object.assign(v70.style, {
-              position: "absolute",
-              bottom: "75px",
-              right: "335px",
-              color: "#FF901A",
-              backgroundColor: "rgba(0, 0, 0, 0.4)",
-              padding: "5px 10px",
-              borderRadius: "5px",
-              fontFamily: "Arial, sans-serif",
-              fontSize: "14px",
-              zIndex: "10",
-              textAlign: "center"
-            });
-            v65.appendChild(v70);
-          }
-          v70.textContent = "AD: " + v69 + "%";
-        }
-      }
-      setupWeaponBorderHandler() {
-        const v71 = Array.from(document.getElementsByClassName("ui-weapon-switch"));
-        v71.forEach(p25 => {
-          if (p25.id === "ui-weapon-id-4") {
-            p25.style.border = "3px solid #2f4032";
-          } else {
-            p25.style.border = "3px solid #FFFFFF";
-          }
-        });
-        const v72 = Array.from(document.getElementsByClassName("ui-weapon-name"));
-        v72.forEach(p26 => {
-          const v73 = p26.closest(".ui-weapon-switch");
-          const v74 = new MutationObserver(() => {
-            const v75 = p26.textContent.trim();
-            let v76 = "#FFFFFF";
-            switch (v75.toUpperCase()) {
-              case "CZ-3A1":
-              case "G18C":
-              case "M9":
-              case "M93R":
-              case "MAC-10":
-              case "MP5":
-              case "P30L":
-              case "DUAL P30L":
-              case "UMP9":
-              case "VECTOR":
-              case "VSS":
-              case "FLAMETHROWER":
-                v76 = "#FFAE00";
-                break;
-              case "AK-47":
-              case "OT-38":
-              case "OTS-38":
-              case "M39 EMR":
-              case "DP-28":
-              case "MOSIN-NAGANT":
-              case "SCAR-H":
-              case "SV-98":
-              case "M1 GARAND":
-              case "PKP PECHENEG":
-              case "AN-94":
-              case "BAR M1918":
-              case "BLR 81":
-              case "SVD-63":
-              case "M134":
-              case "GROZA":
-              case "GROZA-S":
-                v76 = "#007FFF";
-                break;
-              case "FAMAS":
-              case "M416":
-              case "M249":
-              case "QBB-97":
-              case "MK 12 SPR":
-              case "M4A1-S":
-              case "SCOUT ELITE":
-              case "L86A2":
-                v76 = "#0f690d";
-                break;
-              case "M870":
-              case "MP220":
-              case "SAIGA-12":
-              case "SPAS-12":
-              case "USAS-12":
-              case "SUPER 90":
-              case "LASR GUN":
-              case "M1100":
-                v76 = "#FF0000";
-                break;
-              case "MODEL 94":
-              case "PEACEMAKER":
-              case "VECTOR (.45 ACP)":
-              case "M1911":
-              case "M1A1":
-                v76 = "#800080";
-                break;
-              case "DEAGLE 50":
-              case "RAINBOW BLASTER":
-                v76 = "#000000";
-                break;
-              case "AWM-S":
-              case "MK 20 SSR":
-                v76 = "#808000";
-                break;
-              case "POTATO CANNON":
-              case "SPUD GUN":
-                v76 = "#A52A2A";
-                break;
-              case "FLARE GUN":
-                v76 = "#FF4500";
-                break;
-              case "M79":
-                v76 = "#008080";
-                break;
-              case "HEART CANNON":
-                v76 = "#FFC0CB";
-                break;
-              default:
-                v76 = "#FFFFFF";
-                break;
-            }
-            if (v73.id !== "ui-weapon-id-4") {
-              v73.style.border = "3px solid " + v76;
-            }
-          });
-          v74.observe(p26, {
-            childList: true,
-            characterData: true,
-            subtree: true
-          });
-        });
-      }
-      initMenu() {
-        const v77 = document.querySelector("#start-row-top");
-        Object.assign(v77.style, {
-          display: "flex",
-          flexDirection: "row"
-        });
-        const v78 = document.createElement("div");
-        v78.id = "kr1tyHack_broken";
-        Object.assign(v78.style, {
-          backgroundColor: "rgba(0, 0, 0, 0.5)",
-          padding: "15px",
-          borderRadius: "10px",
-          boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
-          fontFamily: "Arial, sans-serif",
-          fontSize: "18px",
-          color: "#fff",
-          maxWidth: "300px",
-          height: "100%",
-          overflowY: "auto",
-          marginRight: "30px",
-          boxSizing: "border-box"
-        });
-        const v79 = document.createElement("h2");
-        v79.textContent = "Social networks";
-        v79.className = "news-header";
-        Object.assign(v79.style, {
-          margin: "0 0 10px",
-          fontSize: "20px"
-        });
-        v78.append(v79);
-        const v80 = document.createElement("p");
-        v80.className = "news-paragraph";
-        v80.style.fontSize = "14px";
-        v80.innerHTML = "⭐ Star us on GitHub<br>📢 Join our Telegram group<br>🎮 Join our Discord server";
-        v78.append(v80);
-        const vF = p27 => {
-          const v81 = document.createElement("a");
-          v81.textContent = "" + p27;
-          v81.target = "_blank";
-          Object.assign(v81.style, {
-            display: "block",
-            border: "none",
-            color: "#fff",
-            padding: "10px",
-            borderRadius: "5px",
-            marginBottom: "10px",
-            fontSize: "15px",
-            lineHeight: "14px",
-            cursor: "pointer",
-            textAlign: "center",
-            textDecoration: "none"
-          });
-          return v81;
-        };
-        const vVF = vF("");
-        vVF.style.backgroundColor = "#0c1117";
-        vVF.href = "https://github.com/Drino955/survev-kr1tyhack";
-        vVF.innerHTML = "<i class=\"fa-brands fa-github\"></i> kr1tyHack";
-        v78.append(vVF);
-        const vVF2 = vF("");
-        vVF2.style.backgroundColor = "#00a8e6";
-        vVF2.href = "https://t.me/kr1tyteam";
-        vVF2.innerHTML = "<i class=\"fa-brands fa-telegram-plane\"></i> kr1tyTeam";
-        v78.append(vVF2);
-        const vVF3 = vF("");
-        vVF3.style.backgroundColor = "#5865F2";
-        vVF3.href = "https://discord.gg/NCGUAmDM2p";
-        vVF3.innerHTML = "<i class=\"fa-brands fa-discord\"></i> [HACK] League of Hackers";
-        v78.append(vVF3);
-        const v82 = document.createElement("p");
-        v82.className = "news-paragraph";
-        v82.style.fontSize = "14px";
-        v82.innerHTML = "Your support helps us develop the project and provide better updates!";
-        v78.append(v82);
-        const v83 = document.querySelector("#left-column");
-        v83.innerHTML = "";
-        v83.style.marginTop = "10px";
-        v83.style.marginBottom = "27px";
-        v83.append(v78);
-        this.menu = v78;
-      }
-      initRules() {
-        const v84 = document.querySelector("#news-block");
-        v84.innerHTML = "\n<h3 class=\"news-header\">Xeno Hack 1.0</h3>\n<div id=\"news-current\">\n<small class=\"news-date\">February 6, 2025</small>\n\n<h2>Welcome to Xenos free Cheats🚀</h2>\n<p class=\"news-paragraph\">Notice: This is the free version of the cheats without aimbot, If you would like the paid version with aimbot, please join the discord server and dm admin/staff</p>\n\n<h3>Recommendations:</h3>\n<ul>\n    <li>Play smart and don't rush headlong, as the cheat does not provide immortality.</li>\n    <li>Use adrenaline to the max to heal and run fast.</li>\n    <li>The map is color-coded: white circle - Mosin, gold container - SV98, etc.</li>\n</ul>\n\n<p class=\"news-paragraph\">For more details, visit the <a href=\"https://github.com/Drino955/survev-kr1tyhack\">GitHub page</a> and join our <a href=\"https://t.me/kr1tyteam\">Telegram group</a> or <a href=\"https://discord.gg/NCGUAmDM2p\">Discord</a>.</p></div>";
-      }
-      startUpdateLoop() {
-        const v85 = performance.now();
-        const v86 = v85 - this.lastFrameTime;
-        this.frameCount++;
-        if (v86 >= 1000) {
-          this.fps = Math.round(this.frameCount * 1000 / v86);
-          this.frameCount = 0;
-          this.lastFrameTime = v85;
-          this.kills = this.getKills();
-          if (this.fpsCounter) {
-            this.fpsCounter.textContent = "FPS: " + this.fps;
-          }
-          if (this.killsCounter) {
-            this.killsCounter.textContent = "Kills: " + this.kills;
-          }
-          if (this.pingCounter && this.pingTest) {
-            const v87 = this.pingTest.getPingResult();
-            this.pingCounter.textContent = "PING: " + v87.ping + " ms";
-          }
-        }
-        this.startPingTest();
-        this.updateBoostBars();
-        this.updateHealthBars();
-      }
-    }
-    class C2 {
-      constructor(p28) {
-        this.ptcDataBuf = new ArrayBuffer(1);
-        this.test = {
-          region: p28.region,
-          url: "wss://" + p28.url + "/ptc",
-          ping: 9999,
-          ws: null,
-          sendTime: 0,
-          retryCount: 0
-        };
-      }
-      startPingTest() {
-        if (!this.test.ws) {
-          const v88 = new WebSocket(this.test.url);
-          v88.binaryType = "arraybuffer";
-          v88.onopen = () => {
-            this.sendPing();
-            this.test.retryCount = 0;
-          };
-          v88.onmessage = () => {
-            const v89 = (Date.now() - this.test.sendTime) / 1000;
-            this.test.ping = Math.round(v89 * 1000);
-            this.test.retryCount = 0;
-            setTimeout(() => this.sendPing(), 200);
-          };
-          v88.onerror = () => {
-            this.test.ping = "Error";
-            this.test.retryCount++;
-            if (this.test.retryCount < 5) {
-              setTimeout(() => this.startPingTest(), 2000);
-            } else {
-              this.test.ws.close();
-              this.test.ws = null;
-            }
-          };
-          v88.onclose = () => {
-            this.test.ws = null;
-          };
-          this.test.ws = v88;
-        }
-      }
-      sendPing() {
-        if (this.test.ws.readyState === WebSocket.OPEN) {
-          this.test.sendTime = Date.now();
-          this.test.ws.send(this.ptcDataBuf);
-        }
-      }
-      getPingResult() {
-        return {
-          region: this.test.region,
-          ping: this.test.ping
-        };
-      }
-    }
-    unsafeWindow.GameMod = new C();
-    console.log("Script injecting...");
-    const v90 = document.getElementById("player-name-input-solo");
-    if (v90) {
-      v90.value = "discord.gg/krity";
-      v90.dispatchEvent(new Event("input", {
-        bubbles: true
-      }));
-    }
-    (async () => {
-      const v91 = [...Array.from(document.querySelectorAll("link[rel=\"modulepreload\"][href]")), ...Array.from(document.querySelectorAll("script[type=\"module\"][src]"))];
-      const v92 = v91.find(p29 => p29.src?.includes("app-"));
-      const v93 = v91.find(p30 => p30.href?.includes("shared-"));
-      const v94 = v91.find(p31 => p31.href?.includes("vendor-"));
-      const v95 = v92.src;
-      const v96 = v93.href;
-      const v97 = v94.href;
-      let v98 = null;
-      let v99 = null;
-      if (v96) {
-        const v100 = await GM.xmlHttpRequest({
-          url: v96
-        }).catch(p32 => console.error(p32));
-        let v101 = await v100.responseText;
-        const v102 = [{
-          name: "bullets",
-          from: /function\s+(\w+)\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\{\s*return\s+(\w+)\((\w+),\s*(\w+),\s*(\w+)\)\s*\}\s*const\s+(\w+)\s*=\s*\{\s*(\w+)\s*:\s*\{\s*type\s*:\s*"(.*?)"\s*,\s*damage\s*:\s*(\d+)\s*,/,
-          to: "function $1($2, $3) {\n    return $4($5, $6, $7)\n}\nconst $8 = window.bullets = {\n    $9: {\n        type: \"$10\",\n        damage: $11,"
-        }, {
-          name: "explosions",
-          from: /(\w+)=\{explosion_frag:\{type:"explosion",damage:(\d+),obstacleDamage/,
-          to: "$1 = window.explosions = {explosion_frag:{type:\"explosion\",damage:$2,obstacleDamage"
-        }, {
-          name: "guns",
-          from: /(\w+)=\{(\w+):\{name:"([^"]+)",type:"gun",quality:(\d+),fireMode:"([^"]+)",caseTiming:"([^"]+)",ammo:"([^"]+)",/,
-          to: "$1 = window.guns = {$2:{name:\"$3\",type:\"gun\",quality:$4,fireMode:\"$5\",caseTiming:\"$6\",ammo:\"$7\","
-        }, {
-          name: "throwable",
-          from: /(\w+)=\{(\w+):\{name:"([^"]+)",type:"throwable",quality:(\d+),explosionType:"([^"]+)",/,
-          to: "$1 = window.throwable = {$2:{name:\"$3\",type:\"throwable\",quality:$4,explosionType:\"$5\","
-        }, {
-          name: "objects",
-          from: /\s*(\w+)\s*=\s*\{\s*(\w+)\s*:\s*Ve\(\{\}\)\s*,\s*(\w+)\s*:\s*Ve\(\{\s*img\s*:\s*\{\s*tint\s*:\s*(\d+)\s*\}\s*,\s*loot\s*:\s*\[\s*n\("(\w+)",\s*(\d+),\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*\]\s*\}\)\s*,/,
-          to: " $1 = window.objects = {\n    $2: Ve({}),\n    $3: Ve({\n        img: {\n            tint: $4\n        },\n        loot: [\n            n(\"$5\", $6, $7),\n            d(\"$8\", $9),\n            d(\"$10\", $11),\n            d(\"$12\", $13)\n        ]\n    }),"
-        }];
-        for (const v103 of v102) {
-          v101 = v101.replace(v103.from, v103.to);
-        }
-        const v104 = new Blob([v101], {
-          type: "application/javascript"
-        });
-        v98 = URL.createObjectURL(v104);
-        console.log(v98);
-      }
-      if (v95) {
-        const v105 = await GM.xmlHttpRequest({
-          url: v95
-        }).catch(p33 => console.error(p33));
-        let v106 = await v105.responseText;
-        const v107 = [{
-          name: "Import shared.js",
-          from: /"\.\/shared-[^"]+\.js";/,
-          to: "\"" + v98 + "\";"
-        }, {
-          name: "Import vendor.js",
-          from: /\.\/vendor-[a-zA-Z0-9]+\.js/,
-          to: "" + v97
-        }, {
-          name: "servers",
-          from: /var\s+(\w+)\s*=\s*\[\s*({\s*region:\s*"([^"]+)",\s*zone:\s*"([^"]+)",\s*url:\s*"([^"]+)",\s*https:\s*(!0|!1)\s*}\s*(,\s*{\s*region:\s*"([^"]+)",\s*zone:\s*"([^"]+)",\s*url:\s*"([^"]+)",\s*https:\s*(!0|!1)\s*})*)\s*\];/,
-          to: "var $1 = window.servers = [$2];"
-        }, {
-          name: "Map colorizing",
-          from: /(\w+)\.sort\(\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*=>\s*\2\.zIdx\s*-\s*\3\.zIdx\s*\);/,
-          to: "$1.sort(($2, $3) => $2.zIdx - $3.zIdx);\nwindow.mapColorizing($1);"
-        }, {
-          name: "Position without interpolation (pos._x, pos._y)",
-          from: /this\.pos\s*=\s*(\w+)\.copy\((\w+)\.netData\.pos\)/,
-          to: "this.pos = $1.copy($2.netData.pos),this.pos._x = this.netData.pos.x, this.pos._y = this.netData.pos.y"
-        }, {
-          name: "Movement interpolation (Game optimization)",
-          from: "this.pos._y = this.netData.pos.y",
-          to: "this.pos._y = this.netData.pos.y,(window.movementInterpolation) &&\n                                                        !(\n                                                            Math.abs(this.pos.x - this.posOld.x) > 18 ||\n                                                            Math.abs(this.pos.y - this.posOld.y) > 18\n                                                        ) &&\n                                                            //movement interpolation\n                                                            ((this.pos.x += (this.posOld.x - this.pos.x) * 0.5),\n                                                            (this.pos.y += (this.posOld.y - this.pos.y) * 0.5))"
-        }, {
-          name: "Mouse position without server delay (Game optimization)",
-          from: "-Math.atan2(this.dir.y,this.dir.x)}",
-          to: "-Math.atan2(this.dir.y, this.dir.x),\n                (window.localRotation) &&\n    ((window.game.activeId == this.__id && !window.game.spectating) &&\n        (this.bodyContainer.rotation = Math.atan2(\n            window.game.input.mousePos.y - window.innerHeight / 2,\n            window.game.input.mousePos.x - window.innerWidth / 2\n        )),\n    (window.game.activeId != this.__id) &&\n        (this.bodyContainer.rotation = -Math.atan2(this.dir.y, this.dir.x)));\n                }"
-        }, {
-          name: "Class definition with methods",
-          from: /(\w+)\s*=\s*24;\s*class\s+(\w+)\s*\{([\s\S]*?)\}\s*function/,
-          to: "$1 = 24;\nclass $2 {\n$3\n}window.pieTimerClass = $2;\nfunction"
-        }, {
-          name: "isMobile (basicDataInfo)",
-          from: /(\w+)\.isMobile\s*=\s*(\w+)\.mobile\s*\|\|\s*window\.mobile\s*,/,
-          to: "$1.isMobile = $2.mobile || window.mobile,window.basicDataInfo = $1,"
-        }, {
-          name: "Game",
-          from: /this\.shotBarn\s*=\s*new\s*(\w+)\s*;/,
-          to: "window.game = this,this.shotBarn = new $1;"
-        }, {
-          name: "Override gameControls",
-          from: /this\.sendMessage\s*\(\s*(\w+)\.(\w+)\s*,\s*(\w+)\s*,\s*(\d+)\s*\)\s*,\s*this\.inputMsgTimeout\s*=\s*(\d+)\s*,\s*this\.prevInputMsg\s*=\s*(\w+)\s*\)/,
-          to: "this._newGameControls = window.initGameControls($3), this.sendMessage($1.$2, this._newGameControls, $4),\nthis.inputMsgTimeout = $5,\nthis.prevInputMsg = this._newGameControls)"
-        }];
-        for (const v108 of v107) {
-          v106 = v106.replace(v108.from, v108.to);
-        }
-        const v109 = new Blob([v106], {
-          type: "application/javascript"
-        });
-        v99 = URL.createObjectURL(v109);
-        console.log(v99);
-      }
-      if (!v95 || !v96 || !v97) {
-        console.error("originalAppURL or originalSharedURL or originalVendorURL is not found", v95, v96, v97);
-        return;
-      }
-      const v110 = [];
-      const v111 = document.addEventListener;
-      document.addEventListener = function (p34, p35, p36) {
-        if (p34 === "DOMContentLoaded") {
-          v110.push(p35);
+
+    if (typeof GM_info !== 'undefined' && GM_info.scriptHandler === 'Tampermonkey') {
+        if (GM_info.version <= '5.1.1' || GM_info.userAgentData.brands[0].brand == 'Firefox') {
+            console.log('The script is launched at Tampermonkey Legacy');
         } else {
-          v111.call(document, p34, p35, p36);
+            alertMsgAndcleanPage();
         }
-      };
-      const v112 = document.createElement("script");
-      v112.type = "module";
-      v112.src = v99;
-      v112.onload = () => {
-        console.log("Im injected appjs", v112);
-        document.addEventListener = v111;
-        v110.forEach(p37 => p37.call(document));
-      };
-      document.head.append(v112);
-    })();
-    console.log("Script injected");
-    function f14() {
-      const v113 = document.getElementById("player-name-input-solo");
-      if (v113) {
-        v113.value = "discord.gg/krity";
-        v113.dispatchEvent(new Event("input", {
-          bubbles: true
-        }));
-      }
-    }
-    f14();
-    const v114 = document.getElementById("player-options");
-    const v115 = new MutationObserver(() => {
-      f14();
-    });
-    if (v114) {
-      v115.observe(v114, {
-        childList: true,
-        subtree: true
-      });
-    }
-    setInterval(() => {
-      const v116 = document.getElementById("player-name-input-solo");
-      if (v116 && v116.value !== "discord.gg/krity") {
-        f14();
-      }
-    }, 100);
-    unsafeWindow.localRotation = true;
-    if (unsafeWindow.location.hostname !== "resurviv.biz" && unsafeWindow.location.hostname !== "zurviv.io" && unsafeWindow.location.hostname !== "eu-comp.net") {
-      unsafeWindow.movementInterpolation = true;
     } else {
-      unsafeWindow.movementInterpolation = false;
+        console.log('The script is not launched at Tampermonkey');
+        alertMsgAndcleanPage();
     }
-    const v117 = document.createElement("link");
-    v117.rel = "stylesheet";
-    v117.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
-    document.head.append(v117);
-    const v118 = document.createElement("style");
-    v118.innerHTML = "\n.kr1ty-overlay-broken{\n    position: absolute;\n    top: 128px;\n    left: 0px;\n    width: 100%;\n    pointer-events: None;\n    color: #fff;\n    font-family: monospace;\n    text-shadow: 0 0 5px rgba(0, 0, 0, .5);\n    z-index: 1;\n}\n\n.kr1ty-title-broken{\n    text-align: center;\n    margin-top: 10px;\n    margin-bottom: 10px;\n    font-size: 25px;\n    text-shadow: 0 0 10px rgba(0, 0, 0, .9);\n    color: #fff;\n    font-family: monospace;\n    pointer-events: None;\n}\n\n.kr1ty-control{\n    text-align: center;\n    margin-top: 3px;\n    margin-bottom: 3px;\n    font-size: 18px;\n}\n\n.aimbotDot-broken{\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 10px;\n    height: 10px;\n    background-color: red;\n    transform: translateX(-50%) translateY(-50%);\n    display: none;\n}\n\n#news-current ul{\n    margin-left: 20px;\n    padding-left: 6px;\n}\n";
-    document.head.append(v118);
-    let v119 = {
-      container_06: 14934793,
-      barn_02: 14934793,
-      stone_02: 1654658,
-      tree_03: 16777215,
-      stone_04: 15406938,
-      stone_05: 15406938,
-      bunker_storm_01: 14934793
-    };
-    let v120 = {
-      stone_02: 6,
-      tree_03: 8,
-      stone_04: 6,
-      stone_05: 6,
-      bunker_storm_01: 1.75
-    };
-    unsafeWindow.mapColorizing = p38 => {
-      p38.forEach(p39 => {
-        if (!v119[p39.obj.type]) {
-          return;
-        }
-        p39.shapes.forEach(p40 => {
-          p40.color = v119[p39.obj.type];
-          console.log(p39);
-          if (!v120[p39.obj.type]) {
-            return;
-          }
-          p40.scale = v120[p39.obj.type];
-          console.log(p39);
+
+    // colors
+    const GREEN = 0x00ff00;
+    const BLUE = 0x00f3f3;
+    const RED = 0xff0000;
+    const WHITE = 0xffffff;
+
+    // tampermonkey
+    const version = GM_info.script.version;
+
+    const newFeaturesKey = `newFeaturesShown_${version}`;
+    const newFeaturesShown = GM_getValue(newFeaturesKey, false);
+
+    if (!newFeaturesShown) {
+        const message = `
+        <strong style="font-size:20px;display:block;">🎉 What's New:</strong><br>
+        - 🌐 Script now works on all survev forks<br>
+        - 🕹️ Added a cheats menu that activates with the ESC key<br>
+        - 🔫 New "UseOneGun" feature, you can lock the weapon and shoot only from it using autoswitch. When you have a shotgun and a rifle, and the enemy is far away, it is useful to lock the rifle and shoot at them.<br>
+        - 📈 Increased objects on the map<br>
+        - 🔦 Fixed bugs with the flashlight(laser a.k.a blue/grey wide lines), it will no longer remain on the map<br>
+        - 🛡️ Protection against installing the wrong Tampermonkey extension<br>
+        - 🛠️ AimBot works by default on downed players<br>
+        - 🛠️ Refactored code (useful for developers)<br>
+        - 🚀 Added runtime code injection to avoid DMCA bans on platforms like GitHub and GreasyFork<br><br>
+        📢 Subscribe to our <a href="https://t.me/kr1tyteam" target="_blank">Telegram channel</a> and group, as GitHub and GreasyFork have banned us, and the Discord server might be next. Telegram is a safer platform for this kind of content and cheats. Plus, the author loves Telegram.<br>
+    `;
+
+        const overlay = document.createElement('div');
+        overlay.style.position = 'fixed';
+        overlay.style.top = '0';
+        overlay.style.left = '0';
+        overlay.style.width = '100%';
+        overlay.style.height = '100%';
+        overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.75)';
+        overlay.style.zIndex = '999';
+
+        const notification = document.createElement('div');
+        notification.innerHTML = message;
+        notification.style.position = 'fixed';
+        notification.style.top = '50%';
+        notification.style.left = '50%';
+        notification.style.transform = 'translate(-50%, -50%)';
+        notification.style.backgroundColor = 'rgb(20, 20, 20)';
+        notification.style.color = '#fff';
+        notification.style.padding = '20px';
+        notification.style.boxShadow = '0 0 10px rgba(0, 0, 0, 0.5)';
+        notification.style.zIndex = '1000';
+        notification.style.borderRadius = '10px';
+        notification.style.maxWidth = '500px';
+        notification.style.width = '80%';
+        notification.style.textAlign = 'center';
+        notification.style.fontSize = '17px';
+        notification.style.overflow = 'auto';
+        notification.style.maxHeight = '90%';
+        notification.style.margin = '10px';
+
+
+        const closeButton = document.createElement('button');
+        closeButton.textContent = 'Close';
+        closeButton.style.margin = '20px auto 0 auto';
+        closeButton.style.padding = '10px 20px';
+        closeButton.style.border = 'none';
+        closeButton.style.backgroundColor = '#007bff';
+        closeButton.style.color = '#fff';
+        closeButton.style.borderRadius = '5px';
+        closeButton.style.cursor = 'pointer';
+        closeButton.style.display = 'block';
+
+        closeButton.addEventListener('click', () => {
+            document.body.removeChild(notification);
+            document.body.removeChild(overlay);
+            GM_setValue(newFeaturesKey, true);
         });
-      });
-    };
-    function f15() {
-      unsafeWindow.document.addEventListener("keyup", function (p41) {
-        if (!unsafeWindow?.game?.ws) {
-          return;
-        }
-        const v121 = ["Z"];
-        if (!v121.includes(String.fromCharCode(p41.keyCode))) {
-          return;
-        }
-        switch (String.fromCharCode(p41.keyCode)) {
-          case "Z":
-            v12.isZoomEnabled = !v12.isZoomEnabled;
-            break;
-        }
-        f5();
-        f11();
-      });
-      unsafeWindow.document.addEventListener("mousedown", function (p42) {
-        if (p42.button !== 1) {
-          return;
-        }
-        const v122 = p42.clientX;
-        const v123 = p42.clientY;
-        const v124 = unsafeWindow.game.playerBarn.playerPool.pool;
-        const v125 = unsafeWindow.game.activePlayer;
-        const vF2 = f2(v125);
-        let v126 = null;
-        let vInfinity = Infinity;
-        v124.forEach(p43 => {
-          if (!p43.active || p43.netData.dead || p43.downed || v125.__id === p43.__id || f2(p43) == vF2) {
-            return;
-          }
-          const v127 = unsafeWindow.game.camera.pointToScreen({
-            x: p43.pos._x,
-            y: p43.pos._y
-          });
-          const v128 = (v127.x - v122) ** 2 + (v127.y - v123) ** 2;
-          if (v128 < vInfinity) {
-            vInfinity = v128;
-            v126 = p43;
-          }
-        });
-        if (v126) {
-          const v129 = v12.friends.indexOf(v126.nameText._text);
-          if (~v129) {
-            v12.friends.splice(v129, 1);
-            console.log("Removed player with name " + v126.nameText._text + " from friends.");
-          } else {
-            v12.friends.push(v126.nameText._text);
-            console.log("Added player with name " + v126.nameText._text + " to friends.");
-          }
-        }
-      });
+
+        notification.appendChild(closeButton);
+        document.body.appendChild(overlay);
+        document.body.appendChild(notification);
     }
-    f15();
-    function f16() {
-      Object.defineProperty(Object.prototype, "textureCacheIds", {
-        set(p44) {
-          this._textureCacheIds = p44;
-          if (Array.isArray(p44)) {
-            const vThis = this;
-            p44.push = new Proxy(p44.push, {
-              apply(p45, p46, p47) {
-                if (p47[0].includes("ceiling") && !p47[0].includes("map-building-container-ceiling-05") || p47[0].includes("map-snow-")) {
-                  Object.defineProperty(vThis, "valid", {
-                    set(p48) {
-                      this._valid = p48;
-                    },
-                    get() {
-                      return false;
-                    }
-                  });
+
+    let state = {
+        isAimBotEnabled: true,
+        isAimAtKnockedOutEnabled: true,
+        get aimAtKnockedOutStatus() {
+            return this.isAimBotEnabled && this.isAimAtKnockedOutEnabled;
+        },
+        isZoomEnabled: true,
+        isMeleeAttackEnabled: true,
+        get meleeStatus() {
+            return this.isAimBotEnabled && this.isMeleeAttackEnabled;
+        },
+        isSpinBotEnabled: false,
+        isAutoSwitchEnabled: true,
+        isUseOneGunEnabled: false,
+        focusedEnemy: null,
+        get focusedEnemyStatus() {
+            return this.isAimBotEnabled && this.focusedEnemy;
+        },
+        isXrayEnabled: true,
+        friends: [],
+        lastFrames: {},
+        enemyAimBot: null,
+        isLaserDrawerEnabled: true,
+        isLineDrawerEnabled: true,
+        isNadeDrawerEnabled: true,
+        isOverlayEnabled: true,
+    };
+
+
+    function getTeam(player) {
+        return Object.keys(game.playerBarn.teamInfo).find(team => game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+    }
+
+    function findWeap(player) {
+        const weapType = player.netData.activeWeapon;
+        return weapType && unsafeWindow.guns[weapType] ? unsafeWindow.guns[weapType] : null;
+    }
+
+    function findBullet(weapon) {
+        return weapon ? unsafeWindow.bullets[weapon.bulletType] : null;
+    }
+
+    //
+    // NOTE: Changed className/id to "broken" versions:
+    //
+    const overlay = document.createElement('div');
+    overlay.className = 'kr1ty-overlay-broken';       // changed
+
+    const kr1tyTitle = document.createElement('h3');
+    kr1tyTitle.className = 'kr1ty-title-broken';      // changed
+    kr1tyTitle.innerText = `kr1tyHack ${version}`;
+
+    const aimbotDot = document.createElement('div');
+    aimbotDot.className = 'aimbotDot-broken';         // changed
+
+
+    function updateOverlay() {
+        overlay.innerHTML = ``;
+
+        const controls = [
+            [ '[B] AimBot:', state.isAimBotEnabled, state.isAimBotEnabled ? 'ON' : 'OFF' ],
+            [ '[Z] Zoom:', state.isZoomEnabled, state.isZoomEnabled ? 'ON' : 'OFF' ],
+            [ '[M] MeleeAtk:', state.meleeStatus, state.meleeStatus ? 'ON' : 'OFF' ],
+            [ '[Y] SpinBot:', state.isSpinBotEnabled, state.isSpinBotEnabled ? 'ON' : 'OFF' ],
+            [ '[T] FocusedEnemy:', state.focusedEnemyStatus, state.focusedEnemy?.nameText?._text ? state.focusedEnemy?.nameText?._text : 'OFF' ],
+            [ '[V] UseOneGun:', state.isUseOneGunEnabled, state.isUseOneGunEnabled ? 'ON' : 'OFF' ],
+        ];
+
+        controls.forEach((control, index) => {
+            let [name, isEnabled, optionalText] = control;
+            const text = `${name} ${optionalText}`;
+
+            const line = document.createElement('p');
+            line.className = 'kr1ty-control';
+            line.style.opacity = isEnabled ? 1 : 0.5;
+            line.textContent = text;
+            overlay.appendChild(line);
+        });
+    }
+
+    function overlayToggle(){
+        state.isOverlayEnabled = !state.isOverlayEnabled;
+        overlay.style.display = state.isOverlayEnabled ? 'block' : 'none';
+    }
+
+    document.querySelector('#ui-game').append(overlay);
+    document.querySelector('#ui-top-left').insertBefore(kr1tyTitle, document.querySelector('#ui-top-left').firstChild);
+    document.querySelector('#ui-game').append(aimbotDot);
+
+    function aimBot() {
+
+        if (!state.isAimBotEnabled) return;
+
+        const players = unsafeWindow.game.playerBarn.playerPool.pool;
+        const me = unsafeWindow.game.activePlayer;
+
+        try {
+            const meTeam = getTeam(me);
+
+            let enemy = null;
+            let minDistanceToEnemyFromMouse = Infinity;
+
+            if (state.focusedEnemy && state.focusedEnemy.active && !state.focusedEnemy.netData.dead) {
+                enemy = state.focusedEnemy;
+            }else {
+                if (state.focusedEnemy){
+                    state.focusedEnemy = null;
+                    updateOverlay();
                 }
-                return Reflect.apply(...arguments);
+
+                players.forEach((player) => {
+                    // We miss inactive or dead players
+                    if (!player.active || player.netData.dead || (!state.isAimAtKnockedOutEnabled && player.downed) || me.__id === player.__id || me.layer !== player.layer || getTeam(player) == meTeam || state.friends.includes(player.nameText._text)) return;
+
+                    const screenPlayerPos = unsafeWindow.game.camera.pointToScreen({x: player.pos._x, y: player.pos._y});
+                    // const distanceToEnemyFromMouse = Math.hypot(screenPlayerPos.x - unsafeWindow.game.input.mousePos._x, screenPlayerPos.y - unsafeWindow.game.input.mousePos._y);
+                    const distanceToEnemyFromMouse = (screenPlayerPos.x - unsafeWindow.game.input.mousePos._x) ** 2 + (screenPlayerPos.y - unsafeWindow.game.input.mousePos._y) ** 2;
+
+                    if (distanceToEnemyFromMouse < minDistanceToEnemyFromMouse) {
+                        minDistanceToEnemyFromMouse = distanceToEnemyFromMouse;
+                        enemy = player;
+                    }
+                });
+            }
+
+            if (enemy) {
+                const meX = me.pos._x;
+                const meY = me.pos._y;
+                const enemyX = enemy.pos._x;
+                const enemyY = enemy.pos._y;
+
+                const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
+                // const distanceToEnemy = (meX - enemyX) ** 2 + (meY - enemyY) ** 2;
+
+                if (enemy != state.enemyAimBot) {
+                    state.enemyAimBot = enemy;
+                    state.lastFrames[enemy.__id] = [];
+                }
+
+                const predictedEnemyPos = calculatePredictedPosForShoot(enemy, me);
+
+                if (!predictedEnemyPos) return;
+
+                unsafeWindow.lastAimPos = {
+                    clientX: predictedEnemyPos.x,
+                    clientY: predictedEnemyPos.y,
+                };
+
+                // AutoMelee
+                if(state.isMeleeAttackEnabled && distanceToEnemy <= 8) {
+                    const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
+                    unsafeWindow.aimTouchMoveDir = {
+                        x: Math.cos(moveAngle),
+                        y: Math.sin(moveAngle),
+                    };
+                    unsafeWindow.aimTouchDistanceToEnemy = distanceToEnemy;
+                }else {
+                    unsafeWindow.aimTouchMoveDir = null;
+                    unsafeWindow.aimTouchDistanceToEnemy = null;
+                }
+
+                if (aimbotDot.style.left !== predictedEnemyPos.x + 'px' || aimbotDot.style.top !== predictedEnemyPos.y + 'px') {
+                    aimbotDot.style.left = predictedEnemyPos.x + 'px';
+                    aimbotDot.style.top = predictedEnemyPos.y + 'px';
+                    aimbotDot.style.display = 'block';
+                }
+            }else {
+                unsafeWindow.aimTouchMoveDir = null;
+                unsafeWindow.lastAimPos = null;
+                aimbotDot.style.display = 'none';
+            }
+        } catch (error) {
+            console.error("Error in aimBot:", error);
+        }
+    }
+
+    function aimBotToggle(){
+        state.isAimBotEnabled = !state.isAimBotEnabled;
+        if (state.isAimBotEnabled) return;
+
+        aimbotDot.style.display = 'None';
+        unsafeWindow.lastAimPos = null;
+        unsafeWindow.aimTouchMoveDir = null;
+    }
+
+    function meleeAttackToggle(){
+        state.isMeleeAttackEnabled = !state.isMeleeAttackEnabled;
+        if (state.isMeleeAttackEnabled) return;
+
+        unsafeWindow.aimTouchMoveDir = null;
+    }
+
+    function calculatePredictedPosForShoot(enemy, curPlayer) {
+        if (!enemy || !curPlayer) {
+            console.log("Missing enemy or player data");
+            return null;
+        }
+
+        const { pos: enemyPos } = enemy;
+        const { pos: curPlayerPos } = curPlayer;
+
+        const dateNow = performance.now();
+
+        if ( !(enemy.__id in state.lastFrames) ) state.lastFrames[enemy.__id] = [];
+        state.lastFrames[enemy.__id].push([dateNow, { ...enemyPos }]);
+
+        if (state.lastFrames[enemy.__id].length < 30) {
+            console.log("Insufficient data for prediction, using current position");
+            return unsafeWindow.game.camera.pointToScreen({x: enemyPos._x, y: enemyPos._y});
+        }
+
+        if (state.lastFrames[enemy.__id].length > 30){
+            state.lastFrames[enemy.__id].shift();
+        }
+
+        const deltaTime = (dateNow - state.lastFrames[enemy.__id][0][0]) / 1000; // Time since last frame in seconds
+
+        const enemyVelocity = {
+            x: (enemyPos._x - state.lastFrames[enemy.__id][0][1]._x) / deltaTime,
+            y: (enemyPos._y - state.lastFrames[enemy.__id][0][1]._y) / deltaTime,
+        };
+
+        const weapon = findWeap(curPlayer);
+        const bullet = findBullet(weapon);
+
+        let bulletSpeed;
+        if (!bullet) {
+            bulletSpeed = 1000;
+        }else {
+            bulletSpeed = bullet.speed;
+        }
+
+
+        // Quadratic equation for time prediction
+        const vex = enemyVelocity.x;
+        const vey = enemyVelocity.y;
+        const dx = enemyPos._x - curPlayerPos._x;
+        const dy = enemyPos._y - curPlayerPos._y;
+        const vb = bulletSpeed;
+
+        const a = vb ** 2 - vex ** 2 - vey ** 2;
+        const b = -2 * (vex * dx + vey * dy);
+        const c = -(dx ** 2) - (dy ** 2);
+
+        let t;
+
+        if (Math.abs(a) < 1e-6) {
+            console.log('Linear solution bullet speed is much greater than velocity');
+            t = -c / b;
+        } else {
+            const discriminant = b ** 2 - 4 * a * c;
+
+            if (discriminant < 0) {
+                console.log("No solution, shooting at current position");
+                return unsafeWindow.game.camera.pointToScreen({x: enemyPos._x, y: enemyPos._y});
+            }
+
+            const sqrtD = Math.sqrt(discriminant);
+            const t1 = (-b - sqrtD) / (2 * a);
+            const t2 = (-b + sqrtD) / (2 * a);
+
+            t = Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2);
+        }
+
+
+        if (t < 0) {
+            console.log("Negative time, shooting at current position");
+            return unsafeWindow.game.camera.pointToScreen({x: enemyPos._x, y: enemyPos._y});
+        }
+
+        // console.log(`A bullet with the enemy will collide through ${t}`)
+
+        const predictedPos = {
+            x: enemyPos._x + vex * t,
+            y: enemyPos._y + vey * t,
+        };
+
+        return unsafeWindow.game.camera.pointToScreen(predictedPos);
+    }
+
+    function calcAngle(playerPos, mePos){
+        const dx = mePos._x - playerPos._x;
+        const dy = mePos._y - playerPos._y;
+
+        return Math.atan2(dy, dx);
+    }
+
+    // Создание элемента с заданными стилями
+    function createElement(tag, styles = {}, innerHTML = '') {
+        const element = document.createElement(tag);
+        Object.assign(element.style, styles);
+        element.innerHTML = innerHTML;
+        return element;
+    }
+
+    function updateButtonColors() {
+        const buttons = uiContainer.querySelectorAll('div[data-stateName]');
+        buttons.forEach(button => {
+            const stateName = button.getAttribute('data-stateName');
+            const role = button.getAttribute('data-role');
+            const isEnabled = state[stateName];
+            button.style.color =  isEnabled && role === 'sub' ? '#a8a922' : isEnabled ? 'white' : '#3e3e3e';
+        });
+    }
+
+
+    // Создание кнопки функции
+    function createFeatureButton(name, clickHandler, stateName, role='sup') {
+        let button;
+        if (role === 'sup'){
+            button = createElement('div', {
+                fontFamily: 'Open Sans, sans-serif',
+                fontSize: '18px',
+                color: 'white',
+                textAlign: 'left',
+                cursor: 'pointer',
+            }, name);
+        }else if(role === 'sub'){
+            button = createElement('div', {
+                fontFamily: 'Open Sans, sans-serif',
+                fontSize: '16px',
+                color: '#a8a922',
+                textAlign: 'left',
+                paddingLeft: '14px',
+                cursor: 'pointer',
+            }, name);
+
+        }else {
+            throw new Error('Invalid role specified for feature button');
+        }
+
+        button.setAttribute('data-stateName', stateName);
+        button.setAttribute('data-role', role);
+
+        button.addEventListener('click', () => {
+            clickHandler();
+            updateOverlay();
+            updateButtonColors();
+        });
+
+        return button;
+    }
+
+    // Создание контейнера UI
+    const uiContainer = createElement('div', {
+        maxWidth: '400px',
+        maxHeight: '400px',
+        width: '30%',
+        height: '60%',
+        overflow: 'auto',
+        backgroundColor: '#010302',
+        borderRadius: '10px',
+        position: 'fixed',
+        left: '15px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        display: 'none',
+        zIndex: 2147483646,
+        userSelect: 'none',
+        transition: 'transform 0.2s ease-in-out'
+    });
+
+    uiContainer.addEventListener('mouseenter', () => {
+        unsafeWindow.game.inputBinds.menuHovered = true;
+    });
+
+    uiContainer.addEventListener('mouseleave', () => {
+        unsafeWindow.game.inputBinds.menuHovered = false;
+    });
+
+    // Создание заголовка
+    const headerSection = createElement('div', {
+        width: '100%',
+        backgroundColor: '#3e3e3e'
+    });
+    const headerText = createElement('div', {
+        fontFamily: 'Open Sans, sans-serif',
+        fontSize: '18px',
+        color: 'white',
+        textAlign: 'left',
+        padding: '10px 20px',
+        lineHeight: '100%'
+    }, `kr1tyHack v${version}`);
+    headerSection.appendChild(headerText);
+
+    // Создание содержимого
+    const bodyContent = createElement('div', {
+        padding: '12px 20px',
+        color: 'white',
+        fontFamily: 'Open Sans, sans-serif'
+    });
+
+    // Создание кнопок функций
+    const featureAimbot = createFeatureButton('AimBot', aimBotToggle, 'isAimBotEnabled');
+
+    const featureTracers = createFeatureButton('Tracers', () => {
+        state.isLineDrawerEnabled = !state.isLineDrawerEnabled;
+        state.isNadeDrawerEnabled = !state.isNadeDrawerEnabled;
+        state.isLaserDrawerEnabled = !state.isLaserDrawerEnabled;
+    }, 'isLineDrawerEnabled');
+
+    const featureFlashlight = createFeatureButton('Flashlight', () => {
+        state.isLaserDrawerEnabled = !state.isLaserDrawerEnabled;
+    }, 'isLaserDrawerEnabled', 'sub');
+
+    const featureZoom = createFeatureButton('Zoom', () => {
+        state.isZoomEnabled = !state.isZoomEnabled;
+    }, 'isZoomEnabled');
+
+    const featureAimAtDowned = createFeatureButton('Aim at Downed', () => {
+        state.isAimAtKnockedOutEnabled = !state.isAimAtKnockedOutEnabled;
+    }, 'aimAtKnockedOutStatus', 'sub');
+
+    const featureMeleeAttack = createFeatureButton('Melee Attack', meleeAttackToggle, 'meleeStatus', 'sub');
+
+    const featureSpinBot= createFeatureButton('SpinBot', () => {
+        state.isSpinBotEnabled = !state.isSpinBotEnabled;
+    }, 'isSpinBotEnabled');
+
+    const featureUseOneGun = createFeatureButton('UseOneGun', () => {
+        state.isUseOneGunEnabled = !state.isUseOneGunEnabled;
+    }, 'isUseOneGunEnabled');
+
+    const featureOverlay = createFeatureButton('Overlay', overlayToggle, 'isOverlayEnabled');
+
+    uiContainer.appendChild(headerSection);
+    bodyContent.appendChild(featureAimbot);
+    bodyContent.appendChild(featureAimAtDowned);
+    bodyContent.appendChild(featureMeleeAttack);
+    bodyContent.appendChild(featureZoom);
+    bodyContent.appendChild(featureTracers);
+    bodyContent.appendChild(featureFlashlight);
+    bodyContent.appendChild(featureSpinBot);
+    bodyContent.appendChild(featureUseOneGun);
+    bodyContent.appendChild(featureOverlay);
+    uiContainer.appendChild(bodyContent);
+
+
+    document.body.appendChild(uiContainer);
+    updateButtonColors();
+
+    function syncMenuVisibility() {
+        const gameMenu = document.getElementById('ui-game-menu');
+        if (gameMenu) {
+            const displayStyle = gameMenu.style.display;
+            uiContainer.style.display = displayStyle;
+        }
+    }
+
+    // Создаем наблюдатель за изменениями атрибутов
+    const observer = new MutationObserver(syncMenuVisibility);
+
+    // Начинаем наблюдение за изменениями атрибутов у элемента #ui-game-menu
+    const gameMenu = document.getElementById('ui-game-menu');
+    if (gameMenu) {
+        observer.observe(gameMenu, { attributes: true, attributeFilter: ['style'] });
+    }
+
+    // Добавление стилей анимации
+    const styleSheet = createElement('style');
+    styleSheet.innerHTML = `
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}`;
+    document.head.appendChild(styleSheet);
+
+    class GameMod {
+        constructor() {
+            this.lastFrameTime = performance.now();
+            this.frameCount = 0;
+            this.fps = 0;
+            this.kills = 0;
+            this.setAnimationFrameCallback();
+
+            if (unsafeWindow.location.hostname !== 'resurviv.biz' && unsafeWindow.location.hostname !== 'zurviv.io' && unsafeWindow.location.hostname !== 'eu-comp.net'){
+                // cause they have fps counter, etc...
+                this.initCounter("fpsCounter");
+                this.initCounter("pingCounter");
+                this.initCounter("killsCounter");
+            }
+
+            this.initMenu(); // left menu in lobby page
+            this.initRules(); // right menu in lobby page
+
+            this.setupWeaponBorderHandler();
+        }
+
+        initCounter(id) {
+            this[id] = document.createElement("div");
+            this[id].id = id;
+            Object.assign(this[id].style, {
+                color: "white",
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+                padding: "5px 10px",
+                marginTop: "10px",
+                borderRadius: "5px",
+                fontFamily: "Arial, sans-serif",
+                fontSize: "14px",
+                zIndex: "10000",
+                pointerEvents: "none",
+            });
+
+            const uiTopLeft = document.getElementById("ui-top-left");
+            if (uiTopLeft) {
+                uiTopLeft.appendChild(this[id]);
+            }
+        }
+
+        setAnimationFrameCallback() {
+            this.animationFrameCallback = (callback) => setTimeout(callback, 1);
+        }
+
+        getKills() {
+          const killElement = document.querySelector(
+            ".ui-player-kills.js-ui-player-kills",
+          );
+          if (killElement) {
+            const kills = parseInt(killElement.textContent, 10);
+            return isNaN(kills) ? 0 : kills;
+          }
+          return 0;
+        }
+
+        startPingTest() {
+          const currentUrl = unsafeWindow.location.href;
+          const isSpecialUrl = /\/#\w+/.test(currentUrl);
+
+          const teamSelectElement = document.getElementById("team-server-select");
+          const mainSelectElement = document.getElementById("server-select-main");
+
+          const region =
+            isSpecialUrl && teamSelectElement
+              ? teamSelectElement.value
+              : mainSelectElement
+                ? mainSelectElement.value
+                : null;
+
+          if (region && region !== this.currentServer) {
+            this.currentServer = region;
+            this.resetPing();
+
+            let servers = unsafeWindow.servers;
+
+            if (!servers) return;
+
+            const selectedServer = servers.find(
+              (server) => region.toUpperCase() === server.region.toUpperCase(),
+            );
+
+            if (selectedServer) {
+              this.pingTest = new PingTest(selectedServer);
+              this.pingTest.startPingTest();
+            } else {
+              this.resetPing();
+            }
+          }
+        }
+
+        resetPing() {
+          if (this.pingTest && this.pingTest.test.ws) {
+            this.pingTest.test.ws.close();
+            this.pingTest.test.ws = null;
+          }
+          this.pingTest = null;
+        }
+
+        updateHealthBars() {
+          const healthBars = document.querySelectorAll("#ui-health-container");
+          healthBars.forEach((container) => {
+            const bar = container.querySelector("#ui-health-actual");
+            if (bar) {
+              const width = Math.round(parseFloat(bar.style.width));
+              let percentageText = container.querySelector(".health-text");
+
+              if (!percentageText) {
+                percentageText = document.createElement("span");
+                percentageText.classList.add("health-text");
+                Object.assign(percentageText.style, {
+                  width: "100%",
+                  textAlign: "center",
+                  marginTop: "5px",
+                  color: "#333",
+                  fontSize: "20px",
+                  fontWeight: "bold",
+                  position: "absolute",
+                  zIndex: "10",
+                });
+                container.appendChild(percentageText);
+              }
+
+              percentageText.textContent = `${width}%`;
+            }
+          });
+        }
+
+        updateBoostBars() {
+          const boostCounter = document.querySelector("#ui-boost-counter");
+          if (boostCounter) {
+            const boostBars = boostCounter.querySelectorAll(
+              ".ui-boost-base .ui-bar-inner",
+            );
+
+            let totalBoost = 0;
+            const weights = [25, 25, 40, 10];
+
+            boostBars.forEach((bar, index) => {
+              const width = parseFloat(bar.style.width);
+              if (!isNaN(width)) {
+                totalBoost += width * (weights[index] / 100);
               }
             });
-          }
-        },
-        get() {
-          return this._textureCacheIds;
-        }
-      });
-    }
-    f16();
-    function f17() {
-      Object.defineProperty(unsafeWindow, "basicDataInfo", {
-        get() {
-          return this._basicDataInfo;
-        },
-        set(p49) {
-          this._basicDataInfo = p49;
-          if (!p49) {
-            return;
-          }
-          Object.defineProperty(unsafeWindow.basicDataInfo, "isMobile", {
-            get() {
-              return true;
-            },
-            set(p50) {}
-          });
-          Object.defineProperty(unsafeWindow.basicDataInfo, "useTouch", {
-            get() {
-              return true;
-            },
-            set(p51) {}
-          });
-        }
-      });
-    }
-    f17();
-    const v130 = {
-      Cancel: 6,
-      Count: 36,
-      CycleUIMode: 30,
-      EmoteMenu: 31,
-      EquipFragGrenade: 15,
-      EquipLastWeap: 19,
-      EquipMelee: 13,
-      EquipNextScope: 22,
-      EquipNextWeap: 17,
-      EquipOtherGun: 20,
-      EquipPrevScope: 21,
-      EquipPrevWeap: 18,
-      EquipPrimary: 11,
-      EquipSecondary: 12,
-      EquipSmokeGrenade: 16,
-      EquipThrowable: 14,
-      Fire: 4,
-      Fullscreen: 33,
-      HideUI: 34,
-      Interact: 7,
-      Loot: 10,
-      MoveDown: 3,
-      MoveLeft: 0,
-      MoveRight: 1,
-      MoveUp: 2,
-      Reload: 5,
-      Revive: 8,
-      StowWeapons: 27,
-      SwapWeapSlots: 28,
-      TeamPingMenu: 32,
-      TeamPingSingle: 35,
-      ToggleMap: 29,
-      Use: 9,
-      UseBandage: 23,
-      UseHealthKit: 24,
-      UsePainkiller: 26,
-      UseSoda: 25
-    };
-    let v131 = [];
-    unsafeWindow.initGameControls = function (p52) {
-      for (const v132 of v131) {
-        p52.addInput(v130[v132]);
-      }
-      v131 = [];
-      if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(v130.Fire)) && unsafeWindow.aimTouchMoveDir) {
-        if (unsafeWindow.aimTouchDistanceToEnemy < 4) {
-          p52.addInput(v130.EquipMelee);
-        }
-        p52.touchMoveActive = true;
-        p52.touchMoveLen = 255;
-        p52.touchMoveDir.x = unsafeWindow.aimTouchMoveDir.x;
-        p52.touchMoveDir.y = unsafeWindow.aimTouchMoveDir.y;
-      }
-      return p52;
-    };
-    function f18() {
-      unsafeWindow.game.inputBinds.isBindPressed = new Proxy(unsafeWindow.game.inputBinds.isBindPressed, {
-        apply(p53, p54, p55) {
-          if (p55[0] === v130.Fire) {
-            return unsafeWindow.game.inputBinds.isBindDown(...p55);
-          }
-          return Reflect.apply(...arguments);
-        }
-      });
-    }
-    let v133 = 0;
-    const v134 = 100;
-    const v135 = 37.5;
-    function f19() {
-      Object.defineProperty(unsafeWindow.game.input.mousePos, "x", {
-        get() {
-          if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(v130.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
-            return unsafeWindow.lastAimPos.clientX;
-          }
-          if (!unsafeWindow.game.touch.shotDetected && !unsafeWindow.game.inputBinds.isBindDown(v130.Fire) && !unsafeWindow.game.inputBinds.isBindPressed(v130.EmoteMenu) && !unsafeWindow.game.inputBinds.isBindDown(v130.EmoteMenu) && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3 && v12.isSpinBotEnabled) {
-            v133 += v135;
-            return Math.cos(f20(v133)) * v134 + unsafeWindow.innerWidth / 2;
-          }
-          return this._x;
-        },
-        set(p56) {
-          this._x = p56;
-        }
-      });
-      Object.defineProperty(unsafeWindow.game.input.mousePos, "y", {
-        get() {
-          if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(v130.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
-            return unsafeWindow.lastAimPos.clientY;
-          }
-          if (!unsafeWindow.game.touch.shotDetected && !unsafeWindow.game.inputBinds.isBindDown(v130.Fire) && !unsafeWindow.game.inputBinds.isBindPressed(v130.EmoteMenu) && !unsafeWindow.game.inputBinds.isBindDown(v130.EmoteMenu) && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3 && v12.isSpinBotEnabled) {
-            return Math.sin(f20(v133)) * v134 + unsafeWindow.innerHeight / 2;
-          }
-          return this._y;
-        },
-        set(p57) {
-          this._y = p57;
-        }
-      });
-    }
-    function f20(p58) {
-      return p58 * (Math.PI / 180);
-    }
-    function f21() {
-      Object.defineProperty(unsafeWindow.game.camera, "zoom", {
-        get() {
-          return Math.max(unsafeWindow.game.camera.targetZoom - (v12.isZoomEnabled ? 0.45 : 0), 0.35);
-        },
-        set(p59) {}
-      });
-      let v136 = unsafeWindow.game.activePlayer.localData.scope;
-      Object.defineProperty(unsafeWindow.game.camera, "targetZoom", {
-        get() {
-          return this._targetZoom;
-        },
-        set(p60) {
-          const v137 = unsafeWindow.game.activePlayer.localData.scope;
-          const v138 = unsafeWindow.game.activePlayer.localData.inventory;
-          const v139 = ["1xscope", "2xscope", "4xscope", "8xscope", "15xscope"];
-          if (v137 == v136 && (v138["2xscope"] || v138["4xscope"] || v138["8xscope"] || v138["15xscope"]) && p60 >= this._targetZoom || v139.indexOf(v137) > v139.indexOf(v136) && p60 >= this._targetZoom) {
-            return;
-          }
-          v136 = unsafeWindow.game.activePlayer.localData.scope;
-          this._targetZoom = p60;
-        }
-      });
-    }
-    function f22() {
-      console.log("smokeopacity");
-      const v140 = unsafeWindow.game.smokeBarn.particles;
-      console.log("smokeopacity", v140, unsafeWindow.game.smokeBarn.particles);
-      v140.push = new Proxy(v140.push, {
-        apply(p61, p62, p63) {
-          console.log("smokeopacity", p63[0]);
-          const v141 = p63[0];
-          Object.defineProperty(v141.sprite, "alpha", {
-            get() {
-              return 0.12;
-            },
-            set(p64) {}
-          });
-          return Reflect.apply(...arguments);
-        }
-      });
-      v140.forEach(p65 => {
-        Object.defineProperty(p65.sprite, "alpha", {
-          get() {
-            return 0.12;
-          },
-          set(p66) {}
-        });
-      });
-    }
-    function f23() {
-      const v142 = unsafeWindow.game.playerBarn.playerPool.pool;
-      console.log("visibleNames", v142);
-      v142.push = new Proxy(v142.push, {
-        apply(p67, p68, p69) {
-          const v143 = p69[0];
-          Object.defineProperty(v143.nameText, "visible", {
-            get() {
-              const v144 = unsafeWindow.game.activePlayer;
-              const vF22 = f2(v144);
-              const vF23 = f2(v143);
-              this.tint = vF23 === vF22 ? v3 : v12.friends.includes(v143.nameText._text) ? v2 : v4;
-              v143.nameText.style.fontSize = 40;
-              return true;
-            },
-            set(p70) {}
-          });
-          return Reflect.apply(...arguments);
-        }
-      });
-      v142.forEach(p71 => {
-        Object.defineProperty(p71.nameText, "visible", {
-          get() {
-            const v145 = unsafeWindow.game.activePlayer;
-            const vF24 = f2(v145);
-            const vF25 = f2(p71);
-            this.tint = vF25 === vF24 ? v3 : v4;
-            p71.nameText.style.fontSize = 40;
-            return true;
-          },
-          set(p72) {}
-        });
-      });
-    }
-    function f24() {
-      const v146 = unsafeWindow.game.pixi;
-      const v147 = unsafeWindow.game.activePlayer;
-      const v148 = unsafeWindow.game.playerBarn.playerPool.pool;
-      if (!v146 || v147?.container == undefined) {
-        return;
-      }
-      const v149 = v147.pos.x;
-      const v150 = v147.pos.y;
-      const vF26 = f2(v147);
-      try {
-        const v151 = v147.container.lineDrawer;
-        try {
-          v151.clear();
-        } catch {
-          if (!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) {
-            return;
-          }
-        }
-        if (v12.isLineDrawerEnabled) {
-          if (!v147.container.lineDrawer) {
-            v147.container.lineDrawer = new PIXI.Graphics();
-            v147.container.addChild(v147.container.lineDrawer);
-          }
-          v148.forEach(p73 => {
-            if (!p73.active || p73.netData.dead || v147.__id == p73.__id) {
-              return;
+
+            const averageBoost = Math.round(totalBoost);
+            let boostDisplay = boostCounter.querySelector(".boost-display");
+
+            if (!boostDisplay) {
+              boostDisplay = document.createElement("div");
+              boostDisplay.classList.add("boost-display");
+              Object.assign(boostDisplay.style, {
+                position: "absolute",
+                bottom: "75px",
+                right: "335px",
+                color: "#FF901A",
+                backgroundColor: "rgba(0, 0, 0, 0.4)",
+                padding: "5px 10px",
+                borderRadius: "5px",
+                fontFamily: "Arial, sans-serif",
+                fontSize: "14px",
+                zIndex: "10",
+                textAlign: "center",
+              });
+
+              boostCounter.appendChild(boostDisplay);
             }
-            const v152 = p73.pos.x;
-            const v153 = p73.pos.y;
-            const vF27 = f2(p73);
-            const v154 = vF27 === vF26 ? v3 : v12.friends.includes(p73.nameText._text) ? v2 : v147.layer === p73.layer && (v12.isAimAtKnockedOutEnabled || !p73.downed) ? v4 : v5;
-            v151.lineStyle(2, v154, 1);
-            v151.moveTo(0, 0);
-            v151.lineTo((v152 - v149) * 16, (v150 - v153) * 16);
-          });
-        }
-        const v155 = v147.container.nadeDrawer;
-        try {
-          v155?.clear();
-        } catch {
-          if (!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) {
-            return;
+
+            boostDisplay.textContent = `AD: ${averageBoost}%`;
           }
         }
-        if (v12.isNadeDrawerEnabled) {
-          if (!v147.container.nadeDrawer) {
-            v147.container.nadeDrawer = new PIXI.Graphics();
-            v147.container.addChild(v147.container.nadeDrawer);
-          }
-          Object.values(unsafeWindow.game.objectCreator.idToObj).filter(p74 => {
-            const v156 = p74.__type === 9 && p74.type !== "smoke" || p74.smokeEmitter && unsafeWindow.objects[p74.type].explosion;
-            return v156;
-          }).forEach(p75 => {
-            if (p75.layer !== v147.layer) {
-              v155.beginFill(16777215, 0.3);
-            } else {
-              v155.beginFill(16711680, 0.2);
-            }
-            v155.drawCircle((p75.pos.x - v149) * 16, (v150 - p75.pos.y) * 16, (unsafeWindow.explosions[unsafeWindow.throwable[p75.type]?.explosionType || unsafeWindow.objects[p75.type].explosion].rad.max + 1) * 16);
-            v155.endFill();
-          });
-        }
-        const v157 = v147.container.laserDrawer;
-        try {
-          v157.clear();
-        } catch {
-          if (!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) {
-            return;
-          }
-        }
-        if (v12.isLaserDrawerEnabled) {
-          const vF32 = f3(v147);
-          const vF42 = f4(vF32);
-          if (!v147.container.laserDrawer) {
-            v147.container.laserDrawer = new PIXI.Graphics();
-            v147.container.addChildAt(v147.container.laserDrawer, 0);
-          }
-          function f25(p76, p77, p78, p79 = 255, p80 = 0.3) {
-            const {
-              pos: _0x4686eb
-            } = p78;
-            const v158 = performance.now();
-            if (!(p78.__id in v12.lastFrames)) {
-              v12.lastFrames[p78.__id] = [];
-            }
-            v12.lastFrames[p78.__id].push([v158, {
-              ..._0x4686eb
-            }]);
-            if (v12.lastFrames[p78.__id].length < 30) {
-              return;
-            }
-            if (v12.lastFrames[p78.__id].length > 30) {
-              v12.lastFrames[p78.__id].shift();
-            }
-            const v159 = (v158 - v12.lastFrames[p78.__id][0][0]) / 1000;
-            const v160 = {
-              x: (_0x4686eb._x - v12.lastFrames[p78.__id][0][1]._x) / v159,
-              y: (_0x4686eb._y - v12.lastFrames[p78.__id][0][1]._y) / v159
-            };
-            let v161 = {};
-            let v162 = !!v160.x || !!v160.y;
-            if (p76) {
-              v161.active = true;
-              v161.range = p76.distance * 16.25;
-              let v163;
-              if (p78 == v147 && (!unsafeWindow.lastAimPos || unsafeWindow.lastAimPos && !unsafeWindow.game.touch.shotDetected && !unsafeWindow.game.inputBinds.isBindDown(v130.Fire))) {
-                v163 = Math.atan2(unsafeWindow.game.input.mousePos._y - unsafeWindow.innerHeight / 2, unsafeWindow.game.input.mousePos._x - unsafeWindow.innerWidth / 2);
-              } else if (p78 == v147 && unsafeWindow.lastAimPos && (unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(v130.Fire))) {
-                const v164 = unsafeWindow.game.camera.pointToScreen({
-                  x: p78.pos._x,
-                  y: p78.pos._y
-                });
-                v163 = Math.atan2(v164.y - unsafeWindow.lastAimPos.clientY, v164.x - unsafeWindow.lastAimPos.clientX) - Math.PI;
+
+        setupWeaponBorderHandler() {
+            const weaponContainers = Array.from(
+              document.getElementsByClassName("ui-weapon-switch"),
+            );
+            weaponContainers.forEach((container) => {
+              if (container.id === "ui-weapon-id-4") {
+                container.style.border = "3px solid #2f4032";
               } else {
-                v163 = Math.atan2(p78.dir.x, p78.dir.y) - Math.PI / 2;
+                container.style.border = "3px solid #FFFFFF";
               }
-              v161.direction = v163;
-              v161.angle = (p77.shotSpread + (v162 ? p77.moveSpread : 0)) * 0.01745329252 / 2;
-            } else {
-              v161.active = false;
-            }
-            if (!v161.active) {
-              return;
-            }
-            const v165 = {
-              x: (_0x4686eb._x - v147.pos._x) * 16,
-              y: (v147.pos._y - _0x4686eb._y) * 16
+            });
+
+            const weaponNames = Array.from(
+              document.getElementsByClassName("ui-weapon-name"),
+            );
+            weaponNames.forEach((weaponNameElement) => {
+              const weaponContainer = weaponNameElement.closest(".ui-weapon-switch");
+              const observer = new MutationObserver(() => {
+                const weaponName = weaponNameElement.textContent.trim();
+                let border = "#FFFFFF";
+
+                switch (weaponName.toUpperCase()) {
+                  //yellow
+                  case "CZ-3A1": case "G18C": case "M9": case "M93R": case "MAC-10": case "MP5": case "P30L": case "DUAL P30L": case "UMP9": case "VECTOR": case "VSS": case "FLAMETHROWER": border = "#FFAE00"; break;
+                  //blue
+                  case "AK-47": case "OT-38": case "OTS-38": case "M39 EMR": case "DP-28": case "MOSIN-NAGANT": case "SCAR-H": case "SV-98": case "M1 GARAND": case "PKP PECHENEG": case "AN-94": case "BAR M1918": case "BLR 81": case "SVD-63": case "M134": case "GROZA": case "GROZA-S": border = "#007FFF"; break;
+                  //green
+                  case "FAMAS": case "M416": case "M249": case "QBB-97": case "MK 12 SPR": case "M4A1-S": case "SCOUT ELITE": case "L86A2": border = "#0f690d"; break;
+                  //red
+                  case "M870": case "MP220": case "SAIGA-12": case "SPAS-12": case "USAS-12": case "SUPER 90": case "LASR GUN": case "M1100": border = "#FF0000"; break;
+                  //purple
+                  case "MODEL 94": case "PEACEMAKER": case "VECTOR (.45 ACP)": case "M1911": case "M1A1": border = "#800080"; break;
+                  //black
+                  case "DEAGLE 50": case "RAINBOW BLASTER": border = "#000000"; break;
+                  //olive
+                  case "AWM-S": case "MK 20 SSR": border = "#808000"; break;
+                  //brown
+                  case "POTATO CANNON": case "SPUD GUN": border = "#A52A2A"; break;
+                  //other Guns
+                  case "FLARE GUN": border = "#FF4500"; break; case "M79": border = "#008080"; break; case "HEART CANNON": border = "#FFC0CB"; break;
+                  default: border = "#FFFFFF"; break; }
+
+                if (weaponContainer.id !== "ui-weapon-id-4") {
+                  weaponContainer.style.border = `3px solid ${border}`;
+                }
+              });
+
+              observer.observe(weaponNameElement, {
+                childList: true,
+                characterData: true,
+                subtree: true,
+              });
+            });
+          }
+
+        //menu
+        initMenu() {
+            const middleRow = document.querySelector("#start-row-top");
+            Object.assign(middleRow.style, {
+                display: "flex",
+                flexDirection: "row",
+            });
+
+
+            const menu = document.createElement("div");
+            menu.id = "kr1tyHack_broken"; // changed
+            Object.assign(menu.style, {
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              padding: "15px",
+              borderRadius: "10px",
+              boxShadow: "0 4px 10px rgba(0, 0, 0, 0.3)",
+              fontFamily: "Arial, sans-serif",
+              fontSize: "18px",
+              color: "#fff",
+              maxWidth: "300px",
+              height: "100%",
+              overflowY: "auto",
+              marginRight: "30px",
+              boxSizing: "border-box",
+            });
+
+
+            const title = document.createElement("h2");
+            title.textContent = "Social networks";
+            title.className = 'news-header';
+            Object.assign(title.style, {
+              margin: "0 0 10px",
+              fontSize: "20px",
+            });
+            menu.append(title);
+
+            const description = document.createElement("p");
+            description.className = "news-paragraph";
+            description.style.fontSize = "14px";
+            description.innerHTML = `⭐ Star us on GitHub<br>📢 Join our Telegram group<br>🎮 Join our Discord server`;
+            menu.append(description);
+
+            const createSocialLink = (text) => {
+              const a = document.createElement("a");
+              a.textContent = `${text}`;
+              a.target = "_blank";
+              Object.assign(a.style, {
+                display: "block",
+                border: "none",
+                color: "#fff",
+                padding: "10px",
+                borderRadius: "5px",
+                marginBottom: "10px",
+                fontSize: "15px",
+                lineHeight: "14px",
+                cursor: "pointer",
+                textAlign: "center",
+                textDecoration: "none",
+              });
+              return a;
             };
-            const v166 = v161.range;
-            let v167 = v161.direction - v161.angle;
-            let v168 = v161.direction + v161.angle;
-            v167 = v167 > Math.PI * 2 ? v167 - Math.PI * 2 : v167 < 0 ? v167 + Math.PI * 2 : v167;
-            v168 = v168 > Math.PI * 2 ? v168 - Math.PI * 2 : v168 < 0 ? v168 + Math.PI * 2 : v168;
-            v157.beginFill(p79, p80);
-            v157.moveTo(v165.x, v165.y);
-            v157.arc(v165.x, v165.y, v166, v167, v168);
-            v157.lineTo(v165.x, v165.y);
-            v157.endFill();
-          }
-          f25(vF42, vF32, v147);
-          v148.filter(p81 => p81.active && !p81.netData.dead && v147.__id !== p81.__id && v147.layer === p81.layer && f2(p81) != vF26).forEach(p82 => {
-            const vF33 = f3(p82);
-            f25(f4(vF33), vF33, p82, "0", 0.2);
-          });
+
+            const githubLink = createSocialLink("");
+            githubLink.style.backgroundColor = "#0c1117";
+            githubLink.href = "https://github.com/Drino955/survev-kr1tyhack";
+            githubLink.innerHTML = `<i class="fa-brands fa-github"></i> kr1tyHack`;
+            menu.append(githubLink);
+
+            const telegramLink = createSocialLink("");
+            telegramLink.style.backgroundColor = "#00a8e6";
+            telegramLink.href = "https://t.me/kr1tyteam";
+            telegramLink.innerHTML = `<i class="fa-brands fa-telegram-plane"></i> kr1tyTeam`;
+            menu.append(telegramLink);
+
+            const discordLink = createSocialLink("");
+            discordLink.style.backgroundColor = "#5865F2";
+            discordLink.href = "https://discord.gg/wPuvEySg3E";
+            discordLink.innerHTML = `<i class="fa-brands fa-discord"></i> [HACK] League of Hackers`;
+            menu.append(discordLink);
+
+            const additionalDescription = document.createElement("p");
+            additionalDescription.className = "news-paragraph";
+            additionalDescription.style.fontSize = "14px";
+            additionalDescription.innerHTML = `Your support helps us develop the project and provide better updates!`;
+            menu.append(additionalDescription);
+
+            const leftColumn = document.querySelector('#left-column');
+            leftColumn.innerHTML = ``;
+            leftColumn.style.marginTop = "10px";
+            leftColumn.style.marginBottom = "27px";
+            leftColumn.append(menu);
+
+            this.menu = menu;
         }
-        ;
-      } catch (_0x2c279e) {}
-    }
-    const v169 = [{
-      name: "",
-      ammo: null,
-      lastShotDate: Date.now()
-    }, {
-      name: "",
-      ammo: null,
-      lastShotDate: Date.now()
-    }, {
-      name: "",
-      ammo: null
-    }, {
-      name: "",
-      ammo: null
-    }];
-    function f26() {
-      if (!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.localData?.curWeapIdx == null) {
-        console.log("AutoSwitch: Game state not ready.");
-        return;
-      }
-      try {
-        const v170 = unsafeWindow.game.activePlayer.localData.curWeapIdx;
-        const v171 = unsafeWindow.game.activePlayer.localData.weapons;
-        const v172 = v171[v170];
-        if (!v172) {
-          console.log("AutoSwitch: Current weapon is invalid.");
-          return;
+
+        initRules() {
+            const newsBlock = document.querySelector("#news-block");
+            newsBlock.innerHTML = `
+<h3 class="news-header">kr1tyHack v${version}</h3>
+<div id="news-current">
+<small class="news-date">January 13, 2025</small>
+
+<h2>How to use the cheat in the game 🚀</h2>
+<p class="news-paragraph">After installing the cheat, you can use the following features and hotkeys:</p>
+
+<h3>Hotkeys:</h3>
+<ul>
+    <li><strong>[B]</strong> - Toggle AimBot</li>
+    <li><strong>[Z]</strong> - Toggle Zoom</li>
+    <li><strong>[M]</strong> - Toggle Melee Attack</li>
+    <li><strong>[Y]</strong> - Toggle SpinBot</li>
+    <li><strong>[T]</strong> - Focus on enemy</li>
+    <li><strong>[V]</strong> - Lock weapon</li>
+</ul>
+
+<h3>Features:</h3>
+<ul>
+    <li><strong>[ESC]</strong> - Open Cheats Menu</li>
+    <li>By clicking the middle mouse button, you can add a player to friends. AimBot will not target them, green lines will go to them, and their name will turn green.</li>
+    <li>AimBot activates when you shoot.</li>
+    <li><strong>AutoMelee:</strong> If the enemy is close enough (4 game coordinates), AutoMelee will automatically move towards and attack them when holding down the left mouse button. If you equip a melee weapon, AutoMelee will work at a distance of 8 game coordinates.</li>
+    <li><strong>AutoSwitch:</strong> By default, quickly switch weapons to avoid cooldown after shooting.</li>
+    <li><strong>BumpFire:</strong> Shoot without constant clicking.</li>
+    <li><strong>FocusedEnemy:</strong> Press <strong>[T]</strong> to focus on an enemy. AimBot will continuously target the focused enemy. Press <strong>[T]</strong> again to reset.</li>
+    <li><strong>UseOneGun:</strong> Press <strong>[V]</strong> to lock a weapon and shoot only from it using autoswitch. Useful when you have a shotgun and a rifle, and the enemy is far away.
+</ul>
+
+<h3>Recommendations:</h3>
+<ul>
+    <li>Play smart and don't rush headlong, as the cheat does not provide immortality.</li>
+    <li>Use adrenaline to the max to heal and run fast.</li>
+    <li>The map is color-coded: white circle - Mosin, gold container - SV98, etc.</li>
+</ul>
+
+<p class="news-paragraph">For more details, visit the <a href="https://github.com/Drino955/survev-kr1tyhack">GitHub page</a> and join our <a href="https://t.me/kr1tyteam">Telegram group</a> or <a href="https://discord.gg/wPuvEySg3E">Discord</a>.</p></div>`;
         }
-        console.log("Current Weapon Index:", v170, "Current Weapon:", v172);
-        const vF5 = p83 => {
-          let v173 = false;
-          try {
-            v173 = (unsafeWindow.guns[p83]?.fireMode === "single" || unsafeWindow.guns[p83]?.fireMode === "burst") && unsafeWindow.guns[p83]?.fireDelay >= 0.45;
-          } catch (_0x41f065) {
-            console.error("Error checking gun switch:", _0x41f065);
-          }
-          return v173;
-        };
-        const v174 = ["EquipPrimary", "EquipSecondary"];
-        if (v172.ammo !== v169[v170]?.ammo) {
-          console.log("Ammo change detected for weapon index:", v170);
-          const v175 = v170 === 0 ? 1 : 0;
-          const v176 = v171[v175];
-          if ((v172.ammo < v169[v170]?.ammo || v169[v170]?.ammo === 0 && v172.ammo > v169[v170]?.ammo && (unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(v130.Fire))) && vF5(v172.type) && v172.type === v169[v170]?.type) {
-            v169[v170].lastShotDate = Date.now();
-            console.log("Switching weapon due to ammo change");
-            if (vF5(v176.type) && v176.ammo && !v12.isUseOneGunEnabled) {
-              v131.push(v174[v175]);
-            } else if (v176.type !== "") {
-              v131.push(v174[v175]);
-              v131.push(v174[v170]);
-            } else {
-              v131.push("EquipMelee");
-              v131.push(v174[v170]);
+
+        startUpdateLoop() {
+          const now = performance.now();
+          const delta = now - this.lastFrameTime;
+
+          this.frameCount++;
+
+          if (delta >= 1000) {
+            this.fps = Math.round((this.frameCount * 1000) / delta);
+            this.frameCount = 0;
+            this.lastFrameTime = now;
+
+            this.kills = this.getKills();
+
+            if (this.fpsCounter) {
+              this.fpsCounter.textContent = `FPS: ${this.fps}`;
+            }
+
+            if (this.killsCounter) {
+              this.killsCounter.textContent = `Kills: ${this.kills}`;
+            }
+
+            if (this.pingCounter && this.pingTest) {
+              const result = this.pingTest.getPingResult();
+              this.pingCounter.textContent = `PING: ${result.ping} ms`;
             }
           }
-          v169[v170].ammo = v172.ammo;
-          v169[v170].type = v172.type;
+
+          this.startPingTest();
+          this.updateBoostBars();
+          this.updateHealthBars();
         }
-      } catch (_0x3da520) {
-        console.error("autoswitch", _0x3da520);
+
       }
-    }
-    function f27() {
-      unsafeWindow.game.map.obstaclePool.pool.forEach(p84 => {
-        if (!["bush", "tree", "table", "stairs"].some(p85 => p84.type.includes(p85))) {
-          return;
+
+    class PingTest {
+        constructor(selectedServer) {
+          this.ptcDataBuf = new ArrayBuffer(1);
+          this.test = {
+            region: selectedServer.region,
+            url: `wss://${selectedServer.url}/ptc`,
+            ping: 9999,
+            ws: null,
+            sendTime: 0,
+            retryCount: 0,
+          };
         }
-        p84.sprite.alpha = 0.45;
-      });
-    }
-    let v177 = Date.now();
-    let v178 = false;
-    let v179 = null;
-    function f28() {
-      if (!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.localData?.curWeapIdx == null || unsafeWindow.game?.activePlayer?.netData?.activeWeapon == null) {
-        return;
-      }
-      try {
-        let v180 = (Date.now() - v177) / 1000;
-        const v181 = unsafeWindow.game.activePlayer;
-        const v182 = v181.netData.activeWeapon;
-        if (v181.throwableState !== "cook" || !v182.includes("frag") && !v182.includes("mirv") && !v182.includes("martyr_nade")) {
-          v178 = false;
-          if (v179) {
-            v179.destroy();
-            v179 = null;
-          }
-          return;
-        }
-        const v183 = 4;
-        if (v180 > v183) {
-          v178 = false;
-        }
-        if (!v178) {
-          if (v179) {
-            v179.destroy();
-          }
-          v179 = new unsafeWindow.pieTimerClass();
-          unsafeWindow.game.pixi.stage.addChild(v179.container);
-          v179.start("Grenade", 0, v183);
-          v178 = true;
-          v177 = Date.now();
-          return;
-        }
-        v179.update(v180 - v179.elapsed, unsafeWindow.game.camera);
-      } catch (_0x14e56d) {
-        console.error("grenadeTimer", _0x14e56d);
-      }
-    }
-    function f29() {
-      unsafeWindow.game.pixi._ticker.add(f24);
-      unsafeWindow.game.pixi._ticker.add(f26);
-      unsafeWindow.game.pixi._ticker.add(f27);
-      unsafeWindow.game.pixi._ticker.add(f28);
-      unsafeWindow.game.pixi._ticker.add(unsafeWindow.GameMod.startUpdateLoop.bind(unsafeWindow.GameMod));
-    }
-    let v184 = false;
-    function f30() {
-      console.log("init game...........");
-      unsafeWindow.lastAimPos = null;
-      unsafeWindow.aimTouchMoveDir = null;
-      v12.enemyAimBot = null;
-      v12.focusedEnemy = null;
-      v12.friends = [];
-      v12.lastFrames = {};
-      const v185 = [{
-        isApplied: false,
-        condition: () => unsafeWindow.game?.input?.mousePos && unsafeWindow.game?.touch?.aimMovement?.toAimDir,
-        action: f19
-      }, {
-        isApplied: false,
-        condition: () => unsafeWindow.game?.input?.mouseButtonsOld,
-        action: f18
-      }, {
-        isApplied: false,
-        condition: () => unsafeWindow.game?.activePlayer?.localData,
-        action: f21
-      }, {
-        isApplied: false,
-        condition: () => Array.prototype.push === unsafeWindow.game?.smokeBarn?.particles.push,
-        action: f22
-      }, {
-        isApplied: false,
-        condition: () => Array.prototype.push === unsafeWindow.game?.playerBarn?.playerPool?.pool.push,
-        action: f23
-      }, {
-        isApplied: false,
-        condition: () => unsafeWindow.game?.pixi?._ticker && unsafeWindow.game?.activePlayer?.container && unsafeWindow.game?.activePlayer?.pos,
-        action: () => {
-          if (!v184) {
-            v184 = true;
-            f29();
+
+        startPingTest() {
+          if (!this.test.ws) {
+            const ws = new WebSocket(this.test.url);
+            ws.binaryType = "arraybuffer";
+
+            ws.onopen = () => {
+              this.sendPing();
+              this.test.retryCount = 0;
+            };
+
+            ws.onmessage = () => {
+              const elapsed = (Date.now() - this.test.sendTime) / 1e3;
+              this.test.ping = Math.round(elapsed * 1000);
+              this.test.retryCount = 0;
+              setTimeout(() => this.sendPing(), 200);
+            };
+
+            ws.onerror = () => {
+              this.test.ping = "Error";
+              this.test.retryCount++;
+              if (this.test.retryCount < 5) {
+                setTimeout(() => this.startPingTest(), 2000);
+              } else {
+                this.test.ws.close();
+                this.test.ws = null;
+              }
+            };
+
+            ws.onclose = () => {
+              this.test.ws = null;
+            };
+
+            this.test.ws = ws;
           }
         }
-      }];
-      (function f31() {
-        if (!unsafeWindow?.game?.ws) {
-          return;
+
+        sendPing() {
+          if (this.test.ws.readyState === WebSocket.OPEN) {
+            this.test.sendTime = Date.now();
+            this.test.ws.send(this.ptcDataBuf);
+          }
         }
-        console.log("Checking local data");
-        v185.forEach(p86 => {
-          if (p86.isApplied || !p86.condition()) {
+
+        getPingResult() {
+          return {
+            region: this.test.region,
+            ping: this.test.ping,
+          };
+        }
+    }
+
+    unsafeWindow.GameMod = new GameMod(); // AlguienClient
+
+    console.log('Script injecting...');
+
+
+    (async () => {
+        const links = [
+            ...Array.from(document.querySelectorAll('link[rel="modulepreload"][href]')),
+            ...Array.from(document.querySelectorAll('script[type="module"][src]'))
+        ];
+
+        const appLink = links.find(link => link.src?.includes('app-'));
+        const sharedLink = links.find(link => link.href?.includes('shared-'));
+        const vendorLink = links.find(link => link.href?.includes('vendor-'));
+
+
+        const originalAppURL = appLink.src;
+        const originalSharedURL = sharedLink.href;
+        const originalVendorURL = vendorLink.href;
+
+        let modifiedSharedURL = null;
+        let modifiedAppURL = null;
+        if (originalSharedURL) {
+            const response = await GM.xmlHttpRequest({ url: originalSharedURL }).catch(e => console.error(e));
+            let scriptContent = await response.responseText;
+
+            const sharedScriptPatches = [
+                {
+                    name: 'bullets',
+                    from: /function\s+(\w+)\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\{\s*return\s+(\w+)\((\w+),\s*(\w+),\s*(\w+)\)\s*\}\s*const\s+(\w+)\s*=\s*\{\s*(\w+)\s*:\s*\{\s*type\s*:\s*"(.*?)"\s*,\s*damage\s*:\s*(\d+)\s*,/,
+                    to: `function $1($2, $3) {\n    return $4($5, $6, $7)\n}\nconst $8 = window.bullets = {\n    $9: {\n        type: "$10",\n        damage: $11,`
+                },
+                {
+                    name: 'explosions',
+                    from: /(\w+)=\{explosion_frag:\{type:"explosion",damage:(\d+),obstacleDamage/,
+                    to: `$1 = window.explosions = {explosion_frag:{type:"explosion",damage:$2,obstacleDamage`
+                },
+                {
+                    name: 'guns',
+                    from: /(\w+)=\{(\w+):\{name:"([^"]+)",type:"gun",quality:(\d+),fireMode:"([^"]+)",caseTiming:"([^"]+)",ammo:"([^"]+)",/,
+                    to: `$1 = window.guns = {$2:{name:"$3",type:"gun",quality:$4,fireMode:"$5",caseTiming:"$6",ammo:"$7",`
+                },
+                {
+                    name: 'throwable',
+                    from: /(\w+)=\{(\w+):\{name:"([^"]+)",type:"throwable",quality:(\d+),explosionType:"([^"]+)",/,
+                    to: `$1 = window.throwable = {$2:{name:"$3",type:"throwable",quality:$4,explosionType:"$5",`
+                },
+                {
+                    name: 'objects',
+                    from: /\s*(\w+)\s*=\s*\{\s*(\w+)\s*:\s*Ve\(\{\}\)\s*,\s*(\w+)\s*:\s*Ve\(\{\s*img\s*:\s*\{\s*tint\s*:\s*(\d+)\s*\}\s*,\s*loot\s*:\s*\[\s*n\("(\w+)",\s*(\d+),\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*,\s*d\("(\w+)",\s*(\d+)\)\s*\]\s*\}\)\s*,/,
+                    to: ` $1 = window.objects = {\n    $2: Ve({}),\n    $3: Ve({\n        img: {\n            tint: $4\n        },\n        loot: [\n            n("$5", $6, $7),\n            d("$8", $9),\n            d("$10", $11),\n            d("$12", $13)\n        ]\n    }),`
+                }
+            ];
+
+            for (const patch of sharedScriptPatches){
+                scriptContent = scriptContent.replace(patch.from, patch.to);
+            }
+
+            const blob = new Blob([scriptContent], { type: 'application/javascript' });
+            modifiedSharedURL = URL.createObjectURL(blob);
+            console.log(modifiedSharedURL);
+        }
+
+        if (originalAppURL) {
+            const response = await GM.xmlHttpRequest({ url: originalAppURL }).catch(e => console.error(e));
+            let scriptContent = await response.responseText;
+
+            const appScriptPatches = [
+                {
+                    name: 'Import shared.js',
+                    from: /"\.\/shared-[^"]+\.js";/,
+                    to: `"${modifiedSharedURL}";`
+                },
+                {
+                    name: 'Import vendor.js',
+                    from: /\.\/vendor-[a-zA-Z0-9]+\.js/,
+                    to: `${originalVendorURL}`
+                },
+                {
+                    name: 'servers',
+                    from: /var\s+(\w+)\s*=\s*\[\s*({\s*region:\s*"([^"]+)",\s*zone:\s*"([^"]+)",\s*url:\s*"([^"]+)",\s*https:\s*(!0|!1)\s*}\s*(,\s*{\s*region:\s*"([^"]+)",\s*zone:\s*"([^"]+)",\s*url:\s*"([^"]+)",\s*https:\s*(!0|!1)\s*})*)\s*\];/,
+                    to: `var $1 = window.servers = [$2];`
+                },
+                {
+                    name: 'Map colorizing',
+                    from: /(\w+)\.sort\(\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*=>\s*\2\.zIdx\s*-\s*\3\.zIdx\s*\);/,
+                    to: `$1.sort(($2, $3) => $2.zIdx - $3.zIdx);\nwindow.mapColorizing($1);`
+                },
+                {
+                    name: 'Position without interpolation (pos._x, pos._y)',
+                    from: /this\.pos\s*=\s*(\w+)\.copy\((\w+)\.netData\.pos\)/,
+                    to: `this.pos = $1.copy($2.netData.pos),this.pos._x = this.netData.pos.x, this.pos._y = this.netData.pos.y`
+                },
+                {
+                    name: 'Movement interpolation (Game optimization)',
+                    from: 'this.pos._y = this.netData.pos.y',
+                    to: `this.pos._y = this.netData.pos.y,(window.movementInterpolation) &&
+                                                        !(
+                                                            Math.abs(this.pos.x - this.posOld.x) > 18 ||
+                                                            Math.abs(this.pos.y - this.posOld.y) > 18
+                                                        ) &&
+                                                            //movement interpolation
+                                                            ((this.pos.x += (this.posOld.x - this.pos.x) * 0.5),
+                                                            (this.pos.y += (this.posOld.y - this.pos.y) * 0.5))`
+                },
+                {
+                    name: 'Mouse position without server delay (Game optimization)',
+                    from: '-Math.atan2(this.dir.y,this.dir.x)}',
+                    to: `-Math.atan2(this.dir.y, this.dir.x),
+                (window.localRotation) &&
+    ((window.game.activeId == this.__id && !window.game.spectating) &&
+        (this.bodyContainer.rotation = Math.atan2(
+            window.game.input.mousePos.y - window.innerHeight / 2,
+            window.game.input.mousePos.x - window.innerWidth / 2
+        )),
+    (window.game.activeId != this.__id) &&
+        (this.bodyContainer.rotation = -Math.atan2(this.dir.y, this.dir.x)));
+                }`
+                },
+                {
+                    name: 'Class definition with methods',
+                    from: /(\w+)\s*=\s*24;\s*class\s+(\w+)\s*\{([\s\S]*?)\}\s*function/,
+                    to: `$1 = 24;\nclass $2 {\n$3\n}window.pieTimerClass = $2;\nfunction`
+                },
+                {
+                    name: 'isMobile (basicDataInfo)',
+                    from: /(\w+)\.isMobile\s*=\s*(\w+)\.mobile\s*\|\|\s*window\.mobile\s*,/,
+                    to: `$1.isMobile = $2.mobile || window.mobile,window.basicDataInfo = $1,`
+                },
+                {
+                    name: 'Game',
+                    from: /this\.shotBarn\s*=\s*new\s*(\w+)\s*;/,
+                    to: `window.game = this,this.shotBarn = new $1;`
+                },
+                {
+                    name: 'Override gameControls',
+                    from: /this\.sendMessage\s*\(\s*(\w+)\.(\w+)\s*,\s*(\w+)\s*,\s*(\d+)\s*\)\s*,\s*this\.inputMsgTimeout\s*=\s*(\d+)\s*,\s*this\.prevInputMsg\s*=\s*(\w+)\s*\)/,
+                    to: `this._newGameControls = window.initGameControls($3), this.sendMessage($1.$2, this._newGameControls, $4),\nthis.inputMsgTimeout = $5,\nthis.prevInputMsg = this._newGameControls)`
+                },
+            ];
+
+            for (const patch of appScriptPatches){
+                scriptContent = scriptContent.replace(patch.from, patch.to);
+            }
+
+            const blob = new Blob([scriptContent], { type: 'application/javascript' });
+            modifiedAppURL = URL.createObjectURL(blob);
+            console.log(modifiedAppURL);
+        }
+
+        if (!originalAppURL || !originalSharedURL || !originalVendorURL){
+            console.error('originalAppURL or originalSharedURL or originalVendorURL is not found', originalAppURL, originalSharedURL, originalVendorURL);
             return;
-          }
-          p86.action();
-          p86.isApplied = true;
+        }
+
+        const isolatedHandlers = [];
+
+        const originalAddEventListener = document.addEventListener;
+        document.addEventListener = function (type, listener, options) {
+            if (type === 'DOMContentLoaded') {
+                isolatedHandlers.push(listener);
+            } else {
+                originalAddEventListener.call(document, type, listener, options);
+            }
+        };
+
+        const appScript = document.createElement('script');
+        appScript.type = 'module';
+        appScript.src = modifiedAppURL;
+        appScript.onload = () => {
+            console.log('Im injected appjs', appScript);
+
+            document.addEventListener = originalAddEventListener;
+
+            isolatedHandlers.forEach((handler) => handler.call(document));
+        };
+        document.head.append(appScript);
+    })();
+
+
+
+    console.log('Script injected');
+
+    unsafeWindow.localRotation = true;
+    if (unsafeWindow.location.hostname !== 'resurviv.biz' && unsafeWindow.location.hostname !== 'zurviv.io' && unsafeWindow.location.hostname !== 'eu-comp.net'){
+        unsafeWindow.movementInterpolation = true;
+    }else {
+        unsafeWindow.movementInterpolation = false;
+    }
+
+    const fontAwesome = document.createElement('link');
+    fontAwesome.rel = "stylesheet";
+    fontAwesome.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css";
+    document.head.append(fontAwesome);
+
+
+    const styles = document.createElement('style');
+    styles.innerHTML = `
+.kr1ty-overlay-broken{
+    position: absolute;
+    top: 128px;
+    left: 0px;
+    width: 100%;
+    pointer-events: None;
+    color: #fff;
+    font-family: monospace;
+    text-shadow: 0 0 5px rgba(0, 0, 0, .5);
+    z-index: 1;
+}
+
+.kr1ty-title-broken{
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-size: 25px;
+    text-shadow: 0 0 10px rgba(0, 0, 0, .9);
+    color: #fff;
+    font-family: monospace;
+    pointer-events: None;
+}
+
+.kr1ty-control{
+    text-align: center;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    font-size: 18px;
+}
+
+.aimbotDot-broken{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    transform: translateX(-50%) translateY(-50%);
+    display: none;
+}
+
+#news-current ul{
+    margin-left: 20px;
+    padding-left: 6px;
+}
+`;
+
+    document.head.append(styles);
+
+    let colors = {
+        container_06: 14934793,
+        barn_02: 14934793,
+        stone_02: 1654658,
+        tree_03: 16777215,
+        stone_04: 0xeb175a,
+        stone_05: 0xeb175a,
+        bunker_storm_01: 14934793,
+    },
+    sizes = {
+        stone_02: 6,
+        tree_03: 8,
+        stone_04: 6,
+        stone_05: 6,
+        bunker_storm_01: 1.75,
+    };
+
+    unsafeWindow.mapColorizing = map => {
+        map.forEach(object => {
+            if ( !colors[object.obj.type] ) return;
+            object.shapes.forEach(shape => {
+                shape.color = colors[object.obj.type];
+                console.log(object);
+                if ( !sizes[object.obj.type] ) return;
+                shape.scale = sizes[object.obj.type];
+                console.log(object);
+            });
         });
-        if (v185.some(p87 => !p87.isApplied)) {
-          setTimeout(f31, 5);
-        } else {
-          console.log("All functions applied, stopping loop.");
-        }
-      })();
-      f5();
+    };
+
+    function keybinds(){
+        unsafeWindow.document.addEventListener('keyup', function (event) {
+            if (!unsafeWindow?.game?.ws) return;
+
+            const validKeys = ['B', 'Z', 'M', 'Y', 'T', 'V'];
+            if (!validKeys.includes(String.fromCharCode(event.keyCode))) return;
+
+            switch (String.fromCharCode(event.keyCode)) {
+                case 'B':
+                    aimBotToggle();
+                    break;
+                case 'Z': state.isZoomEnabled = !state.isZoomEnabled; break;
+                case 'M':
+                    meleeAttackToggle();
+                    break;
+                case 'Y': state.isSpinBotEnabled = !state.isSpinBotEnabled; break;
+                case 'T':
+                    if(state.focusedEnemy){
+                        state.focusedEnemy = null;
+                    }else {
+                        if (!state.enemyAimBot?.active || state.enemyAimBot?.netData?.dead) break;
+                        state.focusedEnemy = state.enemyAimBot;
+                    }
+                    break;
+                case 'V': state.isUseOneGunEnabled = !state.isUseOneGunEnabled; break;
+            }
+            updateOverlay();
+            updateButtonColors();
+        });
+
+        unsafeWindow.document.addEventListener('keydown', function (event) {
+            if (!unsafeWindow?.game?.ws) return;
+
+            const validKeys = ['M', 'T', 'V'];
+            if (!validKeys.includes(String.fromCharCode(event.keyCode))) return;
+
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        unsafeWindow.document.addEventListener('mousedown', function (event) {
+            if (event.button !== 1) return;
+
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            const players = unsafeWindow.game.playerBarn.playerPool.pool;
+            const me = unsafeWindow.game.activePlayer;
+            const meTeam = getTeam(me);
+
+            let enemy = null;
+            let minDistanceToEnemyFromMouse = Infinity;
+
+            players.forEach((player) => {
+                if (!player.active || player.netData.dead || player.downed || me.__id === player.__id || getTeam(player) == meTeam) return;
+
+                const screenPlayerPos = unsafeWindow.game.camera.pointToScreen({x: player.pos._x, y: player.pos._y});
+                const distanceToEnemyFromMouse = (screenPlayerPos.x - mouseX) ** 2 + (screenPlayerPos.y - mouseY) ** 2;
+
+                if (distanceToEnemyFromMouse < minDistanceToEnemyFromMouse) {
+                    minDistanceToEnemyFromMouse = distanceToEnemyFromMouse;
+                    enemy = player;
+                }
+            });
+
+            if (enemy) {
+                const enemyIndex = state.friends.indexOf(enemy.nameText._text);
+                if (~enemyIndex) {
+                    state.friends.splice(enemyIndex, 1);
+                    console.log(`Removed player with name ${enemy.nameText._text} from friends.`);
+                }else {
+                    state.friends.push(enemy.nameText._text);
+                    console.log(`Added player with name ${enemy.nameText._text} to friends.`);
+                }
+            }
+        });
     }
-    function f32() {
-      Object.defineProperty(unsafeWindow, "game", {
-        get() {
-          return this._game;
-        },
-        set(p88) {
-          this._game = p88;
-          if (!p88) {
+
+    keybinds();
+
+    function removeCeilings(){
+        Object.defineProperty( Object.prototype, 'textureCacheIds', {
+            set( value ) {
+                this._textureCacheIds = value;
+
+                if ( Array.isArray( value ) ) {
+                    const scope = this;
+
+                    value.push = new Proxy( value.push, {
+                        apply( target, thisArgs, args ) {
+                            if (args[0].includes('ceiling') && !args[0].includes('map-building-container-ceiling-05') || args[0].includes('map-snow-')) {
+                                Object.defineProperty( scope, 'valid', {
+                                    set( value ) {
+                                        this._valid = value;
+                                    },
+                                    get() {
+                                        return false ;
+                                    }
+                                });
+                            }
+                            return Reflect.apply( ...arguments );
+
+                        }
+                    });
+
+                }
+
+            },
+            get() {
+                return this._textureCacheIds;
+            }
+        });
+    }
+
+    removeCeilings();
+
+    function autoLoot(){
+        Object.defineProperty(unsafeWindow, 'basicDataInfo', {
+            get () {
+                return this._basicDataInfo;
+            },
+            set(value) {
+                this._basicDataInfo = value;
+
+                if (!value) return;
+
+                Object.defineProperty(unsafeWindow.basicDataInfo, 'isMobile', {
+                    get () {
+                        return true;
+                    },
+                    set(value) {
+                    }
+                });
+
+                Object.defineProperty(unsafeWindow.basicDataInfo, 'useTouch', {
+                    get () {
+                        return true;
+                    },
+                    set(value) {
+                    }
+                });
+
+            }
+        });
+    }
+
+    autoLoot();
+
+    const inputCommands = {
+        Cancel: 6,
+        Count: 36,
+        CycleUIMode: 30,
+        EmoteMenu: 31,
+        EquipFragGrenade: 15,
+        EquipLastWeap: 19,
+        EquipMelee: 13,
+        EquipNextScope: 22,
+        EquipNextWeap: 17,
+        EquipOtherGun: 20,
+        EquipPrevScope: 21,
+        EquipPrevWeap: 18,
+        EquipPrimary: 11,
+        EquipSecondary: 12,
+        EquipSmokeGrenade: 16,
+        EquipThrowable: 14,
+        Fire: 4,
+        Fullscreen: 33,
+        HideUI: 34,
+        Interact: 7,
+        Loot: 10,
+        MoveDown: 3,
+        MoveLeft: 0,
+        MoveRight: 1,
+        MoveUp: 2,
+        Reload: 5,
+        Revive: 8,
+        StowWeapons: 27,
+        SwapWeapSlots: 28,
+        TeamPingMenu: 32,
+        TeamPingSingle: 35,
+        ToggleMap: 29,
+        Use: 9,
+        UseBandage: 23,
+        UseHealthKit: 24,
+        UsePainkiller: 26,
+        UseSoda: 25,
+    };
+
+    let inputs = [];
+    unsafeWindow.initGameControls = function(gameControls){
+        for (const command of inputs){
+            gameControls.addInput(inputCommands[command]);
+        }
+        inputs = [];
+
+        // mobile aimbot
+        if (gameControls.touchMoveActive && unsafeWindow.lastAimPos){
+            gameControls.toMouseLen = 18;
+
+            const atan = Math.atan2(
+                unsafeWindow.lastAimPos.clientX - unsafeWindow.innerWidth / 2,
+                unsafeWindow.lastAimPos.clientY - unsafeWindow.innerHeight / 2,
+            ) - Math.PI / 2;
+
+            if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
+                gameControls.toMouseDir.x = Math.cos(atan);
+
+            }
+            if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
+                gameControls.toMouseDir.y = Math.sin(atan);
+            }
+        }
+
+        // autoMelee
+        if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) && unsafeWindow.aimTouchMoveDir) {
+            if (unsafeWindow.aimTouchDistanceToEnemy < 4) gameControls.addInput(inputCommands['EquipMelee']);
+            gameControls.touchMoveActive = true;
+            gameControls.touchMoveLen = 255;
+            gameControls.touchMoveDir.x = unsafeWindow.aimTouchMoveDir.x;
+            gameControls.touchMoveDir.y = unsafeWindow.aimTouchMoveDir.y;
+        }
+
+        return gameControls
+    };
+
+    function bumpFire(){
+        unsafeWindow.game.inputBinds.isBindPressed = new Proxy( unsafeWindow.game.inputBinds.isBindPressed, {
+            apply( target, thisArgs, args ) {
+                if (args[0] === inputCommands.Fire) {
+                    return unsafeWindow.game.inputBinds.isBindDown(...args);
+                }
+                return Reflect.apply( ...arguments );
+            }
+        });
+    }
+
+    let spinAngle = 0;
+    const radius = 100;
+    const spinSpeed = 37.5;
+    function overrideMousePos() {
+        Object.defineProperty(unsafeWindow.game.input.mousePos, 'x', {
+            get() {
+                if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
+                    return unsafeWindow.lastAimPos.clientX;
+                }
+                if (!(unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) &&
+                    !(unsafeWindow.game.inputBinds.isBindPressed(inputCommands.EmoteMenu) || unsafeWindow.game.inputBinds.isBindDown(inputCommands.EmoteMenu)) &&
+                    unsafeWindow.game.activePlayer.localData.curWeapIdx != 3 &&
+                    state.isSpinBotEnabled
+                ) {
+                    spinAngle += spinSpeed;
+                    return Math.cos(degreesToRadians(spinAngle)) * radius + unsafeWindow.innerWidth / 2;
+                }
+                return this._x;
+            },
+            set(value) {
+                this._x = value;
+            }
+        });
+
+        Object.defineProperty(unsafeWindow.game.input.mousePos, 'y', {
+            get() {
+                if ((unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) && unsafeWindow.lastAimPos && unsafeWindow.game.activePlayer.localData.curWeapIdx != 3) {
+                    return unsafeWindow.lastAimPos.clientY;
+                }
+                if (!(unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)) &&
+                    !(unsafeWindow.game.inputBinds.isBindPressed(inputCommands.EmoteMenu) || unsafeWindow.game.inputBinds.isBindDown(inputCommands.EmoteMenu)) &&
+                    unsafeWindow.game.activePlayer.localData.curWeapIdx != 3 &&
+                    state.isSpinBotEnabled
+                ) {
+                    return Math.sin(degreesToRadians(spinAngle)) * radius + unsafeWindow.innerHeight / 2;
+                }
+                return this._y;
+            },
+            set(value) {
+                this._y = value;
+            }
+        });
+
+    }
+
+    function degreesToRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    }
+
+    function betterZoom(){
+        Object.defineProperty(unsafeWindow.game.camera, 'zoom', {
+            get() {
+                return Math.max(unsafeWindow.game.camera.targetZoom - (state.isZoomEnabled ? 0.45 : 0), 0.35);
+            },
+            set(value) {
+            }
+        });
+
+        let oldScope = unsafeWindow.game.activePlayer.localData.scope;
+        Object.defineProperty(unsafeWindow.game.camera, 'targetZoom', {
+            get(){
+                return this._targetZoom;
+            },
+            set(value) {
+                const newScope = unsafeWindow.game.activePlayer.localData.scope;
+                const inventory = unsafeWindow.game.activePlayer.localData.inventory;
+                const scopes = ['1xscope', '2xscope', '4xscope', '8xscope', '15xscope'];
+
+                if (
+                  (newScope == oldScope) && (inventory['2xscope'] || inventory['4xscope'] || inventory['8xscope'] || inventory['15xscope']) && value >= this._targetZoom
+                  || scopes.indexOf(newScope) > scopes.indexOf(oldScope) && value >= this._targetZoom
+                ) return;
+
+                oldScope = unsafeWindow.game.activePlayer.localData.scope;
+                this._targetZoom = value;
+            }
+        });
+    }
+
+    function smokeOpacity(){
+        console.log('smokeopacity');
+
+        const particles = unsafeWindow.game.smokeBarn.particles;
+        console.log('smokeopacity', particles, unsafeWindow.game.smokeBarn.particles);
+        particles.push = new Proxy( particles.push, {
+            apply( target, thisArgs, args ) {
+                console.log('smokeopacity', args[0]);
+                const particle = args[0];
+
+                Object.defineProperty(particle.sprite, 'alpha', {
+                    get() {
+                        return 0.12;
+                    },
+                    set(value) {
+                    }
+                });
+
+                return Reflect.apply( ...arguments );
+
+            }
+        });
+
+        particles.forEach(particle => {
+            Object.defineProperty(particle.sprite, 'alpha', {
+                get() {
+                    return 0.12;
+                },
+                set(value) {
+                }
+            });
+        });
+    }
+
+    function visibleNames(){
+        const pool = unsafeWindow.game.playerBarn.playerPool.pool;
+
+        console.log('visibleNames', pool);
+
+        pool.push = new Proxy( pool.push, {
+            apply( target, thisArgs, args ) {
+                const player = args[0];
+                Object.defineProperty(player.nameText, 'visible', {
+                    get(){
+                        const me = unsafeWindow.game.activePlayer;
+                        const meTeam = getTeam(me);
+                        const playerTeam = getTeam(player);
+                        this.tint = playerTeam === meTeam ? BLUE : state.friends.includes(player.nameText._text) ? GREEN : RED;
+                        player.nameText.style.fontSize = 40;
+                        return true;
+                    },
+                    set(value){
+                    }
+                });
+
+                return Reflect.apply( ...arguments );
+            }
+        });
+
+        pool.forEach(player => {
+            Object.defineProperty(player.nameText, 'visible', {
+                get(){
+                    const me = unsafeWindow.game.activePlayer;
+                    const meTeam = getTeam(me);
+                    const playerTeam = getTeam(player);
+                    this.tint = playerTeam === meTeam ? BLUE : RED;
+                    player.nameText.style.fontSize = 40;
+                    return true;
+                },
+                set(value){
+                }
+            });
+        });
+    }
+
+    function esp(){
+        const pixi = unsafeWindow.game.pixi;
+        const me = unsafeWindow.game.activePlayer;
+        const players = unsafeWindow.game.playerBarn.playerPool.pool;
+
+        if (!pixi || me?.container == undefined) {
             return;
-          }
-          f30();
         }
-      });
+
+        const meX = me.pos.x;
+        const meY = me.pos.y;
+        const meTeam = getTeam(me);
+
+        try{
+        const lineDrawer = me.container.lineDrawer;
+        try{lineDrawer.clear();}
+        catch{if(!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) return;}
+        if (state.isLineDrawerEnabled){
+            if (!me.container.lineDrawer) {
+                me.container.lineDrawer = new PIXI.Graphics();
+                me.container.addChild(me.container.lineDrawer);
+            }
+
+            players.forEach((player) => {
+                if (!player.active || player.netData.dead || me.__id == player.__id) return;
+
+                const playerX = player.pos.x;
+                const playerY = player.pos.y;
+                const playerTeam = getTeam(player);
+
+                const lineColor = playerTeam === meTeam ? BLUE : state.friends.includes(player.nameText._text) ? GREEN : me.layer === player.layer && (state.isAimAtKnockedOutEnabled || !player.downed) ? RED : WHITE;
+
+                lineDrawer.lineStyle(2, lineColor, 1);
+                lineDrawer.moveTo(0, 0);
+                lineDrawer.lineTo(
+                    (playerX - meX) * 16,
+                    (meY - playerY) * 16
+                );
+            });
+        }
+
+        const nadeDrawer = me.container.nadeDrawer;
+        try{nadeDrawer?.clear();}
+        catch{if(!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) return;}
+        if (state.isNadeDrawerEnabled){
+            if (!me.container.nadeDrawer) {
+                me.container.nadeDrawer = new PIXI.Graphics();
+                me.container.addChild(me.container.nadeDrawer);
+            }
+
+            Object.values(unsafeWindow.game.objectCreator.idToObj)
+                .filter(obj => {
+                    const isValid = ( obj.__type === 9 && obj.type !== "smoke" )
+                        ||  (
+                                obj.smokeEmitter &&
+                                unsafeWindow.objects[obj.type].explosion);
+                    return isValid;
+                })
+                .forEach(obj => {
+                    if(obj.layer !== me.layer) {
+                        nadeDrawer.beginFill(0xffffff, 0.3);
+                    } else {
+                        nadeDrawer.beginFill(0xff0000, 0.2);
+                    }
+                    nadeDrawer.drawCircle(
+                        (obj.pos.x - meX) * 16,
+                        (meY - obj.pos.y) * 16,
+                        (unsafeWindow.explosions[
+                            unsafeWindow.throwable[obj.type]?.explosionType ||
+                            unsafeWindow.objects[obj.type].explosion
+                                ].rad.max +
+                            1) *
+                        16
+                    );
+                    nadeDrawer.endFill();
+                });
+        }
+
+        const laserDrawer = me.container.laserDrawer;
+        try{laserDrawer.clear();}
+        catch{if(!unsafeWindow.game?.ws || unsafeWindow.game?.activePlayer?.netData?.dead) return;}
+        if (state.isLaserDrawerEnabled) {
+            const curWeapon = findWeap(me);
+            const curBullet = findBullet(curWeapon);
+
+            if (!me.container.laserDrawer) {
+                me.container.laserDrawer = new PIXI.Graphics();
+                me.container.addChildAt(me.container.laserDrawer, 0);
+            }
+
+            function laserPointer(
+                curBullet,
+                curWeapon,
+                acPlayer,
+                color = 0x0000ff,
+                opacity = 0.3,
+            ) {
+                const { pos: acPlayerPos } = acPlayer;
+
+                const dateNow = performance.now();
+
+                if (!(acPlayer.__id in state.lastFrames)) state.lastFrames[acPlayer.__id] = [];
+                state.lastFrames[acPlayer.__id].push([dateNow, { ...acPlayerPos }]);
+
+                if (state.lastFrames[acPlayer.__id].length < 30) return;
+
+                if (state.lastFrames[acPlayer.__id].length > 30){
+                    state.lastFrames[acPlayer.__id].shift();
+                }
+
+                const deltaTime = (dateNow - state.lastFrames[acPlayer.__id][0][0]) / 1000;
+                const acPlayerVelocity = {
+                    x: (acPlayerPos._x - state.lastFrames[acPlayer.__id][0][1]._x) / deltaTime,
+                    y: (acPlayerPos._y - state.lastFrames[acPlayer.__id][0][1]._y) / deltaTime,
+                };
+
+                let lasic = {};
+                let isMoving = !!(acPlayerVelocity.x || acPlayerVelocity.y);
+
+                if(curBullet) {
+                    lasic.active = true;
+                    lasic.range = curBullet.distance * 16.25;
+                    let atan;
+                    if (acPlayer == me && ((!unsafeWindow.lastAimPos) || (unsafeWindow.lastAimPos && ! (unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire))))) {
+                        atan = Math.atan2(
+                            unsafeWindow.game.input.mousePos._y - unsafeWindow.innerHeight / 2,
+                            unsafeWindow.game.input.mousePos._x - unsafeWindow.innerWidth / 2,
+                        );
+                    }else if(acPlayer == me && (unsafeWindow.lastAimPos) && (unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire))) {
+                        const playerPointToScreen = unsafeWindow.game.camera.pointToScreen({x: acPlayer.pos._x, y: acPlayer.pos._y});
+                        atan = Math.atan2(
+                            playerPointToScreen.y - unsafeWindow.lastAimPos.clientY,
+                            playerPointToScreen.x - unsafeWindow.lastAimPos.clientX
+                        ) - Math.PI;
+                    }else {
+                        atan = Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
+                    }
+                    lasic.direction = atan;
+                    lasic.angle = ((curWeapon.shotSpread + (isMoving ? curWeapon.moveSpread : 0)) * 0.01745329252) / 2;
+                } else {
+                    lasic.active = false;
+                }
+
+                if(!lasic.active) {
+                    return;
+                }
+
+                const center = {
+                    x: (acPlayerPos._x - me.pos._x) * 16,
+                    y: (me.pos._y - acPlayerPos._y) * 16,
+                };
+                const radius = lasic.range;
+                let angleFrom = lasic.direction - lasic.angle;
+                let angleTo = lasic.direction + lasic.angle;
+                angleFrom =
+                    angleFrom > Math.PI * 2
+                        ? angleFrom - Math.PI * 2
+                        : angleFrom < 0
+                        ? angleFrom + Math.PI * 2
+                        : angleFrom;
+                angleTo =
+                    angleTo > Math.PI * 2
+                        ? angleTo - Math.PI * 2
+                        : angleTo < 0
+                        ? angleTo + Math.PI * 2
+                        : angleTo;
+                laserDrawer.beginFill(color, opacity);
+                laserDrawer.moveTo(center.x, center.y);
+                laserDrawer.arc(center.x, center.y, radius, angleFrom, angleTo);
+                laserDrawer.lineTo(center.x, center.y);
+                laserDrawer.endFill();
+            }
+
+            laserPointer(
+                curBullet,
+                curWeapon,
+                me,
+            );
+
+            players
+                .filter(player => player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && getTeam(player) != meTeam)
+                .forEach(enemy => {
+                    const enemyWeapon = findWeap(enemy);
+                    laserPointer(
+                        findBullet(enemyWeapon),
+                        enemyWeapon,
+                        enemy,
+                        "0",
+                        0.2,
+                    );
+                });
+        };
+
+        }catch(err){
+        }
     }
-    f32();
-  })();
+
+    const ammo = [
+        {
+            name: "",
+            ammo: null,
+            lastShotDate: Date.now()
+        },
+        {
+            name: "",
+            ammo: null,
+            lastShotDate: Date.now()
+        },
+        {
+            name: "",
+            ammo: null,
+        },
+        {
+            name: "",
+            ammo: null,
+        },
+    ];
+    function autoSwitch(){
+        if (!(unsafeWindow.game?.ws && unsafeWindow.game?.activePlayer?.localData?.curWeapIdx != null)) return;
+
+        try {
+            const curWeapIdx = unsafeWindow.game.activePlayer.localData.curWeapIdx;
+            const weaps = unsafeWindow.game.activePlayer.localData.weapons;
+            const curWeap = weaps[curWeapIdx];
+            const shouldSwitch = gun => {
+                let s = false;
+                try {
+                    s =
+                        (unsafeWindow.guns[gun].fireMode === "single"
+                        || unsafeWindow.guns[gun].fireMode === "burst")
+                        && unsafeWindow.guns[gun].fireDelay >= 0.45;
+                }
+                catch (e) {
+                }
+                return s;
+            };
+            const weapsEquip = ['EquipPrimary', 'EquipSecondary'];
+            if(curWeap.ammo !== ammo[curWeapIdx].ammo) {
+                const otherWeapIdx = (curWeapIdx == 0) ? 1 : 0;
+                const otherWeap = weaps[otherWeapIdx];
+                if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (unsafeWindow.game.touch.shotDetected || unsafeWindow.game.inputBinds.isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
+                    ammo[curWeapIdx].lastShotDate = Date.now();
+                    console.log("Switching weapon due to ammo change");
+                    if (shouldSwitch(otherWeap.type) && otherWeap.ammo && !state.isUseOneGunEnabled) { inputs.push(weapsEquip[otherWeapIdx]); }
+                    else if ( otherWeap.type !== "" ) { inputs.push(weapsEquip[otherWeapIdx]); inputs.push(weapsEquip[curWeapIdx]); }
+                    else { inputs.push('EquipMelee'); inputs.push(weapsEquip[curWeapIdx]); }
+                }
+                ammo[curWeapIdx].ammo = curWeap.ammo;
+                ammo[curWeapIdx].type = curWeap.type;
+            }
+        }catch(err){
+            console.error('autoswitch', err);
+        }
+    }
+
+    function obstacleOpacity(){
+        unsafeWindow.game.map.obstaclePool.pool.forEach(obstacle => {
+            if (!['bush', 'tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) return;
+            obstacle.sprite.alpha = 0.45;
+        });
+    }
+
+    let lastTime = Date.now();
+    let showing = false;
+    let timer = null;
+    function grenadeTimer(){
+        if (!(unsafeWindow.game?.ws && unsafeWindow.game?.activePlayer?.localData?.curWeapIdx != null && unsafeWindow.game?.activePlayer?.netData?.activeWeapon != null)) return;
+
+        try{
+            let elapsed = (Date.now() - lastTime) / 1000;
+            const player = unsafeWindow.game.activePlayer;
+            const activeItem = player.netData.activeWeapon;
+
+            if (
+                3 !== unsafeWindow.game.activePlayer.localData.curWeapIdx
+                || player.throwableState !== "cook"
+                || (!activeItem.includes('frag') && !activeItem.includes('mirv') && !activeItem.includes('martyr_nade'))
+            )
+                return (
+                    (showing = false),
+                    timer && timer.destroy(),
+                    (timer = false)
+                );
+
+            const time = 4;
+            if(elapsed > time) {
+                showing = false;
+            }
+            if(!showing) {
+                if(timer) {
+                    timer.destroy();
+                }
+                timer = new unsafeWindow.pieTimerClass();
+                unsafeWindow.game.pixi.stage.addChild(timer.container);
+                timer.start("Grenade", 0, time);
+                showing = true;
+                lastTime = Date.now();
+                return;
+            }
+            timer.update(elapsed - timer.elapsed, unsafeWindow.game.camera);
+        }catch(err){
+            console.error('grenadeTimer', err);
+        }
+    }
+
+    function initTicker(){
+        unsafeWindow.game.pixi._ticker.add(esp);
+        unsafeWindow.game.pixi._ticker.add(aimBot);
+        unsafeWindow.game.pixi._ticker.add(autoSwitch);
+        unsafeWindow.game.pixi._ticker.add(obstacleOpacity);
+        unsafeWindow.game.pixi._ticker.add(grenadeTimer);
+        unsafeWindow.game.pixi._ticker.add(unsafeWindow.GameMod.startUpdateLoop.bind(unsafeWindow.GameMod));
+    }
+
+    let tickerOneTime = false;
+    function initGame() {
+        console.log('init game...........');
+
+        unsafeWindow.lastAimPos = null;
+        unsafeWindow.aimTouchMoveDir = null;
+        state.enemyAimBot = null;
+        state.focusedEnemy = null;
+        state.friends = [];
+        state.lastFrames = {};
+
+        const tasks = [
+            {isApplied: false, condition: () => unsafeWindow.game?.input?.mousePos && unsafeWindow.game?.touch?.aimMovement?.toAimDir, action: overrideMousePos},
+            {isApplied: false, condition: () => unsafeWindow.game?.input?.mouseButtonsOld, action: bumpFire},
+            {isApplied: false, condition: () => unsafeWindow.game?.activePlayer?.localData, action: betterZoom},
+            {isApplied: false, condition: () => Array.prototype.push === unsafeWindow.game?.smokeBarn?.particles.push, action: smokeOpacity},
+            {isApplied: false, condition: () => Array.prototype.push === unsafeWindow.game?.playerBarn?.playerPool?.pool.push, action: visibleNames},
+            {isApplied: false, condition: () => unsafeWindow.game?.pixi?._ticker && unsafeWindow.game?.activePlayer?.container && unsafeWindow.game?.activePlayer?.pos, action: () => { if (!tickerOneTime) { tickerOneTime = true; initTicker(); } } },
+        ];
+
+        (function checkLocalData(){
+            if(!unsafeWindow?.game?.ws) return;
+
+            console.log('Checking local data');
+
+            tasks.forEach(task => {
+                if (task.isApplied || !task.condition()) return;
+                task.action();
+                task.isApplied = true;
+            });
+
+            if (tasks.some(task => !task.isApplied)) setTimeout(checkLocalData, 5);
+            else console.log('All functions applied, stopping loop.');
+        })();
+
+        updateOverlay();
+    }
+
+
+
+    function bootLoader(){
+        Object.defineProperty(unsafeWindow, 'game', {
+            get () {
+                return this._game;
+            },
+            set(value) {
+                this._game = value;
+
+                if (!value) return;
+
+                initGame();
+            }
+        });
+    }
+
+    bootLoader();
+
+})();

@@ -7,10 +7,10 @@ export function infiniteZoom() {
     try {
       let zoom = gameManager.game.activePlayer.localData.zoom;
       if (event.deltaY > 0) {
-        zoom += 15;
+        zoom += 35;
       } else {
-        zoom -= 15;
-        zoom = Math.max(30, zoom)
+        zoom -= 35;
+        zoom = Math.max(50, zoom)
       }
       object.defineProperty(gameManager.game.activePlayer.localData, "zoom", { configurable: true, get() { return zoom }, set() { } });
       event.stopImmediatePropagation();

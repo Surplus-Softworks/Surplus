@@ -1,6 +1,8 @@
 import { betterVision } from "./plugins/better-vision.js";
 import { infiniteZoom } from "./plugins/infinite-zoom.js";
 import { esp } from "./plugins/esp.js";
+import { autoLoot } from "./plugins/auto-loot.js";
+
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 
@@ -39,6 +41,7 @@ function loadPlugins() {
 
 function loadStaticPlugins() {
   infiniteZoom();
+  autoLoot();
 }
 
 function attach() {

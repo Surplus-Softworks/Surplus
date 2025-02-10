@@ -15,13 +15,13 @@ const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
-let lastAimPos, Graphics;
+let lastAimPos, PIXI_Graphics;
 
 function initGraphics() {
-    if (Graphics) return;
+    if (PIXI_Graphics) return;
     for (const child of gameManager.pixi.stage.children) {
         if (child.lineStyle) {
-            Graphics = child.constructor;
+            PIXI_Graphics = child.constructor;
             break;
         }
     }
@@ -29,7 +29,7 @@ function initGraphics() {
 
 function createDrawer(container, key) {
     if (!container[key]) {
-        container[key] = new Graphics();
+        container[key] = new PIXI_Graphics();
         container.addChild(container[key]);
     }
     return container[key];
