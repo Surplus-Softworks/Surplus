@@ -7,11 +7,11 @@ const BLUE = 0x00f3f3;
 const RED = 0xff0000;
 const WHITE = 0xffffff;
 
-import { inputCommands, getTeam, findWeap, findBullet } from "../utils/constants.js";
+import { inputCommands, getTeam, findWeap, findBullet, objects, explosions, throwable } from "../utils/constants.js";
 
 import { state } from "../loader.js";
 
-
+const log = console.log;
 
 function espTicker() {
     const pixi = gameManager.game.pixi;
@@ -80,7 +80,7 @@ function espTicker() {
                     const isValid = (obj.__type === 9 && obj.type !== "smoke")
                         || (
                             obj.smokeEmitter &&
-                            gameManager.objects[obj.type].explosion);
+                            objects[obj.type].explosion);
                     return isValid;
                 })
                 .forEach(obj => {
@@ -92,9 +92,9 @@ function espTicker() {
                     grenadeDrawer.drawCircle(
                         (obj.pos.x - meX) * 16,
                         (meY - obj.pos.y) * 16,
-                        (gameManager.explosions[
-                            gameManager.throwable[obj.type]?.explosionType ||
-                            gameManager.objects[obj.type].explosion
+                        (explosions[
+                            throwable[obj.type]?.explosionType ||
+                            objects[obj.type].explosion
                         ].rad.max +
                             1) *
                         16
