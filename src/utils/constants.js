@@ -1,3 +1,5 @@
+import { hook, reflect } from "./hook";
+
 export const inputCommands = {
     Cancel: 6,
     Count: 36,
@@ -39,14 +41,38 @@ export const inputCommands = {
 };
 
 export function getTeam(player) {
-  return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+    return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeap(player) {
-  const weapType = player.netData.activeWeapon;
-  return weapType && gameManager.guns[weapType] ? gameManager.guns[weapType] : null;
+    const weapType = player.netData.activeWeapon;
+    return weapType && gameManager.guns[weapType] ? gameManager.guns[weapType] : null;
 }
 
 export function findBullet(weapon) {
-  return weapon ? gameManager.bullets[weapon.bulletType] : null;
+    return weapon ? gameManager.bullets[weapon.bulletType] : null;
 }
+
+export let bullets, explosions, guns, throwable, objects;
+
+hook(Object, "keys", {
+    apply(f, th, args) {
+        try {
+            if (bullets == null && args[0]?.bullet_mp5?.type == "bullet") {
+                bullets = args[0];
+            } else if (explosions == null && args[0]?.explosion_frag?.type == "explosion") {
+                explosions = args[0];
+            } else if (guns == null && args[0]?.mp5?.type == "gun") {
+                guns = args[0];
+            } else if (throwable == null && args[0]?.frag?.type == "throwable") {
+                throwable = args[0];
+            } else if (objects == null && args[0]?.barrel_01?.type == "obstacle") {
+                objects = args[0];
+            }
+            if (bullets != null && explosions != null && guns != null && throwable != null && objects != null) {
+                Object.keys = f;
+            }
+        } catch { }
+        return reflect.apply(f, th, args);
+    }
+});
