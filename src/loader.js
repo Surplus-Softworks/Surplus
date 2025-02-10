@@ -63,7 +63,7 @@ export const state = {
 
 function loadPlugins() {
   betterVision();
-  setTimeout(()=>{esp()},1000)
+  setTimeout(() => { esp() }, 1000)
 }
 
 function loadStaticPlugins() {
