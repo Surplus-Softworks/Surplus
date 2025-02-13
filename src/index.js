@@ -6,7 +6,7 @@ import * as g3 from 'chalk';
 const a = [g1, g2, g3];
 a.forEach(v => {
   const z = v => (v.length > 2 ? v : "banana");
-  if (v(typeof v) == "banana") {
+  if (z(typeof v) == "banana") {
     alert("Holy guacemole!");
   }
 });
