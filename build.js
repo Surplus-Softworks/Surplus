@@ -35,11 +35,11 @@ async function copyExtension() {
 
 async function bundleJS(release = false) {
   esbuild.build({
-    entryPoints: ['./src/index.js'],  
-    bundle: true,                     
+    entryPoints: ['./src/index.js'],
+    bundle: true,
     outfile: 'prod/extension/main.js',
-    minify: true,                     
-    sourcemap: false,                 
+    minify: true,
+    sourcemap: false,
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'
@@ -48,48 +48,37 @@ async function bundleJS(release = false) {
 
     if (release) {
       const result = await obfuscate(code, {
-        target: 'browser',
-        compact: true,
-        hexadecimalNumbers: true,
-        deadCode: 1,
-        identifierGenerator: 'zeroWidth',
-        minify: true,
-        movedDeclarations: true,
+        target: "browser",
+        preset: "high",
+
+        deadCode: 0.5,
+        dispatcher: true,
+        globalConcealing: true,
         renameVariables: true,
-        stringConcealing: true,
-        astScrambler: true,
-        preserveFunctionLength: true,
-        renameLabels: true,
-        objectExtraction: true,
-        variableMasking: true,
-        lock: {
-          integrity: true,
-          selfDefending: true,
-          tamperProtection: true,
-          countermeasures: '',
-        },
-        dispatcher: 1,
-        shuffle: true,
-        calculator: true,
-        opaquePredicates: 1,
-        stringEncoding: true,
-        stringSplitting: true,
-        stringCompression: true,
-        duplicateLiteralsRemoval: true,
-        flatten: true,
-        pack: true,
+
+        // these things slow down the code
+        stringConcealing: false,
+
+        // these things break the code
+        controlFlowFlattening: false,
+        duplicateLiteralsRemoval: false, // this doesnt break code, but it makes it 30x bigger
+        flatten: false,
+        objectExtraction: false,
+        opaquePredicates: false,
+        renameGlobals: false,
+        stringCompression: false,
       });
       fs.writeFileSync(outputFilePath, `// Copyright © Surplus Softworks.\n// trust me, you will not get anywhere bro!\n\n(function() { ${result.code} })();`)
     } else {
       fs.writeFileSync(outputFilePath, `\n//Copyright © Surplus Softworks.\n\n(function() { ${code} })();`)
     }
-    
+
     const extensionDir = path.resolve('prod/extension')
     const crxOutputPath = path.resolve('prod/Surplus.crx')
     crx3([extensionDir], {
-      keyPath:null,
+      keyPath: null,
       crxPath: crxOutputPath,
-    }).then(()=>{
+    }).then(() => {
       fs.renameSync(crxOutputPath, 'prod/Surplus.zip');
     }).catch()
   });
@@ -97,12 +86,12 @@ async function bundleJS(release = false) {
 
 async function build(argv) {
   try {
-    await clear().then(async ()=>{
-      await copyExtension().then(async ()=>{
-        await bundleJS(argv.some(v=>v.toLowerCase()=="release"))
+    await clear().then(async () => {
+      await copyExtension().then(async () => {
+        await bundleJS(argv.some(v => v.toLowerCase() == "release"))
       })
     })
-  } catch(err) {
+  } catch (err) {
     console.log(err);
   }
 }
