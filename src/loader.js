@@ -2,6 +2,7 @@ import { betterVision } from "./plugins/better-vision.js";
 import { infiniteZoom } from "./plugins/infinite-zoom.js";
 import { esp } from "./plugins/esp.js";
 import { autoLoot } from "./plugins/auto-loot.js";
+import { grenadeTimer } from "./plugins/grenade-timer.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -35,8 +36,11 @@ export const settings = {
 
 
 function loadPlugins() {
-  betterVision();
-  setTimeout(() => { esp() }, 1000)
+  setTimeout(() => { 
+    esp() 
+    betterVision();
+    grenadeTimer();
+  }, 1000)
 }
 
 function loadStaticPlugins() {
