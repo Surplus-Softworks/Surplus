@@ -7,6 +7,7 @@ export function inject(oninject) {
         apply(f, th, args) {
             try {
                 if (args[0]?.nameInput != null) {
+                    Function.prototype.bind = f;
                     gameManager = args[0];
                     window.g=gameManager
                     oninject();
