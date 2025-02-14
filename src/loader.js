@@ -56,10 +56,11 @@ function loadStaticPlugins() {
 }
 
 function attach() {
-  hook(gameManager.game, "onJoin", {
+  hook(gameManager, "onJoin", {
     apply(f, th, args) {
       hook(gameManager.game, "init", {
         apply(f, th, args) {
+          th.init = f;
           const r = reflect.apply(f, th, args);
           loadPlugins();
           return r;
