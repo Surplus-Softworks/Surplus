@@ -1,7 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { hook, reflect, object } from "../utils/hook.js";
 
-export function optimizer() {
+export default function optimizer() {
   hook(gameManager.game.playerBarn.playerPool.pool, "push", {
     apply(f, th, args) {
       args.forEach(plr => {

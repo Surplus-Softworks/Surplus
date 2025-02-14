@@ -1,7 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
 
-export function infiniteZoom() {
+export default function infiniteZoom() {
   window.addEventListener('wheel', function (event) {
     if (!event.shiftKey) return;
     try {

@@ -2,7 +2,7 @@ import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
 import { settings } from "../loader.js";
 
-export function inputOverride() {
+export default function inputOverride() {
   hook(gameManager.game, "sendMessage", {
     apply(f, th, args) {
       if (!args[1].inputs) {

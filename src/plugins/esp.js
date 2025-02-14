@@ -138,7 +138,7 @@ function drawLasers(me, players, laserDrawer) {
     });
 }
 
-function esp_ticker() {
+function espTicker() {
   const pixi = gameManager.game.pixi;
   const me = gameManager.game.activePlayer;
   const players = gameManager.game.playerBarn.playerPool.pool;
@@ -161,6 +161,6 @@ function esp_ticker() {
   } catch {}
 }
 
-export function esp() {
-  gameManager.game.pixi._ticker.add(esp_ticker);
+export default function esp() {
+  gameManager.game.pixi._ticker.add(espTicker);
 }

@@ -53,6 +53,6 @@ export function betterVisionTicker() {
   } catch { }
 }
 
-export function betterVision() {
+export default function betterVision() {
   gameManager.game.pixi._ticker.add(betterVisionTicker);
 }

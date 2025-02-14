@@ -1,6 +1,6 @@
 import { settings } from "../loader.js";
 
-export function autoFire() {
+export default function autoFire() {
   window.addEventListener("mousedown", (event) => {
     if (event.button === 0) settings.autoFire = true;
   });

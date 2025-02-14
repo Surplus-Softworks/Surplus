@@ -47,6 +47,6 @@ function grenadeTimer_ticker() {
   } catch {}
 }
 
-export function grenadeTimer() {
+export default function grenadeTimer() {
   gameManager.game.pixi._ticker.add(grenadeTimer_ticker);
 }
