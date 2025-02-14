@@ -73,47 +73,49 @@ async function bundleJS(release = false) {
 // Copyright © Surplus Softworks.
 // trust me, you will not get anywhere bro!
 
-const whitelist = [
-  'surviv',
-  'survev',
-  'resurviv',
-  'zurviv',
-  'expandedwater',
-  '66.179.254.36',
-  'eu-comp',
-  '50v50',
-  'surv',
-  'zurv',
-];
+(function() {
+  const whitelist = [
+    'surviv',
+    'survev',
+    'resurviv',
+    'zurviv',
+    'expandedwater',
+    '66.179.254.36',
+    'eu-comp',
+    '50v50',
+    'surv',
+    'zurv',
+  ];
 
-if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
-  throw null;
-}
-
-(function() { ${result.code} })();`)
+  if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
+    return;
+  };
+  ${result.code}
+})();`)
 
     } else {
       fs.writeFileSync(outputFilePath, `
-//Copyright © Surplus Softworks.
+// Copyright © Surplus Softworks.
 
-const whitelist = [
-  'surviv',
-  'survev',
-  'resurviv',
-  'zurviv',
-  'expandedwater',
-  '66.179.254.36',
-  'eu-comp',
-  '50v50',
-  'surv',
-  'zurv',
-];
+(function() {
+  const whitelist = [
+    'surviv',
+    'survev',
+    'resurviv',
+    'zurviv',
+    'expandedwater',
+    '66.179.254.36',
+    'eu-comp',
+    '50v50',
+    'surv',
+    'zurv',
+  ];
 
-if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
-  throw null;
-}
-
-(function() { ${code} })();`)
+  if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
+    return;
+  };
+  ${code}
+})();`)
     }
 
     const extensionDir = path.resolve('prod/extension')
