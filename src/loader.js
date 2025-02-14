@@ -60,8 +60,9 @@ function attach() {
     apply(f, th, args) {
       hook(gameManager.game, "init", {
         apply(f, th, args) {
+          const r = reflect.apply(f, th, args);
           loadPlugins();
-          return reflect.apply(f, th, args);
+          return r;
         }
       });
       return reflect.apply(f, th, args);
