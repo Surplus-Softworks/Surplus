@@ -40,13 +40,13 @@ export const settings = {
 
 
 function loadPlugins() {
-  setTimeout(()=>{
-    esp() 
+  try {
+    esp()
     betterVision();
     grenadeTimer();
     inputOverride();
     optimizer();
-  }, 1000)
+  } catch { }
 }
 
 function loadStaticPlugins() {
@@ -58,7 +58,12 @@ function loadStaticPlugins() {
 function attach() {
   hook(gameManager.game, "onJoin", {
     apply(f, th, args) {
-      loadPlugins()
+      hook(gameManager.game, "init", {
+        apply(f, th, args) {
+          loadPlugins();
+          return reflect.apply(f, th, args);
+        }
+      });
       return reflect.apply(f, th, args);
     }
   })
