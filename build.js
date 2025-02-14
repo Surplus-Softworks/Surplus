@@ -50,20 +50,21 @@ async function bundleJS(release = false) {
       const result = await obfuscate(code, {
         target: "browser",
         preset: "high",
-
-        deadCode: 0.5,
+        
+        deadCode: 1, //
         dispatcher: true,
         globalConcealing: true,
         renameVariables: true,
+        identifierGenerator: 'zeroWidth',
 
         // these things slow down the code
-        stringConcealing: false,
+        stringConcealing: true,
 
         // these things break the code
         controlFlowFlattening: false,
-        duplicateLiteralsRemoval: false, // this doesnt break code, but it makes it 30x bigger
+        duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
         flatten: false,
-        objectExtraction: false,
+        objectExtraction: true, //
         opaquePredicates: false,
         renameGlobals: false,
         stringCompression: false,
