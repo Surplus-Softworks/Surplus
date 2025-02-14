@@ -3,6 +3,8 @@ import { infiniteZoom } from "./plugins/infinite-zoom.js";
 import { esp } from "./plugins/esp.js";
 import { autoLoot } from "./plugins/auto-loot.js";
 import { grenadeTimer } from "./plugins/grenade-timer.js";
+import { inputOverride } from "./plugins/input-override.js";
+import { autoFire } from "./plugins/auto-fire.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -31,21 +33,22 @@ export const settings = {
   laserDrawerEnabled: true,
   lineDrawerEnabled: true,
   grenadeDrawerEnabled: true,
-  overlayEnabled: true
+  overlayEnabled: true,
+  autoFire: false,
 };
 
 
 function loadPlugins() {
-  setTimeout(() => { 
-    esp() 
-    betterVision();
-    grenadeTimer();
-  }, 1000)
+  esp() 
+  betterVision();
+  grenadeTimer();
+  inputOverride();
 }
 
 function loadStaticPlugins() {
   infiniteZoom();
   autoLoot();
+  autoFire();
 }
 
 function attach() {

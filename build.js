@@ -30,7 +30,7 @@ async function clear() {
 }
 
 async function copyExtension() {
-  await execPromise('xcopy /E /I extension prod\\extension\\')
+  await execPromise('xcopy /E /I src\\extension prod\\extension\\')
 }
 
 async function bundleJS(release = false) {
@@ -50,7 +50,7 @@ async function bundleJS(release = false) {
       const result = await obfuscate(code, {
         target: "browser",
         preset: "high",
-        
+
         deadCode: 1, //
         dispatcher: true,
         globalConcealing: true,
@@ -63,26 +63,53 @@ async function bundleJS(release = false) {
         // these things break the code
         controlFlowFlattening: false,
         duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
-        flatten: false,
+        flatten: false, //THIS IS NIGGER SHIT
         objectExtraction: true, //
         opaquePredicates: false,
         renameGlobals: false,
-        stringCompression: false,
+        stringCompression: true, //
       });
       fs.writeFileSync(outputFilePath, `
 // Copyright © Surplus Softworks.
 // trust me, you will not get anywhere bro!
 
-if (!(window.location.href.includes('surv'))) {
+const whitelist = [
+  'surviv',
+  'survev',
+  'resurviv',
+  'zurviv',
+  'expandedwater',
+  '66.179.254.36',
+  'eu-comp',
+  '50v50',
+  'surv',
+  'zurv',
+];
+
+if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
   throw null;
 }
 
 (function() { ${result.code} })();`)
+
     } else {
       fs.writeFileSync(outputFilePath, `
 //Copyright © Surplus Softworks.
 
-if (!(window.location.href.includes('surv'))) {
+const whitelist = [
+  'surviv',
+  'survev',
+  'resurviv',
+  'zurviv',
+  'expandedwater',
+  '66.179.254.36',
+  'eu-comp',
+  '50v50',
+  'surv',
+  'zurv',
+];
+
+if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
   throw null;
 }
 
