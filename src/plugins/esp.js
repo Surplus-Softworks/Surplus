@@ -52,7 +52,7 @@ function drawLines(me, players, lineDrawer) {
           (settings.aimAtKnockedEnabled || !player.downed)
         ? RED
         : WHITE;
-    lineDrawer.lineStyle(2, lineColor, 1);
+    lineDrawer.lineStyle(2, lineColor, 0.45);
     lineDrawer.moveTo(0, 0);
     lineDrawer.lineTo((player.pos.x - meX) * 16, (meY - player.pos.y) * 16);
   });
@@ -132,7 +132,7 @@ function drawLasers(me, players, laserDrawer) {
         getTeam(player) !== getTeam(me)
     )
     .forEach((enemy) => {
-      laserPointer(enemy, findBullet(findWeap(enemy)), findWeap(enemy), 0, 0.2);
+      laserPointer(enemy, findBullet(findWeap(enemy)), findWeap(enemy), 0, 0.05);
     });
 }
 
