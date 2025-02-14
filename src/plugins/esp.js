@@ -71,7 +71,7 @@ function drawGrenades(me, grenadeDrawer) {
     .forEach((obj) => {
       grenadeDrawer.beginFill(
         obj.layer !== me.layer ? 0xffffff : 0xff0000,
-        obj.layer !== me.layer ? 0.3 : 0.2
+        obj.layer !== me.layer ? 0.2 : 0.1
       );
       grenadeDrawer.drawCircle(
         (obj.pos.x - meX) * 16,

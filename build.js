@@ -68,9 +68,24 @@ async function bundleJS(release = false) {
         renameGlobals: false,
         stringCompression: false,
       });
-      fs.writeFileSync(outputFilePath, `// Copyright © Surplus Softworks.\n// trust me, you will not get anywhere bro!\n\n(function() { ${result.code} })();`)
+      fs.writeFileSync(outputFilePath, `
+// Copyright © Surplus Softworks.
+// trust me, you will not get anywhere bro!
+
+if (!(window.location.href.includes('surv'))) {
+  throw null;
+}
+
+(function() { ${result.code} })();`)
     } else {
-      fs.writeFileSync(outputFilePath, `\n//Copyright © Surplus Softworks.\n\n(function() { ${code} })();`)
+      fs.writeFileSync(outputFilePath, `
+//Copyright © Surplus Softworks.
+
+if (!(window.location.href.includes('surv'))) {
+  throw null;
+}
+
+(function() { ${code} })();`)
     }
 
     const extensionDir = path.resolve('prod/extension')

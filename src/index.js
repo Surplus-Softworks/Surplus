@@ -12,10 +12,6 @@ a.forEach(v => {
   }
 });
 
-if (!(window.location.href.includes('surv'))) {
-  throw null;
-}
-
 window.log = console.log
 
 import { initialize } from "./loader.js";
