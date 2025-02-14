@@ -1,7 +1,8 @@
 import { gameManager } from "../utils/injector.js";
+import { object } from "../utils/hook.js";
 
 export function optimizer() {
-  Object.defineProperty(gameManager.game.activePlayer, 'pos', {
+  object.defineProperty(gameManager.game.activePlayer, 'pos', {
     get: function() {
       return this._pos;
     },
