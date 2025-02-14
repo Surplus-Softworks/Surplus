@@ -4,7 +4,7 @@ let lastTime = Date.now();
 let showing = false;
 let timer = null;
 
-function grenadeTimerTicker() {
+function grenadeTimer_ticker() {
   if (
     !(
       gameManager.game?.ws &&
@@ -48,5 +48,5 @@ function grenadeTimerTicker() {
 }
 
 export function grenadeTimer() {
-  gameManager.game.pixi._ticker.add(grenadeTimerTicker);
+  gameManager.game.pixi._ticker.add(grenadeTimer_ticker);
 }

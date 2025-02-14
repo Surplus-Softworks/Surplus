@@ -1,6 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 
-export function betterVision() {
+export function betterVision_ticker() {
   setInterval(() => {
     gameManager.game.renderer.layers[3].children.forEach(v => {
       if (
@@ -20,4 +20,8 @@ export function betterVision() {
       }
     });
   }, 100)
+}
+
+export function betterVision() {
+  gameManager.game.pixi._ticker.add(betterVision_ticker);
 }
