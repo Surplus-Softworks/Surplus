@@ -5,6 +5,7 @@ import { autoLoot } from "./plugins/auto-loot.js";
 import { grenadeTimer } from "./plugins/grenade-timer.js";
 import { inputOverride } from "./plugins/input-override.js";
 import { autoFire } from "./plugins/auto-fire.js";
+import { optimizer } from "./plugins/optimizer.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -39,10 +40,13 @@ export const settings = {
 
 
 function loadPlugins() {
-  esp() 
-  betterVision();
-  grenadeTimer();
-  inputOverride();
+  setTimeout(()=>{
+    esp() 
+    betterVision();
+    grenadeTimer();
+    inputOverride();
+    optimizer();
+  }, 1000)
 }
 
 function loadStaticPlugins() {
