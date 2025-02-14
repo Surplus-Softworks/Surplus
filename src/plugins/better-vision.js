@@ -3,11 +3,6 @@ import {
   getTeam,
 } from "../utils/constants.js";
 
-const GREEN = 0x399d37;
-const BLUE = 0x3a88f4;
-const RED = 0xdc3734;
-const WHITE = 0xffffff;
-
 export function betterVision_ticker() {
   gameManager.game.renderer.layers[3].children.forEach(v => {
     if (
@@ -27,12 +22,24 @@ export function betterVision_ticker() {
     }
   });
   gameManager.game.playerBarn.playerPool.pool.forEach(player => {
+    player.nameText.text = player.netData.activeWeapon === "fists" 
+      ? player.nameText.text.split('\n')[0] 
+      : `${player.nameText.text.split('\n')[0]}\n${player.netData.activeWeapon}`;
+
     player.nameText.visible = true
     const me = gameManager.game.activePlayer;
     const meTeam = getTeam(me);
     const playerTeam = getTeam(player);
-    player.tint = playerTeam === meTeam ? BLUE : RED;
+
+    if (playerTeam == meTeam) {
+      player.tint = 0x3a88f4
+      player.nameText.style.fill = "3a88f4"
+    } else {
+      player.tint = 0xff2828
+      player.nameText.style.fill = "ff2828"
+    }
     player.nameText.style.fontSize = 20;
+    player.nameText.style.dropShadowBlur=0.1
   })
 }
 

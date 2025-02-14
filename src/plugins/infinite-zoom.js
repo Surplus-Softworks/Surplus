@@ -10,7 +10,7 @@ export function infiniteZoom() {
         zoom += 35;
       } else {
         zoom -= 35;
-        zoom = Math.max(50, zoom)
+        zoom = Math.max(36, zoom)
       }
       object.defineProperty(gameManager.game.activePlayer.localData, "zoom", { configurable: true, get() { return zoom }, set() { } });
       event.stopImmediatePropagation();

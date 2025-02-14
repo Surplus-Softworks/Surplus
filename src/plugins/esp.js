@@ -45,7 +45,7 @@ function drawLines(me, players, lineDrawer) {
     const playerTeam = getTeam(player);
     const lineColor =
       playerTeam === myTeam
-        ? BLUE
+        ? 0x3a88f4
         : settings.friends.includes(player.nameText._text)
         ? GREEN
         : me.layer === player.layer &&
