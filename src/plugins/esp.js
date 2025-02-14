@@ -15,7 +15,9 @@ const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
-let lastAimPos, PIXI_Graphics;
+import { lastAimPos } from "./aimbot.js";
+
+let PIXI_Graphics;
 
 function initGraphics() {
   if (PIXI_Graphics) return;
