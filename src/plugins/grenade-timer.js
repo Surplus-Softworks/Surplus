@@ -4,49 +4,49 @@ let lastTime = Date.now();
 let showing = false;
 let timer = null;
 
-function createTimer(time) {
-    if (timer) timer.destroy();
-    timer = new gameManager.game.uiManager.pieTimer.constructor();
-    gameManager.game.pixi.stage.addChild(timer.container);
-    timer.start("Grenade", 0, time);
-    showing = true;
-    lastTime = Date.now();
-}
-
 function grenadeTimerTicker() {
-    const game = gameManager.game;
-    const player = game?.activePlayer;
-    const activeItem = player?.netData?.activeWeapon;
+  if (
+    !(
+      gameManager.game?.ws &&
+      gameManager.game?.activePlayer?.localData?.curWeapIdx != null &&
+      gameManager.game?.activePlayer?.netData?.activeWeapon != null
+    )
+  )
+    return;
 
-    if (!game?.ws || player?.localData?.curWeapIdx == null || activeItem == null) return;
-    
-    const elapsed = (Date.now() - lastTime) / 1000;
-    const grenadeTime = 4;
-    
+  try {
+    let elapsed = (Date.now() - lastTime) / 1000;
+    const player = gameManager.game.activePlayer;
+    const activeItem = player.netData.activeWeapon;
+
     if (
-        player.localData.curWeapIdx !== 3 || 
-        player.throwableState !== "cook" || 
-        (!activeItem.includes("frag") && !activeItem.includes("mirv") && !activeItem.includes("martyr_nade"))
-    ) {
-        showing = false;
-        if (timer) timer.destroy();
-        timer = null;
-        return;
+      3 !== gameManager.game.activePlayer.localData.curWeapIdx ||
+      player.throwableState !== "cook" ||
+      (!activeItem.includes("frag") &&
+        !activeItem.includes("mirv") &&
+        !activeItem.includes("martyr_nade"))
+    )
+      return (showing = false), timer && timer.destroy(), (timer = false);
+
+    const time = 4;
+    if (elapsed > time) {
+      showing = false;
     }
-    
-    if (elapsed > grenadeTime) {
-        showing = false;
-        return;
-    }
-    
     if (!showing) {
-        createTimer(grenadeTime);
-        return;
+      if (timer) {
+        timer.destroy();
+      }
+      timer = new gameManager.game.uiManager.pieTimer.constructor();
+      gameManager.game.pixi.stage.addChild(timer.container);
+      timer.start("Grenade", 0, time);
+      showing = true;
+      lastTime = Date.now();
+      return;
     }
-    
-    timer.update(elapsed - timer.elapsed, game.camera);
+    timer.update(elapsed - timer.elapsed, gameManager.game.camera);
+  } catch {}
 }
 
 export function grenadeTimer() {
-    gameManager.game.pixi._ticker.add(grenadeTimerTicker);
+  gameManager.game.pixi._ticker.add(grenadeTimerTicker);
 }
