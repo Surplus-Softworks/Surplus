@@ -6,10 +6,10 @@ export default function optimizer() {
     apply(f, th, args) {
       args.forEach(plr => {
         object.defineProperty(plr, 'pos', {
-          get: function () {
+          get() {
             return this._pos;
           },
-          set: function (value) {
+          set(value) {
             const prevPos = this._pos;
             this._pos = value;
 
@@ -24,6 +24,7 @@ export default function optimizer() {
             }
           }
         });
+        plr.pos = plr.netData.pos;
       });
       return reflect.apply(f, th, args);
     }

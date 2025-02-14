@@ -1,11 +1,13 @@
-import { betterVision } from "./plugins/better-vision.js";
-import { infiniteZoom } from "./plugins/infinite-zoom.js";
-import { esp } from "./plugins/esp.js";
-import { autoLoot } from "./plugins/auto-loot.js";
-import { grenadeTimer } from "./plugins/grenade-timer.js";
-import { inputOverride } from "./plugins/input-override.js";
-import { autoFire } from "./plugins/auto-fire.js";
-import { optimizer } from "./plugins/optimizer.js";
+
+import betterVision from "./plugins/better-vision.js";
+import infiniteZoom from "./plugins/infinite-zoom.js";
+import esp from "./plugins/esp.js";
+import autoLoot from "./plugins/auto-loot.js";
+import grenadeTimer from "./plugins/grenade-timer.js";
+import inputOverride from "./plugins/input-override.js";
+import autoFire from "./plugins/auto-fire.js";
+import optimizer from "./plugins/optimizer.js";
+import aimbot from "./plugins/aimbot.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -40,13 +42,14 @@ export const settings = {
 
 
 function loadPlugins() {
-  try {
-    esp()
-    betterVision();
-    grenadeTimer();
-    inputOverride();
-    optimizer();
-  } catch { }
+  //try {
+  esp();
+  betterVision();
+  grenadeTimer();
+  inputOverride();
+  optimizer();
+  aimbot();
+  //} catch(e) { warn(e) }
 }
 
 function loadStaticPlugins() {
@@ -56,19 +59,13 @@ function loadStaticPlugins() {
 }
 
 function attach() {
-  hook(gameManager, "onJoin", {
+  hook(gameManager.game, "init", {
     apply(f, th, args) {
-      hook(gameManager.game, "init", {
-        apply(f, th, args) {
-          th.init = f;
-          const r = reflect.apply(f, th, args);
-          loadPlugins();
-          return r;
-        }
-      });
-      return reflect.apply(f, th, args);
+      const r = reflect.apply(f, th, args);
+      loadPlugins();
+      return r;
     }
-  })
+  });
 }
 
 export function initialize() {

@@ -1,5 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
+import { lastAimPos } from "./aimbot.js";
 import {
   getTeam,
   findWeap,
@@ -14,8 +15,6 @@ const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
-
-import { lastAimPos } from "./aimbot.js";
 
 let PIXI_Graphics;
 
