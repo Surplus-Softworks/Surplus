@@ -4,7 +4,7 @@ import { object } from "../utils/hook.js";
 
 let previous;
 
-function spinbot_ticker() {
+function spinbotTicker() {
   if (!gameManager.game.activePlayer || !gameManager.game.activePlayer.bodyContainer) return;
   if (!settings.spinbot) {
     if (!gameManager.game.spectating) {
@@ -19,7 +19,7 @@ function spinbot_ticker() {
 }
 
 export default function spinbot() {
-  gameManager.game.pixi._ticker.add(spinbot_ticker);
+  gameManager.game.pixi._ticker.add(spinbotTicker);
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
     get() {
