@@ -13,7 +13,7 @@ export default function initUI() {
         Object.assign(popup.style, {
             position: 'fixed',
             zIndex: '9999',
-            left: `350px`,
+            left: `2750px`,
             top: `250px`
         });
       

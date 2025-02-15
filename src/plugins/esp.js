@@ -92,8 +92,8 @@ function drawLasers(me, players, laserDrawer) {
     const atan =
       acPlayer === me && !lastAimPos
         ? Math.atan2(
-            gameManager.game.input.mousePos.y - innerHeight / 2,
-            gameManager.game.input.mousePos.x - innerWidth / 2
+            gameManager.game.input.mousePos._y - innerHeight / 2,
+            gameManager.game.input.mousePos._x - innerWidth / 2
           )
         : Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
     laserDrawer.beginFill(color, opacity);
