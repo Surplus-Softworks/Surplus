@@ -3,20 +3,23 @@
 import { settings } from '../loader.js';
 import { getTeam, findBullet, findWeap } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
-import * as PIXI from "pixi.js";
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
-const aimbotDot = (() => {
-    const circle = new PIXI.Graphics();
-    circle.beginFill(0xFF0000);
-    circle.drawCircle(0, 0, 15);
-    circle.endFill();
-    const container = new PIXI.Container();
-    container.addChild(circle);
-    container.visible = false;
-    return container;
-})();
+let PIXI_Graphics, PIXI_Container;
+
+function initGraphics() {
+  if (PIXI_Graphics && PIXI_Container) return;
+  PIXI_Container = g.game.pixi.stage.constructor;
+  for (const child of gameManager.pixi.stage.children) {
+    if (child.lineStyle) {
+      PIXI_Graphics = child.constructor;
+      break;
+    }
+  }
+}
+
+let aimbotDot;
 
 export function aimbotTicker() {
 
@@ -217,6 +220,17 @@ function calcAngle(playerPos, mePos) {
 }
 
 export default function aimbot() {
+    initGraphics();
+    aimbotDot = (() => {
+        const circle = new PIXI_Graphics();
+        circle.beginFill(0xFF0000);
+        circle.drawCircle(0, 0, 15);
+        circle.endFill();
+        const container = new PIXI_Container();
+        container.addChild(circle);
+        container.visible = false;
+        return container;
+    })();
     gameManager.game.pixi.stage.addChild(aimbotDot);
     gameManager.game.pixi._ticker.add(aimbotTicker);
 }
