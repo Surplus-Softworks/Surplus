@@ -6,7 +6,7 @@ let previous;
 
 function spinbot_ticker() {
   if (!gameManager.game.activePlayer || !gameManager.game.activePlayer.bodyContainer) return;
-  if (!settings.spinBot) {
+  if (!settings.spinbot) {
     if (!gameManager.game.spectating) {
       gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
         gameManager.game.input.mousePos.y - window.innerHeight / 2,
@@ -23,7 +23,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
     get() {
-        if (settings.spinBot) {
+        if (settings.spinbot) {
             return Math.random() * window.innerHeight;
         }
         return this._y;
@@ -35,7 +35,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'x', {
     get() {
-        if (settings.spinBot) {
+        if (settings.spinbot) {
             return Math.random() * window.innerWidth;
         }
         return this._x;
@@ -46,10 +46,10 @@ export default function spinbot() {
   });
 
   window.addEventListener("mousedown", () => {
-    previous = settings.spinBot;
-    settings.spinBot = false;
+    previous = settings.spinbot;
+    settings.spinbot = false;
   });
   window.addEventListener("mouseup", () => {
-    settings.spinBot = previous;
+    settings.spinbot = previous;
   });
 }

@@ -7,7 +7,7 @@ import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
-import spinbot from "./plugins/spinBot.js";
+import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
 import initUI from "./ui/initUI.js";
 
@@ -16,17 +16,23 @@ import { hook, reflect } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
 export const settings = {
-  aimbot: true,
-  spinBot: true,
-  emoteSpam: false,
+  aimbot: {
+    enabled: true,
+    targetKnocked: true,
+  },
+  spinbot: true,
+  autoFire: true,
   xray: true,
   esp: {
-    flashlight: true,
-    lines: true,
+    players: true,
     grenades: true,
   },
-  autoFire: true,
+  flashlights: {
+    own: true,
+    others: true,
+  },
   autoLoot: true,
+  emoteSpam: false,
 };
 
 function loadStaticPlugins() {
