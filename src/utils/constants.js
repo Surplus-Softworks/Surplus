@@ -2,43 +2,43 @@ import { hook, reflect, object } from "./hook.js";
 import { gameManager } from "./injector.js";
 
 export const inputCommands = {
-    Cancel: 6,
-    Count: 36,
-    CycleUIMode: 30,
-    EmoteMenu: 31,
-    EquipFragGrenade: 15,
-    EquipLastWeap: 19,
-    EquipMelee: 13,
-    EquipNextScope: 22,
-    EquipNextWeap: 17,
-    EquipOtherGun: 20,
-    EquipPrevScope: 21,
-    EquipPrevWeap: 18,
-    EquipPrimary: 11,
-    EquipSecondary: 12,
-    EquipSmokeGrenade: 16,
-    EquipThrowable: 14,
-    Fire: 4,
-    Fullscreen: 33,
-    HideUI: 34,
-    Interact: 7,
-    Loot: 10,
-    MoveDown: 3,
     MoveLeft: 0,
     MoveRight: 1,
     MoveUp: 2,
+    MoveDown: 3,
+    Fire: 4,
     Reload: 5,
+    Cancel: 6,
+    Interact: 7,
     Revive: 8,
-    StowWeapons: 27,
-    SwapWeapSlots: 28,
-    TeamPingMenu: 32,
-    TeamPingSingle: 35,
-    ToggleMap: 29,
     Use: 9,
+    Loot: 10,
+    EquipPrimary: 11,
+    EquipSecondary: 12,
+    EquipMelee: 13,
+    EquipThrowable: 14,
+    EquipFragGrenade: 15,
+    EquipSmokeGrenade: 16,
+    EquipNextWeap: 17,
+    EquipPrevWeap: 18,
+    EquipLastWeap: 19,
+    EquipOtherGun: 20,
+    EquipPrevScope: 21,
+    EquipNextScope: 22,
     UseBandage: 23,
     UseHealthKit: 24,
-    UsePainkiller: 26,
     UseSoda: 25,
+    UsePainkiller: 26,
+    StowWeapons: 27,
+    SwapWeapSlots: 28,
+    ToggleMap: 29,
+    CycleUIMode: 30,
+    EmoteMenu: 31,
+    TeamPingMenu: 32,
+    Fullscreen: 33,
+    HideUI: 34,
+    TeamPingSingle: 35,
+    Count: 36,
 };
 
 export let bullets, explosions, guns, throwable, objects;
@@ -60,7 +60,9 @@ hook(Object, "keys", {
             if (bullets != null && explosions != null && guns != null && throwable != null && objects != null) {
                 Object.keys = f;
             }
-        } catch { }
+        } catch {
+            
+         }
         return reflect.apply(f, th, args);
     }
 });
@@ -76,4 +78,9 @@ export function findWeap(player) {
 
 export function findBullet(weapon) {
     return weapon ? bullets[weapon.bulletType] : null;
+}
+
+export let PIXI = {
+    Graphics: undefined,
+    Container: undefined,
 }

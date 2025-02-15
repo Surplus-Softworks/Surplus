@@ -1,45 +1,37 @@
 
-import betterVision from "./plugins/better-vision.js";
-import infiniteZoom from "./plugins/infinite-zoom.js";
+import betterVision from "./plugins/betterVision.js";
+import infiniteZoom from "./plugins/infiniteZoom.js";
 import esp from "./plugins/esp.js";
-import autoLoot from "./plugins/auto-loot.js";
-import grenadeTimer from "./plugins/grenade-timer.js";
-import inputOverride from "./plugins/input-override.js";
-import autoFire from "./plugins/auto-fire.js";
+import autoLoot from "./plugins/autoLoot.js";
+import grenadeTimer from "./plugins/grenadeTimer.js";
+import inputOverride from "./plugins/inputOverride.js";
+import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import aimbot from "./plugins/aimbot.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
+import { PIXI } from "./utils/constants.js";
 
 export const settings = {
-  aimbotEnabled: true,
-  aimAtKnockedEnabled: true,
-  get aimAtKnockedStatus() {
-    return this.isAimBotEnabled && this.aimAtKnockedEnabled;
+  aimbot: true,
+  spinbot: false,
+  emoteSpam: false,
+  xray: true,
+  esp: {
+    flashlight: true,
+    lines: true,
+    grenades: true,
   },
-  meleeAttackEnabled: true,
-  get meleeStatus() {
-    return this.aimb
-  },
-  spinBotEnabled: false,
-  autoSwitchEnabled: true,
-  useOneGunEnabled: false,
-  focusedEnemy: null,
-  get focusedEnemyStatus() {
-    return this.aimbotEnabled && this.focusedEnemy;
-  },
-  xrayEnabled: true,
-  friends: [],
-  lastFrames: {},
-  enemyAimbot: null,
-  laserDrawerEnabled: true,
-  lineDrawerEnabled: true,
-  grenadeDrawerEnabled: true,
-  overlayEnabled: true,
   autoFire: false,
+  autoLoot: true,
 };
 
+function loadStaticPlugins() {
+  infiniteZoom();
+  autoLoot();
+  autoFire();
+}
 
 function loadPlugins() {
   //try {
@@ -48,22 +40,28 @@ function loadPlugins() {
   grenadeTimer();
   inputOverride();
   optimizer();
-  aimbot();
+  //aimbot();
   //} catch(e) { warn(e) }
 }
 
-function loadStaticPlugins() {
-  infiniteZoom();
-  autoLoot();
-  autoFire();
+function loadPIXI() {
+  PIXI.Container = gameManager.game.pixi.stage.constructor;
+  for (const child of gameManager.pixi.stage.children) {
+    if (child.lineStyle) {
+      PIXI.Graphics = child.constructor;
+      window.log(PIXI)
+      break;
+    }
+  }
 }
 
 function attach() {
   hook(gameManager.game, "init", {
     apply(f, th, args) {
-      const r = reflect.apply(f, th, args);
+      const result = reflect.apply(f, th, args);
       loadPlugins();
-      return r;
+      loadPIXI();
+      return result;
     }
   });
 }

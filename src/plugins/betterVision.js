@@ -3,7 +3,7 @@ import {
   getTeam,
 } from "../utils/constants.js";
 
-export function betterVisionTicker() {
+export function betterVision_ticker() {
   try {
     gameManager.game.renderer.layers[3].children.forEach(v => {
       if (
@@ -54,5 +54,5 @@ export function betterVisionTicker() {
 }
 
 export default function betterVision() {
-  gameManager.game.pixi._ticker.add(betterVisionTicker);
+  gameManager.game.pixi._ticker.add(betterVision_ticker);
 }

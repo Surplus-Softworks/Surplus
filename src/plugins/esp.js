@@ -8,6 +8,7 @@ import {
   objects,
   explosions,
   throwable,
+  PIXI,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
 
@@ -16,21 +17,9 @@ const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
-let PIXI_Graphics;
-
-function initGraphics() {
-  if (PIXI_Graphics) return;
-  for (const child of gameManager.pixi.stage.children) {
-    if (child.lineStyle) {
-      PIXI_Graphics = child.constructor;
-      break;
-    }
-  }
-}
-
 function createDrawer(container, key) {
   if (!container[key]) {
-    container[key] = new PIXI_Graphics();
+    container[key] = new PIXI.Graphics();
     container.addChild(container[key]);
   }
   return container[key];
@@ -46,11 +35,8 @@ function drawLines(me, players, lineDrawer) {
     const playerTeam = getTeam(player);
     const lineColor =
       playerTeam === myTeam
-        ? 0x3a88f4
-        : settings.friends.includes(player.nameText._text)
-        ? GREEN
-        : me.layer === player.layer &&
-          (settings.aimAtKnockedEnabled || !player.downed)
+        ? BLUE
+        : me.layer === player.layer && !player.downed
         ? RED
         : WHITE;
     lineDrawer.lineStyle(2, lineColor, 0.45);
@@ -137,29 +123,26 @@ function drawLasers(me, players, laserDrawer) {
     });
 }
 
-function espTicker() {
+function esp_ticker() {
   const pixi = gameManager.game.pixi;
   const me = gameManager.game.activePlayer;
   const players = gameManager.game.playerBarn.playerPool.pool;
   if (!pixi || !me || me.container == undefined) return;
-
-  initGraphics();
-
   try {
     const lineDrawer = createDrawer(me.container, "lineDrawer");
     lineDrawer.clear();
-    if (settings.lineDrawerEnabled) drawLines(me, players, lineDrawer);
+    if (settings.esp.lines) drawLines(me, players, lineDrawer);
 
     const grenadeDrawer = createDrawer(me.container, "grenadeDrawer");
     grenadeDrawer.clear();
-    if (settings.grenadeDrawerEnabled) drawGrenades(me, grenadeDrawer);
+    if (settings.esp.grenades) drawGrenades(me, grenadeDrawer);
 
     const laserDrawer = createDrawer(me.container, "laserDrawer");
     laserDrawer.clear();
-    if (settings.laserDrawerEnabled) drawLasers(me, players, laserDrawer);
+    if (settings.esp.flashlight) drawLasers(me, players, laserDrawer);
   } catch {}
 }
 
 export default function esp() {
-  gameManager.game.pixi._ticker.add(espTicker);
+  gameManager.game.pixi._ticker.add(esp_ticker);
 }

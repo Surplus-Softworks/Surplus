@@ -4,14 +4,6 @@ import * as g2 from 'react';
 import * as g3 from 'chalk';
 /////////////////////////////
 
-const a = [g1, g2, g3];
-a.forEach(v => {
-  const z = v => (v.length > 2 ? v : "banana");
-  if (z(typeof v) == "banana") {
-    alert("Holy guacemole!");
-  }
-});
-
 window.log = console.log;
 window.warn = console.warn;
 

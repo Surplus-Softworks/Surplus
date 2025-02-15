@@ -14,7 +14,8 @@ export default function infiniteZoom() {
       }
       object.defineProperty(gameManager.game.activePlayer.localData, "zoom", { configurable: true, get() { return zoom }, set() { } });
       event.stopImmediatePropagation();
-    } catch { }
+    } catch {
 
+    }
   }, false);
 }

@@ -23,7 +23,7 @@ let aimbotDot;
 
 export function aimbotTicker() {
 
-    if (!settings.aimbotEnabled) return;
+    if (!settings.aimbot) return;
 
     const players = gameManager.game.playerBarn.playerPool.pool;
     const me = gameManager.game.activePlayer;
@@ -109,8 +109,8 @@ export function aimbotTicker() {
 }
 
 export function aimBotToggle() {
-    settings.aimbotEnabled = !settings.aimbotEnabled;
-    if (settings.aimbotEnabled) return;
+    settings.aimbot = !settings.aimbot;
+    if (settings.aimbot) return;
 
     aimbotDot.visible = false;
     lastAimPos = null;
