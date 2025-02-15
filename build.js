@@ -33,6 +33,19 @@ async function copyExtension() {
   await execPromise('xcopy /E /I src\\extension prod\\extension\\')
 }
 
+const htmlPlugin = {
+  name: 'html-plugin',
+  setup(build) {
+    build.onLoad({ filter: /\.html$/ }, async (args) => {
+      const content = await fs.promises.readFile(args.path, 'utf8');
+      return {
+        contents: `export default html = ${JSON.stringify(content)};`,
+        loader: 'js',
+      };
+    });
+  },
+};
+
 async function bundleJS(release = false) {
   esbuild.build({
     entryPoints: ['./src/index.js'],
@@ -40,6 +53,7 @@ async function bundleJS(release = false) {
     outfile: 'prod/extension/main.js',
     minify: true,
     sourcemap: false,
+    plugins: [htmlPlugin],
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'

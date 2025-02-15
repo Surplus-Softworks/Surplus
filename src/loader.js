@@ -9,6 +9,7 @@ import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinBot from "./plugins/spinBot.js";
 import aimbot from "./plugins/aimbot.js";
+import initUI from "./ui.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -69,6 +70,7 @@ function attach() {
 }
 
 export function initialize() {
+  initUI();
   loadStaticPlugins()
   inject(attach);
 }

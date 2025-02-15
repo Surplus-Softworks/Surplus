@@ -1,6 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
-import { lastAimPos } from "./aimBot.js";
+import { lastAimPos } from "./aimbot.js";
 import {
   getTeam,
   findWeap,

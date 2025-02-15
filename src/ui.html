@@ -1,0 +1,40 @@
+<style>
+    .popup {
+        position: relative;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        width: 300px;
+        height: 200px;
+        overflow: hidden;
+    }
+    .header {
+        background: #f0f0f0;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ccc;
+        user-select: none;
+    }
+    .close-btn {
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-size: 16px;
+        padding: 0 5px;
+    }
+    .content {
+        padding: 15px;
+    }
+</style>
+<div class="popup">
+    <div class="header">
+        <span>Popup Title</span>
+        <button class="close-btn">×</button>
+    </div>
+    <div class="content">
+        Popup content goes here...
+    </div>
+</div>
