@@ -12,7 +12,9 @@ export function inject(oninject) {
                     window.gameManager = gameManager
                     oninject();
                 }
-            } catch { }
+            } catch {
+                
+             }
             return reflect.apply(f, th, args);
         }
     })

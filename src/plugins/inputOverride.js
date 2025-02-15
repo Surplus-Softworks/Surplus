@@ -8,7 +8,7 @@ export default function inputOverride() {
       if (!args[1].inputs) {
         return reflect.apply(f, th, args);
       }
-
+      window.log(args[1])
       args[1].shootStart = false;
       args[1].shootHold = false;
 
@@ -17,6 +17,13 @@ export default function inputOverride() {
         args[1].shootHold = true;
       }
       
+      if (settings.spinBot) {
+        args[1].toMouseDir = {
+          x: Math.random() * 2 - 1,
+          y: Math.random() * 2 - 1,
+        }
+      }
+
       return reflect.apply(f, th, args);
     }
   });

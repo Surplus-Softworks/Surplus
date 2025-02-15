@@ -2,6 +2,7 @@ import { gameManager } from "../utils/injector.js";
 import {
   getTeam,
 } from "../utils/constants.js";
+import { settings } from "../loader.js";
 
 export function betterVision_ticker() {
   try {
@@ -42,14 +43,6 @@ export function betterVision_ticker() {
       player.nameText.style.fontSize = 20;
       player.nameText.style.dropShadowBlur = 0.1;
     })
-    if (!gameManager.game.spectating) {
-      gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-        gameManager.game.input.mousePos.y - window.innerHeight / 2,
-        gameManager.game.input.mousePos.x - window.innerWidth / 2
-      );
-    } else {
-      gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(gameManager.game.activePlayer.dir.y, gameManager.game.activePlayer.dir.x);
-    }
   } catch { }
 }
 
