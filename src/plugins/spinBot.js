@@ -4,8 +4,10 @@ import { gameManager } from "../utils/injector.js";
 let previous;
 
 function spinBot_ticker() {
+  if (!gameManager.game.activePlayer || !gameManager.game.activePlayer.bodyContainer) return;
   if (settings.spinBot) {
-    gameManager.game.activePlayer.bodyContainer.rotation = Math.random(), Math.random()
+    rot = Math.random()
+    gameManager.game.activePlayer.bodyContainer.rotation = Math.random() * (Math.PI * 2) - Math.PI, Math.random() * (Math.PI * 2) - Math.PI
   } else {
     if (!gameManager.game.spectating) {
       gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(

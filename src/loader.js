@@ -29,7 +29,6 @@ export const settings = {
 };
 
 function loadStaticPlugins() {
-  spinBot();
   infiniteZoom();
   autoLoot();
   autoFire();
@@ -42,6 +41,7 @@ function loadPlugins() {
   grenadeTimer();
   inputOverride();
   optimizer();
+  spinBot();
   //aimbot();
   //} catch(e) { warn(e) }
 }
