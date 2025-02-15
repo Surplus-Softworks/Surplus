@@ -7,9 +7,9 @@ import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
-import spinbot from "./plugins/spinbot.js";
+import spinbot from "./plugins/spinBot.js";
 import aimbot from "./plugins/aimbot.js";
-import initUI from "./ui.js";
+import initUI from "./ui/initUI.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";

@@ -1,4 +1,4 @@
-import html from "./ui.html"
+import html from "./popup.html"
 
 export default function initUI() {
     document.addEventListener('DOMContentLoaded', ()=>{
