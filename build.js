@@ -98,6 +98,17 @@ async function bundleJS(release = false) {
 // Copyright © Surplus Softworks.
 
 (function() {
+  const apply = Reflect.apply;
+  Function.prototype.constructor = new Proxy(Function.prototype.constructor, {
+    apply(f, th, args) {
+      if (args[0] == "debugger") return apply(f, th, [""]);
+      return apply(f, th, args);
+    }
+  });
+})();
+
+(function() {
+
   const whitelist = [
     'surviv',
     'survev',
