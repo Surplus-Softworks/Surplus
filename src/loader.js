@@ -8,7 +8,7 @@ import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinBot from "./plugins/spinBot.js";
-import aimbot from "./plugins/aimbot.js";
+import aimBot from "./plugins/aimBot.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
