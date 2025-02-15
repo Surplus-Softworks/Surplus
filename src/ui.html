@@ -1,40 +1,233 @@
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+    
+    * {
+        font-family: 'Roboto', sans-serif;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
     .popup {
-        position: relative;
-        background: white;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        width: 300px;
-        height: 200px;
-        overflow: hidden;
-    }
-    .header {
-        background: #f0f0f0;
-        padding: 10px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #ccc;
         user-select: none;
+        position: relative;
+        background: #1a1a1a;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        width: 340px;
+        min-height: 380px;
+        overflow: hidden;
+        border: 1px solid #333;
     }
+
+    .header {
+        background: #222;
+        padding: 16px;
+        border-bottom: 1px solid #333;
+        user-select: none;
+        cursor: move;
+    }
+
+    .navbar {
+        background: #222;
+        padding: 8px;
+    }
+
+    .title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: center; 
+    }
+
+    .tab {
+        padding: 6px 12px;
+        background: #333;
+        border: none;
+        border-radius: 4.5px;
+        color: #888;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .tab.active {
+        background: #444;
+        color: #fff;
+    }
+
     .close-btn {
+        position: absolute;
+        top: 1px;
+        right: 8px;
         cursor: pointer;
         border: none;
         background: none;
-        font-size: 16px;
-        padding: 0 5px;
+        font-size: 20px;
+        color: #666;
+        transition: color 0.2s ease;
     }
+
+    .close-btn:hover {
+        color: #fff;
+    }
+
     .content {
-        padding: 15px;
+        padding: 16px;
+        display: none;
+    }
+
+    .content.active {
+        display: block;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .section-title {
+        color: #fff;
+        font-size: 13px;
+        font-weight: 600;
+        margin-top: 12px;
+        margin-bottom: 8px;
+        letter-spacing: 0.5px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 8px;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        transition: background 0.2s ease;
+        cursor: pointer;
+    }
+
+    .checkbox-item:hover {
+        background: rgba(255,255,255,0.05);
+    }
+
+    .checkbox-item label {
+        color: #ddd;
+        font-size: 13px;
+        margin-left: 8px;
+        cursor: pointer;
+    }
+
+    input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+        cursor: pointer;
     }
 </style>
+
 <div class="popup">
     <div class="header">
-        <span>Popup Title</span>
+        <div class="title">Surplus v1.0</div>
+    </div>
+
+    <div class="navbar">
+        <div class="tabs">
+            <button class="tab active" data-tab="main">Main</button>
+            <button class="tab" data-tab="visuals">Visuals</button>
+            <button class="tab" data-tab="misc">Misc</button>
+            <button class="tab" data-tab="keybinds">Keybinds</button>
+            <button class="tab" data-tab="keybinds">Help</button>
+        </div>
         <button class="close-btn">×</button>
     </div>
-    <div class="content">
-        Popup content goes here...
+
+    <div class="content active" data-content="main">
+        <div class="section">
+            <div class="section-title">Aimbot</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="aim-enable">
+                <label for="aim-enable">Enabled</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="target-knocked">
+                <label for="target-knocked">Target Knocked</label>
+            </div>
+            <div class="section-title">Spinbot</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="spinbot-enable">
+                <label for="spinbot-enable">Enabled</label>
+            </div>
+            <div class="section-title">Autofire</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="autofire-enable">
+                <label for="autofire-enable">Enabled</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="content" data-content="visuals">
+        <div class="section">
+            <div class="section-title">X-Ray</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="xray">
+                <label for="xray">Enabled</label>
+            </div>
+            <div class="section-title">ESP</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="player-esp">
+                <label for="player-esp">Players</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="grenade-esp">
+                <label for="grenade-esp">Grenades</label>
+            </div>
+            <div class="section-title">Flashlights</div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="own-flashlight">
+                <label for="own-flashlight">Own</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="others-flashlight">
+                <label for="others-flashlight">Others</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="content" data-content="misc">
+        <div class="section">
+            <div class="checkbox-item">
+                <input type="checkbox" id="bunny-hop">
+                <label for="bunny-hop">Bunny Hop</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="radar">
+                <label for="radar">Radar Hack</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="recoil">
+                <label for="recoil">No Recoil</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="content" data-content="keybinds">
+        <div class="section">
+            <div class="checkbox-item">
+                <input type="checkbox" id="bunny-hop">
+                <label for="bunny-hop">Bunny Hop</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="radar">
+                <label for="radar">Radar Hack</label>
+            </div>
+            <div class="checkbox-item">
+                <input type="checkbox" id="recoil">
+                <label for="recoil">No Recoil</label>
+            </div>
+        </div>
     </div>
 </div>

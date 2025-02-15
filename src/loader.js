@@ -7,7 +7,7 @@ import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
-import spinBot from "./plugins/spinBot.js";
+import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
 import initUI from "./ui.js";
 
@@ -42,7 +42,7 @@ function loadPlugins() {
   grenadeTimer();
   inputOverride();
   optimizer();
-  spinBot();
+  spinbot();
   //aimbot();
   //} catch(e) { warn(e) }
 }
