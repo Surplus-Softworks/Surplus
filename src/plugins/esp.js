@@ -131,7 +131,7 @@ function esp_ticker() {
   try {
     const lineDrawer = createDrawer(me.container, "lineDrawer");
     lineDrawer.clear();
-    if (settings.esp.lines) drawLines(me, players, lineDrawer);
+    if (settings.esp.players) drawLines(me, players, lineDrawer);
 
     const grenadeDrawer = createDrawer(me.container, "grenadeDrawer");
     grenadeDrawer.clear();
