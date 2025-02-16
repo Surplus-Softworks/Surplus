@@ -4,11 +4,14 @@ export let menuElement;
 
 export default function initUI() {
     document.addEventListener('DOMContentLoaded', ()=>{
+        var link = document.createElement('link');
+        link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
         const popup = document.createElement('div');
         const shadow = popup.attachShadow({ mode: 'closed' });
         menuElement = shadow;
-        window.log(menuElement)
-      
         shadow.innerHTML = html
         document.body.appendChild(popup);
       
@@ -18,7 +21,7 @@ export default function initUI() {
             left: `225px`,
             top: `250px`
         });
-      
+        
         const header = shadow.querySelector('.header');
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');

@@ -1,6 +1,6 @@
 <style>
     * {
-        font-family: sans-serif;
+        font-family: 'GothamPro', sans-serif;
         box-sizing: border-box;
         margin: 0;
         padding: 0;
@@ -53,7 +53,7 @@
 
     .tabs {
         display: flex;
-        gap: 8px;
+        gap: 4px;
         align-items: center;
         justify-content: center; 
         transition: all 0.3s ease;
@@ -112,17 +112,36 @@
         color: #fff;
         font-size: 13px;
         font-weight: 600;
-        margin: 0 0 8px 0;
+        margin: 0 0 12px 0; 
         letter-spacing: 0.5px;
-        border-radius: 4px;
-        display: inline-block;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .section-title .checkbox-item {
+        border: none;
+        background: none;
+        padding: 4px 6px;
+        margin: 0;
+    }
+
+    .section-title .checkbox-item:hover {
+        background: rgba(255,255,255,0.05);
+        border-radius: 6px;
+    }
+
+    .section-title label {
+        font-size: 12px;
+        color: #ddd !important;
     }
 
     .subsection-title {
         color: #bbb;
         font-size: 12px;
         font-weight: 500;
-        margin: 12px 0 2px 15px;
+        margin: 14px 0 4px 15px; 
         position: relative;
     }
 
@@ -184,39 +203,48 @@
     }
 
     input[type="checkbox"] {
-        appearance: none;
-        width: 15px;
-        height: 15px;
-        border: 2px solid #888;
-        border-radius: 4px;
-        background: #222;
-        display: inline-block;
-        position: relative;
-        transition: all 0.2s ease;
-    }
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #888;
+    border-radius: 4px;
+    background: #222;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    cursor: pointer;
+}
 
-    input[type="checkbox"]:checked {
-        background: #66db6a;
-        border-color: #66db6a;
-    }
+input[type="checkbox"]:checked {
+    background: #66db6a;
+    border-color: #66db6a;
+    animation: checkboxBounce 0.6s ease;
+    box-shadow: 0 0 10px rgba(102, 219, 106, 0.12);
+}
 
-    input[type="checkbox"]::before {
-        content: "";
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0px;
-        height: 0px;
-        background: transparent;
-        transform: translate(-50%, -50%) scale(0);
-        transition: all 0.2s ease;
-    }
+input[type="checkbox"]::after {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(0) rotate(-45deg);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 900;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
 
-    input[type="checkbox"]:checked::before {
-        background: #54bd57;
-        border-radius: 2px;
-        transform: translate(-50%, -50%) scale(1);
-    }
+input[type="checkbox"]:checked::after {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 2.2);
+}
+
+@keyframes checkboxBounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.2); }
+    60% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+}
 </style>
 
 <div class="popup">
@@ -237,28 +265,30 @@
 
     <div class="content active" data-content="main">
         <div class="section">
-            <div class="section-title">Aimbot</div>
-            <div class="group">
+            <div class="section-title">
+                Aimbot
                 <div class="checkbox-item">
                     <input type="checkbox" id="aim-enable">
                     <label for="aim-enable">Enabled</label>
                 </div>
+            </div>
+            <div class="group">
                 <div class="checkbox-item">
                     <input type="checkbox" id="target-knocked">
                     <label for="target-knocked">Target Knocked</label>
                 </div>
             </div>
             
-            <div class="section-title">Spinbot</div>
-            <div class="group">
+            <div class="section-title">
+                Spinbot
                 <div class="checkbox-item">
                     <input type="checkbox" id="spinbot-enable">
                     <label for="spinbot-enable">Enabled</label>
                 </div>
             </div>
             
-            <div class="section-title">Autofire</div>
-            <div class="group">
+            <div class="section-title">
+                Autofire
                 <div class="checkbox-item">
                     <input type="checkbox" id="autofire-enable">
                     <label for="autofire-enable">Enabled</label>
@@ -269,15 +299,21 @@
 
     <div class="content" data-content="visuals">
         <div class="section">
-            <div class="section-title">X-Ray</div>
-            <div class="group">
+            <div class="section-title">
+                X-Ray
                 <div class="checkbox-item">
                     <input type="checkbox" id="xray">
                     <label for="xray">Enabled</label>
                 </div>
             </div>
 
-            <div class="section-title">ESP</div>
+            <div class="section-title">
+                ESP
+                <div class="checkbox-item">
+                    <input type="checkbox" id="esp-enable">
+                    <label for="esp-enable">Enabled</label>
+                </div>
+            </div>
             <div class="group">
                 <div class="checkbox-item">
                     <input type="checkbox" id="player-esp">
