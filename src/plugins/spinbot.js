@@ -2,11 +2,11 @@ import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
 
-let previous;
+export let spinbotEnabled;
 
 function spinbotTicker() {
   if (!gameManager.game.activePlayer || !gameManager.game.activePlayer.bodyContainer) return;
-  if (!settings.spinbot) {
+  if (!spinbotEnabled) {
     if (!gameManager.game.spectating) {
       gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
         gameManager.game.input.mousePos.y - window.innerHeight / 2,
@@ -19,11 +19,12 @@ function spinbotTicker() {
 }
 
 export default function spinbot() {
+  spinbotEnabled = settings.spinbot
   gameManager.game.pixi._ticker.add(spinbotTicker);
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
     get() {
-        if (settings.spinbot && !(gameManager.game.activePlayer.throwableState === "cook")) {
+        if (spinbotEnabled && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerHeight;
         }
         return this._y;
@@ -35,7 +36,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'x', {
     get() {
-        if (settings.spinbot && !(gameManager.game.activePlayer.throwableState === "cook")) {
+        if (spinbotEnabled && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerWidth;
         }
         return this._x;
@@ -46,10 +47,9 @@ export default function spinbot() {
   });
 
   window.addEventListener("mousedown", () => {
-    previous = settings.spinbot;
-    settings.spinbot = false;
+    spinbotEnabled = false;
   });
   window.addEventListener("mouseup", () => {
-    settings.spinbot = previous;
+    spinbotEnabled = settings.spinbot;
   });
 }

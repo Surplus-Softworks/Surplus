@@ -1,6 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
-import { settings } from "../loader.js";
+import { autoFireEnabled } from "./autoFire.js";
 
 export default function inputOverride() {
   hook(gameManager.game, "sendMessage", {
@@ -12,7 +12,7 @@ export default function inputOverride() {
       args[1].shootStart = false;
       args[1].shootHold = false;
 
-      if (settings.autoFire) {
+      if (autoFireEnabled) {
         args[1].shootStart = true;
         args[1].shootHold = true;
       }
