@@ -18,6 +18,7 @@
         min-height: 380px;
         overflow: hidden;
         border: 1px solid #333;
+        transition: all 0.3s ease-out;
     }
 
     .header {
@@ -50,7 +51,7 @@
         gap: 8px;
         align-items: center;
         justify-content: center; 
-        transition: all 0.1s ease;
+        transition: all 0.3s ease;
     }
 
     .tab {
@@ -62,12 +63,13 @@
         font-size: 12px;
         font-weight: 500;
         cursor: pointer;
-        transition: all 0.2s ease;
+        transition: all 0.2s ease, transform 0.1s ease;
     }
 
     .tab.active {
         background: #444;
         color: #fff;
+        transform: translateY(-1px);
     }
 
     .close-btn {
@@ -137,11 +139,12 @@
         padding: 10px;
         margin-bottom: 12px;
         border: 1px solid rgba(255,255,255,0.05);
+        transition: all 0.2s ease, transform 0.2s ease;
     }
 
     .group:hover {
         background: rgba(255,255,255,0.04);
-        transition: all 0.2s ease;
+        transform: translateX(1.5px);
     }
 
     .subgroup {
