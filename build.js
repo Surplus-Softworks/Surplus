@@ -64,6 +64,7 @@ async function bundleJS(release = false) {
       const result = await obfuscate(code, {
         target: "browser",
         preset: "high",
+        pack: true,
 
         deadCode: 1, //
         dispatcher: true,

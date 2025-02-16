@@ -1,9 +1,13 @@
-import html from "./popup.html"
+import html from "./menu.html"
+
+export let menuElement;
 
 export default function initUI() {
     document.addEventListener('DOMContentLoaded', ()=>{
         const popup = document.createElement('div');
         const shadow = popup.attachShadow({ mode: 'closed' });
+        menuElement = shadow;
+        window.log(menuElement)
       
         shadow.innerHTML = html
         document.body.appendChild(popup);

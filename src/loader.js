@@ -14,16 +14,22 @@ import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
-import initUI from "./ui/init.js";
+import initUI from "./ui/worker.js";
 
 export const settings = {
   aimbot: {
     enabled: true,
     targetKnocked: true,
   },
-  spinbot: true,
-  autoFire: true,
-  xray: true,
+  spinbot: {
+    enabled: true,
+  },
+  autoFire: {
+    enabled: true,
+  },
+  xray: {
+    enabled: true,
+  },
   esp: {
     players: true,
     grenades: true,
@@ -32,8 +38,12 @@ export const settings = {
       others: true,
     },
   },
-  autoLoot: true,
-  emoteSpam: false,
+  autoLoot: {
+    enabled: true,
+  },
+  trolling: {
+    emoteSpam: false,
+  }
 };
 
 function loadStaticPlugins() {
@@ -44,6 +54,8 @@ function loadStaticPlugins() {
 
 function loadPlugins() {
   //try {
+  loadPIXI();
+
   esp();
   betterVision();
   grenadeTimer();
@@ -59,7 +71,6 @@ function loadPIXI() {
   for (const child of gameManager.pixi.stage.children) {
     if (child.lineStyle) {
       PIXI.Graphics = child.constructor;
-      window.log(PIXI)
       break;
     }
   }
@@ -70,7 +81,6 @@ function attach() {
     apply(f, th, args) {
       const result = reflect.apply(f, th, args);
       loadPlugins();
-      loadPIXI();
       return result;
     }
   });

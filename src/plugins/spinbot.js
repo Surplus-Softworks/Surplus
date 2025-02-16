@@ -19,8 +19,8 @@ function spinbotTicker() {
 }
 
 export default function spinbot() {
-  spinbotEnabled = settings.spinbot; // copied primitive
-  
+  spinbotEnabled = settings.spinbot.enabled; // copied primitive
+
   gameManager.game.pixi._ticker.add(spinbotTicker);
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
@@ -51,6 +51,6 @@ export default function spinbot() {
     spinbotEnabled = false;
   });
   window.addEventListener("mouseup", () => {
-    spinbotEnabled = settings.spinbot;
+    spinbotEnabled = settings.spinbot.enabled;
   });
 }
