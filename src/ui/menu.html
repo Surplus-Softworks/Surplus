@@ -1,12 +1,11 @@
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
-    
     * {
-        font-family: 'Roboto', sans-serif;
+        font-family: sans-serif;
         box-sizing: border-box;
         margin: 0;
         padding: 0;
     }
+
 
     .popup {
         user-select: none;
@@ -31,6 +30,12 @@
 
     .header:hover {
         background: #262626;
+        border-bottom: 1px solid #444;
+        transition: all 0.2s ease;
+    }
+
+    .header:active {
+        background: rgb(45, 45, 45);
         border-bottom: 1px solid #444;
         transition: all 0.2s ease;
     }
@@ -109,8 +114,6 @@
         font-weight: 600;
         margin: 0 0 8px 0;
         letter-spacing: 0.5px;
-        padding: 6px 10px;
-        background: rgba(255,255,255,0.05);
         border-radius: 4px;
         display: inline-block;
     }
@@ -119,7 +122,7 @@
         color: #bbb;
         font-size: 12px;
         font-weight: 500;
-        margin: 12px 0 8px 15px;
+        margin: 12px 0 2px 15px;
         position: relative;
     }
 
@@ -134,10 +137,13 @@
     }
 
     .group {
+        display: flex;
+        flex-direction: column;
         background: rgba(255,255,255,0.03);
         border-radius: 8px;
         padding: 10px;
         margin-bottom: 12px;
+        gap: 6px;
         border: 1px solid rgba(255,255,255,0.05);
         transition: all 0.2s ease, transform 0.2s ease;
     }
@@ -154,13 +160,14 @@
     }
 
     .checkbox-item {
-        display: flex;
+        border: 1px solid #2c2c2c;
+        display: inline-flex;
         align-items: center;
         padding: 8px;
         border-radius: 6px;
-        margin-bottom: 6px;
         transition: background 0.2s ease;
         cursor: pointer;
+        width: fit-content;
     }
 
     .checkbox-item:hover {
@@ -177,9 +184,38 @@
     }
 
     input[type="checkbox"] {
-        width: 14px;
-        height: 14px;
-        cursor: pointer;
+        appearance: none;
+        width: 15px;
+        height: 15px;
+        border: 2px solid #888;
+        border-radius: 4px;
+        background: #222;
+        display: inline-block;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+
+    input[type="checkbox"]:checked {
+        background: #4CAF50;
+        border-color: #4CAF50;
+    }
+
+    input[type="checkbox"]::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 7px;
+        height: 7px;
+        background: transparent;
+        transform: translate(-50%, -50%) scale(0);
+        transition: all 0.2s ease;
+    }
+
+    input[type="checkbox"]:checked::before {
+        background: white;
+        border-radius: 2px;
+        transform: translate(-50%, -50%) scale(1);
     }
 </style>
 
@@ -201,8 +237,8 @@
 
     <div class="content active" data-content="main">
         <div class="section">
+            <div class="section-title">Aimbot</div>
             <div class="group">
-                <div class="section-title">Aimbot</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="aim-enable">
                     <label for="aim-enable">Enabled</label>
@@ -213,16 +249,16 @@
                 </div>
             </div>
             
+            <div class="section-title">Spinbot</div>
             <div class="group">
-                <div class="section-title">Spinbot</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="spinbot-enable">
                     <label for="spinbot-enable">Enabled</label>
                 </div>
             </div>
             
+            <div class="section-title">Autofire</div>
             <div class="group">
-                <div class="section-title">Autofire</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="autofire-enable">
                     <label for="autofire-enable">Enabled</label>
@@ -233,16 +269,16 @@
 
     <div class="content" data-content="visuals">
         <div class="section">
+            <div class="section-title">X-Ray</div>
             <div class="group">
-                <div class="section-title">X-Ray</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="xray">
                     <label for="xray">Enabled</label>
                 </div>
             </div>
 
+            <div class="section-title">ESP</div>
             <div class="group">
-                <div class="section-title">ESP</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="player-esp">
                     <label for="player-esp">Players</label>
@@ -269,8 +305,8 @@
 
     <div class="content" data-content="misc">
         <div class="section">
+            <div class="section-title">Trolling</div>
             <div class="group">
-                <div class="section-title">Trolling</div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="emote-spam">
                     <label for="emote-spam">Emote Spam</label>
