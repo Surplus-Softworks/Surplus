@@ -91,6 +91,7 @@
 
     .close-btn:hover {
         color: #fff;
+        animation: woah 0.5s linear infinite;
     }
 
     .content {
@@ -255,6 +256,12 @@
         33% { transform: scale(1.1); }
         66% { transform: scale(0.95); }
         100% { transform: scale(1); }
+    }
+
+    @keyframes woah {
+        0% { rotate: 0deg; }
+        50% { rotate: 180deg; }
+        100% { rotate: 360deg; }
     }
 
 </style>
