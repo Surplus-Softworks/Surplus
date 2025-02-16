@@ -108,7 +108,7 @@ function drawLasers(me, players, laserDrawer) {
     laserDrawer.lineTo(center.x, center.y);
     laserDrawer.endFill();
   }
-  if (settings.flashlights.own) laserPointer(me, curBullet, curWeapon);
+  if (settings.esp.flashlights.own) laserPointer(me, curBullet, curWeapon);
   players
     .filter(
       (player) =>
@@ -119,7 +119,7 @@ function drawLasers(me, players, laserDrawer) {
         getTeam(player) !== getTeam(me)
     )
     .forEach((enemy) => {
-      if (settings.flashlights.others) laserPointer(enemy, findBullet(findWeap(enemy)), findWeap(enemy), 0, 0.05);
+      if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeap(enemy)), findWeap(enemy), 0, 0.05);
     });
 }
 
@@ -139,7 +139,7 @@ function esp_ticker() {
 
     const laserDrawer = createDrawer(me.container, "laserDrawer");
     laserDrawer.clear();
-    if (settings.flashlights.others || settings.flashlights.own) drawLasers(me, players, laserDrawer);
+    if (settings.esp.flashlights.others || settings.esp.flashlights.own) drawLasers(me, players, laserDrawer);
   } catch {}
 }
 

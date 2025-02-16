@@ -17,8 +17,6 @@ export default function inputOverride() {
         args[1].shootHold = true;
       }
 
-      window.log(args[1].toMouseDir)
-
       return reflect.apply(f, th, args);
     }
   });

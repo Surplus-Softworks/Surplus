@@ -50,6 +50,7 @@
         gap: 8px;
         align-items: center;
         justify-content: center; 
+        transition: all 0.1s ease;
     }
 
     .tab {
@@ -57,7 +58,7 @@
         background: #333;
         border: none;
         border-radius: 4.5px;
-        color: #888;
+        color: #bababa;
         font-size: 12px;
         font-weight: 500;
         cursor: pointer;
@@ -86,7 +87,9 @@
     }
 
     .content {
-        padding: 16px;
+        padding-top: 16px;
+        padding-left: 16px;
+        padding-right: 16px;
         display: none;
     }
 
@@ -102,9 +105,49 @@
         color: #fff;
         font-size: 13px;
         font-weight: 600;
-        margin-top: 12px;
-        margin-bottom: 8px;
+        margin: 0 0 8px 0;
         letter-spacing: 0.5px;
+        padding: 6px 10px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 4px;
+        display: inline-block;
+    }
+
+    .subsection-title {
+        color: #bbb;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 12px 0 8px 15px;
+        position: relative;
+    }
+
+    .subsection-title::before {
+        content: "";
+        position: absolute;
+        left: -10px;
+        top: 50%;
+        height: 1px;
+        width: 6px;
+        background: #666;
+    }
+
+    .group {
+        background: rgba(255,255,255,0.03);
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .group:hover {
+        background: rgba(255,255,255,0.04);
+        transition: all 0.2s ease;
+    }
+
+    .subgroup {
+        margin-left: 15px;
+        border-left: 2px solid rgba(255,255,255,0.1);
+        padding-left: 10px;
     }
 
     .checkbox-item {
@@ -127,6 +170,7 @@
         font-size: 13px;
         margin-left: 8px;
         cursor: pointer;
+        pointer-events: none;
     }
 
     input[type="checkbox"] {
@@ -154,61 +198,80 @@
 
     <div class="content active" data-content="main">
         <div class="section">
-            <div class="section-title">Aimbot</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="aim-enable">
-                <label for="aim-enable">Enabled</label>
+            <div class="group">
+                <div class="section-title">Aimbot</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="aim-enable">
+                    <label for="aim-enable">Enabled</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="target-knocked">
+                    <label for="target-knocked">Target Knocked</label>
+                </div>
             </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="target-knocked">
-                <label for="target-knocked">Target Knocked</label>
+            
+            <div class="group">
+                <div class="section-title">Spinbot</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="spinbot-enable">
+                    <label for="spinbot-enable">Enabled</label>
+                </div>
             </div>
-            <div class="section-title">Spinbot</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="spinbot-enable">
-                <label for="spinbot-enable">Enabled</label>
-            </div>
-            <div class="section-title">Autofire</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="autofire-enable">
-                <label for="autofire-enable">Enabled</label>
+            
+            <div class="group">
+                <div class="section-title">Autofire</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="autofire-enable">
+                    <label for="autofire-enable">Enabled</label>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="content" data-content="visuals">
         <div class="section">
-            <div class="section-title">X-Ray</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="xray">
-                <label for="xray">Enabled</label>
+            <div class="group">
+                <div class="section-title">X-Ray</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="xray">
+                    <label for="xray">Enabled</label>
+                </div>
             </div>
-            <div class="section-title">ESP</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="player-esp">
-                <label for="player-esp">Players</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="grenade-esp">
-                <label for="grenade-esp">Grenades</label>
-            </div>
-            <div class="section-title">Flashlights</div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="own-flashlight">
-                <label for="own-flashlight">Own</label>
-            </div>
-            <div class="checkbox-item">
-                <input type="checkbox" id="others-flashlight">
-                <label for="others-flashlight">Others</label>
+
+            <div class="group">
+                <div class="section-title">ESP</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="player-esp">
+                    <label for="player-esp">Players</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="grenade-esp">
+                    <label for="grenade-esp">Grenades</label>
+                </div>
+                
+                <div class="subsection-title">Flashlights</div>
+                <div class="subgroup">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="own-flashlight">
+                        <label for="own-flashlight">Own</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="others-flashlight">
+                        <label for="others-flashlight">Others</label>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <div class="content" data-content="misc">
         <div class="section">
-            <div class="checkbox-item">
-                <input type="checkbox" id="emote-spam">
-                <label for="emote-spam">Emote Spam</label>
+            <div class="group">
+                <div class="section-title">Trolling</div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="emote-spam">
+                    <label for="emote-spam">Emote Spam</label>
+                </div>
             </div>
         </div>
     </div>

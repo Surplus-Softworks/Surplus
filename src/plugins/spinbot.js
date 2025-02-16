@@ -23,7 +23,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
     get() {
-        if (settings.spinbot) {
+        if (settings.spinbot && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerHeight;
         }
         return this._y;
@@ -35,7 +35,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'x', {
     get() {
-        if (settings.spinbot) {
+        if (settings.spinbot && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerWidth;
         }
         return this._x;

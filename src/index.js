@@ -14,11 +14,4 @@ window.warn = console.warn;
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 
-hook(Function.prototype, "constructor", {
-  apply(f, th, args) {
-    if (args[0] == "debugger") return reflect.apply(f, th, [""]);
-    return reflect.apply(f, th, args);
-  }
-});
-
 initialize();

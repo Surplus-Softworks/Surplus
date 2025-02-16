@@ -9,11 +9,12 @@ import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
-import initUI from "./ui/initUI.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
+
+import initUI from "./ui/init.js";
 
 export const settings = {
   aimbot: {
@@ -26,10 +27,10 @@ export const settings = {
   esp: {
     players: true,
     grenades: true,
-  },
-  flashlights: {
-    own: true,
-    others: true,
+    flashlights: {
+      own: true,
+      others: true,
+    },
   },
   autoLoot: true,
   emoteSpam: false,

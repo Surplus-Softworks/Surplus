@@ -8,12 +8,10 @@ export default function initUI() {
         shadow.innerHTML = html
         document.body.appendChild(popup);
       
-        const rect = popup.getBoundingClientRect();
-        
         Object.assign(popup.style, {
             position: 'fixed',
             zIndex: '9999',
-            left: `275px`,
+            left: `225px`,
             top: `250px`
         });
       
