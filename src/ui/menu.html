@@ -86,11 +86,14 @@
         background: none;
         font-size: 20px;
         color: #666;
-        transition: color 0.2s ease;
+        transition: all 0.2s ease;
     }
 
     .close-btn:hover {
         color: #fff;
+        rotate: 45deg;
+        scale: 1.1;
+        transition: all 0.2s ease;
     }
 
     .content {
@@ -255,12 +258,6 @@
         33% { transform: scale(1.1); }
         66% { transform: scale(0.95); }
         100% { transform: scale(1); }
-    }
-
-    @keyframes woah {
-        0% { rotate: 0deg; }
-        50% { rotate: 180deg; }
-        100% { rotate: 360deg; }
     }
 
 </style>
