@@ -19,7 +19,8 @@ function spinbotTicker() {
 }
 
 export default function spinbot() {
-  spinbotEnabled = settings.spinbot
+  spinbotEnabled = settings.spinbot; // copied primitive
+  
   gameManager.game.pixi._ticker.add(spinbotTicker);
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {

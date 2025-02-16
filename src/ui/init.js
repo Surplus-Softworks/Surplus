@@ -19,6 +19,12 @@ export default function initUI() {
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');
       
+        window.addEventListener("keydown", (event) => {
+            if (event.key === "Shift" && event.code === "ShiftRight") {
+                shadow.host.style.display = shadow.host.style.display === "none" ? "" : "none";
+            }
+        });              
+
         closeBtn.addEventListener('click', () => {
           shadow.host.style.display = 'none';
         });

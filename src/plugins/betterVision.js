@@ -6,23 +6,26 @@ import { settings } from "../loader.js";
 
 export function betterVision_ticker() {
   try {
-    gameManager.game.renderer.layers[3].children.forEach(v => {
-      if (
-        v._texture?.textureCacheIds != null &&
-        v._texture.textureCacheIds.some(texture => texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05") || texture.includes("map-snow-"))
-      ) {
-        v.visible = false
-      }
-    })
-    gameManager.game.smokeBarn.particles.forEach(v => { v.pos = { x: 1000000, y: 100000 } })
-    gameManager.game.map.obstaclePool.pool.forEach(obstacle => {
-      if (['tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = 0.55;
-      };
-      if (['bush'].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = 0;
-      }
-    });
+    if (settings.xray) {
+      gameManager.game.renderer.layers[3].children.forEach(v => {
+        if (
+          v._texture?.textureCacheIds != null &&
+          v._texture.textureCacheIds.some(texture => texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05") || texture.includes("map-snow-"))
+        ) {
+          v.visible = false
+        }
+      })
+      gameManager.game.smokeBarn.particles.forEach(v => { v.pos = { x: 1000000, y: 100000 } })
+      gameManager.game.map.obstaclePool.pool.forEach(obstacle => {
+        if (['tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) {
+          obstacle.sprite.alpha = 0.55;
+        };
+        if (['bush'].some(substring => obstacle.type.includes(substring))) {
+          obstacle.sprite.alpha = 0;
+        }
+      });
+    }
+    
     gameManager.game.playerBarn.playerPool.pool.forEach(player => {
       player.nameText.text = player.netData.activeWeapon === "fists"
         ? player.nameText.text.split('\n')[0]
