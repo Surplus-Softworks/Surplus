@@ -235,113 +235,115 @@
 
 </style>
 
-<div class="popup">
-    <div class="header">
-        <div class="title">Surplus v1.0</div>
-    </div>
-
-    <div class="navbar">
-        <div class="tabs">
-            <button class="tab active" data-tab="main">Main</button>
-            <button class="tab" data-tab="visuals">Visuals</button>
-            <button class="tab" data-tab="misc">Misc</button>
-            <button class="tab" data-tab="keybinds">Keybinds</button>
-            <button class="tab" data-tab="keybinds">Help</button>
+<div id="ui">
+    <div class="popup">
+        <div class="header">
+            <div class="title">Surplus v1.0</div>
         </div>
-        <button class="close-btn">×</button>
-    </div>
-
-    <div class="content active" data-content="main">
-        <div class="section">
-            <div class="section-title">
-                Aimbot
-                <div class="checkbox-item">
-                    <input type="checkbox" id="aim-enable">
-                    <label for="aim-enable">Enabled</label>
-                </div>
+    
+        <div class="navbar">
+            <div class="tabs">
+                <button class="tab active" data-tab="main">Main</button>
+                <button class="tab" data-tab="visuals">Visuals</button>
+                <button class="tab" data-tab="misc">Misc</button>
+                <button class="tab" data-tab="keybinds">Keybinds</button>
+                <button class="tab" data-tab="keybinds">Help</button>
             </div>
-            <div class="group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="target-knocked">
-                    <label for="target-knocked">Target Knocked</label>
-                </div>
-            </div>
-            
-            <div class="section-title">
-                Spinbot
-                <div class="checkbox-item">
-                    <input type="checkbox" id="spinbot-enable">
-                    <label for="spinbot-enable">Enabled</label>
-                </div>
-            </div>
-            
-            <div class="section-title">
-                Autofire
-                <div class="checkbox-item">
-                    <input type="checkbox" id="autofire-enable">
-                    <label for="autofire-enable">Enabled</label>
-                </div>
-            </div>
+            <button class="close-btn">×</button>
         </div>
-    </div>
-
-    <div class="content" data-content="visuals">
-        <div class="section">
-            <div class="section-title">
-                X-Ray
-                <div class="checkbox-item">
-                    <input type="checkbox" id="xray">
-                    <label for="xray">Enabled</label>
+    
+        <div class="content active" data-content="main">
+            <div class="section">
+                <div class="section-title">
+                    Aimbot
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="aim-enable">
+                        <label for="aim-enable">Enabled</label>
+                    </div>
                 </div>
-            </div>
-
-            <div class="section-title">
-                ESP
-                <div class="checkbox-item">
-                    <input type="checkbox" id="esp-enable">
-                    <label for="esp-enable">Enabled</label>
-                </div>
-            </div>
-            <div class="group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="player-esp">
-                    <label for="player-esp">Players</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="grenade-esp">
-                    <label for="grenade-esp">Grenades</label>
+                <div class="group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="target-knocked">
+                        <label for="target-knocked">Target Knocked</label>
+                    </div>
                 </div>
                 
-                <div class="subsection-title">Flashlights</div>
-                <div class="subgroup">
+                <div class="section-title">
+                    Spinbot
                     <div class="checkbox-item">
-                        <input type="checkbox" id="own-flashlight">
-                        <label for="own-flashlight">Own</label>
+                        <input type="checkbox" id="spinbot-enable">
+                        <label for="spinbot-enable">Enabled</label>
                     </div>
+                </div>
+                
+                <div class="section-title">
+                    Autofire
                     <div class="checkbox-item">
-                        <input type="checkbox" id="others-flashlight">
-                        <label for="others-flashlight">Others</label>
+                        <input type="checkbox" id="autofire-enable">
+                        <label for="autofire-enable">Enabled</label>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="content" data-content="misc">
-        <div class="section">
-            <div class="section-title">Trolling</div>
-            <div class="group">
-                <div class="checkbox-item">
-                    <input type="checkbox" id="emote-spam">
-                    <label for="emote-spam">Emote Spam</label>
+    
+        <div class="content" data-content="visuals">
+            <div class="section">
+                <div class="section-title">
+                    X-Ray
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="xray">
+                        <label for="xray">Enabled</label>
+                    </div>
+                </div>
+    
+                <div class="section-title">
+                    ESP
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="esp-enable">
+                        <label for="esp-enable">Enabled</label>
+                    </div>
+                </div>
+                <div class="group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="player-esp">
+                        <label for="player-esp">Players</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="grenade-esp">
+                        <label for="grenade-esp">Grenades</label>
+                    </div>
+                    
+                    <div class="subsection-title">Flashlights</div>
+                    <div class="subgroup">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="own-flashlight">
+                            <label for="own-flashlight">Own</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="others-flashlight">
+                            <label for="others-flashlight">Others</label>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="content" data-content="keybinds">
-        <div class="section">
-            <p style="color:gray">Nothing here</p>
+    
+        <div class="content" data-content="misc">
+            <div class="section">
+                <div class="section-title">Trolling</div>
+                <div class="group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="emote-spam">
+                        <label for="emote-spam">Emote Spam</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="content" data-content="keybinds">
+            <div class="section">
+                <p style="color:gray">Nothing here</p>
+            </div>
         </div>
     </div>
 </div>
