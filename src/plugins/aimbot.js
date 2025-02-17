@@ -64,7 +64,7 @@ export function aimbotTicker() {
 
                 const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player.pos.x, y: player.pos.y });
                 // const distanceToEnemyFromMouse = Math.hypot(screenPlayerPos.x - unsafeWindow.game.input.mousePos.x, screenPlayerPos.y - unsafeWindow.game.input.mousePos.x);
-                const distanceToEnemyFromMouse = (screenPlayerPos.x - gameManager.game.input.mousePos.x) ** 2 + (screenPlayerPos.y - gameManager.game.input.mousePos.y) ** 2;
+                const distanceToEnemyFromMouse = (screenPlayerPos.x - gameManager.game.input.mousePos._x) ** 2 + (screenPlayerPos.y - gameManager.game.input.mousePos._y) ** 2;
 
                 if (distanceToEnemyFromMouse < minDistanceToEnemyFromMouse) {
                     minDistanceToEnemyFromMouse = distanceToEnemyFromMouse;
