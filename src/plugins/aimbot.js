@@ -62,7 +62,7 @@ export function aimbotTicker() {
                 // We miss inactive or dead players
                 if (!player.active || player.netData.dead || (!state.aimAtKnockedEnabled && player.downed) || me.__id === player.__id || me.layer !== player.layer || getTeam(player) == meTeam || state.friends.includes(player.nameText._text)) return;
 
-                const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player.pos.x, y: player.pos.y });
+                const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player._pos.x, y: player._pos.y });
                 // const distanceToEnemyFromMouse = Math.hypot(screenPlayerPos.x - unsafeWindow.game.input.mousePos.x, screenPlayerPos.y - unsafeWindow.game.input.mousePos.x);
                 const distanceToEnemyFromMouse = (screenPlayerPos.x - gameManager.game.input.mousePos._x) ** 2 + (screenPlayerPos.y - gameManager.game.input.mousePos._y) ** 2;
 
@@ -74,10 +74,10 @@ export function aimbotTicker() {
         }
 
         if (enemy) {
-            const meX = me.pos.x;
-            const meY = me.pos.y;
-            const enemyX = enemy.pos.x;
-            const enemyY = enemy.pos.y;
+            const meX = me._pos.x;
+            const meY = me._pos.y;
+            const enemyX = enemy._pos.x;
+            const enemyY = enemy._pos.y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
             // const distanceToEnemy = (meX - enemyX) ** 2 + (meY - enemyY) ** 2;
@@ -98,7 +98,7 @@ export function aimbotTicker() {
 
             // AutoMelee
             if (state.meleeAttackENabled && distanceToEnemy <= 8) {
-                const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
+                const moveAngle = calcAngle(enemy._pos, me._pos) + Math.PI;
                 aimTouchMoveDir = {
                     x: Math.cos(moveAngle),
                     y: Math.sin(moveAngle),
