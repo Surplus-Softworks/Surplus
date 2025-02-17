@@ -1,5 +1,6 @@
 import html from "./menu.html"
 
+export let ui;
 export let menuElement;
 
 export default function initUI() {
@@ -9,11 +10,13 @@ export default function initUI() {
         link.rel = 'stylesheet';
         document.head.appendChild(link);
 
-        const popup = document.createElement('div');
-        const shadow = popup.attachShadow({ mode: 'closed' });
-        menuElement = shadow;
-        shadow.innerHTML = html
-        document.body.appendChild(popup);
+        const div = document.createElement('div');
+        const shadow = div.attachShadow({ mode: 'closed' });
+        shadow.innerHTML = html;
+        ui = shadow;
+        document.body.appendChild(div);
+        const popup = menuElement = ui.querySelector(".popup");
+        
       
         Object.assign(popup.style, {
             position: 'fixed',
@@ -28,12 +31,12 @@ export default function initUI() {
       
         window.addEventListener("keydown", (event) => {
             if (event.key === "Shift" && event.code === "ShiftRight") {
-                shadow.host.style.display = shadow.host.style.display === "none" ? "" : "none";
+                popup.style.display = popup.style.display === "none" ? "" : "none";
             }
         });              
 
         closeBtn.addEventListener('click', () => {
-          shadow.host.style.display = 'none';
+          popup.style.display = 'none';
         });
       
         const checkboxItems = shadow.querySelectorAll('.checkbox-item');
