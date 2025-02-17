@@ -62,7 +62,7 @@ function loadPlugins() {
   inputOverride();
   optimizer();
   spinbot();
-  //aimbot();
+  aimbot();
   //} catch(e) { warn(e) }
 }
 

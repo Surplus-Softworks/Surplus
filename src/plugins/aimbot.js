@@ -10,7 +10,7 @@ let PIXI_Graphics, PIXI_Container;
 
 function initGraphics() {
   if (PIXI_Graphics && PIXI_Container) return;
-  PIXI_Container = g.game.pixi.stage.constructor;
+  PIXI_Container = gameManager.game.pixi.stage.constructor;
   for (const child of gameManager.pixi.stage.children) {
     if (child.lineStyle) {
       PIXI_Graphics = child.constructor;
@@ -19,11 +19,39 @@ function initGraphics() {
   }
 }
 
+let state = {
+    isAimBotEnabled: true,
+    isAimAtKnockedOutEnabled: true,
+    get aimAtKnockedOutStatus() {
+        return this.isAimBotEnabled && this.isAimAtKnockedOutEnabled;
+    },
+    isZoomEnabled: true,
+    isMeleeAttackEnabled: true,
+    get meleeStatus() {
+        return this.isAimBotEnabled && this.isMeleeAttackEnabled;
+    },
+    isSpinBotEnabled: false,
+    isAutoSwitchEnabled: true,
+    isUseOneGunEnabled: false,
+    focusedEnemy: null,
+    get focusedEnemyStatus() {
+        return this.isAimBotEnabled && this.focusedEnemy;
+    },
+    isXrayEnabled: true,
+    friends: [],
+    lastFrames: {},
+    enemyAimBot: null,
+    isLaserDrawerEnabled: true,
+    isLineDrawerEnabled: true,
+    isNadeDrawerEnabled: true,
+    isOverlayEnabled: true,
+};
+
 let aimbotDot;
 
 export function aimbotTicker() {
 
-    if (!settings.aimbot) return;
+    if (!state.isAimBotEnabled) return;
 
     const players = gameManager.game.playerBarn.playerPool.pool;
     const me = gameManager.game.activePlayer;
@@ -34,17 +62,17 @@ export function aimbotTicker() {
         let enemy = null;
         let minDistanceToEnemyFromMouse = Infinity;
 
-        if (settings.focusedEnemy && settings.focusedEnemy.active && !settings.focusedEnemy.netData.dead) {
-            enemy = settings.focusedEnemy;
+        if (state.focusedEnemy && state.focusedEnemy.active && !state.focusedEnemy.netData.dead) {
+            enemy = state.focusedEnemy;
         } else {
-            if (settings.focusedEnemy) {
-                settings.focusedEnemy = null;
+            if (state.focusedEnemy) {
+                state.focusedEnemy = null;
                 //updateOverlay();
             }
 
             players.forEach((player) => {
                 // We miss inactive or dead players
-                if (!player.active || player.netData.dead || (!settings.aimAtKnockedEnabled && player.downed) || me.__id === player.__id || me.layer !== player.layer || getTeam(player) == meTeam || settings.friends.includes(player.nameText._text)) return;
+                if (!player.active || player.netData.dead || (!state.aimAtKnockedEnabled && player.downed) || me.__id === player.__id || me.layer !== player.layer || getTeam(player) == meTeam || state.friends.includes(player.nameText._text)) return;
 
                 const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player.pos.x, y: player.pos.x });
                 // const distanceToEnemyFromMouse = Math.hypot(screenPlayerPos.x - unsafeWindow.game.input.mousePos.x, screenPlayerPos.y - unsafeWindow.game.input.mousePos.x);
@@ -66,9 +94,9 @@ export function aimbotTicker() {
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
             // const distanceToEnemy = (meX - enemyX) ** 2 + (meY - enemyY) ** 2;
 
-            if (enemy != settings.enemyAimbot) {
-                settings.enemyAimbot = enemy;
-                settings.lastFrames[enemy.__id] = [];
+            if (enemy != state.enemyAimbot) {
+                state.enemyAimbot = enemy;
+                state.lastFrames[enemy.__id] = [];
             }
 
             const predictedEnemyPos = calculatePredictedPosForShoot(enemy, me);
@@ -81,7 +109,7 @@ export function aimbotTicker() {
             }
 
             // AutoMelee
-            if (settings.meleeAttackENabled && distanceToEnemy <= 8) {
+            if (state.meleeAttackENabled && distanceToEnemy <= 8) {
                 const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
                 aimTouchMoveDir = {
                     x: Math.cos(moveAngle),
@@ -109,8 +137,8 @@ export function aimbotTicker() {
 }
 
 export function aimBotToggle() {
-    settings.aimbot = !settings.aimbot;
-    if (settings.aimbot) return;
+    state.isAimBotEnabled = !state.isAimBotEnabled;
+    if (state.isAimBotEnabled) return;
 
     aimbotDot.visible = false;
     lastAimPos = null;
@@ -118,8 +146,8 @@ export function aimBotToggle() {
 }
 
 export function meleeAttackToggle() {
-    settings.meleeAttackEnabled = !settings.meleeAttackEnabled;
-    if (settings.meleeAttackEnabled) return;
+    state.meleeAttackEnabled = !state.meleeAttackEnabled;
+    if (state.meleeAttackEnabled) return;
 
     aimTouchMoveDir = null;
 }
@@ -135,23 +163,23 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
 
     const dateNow = performance.now();
 
-    if (!(enemy.__id in settings.lastFrames)) settings.lastFrames[enemy.__id] = [];
-    settings.lastFrames[enemy.__id].push([dateNow, { ...enemyPos }]);
+    if (!(enemy.__id in state.lastFrames)) state.lastFrames[enemy.__id] = [];
+    state.lastFrames[enemy.__id].push([dateNow, { ...enemyPos }]);
 
-    if (settings.lastFrames[enemy.__id].length < 30) {
+    if (state.lastFrames[enemy.__id].length < 30) {
         console.log("Insufficient data for prediction, using current position");
         return gameManager.game.camera.pointToScreen({ x: enemyPos.x, y: enemyPos.x });
     }
 
-    if (settings.lastFrames[enemy.__id].length > 30) {
-        settings.lastFrames[enemy.__id].shift();
+    if (state.lastFrames[enemy.__id].length > 30) {
+        state.lastFrames[enemy.__id].shift();
     }
 
-    const deltaTime = (dateNow - settings.lastFrames[enemy.__id][0][0]) / 1000; // Time since last frame in seconds
+    const deltaTime = (dateNow - state.lastFrames[enemy.__id][0][0]) / 1000; // Time since last frame in seconds
 
     const enemyVelocity = {
-        x: (enemyPos.x - settings.lastFrames[enemy.__id][0][1].x) / deltaTime,
-        y: (enemyPos.x - settings.lastFrames[enemy.__id][0][1].x) / deltaTime,
+        x: (enemyPos.x - state.lastFrames[enemy.__id][0][1].x) / deltaTime,
+        y: (enemyPos.x - state.lastFrames[enemy.__id][0][1].x) / deltaTime,
     };
 
     const weapon = findWeap(curPlayer);
