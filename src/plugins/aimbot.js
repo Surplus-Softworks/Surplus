@@ -3,21 +3,9 @@
 import { settings } from '../loader.js';
 import { getTeam, findBullet, findWeap } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
+import { ui } from '../ui/worker.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
-
-let PIXI_Graphics, PIXI_Container;
-
-function initGraphics() {
-  if (PIXI_Graphics && PIXI_Container) return;
-  PIXI_Container = gameManager.game.pixi.stage.constructor;
-  for (const child of gameManager.pixi.stage.children) {
-    if (child.lineStyle) {
-      PIXI_Graphics = child.constructor;
-      break;
-    }
-  }
-}
 
 let state = {
     isAimBotEnabled: true,
@@ -121,15 +109,15 @@ export function aimbotTicker() {
                 aimTouchDistanceToEnemy = null;
             }
 
-            if (aimbotDot.x !== predictedEnemyPos.x || aimbotDot.y !== predictedEnemyPos.y) {
-                aimbotDot.x = predictedEnemyPos.x;
-                aimbotDot.y = predictedEnemyPos.y;
-                aimbotDot.visible = true;
+            if (aimbotDot.style.left !== predictedEnemyPos.x + "px" || aimbotDot.style.left !== predictedEnemyPos.y + "px") {
+                aimbotDot.style.left = predictedEnemyPos.x + "px";
+                aimbotDot.style.top = predictedEnemyPos.y + "px";
+                aimbotDot.style.display = "block";
             }
         } else {
             aimTouchMoveDir = null;
             lastAimPos = null;
-            aimbotDot.visible = false;
+            aimbotDot.style.display = "none";
         }
     } catch (error) {
         console.error("Error in aimBot:", error);
@@ -140,7 +128,7 @@ export function aimBotToggle() {
     state.isAimBotEnabled = !state.isAimBotEnabled;
     if (state.isAimBotEnabled) return;
 
-    aimbotDot.visible = false;
+    aimbotDot.style.display = "none";
     lastAimPos = null;
     aimTouchMoveDir = null;
 }
@@ -248,17 +236,10 @@ function calcAngle(playerPos, mePos) {
 }
 
 export default function aimbot() {
-    initGraphics();
-    aimbotDot = (() => {
-        const circle = new PIXI_Graphics();
-        circle.beginFill(0xFF0000);
-        circle.drawCircle(0, 0, 15);
-        circle.endFill();
-        const container = new PIXI_Container();
-        container.addChild(circle);
-        container.visible = false;
-        return container;
-    })();
-    gameManager.game.pixi.stage.addChild(aimbotDot);
+    if (aimbotDot == null) {
+        aimbotDot = document.createElement("div");
+        aimbotDot.classList.add("aimbotDot");
+        ui.appendChild(aimbotDot);
+    }
     gameManager.game.pixi._ticker.add(aimbotTicker);
 }
