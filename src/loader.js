@@ -9,6 +9,7 @@ import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
+import emoteSpam from "./plugins/emoteSpam.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
@@ -43,7 +44,7 @@ export const settings = {
     enabled: true,
   },
   trolling: {
-    emoteSpam: false,
+    emoteSpam: true,
   }
 };
 
@@ -51,6 +52,7 @@ function loadStaticPlugins() {
   infiniteZoom();
   autoLoot();
   autoFire();
+  emoteSpam();
 }
 
 function loadPlugins() {
@@ -63,7 +65,7 @@ function loadPlugins() {
   inputOverride();
   optimizer();
   spinbot();
-  aimbot();
+  //aimbot();
   //} catch(e) { warn(e) }
 }
 

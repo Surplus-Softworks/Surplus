@@ -127,7 +127,7 @@ function esp_ticker() {
   const pixi = gameManager.game.pixi;
   const me = gameManager.game.activePlayer;
   const players = gameManager.game.playerBarn.playerPool.pool;
-  if (!pixi || !me || me.container == undefined) return;
+  if (!pixi || !me || me.container == undefined || !settings.esp.enabled) return;
   try {
     const lineDrawer = createDrawer(me.container, "lineDrawer");
     lineDrawer.clear();
