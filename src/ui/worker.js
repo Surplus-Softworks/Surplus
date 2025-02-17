@@ -36,12 +36,6 @@ export default function initUI() {
           shadow.host.style.display = 'none';
         });
       
-        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                this.closest('.checkbox-item').classList.add('animate');
-            });
-        });
-
         const checkboxItems = shadow.querySelectorAll('.checkbox-item');
       
         checkboxItems.forEach(item => {

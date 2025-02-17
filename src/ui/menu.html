@@ -194,7 +194,11 @@
 
     .checkbox-item:hover {
         background: rgba(255,255,255,0.05);
-        transition: background 0.05s ease;
+        transition: background 0.2s ease;
+    }
+
+    .checkbox-item:active {
+        transform: scale(0.95);
     }
 
     .checkbox-item label {
@@ -213,50 +217,14 @@
         border-radius: 4px;
         background: #222;
         position: relative;
-        transition: all 0.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        transition: all 0.1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
         cursor: pointer;
     }
 
     input[type="checkbox"]:checked {
         background: #66db6a;
         border-color: #66db6a;
-        animation: checkboxBounce 0.2s ease;
         box-shadow: 0 0 10px rgba(102, 219, 106, 0.12);
-    }
-
-    input[type="checkbox"]::after {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%) scale(0) rotate(-45deg);
-        color: rgba(255, 255, 255, 0.9);
-        font-size: 14px;
-        font-weight: 900;
-        opacity: 0;
-        transition: all 0.2s ease;
-    }
-
-
-    @keyframes checkboxShrink {
-        0% { transform: scale(1) }
-        33% { transform: scale(0.85) }
-        66% { transform: scale(1.05) }
-        100% { transform: scale(1) }
-    }
-
-    @keyframes checkboxBounce {
-        0% { transform: scale(1); }
-        33% { transform: scale(1.1); }
-        66% { transform: scale(0.95); }
-        100% { transform: scale(1); }
-    }
-
-    .animate input[type="checkbox"]:checked {
-        animation: checkboxBounce 0.2s ease;
-    }
-
-    .animate input[type="checkbox"]:not(:checked) {
-        animation: checkboxShrink 0.2s ease;
     }
 
 </style>

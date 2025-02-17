@@ -31,6 +31,7 @@ export const settings = {
     enabled: true,
   },
   esp: {
+    enabled: true,
     players: true,
     grenades: true,
     flashlights: {
