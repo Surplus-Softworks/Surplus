@@ -62,9 +62,9 @@ export function aimbotTicker() {
                 // We miss inactive or dead players
                 if (!player.active || player.netData.dead || (!state.aimAtKnockedEnabled && player.downed) || me.__id === player.__id || me.layer !== player.layer || getTeam(player) == meTeam || state.friends.includes(player.nameText._text)) return;
 
-                const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player.pos.x, y: player.pos.x });
+                const screenPlayerPos = gameManager.game.camera.pointToScreen({ x: player.pos.x, y: player.pos.y });
                 // const distanceToEnemyFromMouse = Math.hypot(screenPlayerPos.x - unsafeWindow.game.input.mousePos.x, screenPlayerPos.y - unsafeWindow.game.input.mousePos.x);
-                const distanceToEnemyFromMouse = (screenPlayerPos.x - gameManager.game.input.mousePos.x) ** 2 + (screenPlayerPos.y - gameManager.game.input.mousePos.x) ** 2;
+                const distanceToEnemyFromMouse = (screenPlayerPos.x - gameManager.game.input.mousePos.x) ** 2 + (screenPlayerPos.y - gameManager.game.input.mousePos.y) ** 2;
 
                 if (distanceToEnemyFromMouse < minDistanceToEnemyFromMouse) {
                     minDistanceToEnemyFromMouse = distanceToEnemyFromMouse;
@@ -75,9 +75,9 @@ export function aimbotTicker() {
 
         if (enemy) {
             const meX = me.pos.x;
-            const meY = me.pos.x;
+            const meY = me.pos.y;
             const enemyX = enemy.pos.x;
-            const enemyY = enemy.pos.x;
+            const enemyY = enemy.pos.y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
             // const distanceToEnemy = (meX - enemyX) ** 2 + (meY - enemyY) ** 2;
@@ -109,10 +109,10 @@ export function aimbotTicker() {
                 aimTouchDistanceToEnemy = null;
             }
 
-            if (aimbotDot.style.left !== predictedEnemyPos.x + "px" || aimbotDot.style.left !== predictedEnemyPos.y + "px") {
-                aimbotDot.style.left = predictedEnemyPos.x + "px";
-                aimbotDot.style.top = predictedEnemyPos.y + "px";
-                aimbotDot.style.display = "block";
+            if (aimbotDot.style.left !== predictedEnemyPos.x + 'px' || aimbotDot.style.top !== predictedEnemyPos.y + 'px') {
+                aimbotDot.style.left = predictedEnemyPos.x + 'px';
+                aimbotDot.style.top = predictedEnemyPos.y + 'px';
+                aimbotDot.style.display = 'block';
             }
         } else {
             aimTouchMoveDir = null;
@@ -145,21 +145,21 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
         console.log("Missing enemy or player data");
         return null;
     }
-
+    
     const { pos: enemyPos } = enemy;
     const { pos: curPlayerPos } = curPlayer;
 
     const dateNow = performance.now();
 
-    if (!(enemy.__id in state.lastFrames)) state.lastFrames[enemy.__id] = [];
+    if ( !(enemy.__id in state.lastFrames) ) state.lastFrames[enemy.__id] = [];
     state.lastFrames[enemy.__id].push([dateNow, { ...enemyPos }]);
 
     if (state.lastFrames[enemy.__id].length < 30) {
         console.log("Insufficient data for prediction, using current position");
-        return gameManager.game.camera.pointToScreen({ x: enemyPos.x, y: enemyPos.x });
+        return gameManager.game.camera.pointToScreen({x: enemyPos.x, y: enemyPos.y});
     }
 
-    if (state.lastFrames[enemy.__id].length > 30) {
+    if (state.lastFrames[enemy.__id].length > 30){
         state.lastFrames[enemy.__id].shift();
     }
 
@@ -167,7 +167,7 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
 
     const enemyVelocity = {
         x: (enemyPos.x - state.lastFrames[enemy.__id][0][1].x) / deltaTime,
-        y: (enemyPos.x - state.lastFrames[enemy.__id][0][1].x) / deltaTime,
+        y: (enemyPos.y - state.lastFrames[enemy.__id][0][1].y) / deltaTime,
     };
 
     const weapon = findWeap(curPlayer);
@@ -176,7 +176,7 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
     let bulletSpeed;
     if (!bullet) {
         bulletSpeed = 1000;
-    } else {
+    }else{
         bulletSpeed = bullet.speed;
     }
 
@@ -185,14 +185,14 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
     const vex = enemyVelocity.x;
     const vey = enemyVelocity.y;
     const dx = enemyPos.x - curPlayerPos.x;
-    const dy = enemyPos.x - curPlayerPos.x;
+    const dy = enemyPos.y - curPlayerPos.y;
     const vb = bulletSpeed;
 
     const a = vb ** 2 - vex ** 2 - vey ** 2;
     const b = -2 * (vex * dx + vey * dy);
     const c = -(dx ** 2) - (dy ** 2);
 
-    let t;
+    let t; 
 
     if (Math.abs(a) < 1e-6) {
         console.log('Linear solution bullet speed is much greater than velocity')
@@ -202,7 +202,7 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
 
         if (discriminant < 0) {
             console.log("No solution, shooting at current position");
-            return gameManager.game.camera.pointToScreen({ x: enemyPos.x, y: enemyPos.x });
+            return gameManager.game.camera.pointToScreen({x: enemyPos.x, y: enemyPos.y});
         }
 
         const sqrtD = Math.sqrt(discriminant);
@@ -215,14 +215,14 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
 
     if (t < 0) {
         console.log("Negative time, shooting at current position");
-        return gameManager.game.camera.pointToScreen({ x: enemyPos.x, y: enemyPos.x });
+        return gameManager.game.camera.pointToScreen({x: enemyPos.x, y: enemyPos.y});
     }
 
     // console.log(`A bullet with the enemy will collide through ${t}`)
 
     const predictedPos = {
         x: enemyPos.x + vex * t,
-        y: enemyPos.x + vey * t,
+        y: enemyPos.y + vey * t,
     };
 
     return gameManager.game.camera.pointToScreen(predictedPos);
@@ -230,7 +230,7 @@ function calculatePredictedPosForShoot(enemy, curPlayer) {
 
 function calcAngle(playerPos, mePos) {
     const dx = mePos.x - playerPos.x;
-    const dy = mePos.x - playerPos.x;
+    const dy = mePos.y - playerPos.y;
 
     return Math.atan2(dy, dx);
 }

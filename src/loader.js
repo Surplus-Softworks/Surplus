@@ -23,7 +23,7 @@ export const settings = {
     targetKnocked: true,
   },
   spinbot: {
-    enabled: true,
+    enabled: false,
   },
   autoFire: {
     enabled: true,
