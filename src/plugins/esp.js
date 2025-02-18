@@ -8,6 +8,7 @@ import {
   objects,
   explosions,
   throwable,
+  inputCommands,
   PIXI,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
@@ -89,13 +90,21 @@ function drawLasers(me, players, laserDrawer) {
       x: (acPlayer.pos.x - me.pos.x) * 16,
       y: (me.pos.y - acPlayer.pos.y) * 16,
     };
-    const atan =
-      acPlayer === me && !lastAimPos
-        ? Math.atan2(
-            gameManager.game.input.mousePos._y - innerHeight / 2,
-            gameManager.game.input.mousePos._x - innerWidth / 2
-          )
-        : Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
+    let atan
+    if (acPlayer == me && (!lastAimPos || (lastAimPos && ! (gameManager.game.touch.shotDetected || gameManager.game.inputBinds.isBindDown(inputCommands.Fire))))) {
+      atan = Math.atan2(
+        gameManager.game.input.mousePos._y - innerHeight / 2,
+          gameManager.game.input.mousePos._x - innerWidth / 2,
+      );
+    } else if(acPlayer == me && (lastAimPos)) {
+        const playerPointToScreen = gameManager.game.camera.pointToScreen({x: acPlayer.pos.x, y: acPlayer.pos.y});
+        atan = Math.atan2(
+            playerPointToScreen.y - lastAimPos.clientY,
+            playerPointToScreen.x - lastAimPos.clientX
+        ) - Math.PI;
+    } else {
+        atan = Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
+    }
     laserDrawer.beginFill(color, opacity);
     laserDrawer.moveTo(center.x, center.y);
     laserDrawer.arc(

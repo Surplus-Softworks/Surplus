@@ -1,6 +1,7 @@
 import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
+import { lastAimPos } from "./aimbot.js";
 
 export let spinbotEnabled;
 
@@ -25,6 +26,9 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'y', {
     get() {
+        if (lastAimPos && !spinbotEnabled) {
+          return lastAimPos.clientY
+        }
         if (spinbotEnabled && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerHeight;
         }
@@ -37,6 +41,9 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, 'x', {
     get() {
+        if (lastAimPos && !spinbotEnabled) {
+          return lastAimPos.clientX
+        }
         if (spinbotEnabled && !(gameManager.game.activePlayer.throwableState === "cook")) {
             return Math.random() * window.innerWidth;
         }

@@ -21,6 +21,7 @@ export const settings = {
   aimbot: {
     enabled: true,
     targetKnocked: true,
+    meleeLock: true,
   },
   spinbot: {
     enabled: true,
@@ -44,7 +45,7 @@ export const settings = {
     enabled: true,
   },
   trolling: {
-    emoteSpam: true,
+    emoteSpam: false,
   }
 };
 
