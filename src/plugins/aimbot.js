@@ -99,7 +99,7 @@ function findTarget(players, me) {
     if (
       !player.active ||
       player.netData.dead ||
-      (!settings.aimbot.targetKnocked && player.downed) ||
+      (!settings.aimbot_.targetKnocked && player.downed) ||
       me.__id === player.__id ||
       me.layer !== player.layer ||
       getTeam(player) === meTeam

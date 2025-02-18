@@ -53,6 +53,8 @@ async function bundleJS(release = false) {
     outfile: 'prod/extension/main.js',
     minify: true,
     sourcemap: false,
+    treeShaking: true,
+    keepNames: false,
     plugins: [htmlPlugin],
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
