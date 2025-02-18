@@ -161,6 +161,8 @@ export function aimbotTicker() {
 
       if (me.netData.activeWeapon === "fists" && distanceToEnemy >= 8) return;
 
+      if (gameManager.game.activePlayer.throwableState === "cook") return
+
       lastAimPos = {
         clientX: predictedPos.x,
         clientY: predictedPos.y,

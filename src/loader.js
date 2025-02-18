@@ -25,6 +25,7 @@ export const settings = {
   },
   spinbot: {
     enabled: true,
+    realistic: true, 
   },
   autoFire: {
     enabled: true,
