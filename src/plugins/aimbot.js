@@ -10,7 +10,7 @@ export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 const state = {
   isAimBotEnabled: true,
   focusedEnemy: null,
-  lastFrames: {},
+  lastEnemyFrames: {},
   enemyAimbot: null,
 };
 
@@ -28,21 +28,21 @@ function predictPosition(enemy, curPlayer) {
   const now = performance.now();
   const enemyId = enemy.__id;
 
-  if (!state.lastFrames[enemyId]) state.lastFrames[enemyId] = [];
+  if (!state.lastEnemyFrames[enemyId]) state.lastEnemyFrames[enemyId] = [];
 
-  state.lastFrames[enemyId].push([now, { ...enemyPos }]);
-  if (state.lastFrames[enemyId].length > 30) state.lastFrames[enemyId].shift();
+  state.lastEnemyFrames[enemyId].push([now, { ...enemyPos }]);
+  if (state.lastEnemyFrames[enemyId].length > 30) state.lastEnemyFrames[enemyId].shift();
 
-  if (state.lastFrames[enemyId].length < 30)
+  if (state.lastEnemyFrames[enemyId].length < 30)
     return gameManager.game.camera.pointToScreen({
       x: enemyPos.x,
       y: enemyPos.y,
     });
 
-  const deltaTime = (now - state.lastFrames[enemyId][0][0]) / 1000;
+  const deltaTime = (now - state.lastEnemyFrames[enemyId][0][0]) / 1000;
   const enemyVelocity = {
-    x: (enemyPos.x - state.lastFrames[enemyId][0][1].x) / deltaTime,
-    y: (enemyPos.y - state.lastFrames[enemyId][0][1].y) / deltaTime,
+    x: (enemyPos.x - state.lastEnemyFrames[enemyId][0][1].x) / deltaTime,
+    y: (enemyPos.y - state.lastEnemyFrames[enemyId][0][1].y) / deltaTime,
   };
 
   const weapon = findWeap(curPlayer);
@@ -90,7 +90,7 @@ function predictPosition(enemy, curPlayer) {
   return gameManager.game.camera.pointToScreen(predictedPos);
 }
 
-function findTarget(players, me, aimAtKnockedEnabled) {
+function findTarget(players, me) {
   const meTeam = getTeam(me);
   let enemy = null;
   let minDistance = Infinity;
@@ -99,7 +99,7 @@ function findTarget(players, me, aimAtKnockedEnabled) {
     if (
       !player.active ||
       player.netData.dead ||
-      (!aimAtKnockedEnabled && player.downed) ||
+      (!settings.aimbot.targetKnocked && player.downed) ||
       me.__id === player.__id ||
       me.layer !== player.layer ||
       getTeam(player) === meTeam
@@ -138,7 +138,7 @@ export function aimbotTicker() {
       : null;
 
     if (!enemy) {
-      enemy = findTarget(players, me, state.aimAtKnockedEnabled);
+      enemy = findTarget(players, me);
       state.enemyAimbot = enemy;
     }
 
@@ -152,7 +152,7 @@ export function aimbotTicker() {
 
       if (enemy != state.enemyAimbot) {
         state.enemyAimbot = enemy;
-        state.lastFrames[enemy.__id] = [];
+        state.lastEnemyFrames[enemy.__id] = [];
       }
 
       const predictedPos = predictPosition(enemy, me);
