@@ -7,7 +7,7 @@ export let spinbotEnabled;
 
 let currentAngle = 0;
 let angularVelocity = 0;
-const angularAccelerationMax = 0.006; 
+const angularAccelerationMax = 0.012; 
 const dampingFactor = 0.98;
 
 function spinbotTicker() {
