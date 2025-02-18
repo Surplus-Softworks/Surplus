@@ -45,7 +45,7 @@
     .menu-icon {
       height: 20px;
       margin-right: 8px;
-      cursor: pointer;
+      pointer-events: none;
     }
   
     .navbar {
@@ -246,13 +246,14 @@
     }
   
     .aimbotDot {
-      position: absolute;
-      background-color: red;
-      width: 10px;
-      height: 10px;
-      opacity: 70%;
-      transform: translateX(-50%) translateY(-50%);
-      display: none;
+        position: absolute;
+        background-color: red;
+        width: 10px;
+        height: 10px;
+        opacity: 70%;
+        transform: translateX(-50%) translateY(-50%);
+        display: none;
+        border-radius: 50%; 
     }
   </style>
   

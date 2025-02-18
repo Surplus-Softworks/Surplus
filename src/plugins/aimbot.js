@@ -165,7 +165,7 @@ export function aimbotTicker() {
         lastAimPos = null;
         return
       }
-      
+
       lastAimPos = {
         clientX: predictedPos.x,
         clientY: predictedPos.y,
