@@ -159,7 +159,10 @@ export function aimbotTicker() {
 
       if (!predictedPos) return;
 
-      if (me.netData.activeWeapon === "fists" && distanceToEnemy >= 8) return;
+      if (me.netData.activeWeapon === "fists" && distanceToEnemy >= 8) {
+        lastAimPos = null;
+        return
+      }
 
       if (gameManager.game.activePlayer.throwableState === "cook") {
         lastAimPos = null;
