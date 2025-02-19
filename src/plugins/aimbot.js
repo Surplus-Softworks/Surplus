@@ -1,7 +1,12 @@
 //import { updateOverlay, aimbotDot } from '../overlay.js';
 
 import { settings } from '../loader.js';
-import { getTeam, findBullet, findWeap, inputCommands } from '../utils/constants.js';
+import {
+  getTeam,
+  findBullet,
+  findWeap,
+  inputCommands,
+} from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
 
@@ -12,6 +17,8 @@ const state = {
   focusedEnemy: null,
   lastEnemyFrames: {},
   enemyAimbot: null,
+  velocityBuffer: {},
+  velocityBufferSize: 10,
 };
 
 let aimbotDot;
@@ -20,7 +27,7 @@ function getDistance(x1, y1, x2, y2) {
   return (x1 - x2) ** 2 + (y1 - y2) ** 2;
 }
 
-function calcAngle(playerPos, mePos){
+function calcAngle(playerPos, mePos) {
   const dx = mePos.x - playerPos.x;
   const dy = mePos.y - playerPos.y;
 
@@ -35,10 +42,12 @@ function predictPosition(enemy, curPlayer) {
   const now = performance.now();
   const enemyId = enemy.__id;
 
-  if (!state.lastEnemyFrames[enemyId]) state.lastEnemyFrames[enemyId] = [];
+  if (!state.lastEnemyFrames[enemyId])
+    state.lastEnemyFrames[enemyId] = [];
 
   state.lastEnemyFrames[enemyId].push([now, { ...enemyPos }]);
-  if (state.lastEnemyFrames[enemyId].length > 30) state.lastEnemyFrames[enemyId].shift();
+  if (state.lastEnemyFrames[enemyId].length > 30)
+    state.lastEnemyFrames[enemyId].shift();
 
   if (state.lastEnemyFrames[enemyId].length < 30)
     return gameManager.game.camera.pointToScreen({
@@ -46,11 +55,34 @@ function predictPosition(enemy, curPlayer) {
       y: enemyPos.y,
     });
 
-  const deltaTime = (now - state.lastEnemyFrames[enemyId][0][0]) / 1000;
-  const enemyVelocity = {
-    x: (enemyPos.x - state.lastEnemyFrames[enemyId][0][1].x) / deltaTime,
-    y: (enemyPos.y - state.lastEnemyFrames[enemyId][0][1].y) / deltaTime,
+  const deltaTime =
+    (now - state.lastEnemyFrames[enemyId][0][0]) / 1000;
+  let enemyVelocity = {
+    x: (enemyPos.x - state.lastEnemyFrames[enemyId][0][1].x) /
+      deltaTime,
+    y: (enemyPos.y - state.lastEnemyFrames[enemyId][0][1].y) /
+      deltaTime,
   };
+
+  if (!state.velocityBuffer[enemyId]) {
+    state.velocityBuffer[enemyId] = [];
+  }
+
+  state.velocityBuffer[enemyId].push(enemyVelocity);
+
+  if (state.velocityBuffer[enemyId].length > state.velocityBufferSize) {
+    state.velocityBuffer[enemyId].shift();
+  }
+
+  let avgVelocity = { x: 0, y: 0 };
+  for (const velocity of state.velocityBuffer[enemyId]) {
+    avgVelocity.x += velocity.x;
+    avgVelocity.y += velocity.y;
+  }
+  avgVelocity.x /= state.velocityBuffer[enemyId].length;
+  avgVelocity.y /= state.velocityBuffer[enemyId].length;
+
+  enemyVelocity = avgVelocity; 
 
   const weapon = findWeap(curPlayer);
   const bullet = findBullet(weapon);
@@ -140,9 +172,10 @@ export function aimbotTicker() {
   const me = gameManager.game.activePlayer;
 
   try {
-    let enemy = state.focusedEnemy?.active && !state.focusedEnemy.netData.dead
-      ? state.focusedEnemy
-      : null;
+    let enemy =
+      state.focusedEnemy?.active && !state.focusedEnemy.netData.dead
+        ? state.focusedEnemy
+        : null;
 
     if (!enemy) {
       enemy = findTarget(players, me);
@@ -160,38 +193,44 @@ export function aimbotTicker() {
       if (enemy != state.enemyAimbot) {
         state.enemyAimbot = enemy;
         state.lastEnemyFrames[enemy.__id] = [];
+        state.velocityBuffer[enemy.__id] = []; // Clear velocity buffer on new target
       }
 
       const predictedPos = predictPosition(enemy, me);
 
       if (!predictedPos) return;
 
-      if (me.netData.activeWeapon === "fists" && distanceToEnemy <= 8 && settings.aimbot.meleeLock && (gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
+      if (
+        me.netData.activeWeapon === 'fists' &&
+        distanceToEnemy <= 8 &&
+        settings.aimbot.meleeLock &&
+        gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
+      ) {
         const moveAngle = calcAngle(enemy._pos, me._pos) + Math.PI;
         aimTouchMoveDir = {
           touchMoveActive: true,
           touchMoveLen: 255,
           x: Math.cos(moveAngle),
           y: Math.sin(moveAngle),
-        }
+        };
         lastAimPos = {
           clientX: predictedPos.x,
           clientY: predictedPos.y,
         };
-        return
+        return;
       } else {
         aimTouchMoveDir = null;
       }
 
-      if (me.netData.activeWeapon === "fists" && distanceToEnemy >= 8) {
+      if (me.netData.activeWeapon === 'fists' && distanceToEnemy >= 8) {
         aimTouchMoveDir = null;
         lastAimPos = null;
-        return
+        return;
       }
 
-      if (gameManager.game.activePlayer.throwableState === "cook") {
+      if (gameManager.game.activePlayer.throwableState === 'cook') {
         lastAimPos = null;
-        return
+        return;
       }
 
       lastAimPos = {
@@ -200,17 +239,17 @@ export function aimbotTicker() {
       };
 
       if (
-        aimbotDot.style.left !== predictedPos.x + "px" ||
-        aimbotDot.style.top !== predictedPos.y + "px"
+        aimbotDot.style.left !== predictedPos.x + 'px' ||
+        aimbotDot.style.top !== predictedPos.y + 'px'
       ) {
-        aimbotDot.style.left = predictedPos.x + "px";
-        aimbotDot.style.top = predictedPos.y + "px";
-        aimbotDot.style.display = "block";
+        aimbotDot.style.left = predictedPos.x + 'px';
+        aimbotDot.style.top = predictedPos.y + 'px';
+        aimbotDot.style.display = 'block';
       }
     } else {
       aimTouchMoveDir = null;
       lastAimPos = null;
-      aimbotDot.style.display = "none";
+      aimbotDot.style.display = 'none';
     }
   } catch (error) {
     //console.error("Error in aimbotTicker:", error);
@@ -219,8 +258,8 @@ export function aimbotTicker() {
 
 export default function aimbot() {
   if (!aimbotDot) {
-    aimbotDot = document.createElement("div");
-    aimbotDot.classList.add("aimbotDot");
+    aimbotDot = document.createElement('div');
+    aimbotDot.classList.add('aimbotDot');
     ui.appendChild(aimbotDot);
   }
   gameManager.game.pixi._ticker.add(aimbotTicker);
