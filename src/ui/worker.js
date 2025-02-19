@@ -16,7 +16,6 @@ export default function initUI() {
         ui = shadow;
         document.body.appendChild(div);
         const popup = menuElement = ui.querySelector("#ui");
-        
       
         Object.assign(popup.style, {
             position: 'fixed',

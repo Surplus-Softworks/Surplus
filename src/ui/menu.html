@@ -141,6 +141,10 @@
      gap: 10px;
     }
   
+    .group .section-title {
+        margin-top: 10px;
+    }
+
     .section-title .checkbox-item {
      border: none;
      background: none;
@@ -255,7 +259,18 @@
      display: none;
      border-radius: 50%;
     }
-  
+    
+    .ownAimbotDot {
+     position: absolute;
+     background-color: red;
+     width: 10px;
+     height: 10px;
+     opacity: 70%;
+     transform: translateX(-50%) translateY(-50%);
+     display: none;
+     border-radius: 50%;
+    }
+
     .slider-container {
      display: flex;
      align-items: center;
@@ -409,7 +424,7 @@
          <label for="grenade-esp">Grenades</label>
         </div>
   
-        <div class="subsection-title">Flashlights</div>
+        <div class="section-title">Flashlights</div>
         <div class="subgroup">
          <div class="checkbox-item">
           <input type="checkbox" id="own-flashlight" />

@@ -18,7 +18,7 @@ import { PIXI } from "./utils/constants.js";
 import initUI from "./ui/worker.js";
 
 export const settings = {
-  aimbot_: {
+  aimbot: {
     enabled: true,
     targetKnocked: true,
     meleeLock: true,

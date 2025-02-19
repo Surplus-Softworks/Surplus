@@ -76,6 +76,9 @@ async function bundleJS(release = false) {
 
         // these things slow down the code
         stringConcealing: true,
+        stringEncoding: true,
+        stringSplitting: true,
+        stringCompression: true,
 
         // these things break the code
         controlFlowFlattening: false,
@@ -84,7 +87,6 @@ async function bundleJS(release = false) {
         objectExtraction: true, //
         opaquePredicates: false,
         renameGlobals: false,
-        stringCompression: true, //
       });
       fs.writeFileSync(outputFilePath, `
 // Copyright © Surplus Softworks.

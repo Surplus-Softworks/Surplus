@@ -1,7 +1,7 @@
 //import { updateOverlay, aimbotDot } from '../overlay.js';
 
 import { settings } from '../loader.js';
-import { getTeam, findBullet, findWeap } from '../utils/constants.js';
+import { getTeam, findBullet, findWeap, inputCommands } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
 
@@ -18,6 +18,13 @@ let aimbotDot;
 
 function getDistance(x1, y1, x2, y2) {
   return (x1 - x2) ** 2 + (y1 - y2) ** 2;
+}
+
+function calcAngle(playerPos, mePos){
+  const dx = mePos.x - playerPos.x;
+  const dy = mePos.y - playerPos.y;
+
+  return Math.atan2(dy, dx);
 }
 
 function predictPosition(enemy, curPlayer) {
@@ -99,7 +106,7 @@ function findTarget(players, me) {
     if (
       !player.active ||
       player.netData.dead ||
-      (!settings.aimbot_.targetKnocked && player.downed) ||
+      (!settings.aimbot.targetKnocked && player.downed) ||
       me.__id === player.__id ||
       me.layer !== player.layer ||
       getTeam(player) === meTeam
@@ -159,7 +166,25 @@ export function aimbotTicker() {
 
       if (!predictedPos) return;
 
+      if (me.netData.activeWeapon === "fists" && distanceToEnemy <= 8 && settings.aimbot.meleeLock && (gameManager.game.inputBinds.isBindDown(inputCommands.Fire))) {
+        const moveAngle = calcAngle(enemy._pos, me._pos) + Math.PI;
+        aimTouchMoveDir = {
+          touchMoveActive: true,
+          touchMoveLen: 255,
+          x: Math.cos(moveAngle),
+          y: Math.sin(moveAngle),
+        }
+        lastAimPos = {
+          clientX: predictedPos.x,
+          clientY: predictedPos.y,
+        };
+        return
+      } else {
+        aimTouchMoveDir = null;
+      }
+
       if (me.netData.activeWeapon === "fists" && distanceToEnemy >= 8) {
+        aimTouchMoveDir = null;
         lastAimPos = null;
         return
       }
