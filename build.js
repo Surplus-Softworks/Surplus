@@ -35,12 +35,57 @@ async function copyExtension() {
   await execPromise('xcopy /E /I src\\extension prod\\extension\\')
 }
 
+function makeid(length) {
+  let result = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
+
+const replacements = [
+  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /autofire-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
+  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) }
+];
+
+
 const htmlPlugin = {
   name: 'html-plugin',
   setup(build) {
     build.onLoad({ filter: /\.html$/ }, async (args) => {
       const content = await fs.promises.readFile(args.path, 'utf8');
-      const minified = await minify(content, {
+      let minified = await minify(content, {
         collapseWhitespace: true,
         removeComments: true,
         removeRedundantAttributes: true,
@@ -48,12 +93,42 @@ const htmlPlugin = {
         minifyCSS: true,
         minifyJS: true,
       });
+      for (const { regex, replacement } of replacements) {
+        minified = minified.replace(regex, replacement);
+      }
       return {
         contents: `export default ${JSON.stringify(minified)};`,
         loader: 'js',
       };
     });
   },
+};
+
+const regexReplacementPlugin = {
+  name: 'regex-replacement',
+  setup(build) {
+      build.onLoad({ filter: /.*/ }, async (args) => {
+        if (args.path.includes('loader.js') ||  args.path.includes('worker.js')) {
+          console.log(args.path)
+        } else {
+          return null;
+        }
+          try {
+              let contents = await fs.promises.readFile(args.path, 'utf8');
+              
+              for (const { regex, replacement } of replacements) {
+                  contents = contents.replace(regex, replacement);
+              }
+
+              return {
+                  contents,
+                  loader: 'default'
+              };
+          } catch (error) {
+              return null;
+          }
+      });
+  }
 };
 
 
@@ -66,7 +141,7 @@ async function bundleJS(release = false) {
     sourcemap: false,
     treeShaking: true,
     keepNames: false,
-    plugins: [htmlPlugin],
+    plugins: [htmlPlugin, regexReplacementPlugin],
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'

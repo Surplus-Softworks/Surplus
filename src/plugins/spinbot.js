@@ -5,7 +5,6 @@ import { lastAimPos } from "./aimbot.js";
 
 let currentAngle = 0;
 let angularVelocity = 0;
-let randomSpinbotSpeed = 100;
 const angularAccelerationMax = 0.012;
 const dampingFactor = 0.98;
 let isMouseDown = false;
