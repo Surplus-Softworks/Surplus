@@ -25,6 +25,7 @@ export default function initUI() {
         });
         
         const header = shadow.querySelector('.header');
+        console.log('.header')
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');
       

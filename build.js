@@ -5,6 +5,8 @@ const { promisify } = require("util");
 const path = require("path");
 const crx3 = require("crx3");
 const esbuild = require("esbuild");
+const { minify } = require('html-minifier-terser');
+
 
 const error = console.error;
 console.error = function (...args) {
@@ -38,13 +40,22 @@ const htmlPlugin = {
   setup(build) {
     build.onLoad({ filter: /\.html$/ }, async (args) => {
       const content = await fs.promises.readFile(args.path, 'utf8');
+      const minified = await minify(content, {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeEmptyAttributes: true,
+        minifyCSS: true,
+        minifyJS: true,
+      });
       return {
-        contents: `export default html = ${JSON.stringify(content)};`,
+        contents: `export default ${JSON.stringify(minified)};`,
         loader: 'js',
       };
     });
   },
 };
+
 
 async function bundleJS(release = false) {
   esbuild.build({

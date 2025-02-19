@@ -10,6 +10,8 @@
     "crx3": "*",
     "js-confuser": "*",
     "esbuild": "*",
+    "html-minifier-terser": "*",
+
 
     "pixi.js": "7.0.3",
     "react": "*",
