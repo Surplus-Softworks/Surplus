@@ -6,7 +6,7 @@ import { settings } from "../loader.js";
 
 export function betterVision_ticker() {
   try {
-    if (settings.xray) {
+    if (settings.xray.enabled) {
       gameManager.game.renderer.layers[3].children.forEach(v => {
         if (
           v._texture?.textureCacheIds != null &&

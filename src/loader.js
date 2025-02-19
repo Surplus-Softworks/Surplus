@@ -18,7 +18,9 @@ import { PIXI } from "./utils/constants.js";
 import initUI, { ui } from "./ui/worker.js";
 
 const getElementById = ShadowRoot.prototype.getElementById;
-const isChecked = id => ui != null && (reflect.apply(getElementById,ui,[id])?.value == "on");
+const isChecked = id => ui != null && (reflect.apply(getElementById,ui,[id])?.checked);
+const getValue = id => ui != null && (reflect.apply(getElementById,ui,[id])?.value);
+
 export const settings = {
   aimbot: {
     get enabled() {
@@ -71,9 +73,12 @@ export const settings = {
   autoLoot: {
     enabled: true,
   },
-  trolling: {
-    get emoteSpam() {
+  emoteSpam: {
+    get enabled() {
       return isChecked("emote-spam-enable");
+    },
+    get speed() {
+      return 1001 - (getValue("emote-spam-speed") * 10)
     }
   }
 };
