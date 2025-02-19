@@ -5,6 +5,7 @@ import { lastAimPos } from "./aimbot.js";
 
 let currentAngle = 0;
 let angularVelocity = 0;
+let randomSpinbotSpeed = 100;
 const angularAccelerationMax = 0.012;
 const dampingFactor = 0.98;
 let isMouseDown = false;
@@ -35,6 +36,11 @@ function updateRotation() {
         gameManager.game.activePlayer.dir.x
       );
     }
+  } else {
+    gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+      gameManager.game.input.mousePos.y - window.innerHeight / 2,
+      gameManager.game.input.mousePos.x - window.innerWidth / 2
+    );
   }
 }
 
