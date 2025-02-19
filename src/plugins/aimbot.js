@@ -18,7 +18,7 @@ const state = {
   lastEnemyFrames: {},
   enemyAimbot: null,
   velocityBuffer: {},
-  velocityBufferSize: 3,
+  velocityBufferSize: 30,
 };
 
 let aimbotDot;
@@ -193,7 +193,7 @@ export function aimbotTicker() {
       if (enemy != state.enemyAimbot) {
         state.enemyAimbot = enemy;
         state.lastEnemyFrames[enemy.__id] = [];
-        state.velocityBuffer[enemy.__id] = []; // Clear velocity buffer on new target
+        state.velocityBuffer[enemy.__id] = []; 
       }
 
       const predictedPos = predictPosition(enemy, me);
