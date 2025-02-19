@@ -366,7 +366,55 @@
           <button class="tab" data-tab="misc">Misc</button>
           <button class="tab" data-tab="help">Help</button>
         </div>
+<<<<<<< HEAD
         <button class="close-btn">×</button>
+=======
+       </div>
+       <div class="group">
+        <div class="checkbox-item">
+         <input type="checkbox" id="target-knocked" />
+         <label for="target-knocked">Target Knocked</label>
+        </div>
+        <div class="checkbox-item">
+         <input type="checkbox" id="melee-lock" />
+         <label for="melee-lock">Melee Lock (follow)</label>
+        </div>
+       </div>
+  
+       <div class="section-title">
+        Spinbot
+        <div class="checkbox-item">
+         <input type="checkbox" id="spinbot-enable" />
+         <label for="spinbot-enable">Enabled</label>
+        </div>
+       </div>
+       <div class="group">
+        <div class="checkbox-item">
+         <input type="checkbox" id="realistic" />
+         <label for="realistic">Realistic</label>
+        </div>
+        <div class="checkbox-item slider-container">
+         <label for="spinbot-speed">Speed:</label>
+         <input
+          type="range"
+          id="spinbot-speed"
+          min="0"
+          max="100"
+          value="50"
+          style="--slider-value: 50%"
+          oninput="this.style.setProperty('--slider-value', this.value + '%')"
+         />
+        </div>
+       </div>
+  
+       <div class="section-title">
+        Autofire
+        <div class="checkbox-item">
+         <input type="checkbox" id="autofire-enable" />
+         <label for="autofire-enable">Enabled</label>
+        </div>
+       </div>
+>>>>>>> 844ff88724043ba3f48ac16ee6fc5478d54785a3
       </div>
   
       <div class="content active" data-content="main">

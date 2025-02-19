@@ -15,38 +15,66 @@ import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
-import initUI from "./ui/worker.js";
+import initUI, { ui } from "./ui/worker.js";
 
+const getElementById = ShadowRoot.prototype.getElementById;
+const isChecked = id => ui != null && (reflect.apply(getElementById,ui,[id])?.value == "on");
 export const settings = {
   aimbot: {
-    enabled: true,
-    targetKnocked: true,
-    meleeLock: true,
+    get enabled() {
+      return isChecked("aim-enable");
+    },
+    get targetKnocked() {
+      return isChecked("target-knocked");
+    },
+    get meleeLock() {
+      return isChecked("melee-lock");
+    }
   },
   spinbot: {
-    enabled: true,
-    realistic: true, 
+    get enabled() {
+      return isChecked("spinbot-enable");
+    },
+    get realistic() {
+      return isChecked("realistic");
+    }
   },
   autoFire: {
-    enabled: true,
+    get enabled() {
+      return isChecked("autofire-enable");
+    }
   },
   xray: {
-    enabled: true,
+    get enabled() {
+      return isChecked("xray");
+    }
   },
   esp: {
-    enabled: true,
-    players: true,
-    grenades: true,
+    get enabled() {
+      return isChecked("esp-enable");
+    },
+    get players() {
+      return isChecked("player-esp");
+    },
+    get grenades() {
+      return isChecked("grenade-esp");
+    },
     flashlights: {
-      own: true,
-      others: true,
+      get own() {
+        return isChecked("own-flashlight");
+      },
+      get others() {
+        return isChecked("others-flashlight");
+      }
     },
   },
   autoLoot: {
     enabled: true,
   },
   trolling: {
-    emoteSpam: false,
+    get emoteSpam() {
+      return isChecked("emote-spam-enable");
+    }
   }
 };
 

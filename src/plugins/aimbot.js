@@ -252,6 +252,7 @@ export function aimbotTicker() {
       aimbotDot.style.display = 'none';
     }
   } catch (error) {
+    aimbotDot.style.display = "none";
     //console.error("Error in aimbotTicker:", error);
   }
 }
