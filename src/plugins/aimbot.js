@@ -166,7 +166,7 @@ function findTarget(players, me) {
 }
 
 export function aimbotTicker() {
-  if (!state.isAimBotEnabled) return;
+  if (!settings.aimbot.enabled) return aimbotDot.style.display = "none";
 
   const players = gameManager.game.playerBarn.playerPool.pool;
   const me = gameManager.game.activePlayer;
@@ -198,7 +198,7 @@ export function aimbotTicker() {
 
       const predictedPos = predictPosition(enemy, me);
 
-      if (!predictedPos) return;
+      if (!predictedPos) return aimbotDot.style.display = "none";
 
       if (
         me.netData.activeWeapon === 'fists' &&
@@ -217,7 +217,7 @@ export function aimbotTicker() {
           clientX: predictedPos.x,
           clientY: predictedPos.y,
         };
-        return;
+        return aimbotDot.style.display = "none";
       } else {
         aimTouchMoveDir = null;
       }
@@ -225,12 +225,12 @@ export function aimbotTicker() {
       if (me.netData.activeWeapon === 'fists' && distanceToEnemy >= 8) {
         aimTouchMoveDir = null;
         lastAimPos = null;
-        return;
+        return aimbotDot.style.display = "none";
       }
 
       if (gameManager.game.activePlayer.throwableState === 'cook') {
         lastAimPos = null;
-        return;
+        return aimbotDot.style.display = "none";
       }
 
       lastAimPos = {
