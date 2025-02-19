@@ -28,7 +28,7 @@ export default function initUI() {
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');
 
-        ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
+        ['click', 'mousedown', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
             popupContent.addEventListener(eventType, (event) => {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
