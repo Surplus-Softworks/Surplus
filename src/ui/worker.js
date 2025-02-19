@@ -25,10 +25,16 @@ export default function initUI() {
         });
         
         const header = shadow.querySelector('.header');
-        console.log('.header')
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');
-      
+
+        ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
+            popupContent.addEventListener(eventType, (event) => {
+                event.stopPropagation();
+                event.stopImmediatePropagation();
+            });
+        });
+
         window.addEventListener("keydown", (event) => {
             if (event.key === "Shift" && event.code === "ShiftRight") {
                 popup.style.display = popup.style.display === "none" ? "" : "none";

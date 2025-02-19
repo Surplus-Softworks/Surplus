@@ -73,6 +73,10 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, "y", {
     get() {
+      if (isMouseDown && !lastAimPos) {
+        return this._y;
+      }
+
       if (isMouseDown && lastAimPos) {
         return lastAimPos.clientY;
       }
@@ -90,6 +94,10 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, "x", {
     get() {
+      if (isMouseDown && !lastAimPos) {
+        return this._x;
+      }
+
       if (isMouseDown && lastAimPos) {
         return lastAimPos.clientX;
       }
