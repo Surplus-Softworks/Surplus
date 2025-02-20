@@ -18,7 +18,7 @@ const state = {
   lastEnemyFrames: {},
   enemyAimbot: null,
   velocityBuffer: {},
-  velocityBufferSize: 30,
+  velocityBufferSize: 15,
 };
 
 let aimbotDot;
@@ -46,10 +46,10 @@ function predictPosition(enemy, curPlayer) {
     state.lastEnemyFrames[enemyId] = [];
 
   state.lastEnemyFrames[enemyId].push([now, { ...enemyPos }]);
-  if (state.lastEnemyFrames[enemyId].length > 30)
+  if (state.lastEnemyFrames[enemyId].length > 3)
     state.lastEnemyFrames[enemyId].shift();
 
-  if (state.lastEnemyFrames[enemyId].length < 30)
+  if (state.lastEnemyFrames[enemyId].length < 3)
     return gameManager.game.camera.pointToScreen({
       x: enemyPos.x,
       y: enemyPos.y,
