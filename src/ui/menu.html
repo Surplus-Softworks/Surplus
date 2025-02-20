@@ -78,7 +78,7 @@
       z-index: 1;
     }
   
-    .tabs {
+    .nav-tabs {
       display: flex;
       gap: 4px;
       align-items: center;
@@ -86,7 +86,7 @@
       transition: all 0.3s ease;
     }
   
-    .tab {
+    .nav-tab {
       padding: 6px 12px;
       background: #333;
       border: none;
@@ -98,7 +98,7 @@
       transition: all 0.2s ease, transform 0.1s ease;
     }
   
-    .tab.active {
+    .nav-tab.active {
       background: #444;
       color: #fff;
       transform: translateY(-1px);
@@ -123,14 +123,14 @@
       transition: all 0.2s ease;
     }
   
-    .content {
+    .content-container {
       padding-top: 10px;
       padding-left: 16px;
       padding-right: 16px;
       display: none;
     }
   
-    .content.active {
+    .content-container.active {
       display: block;
     }
   
@@ -369,16 +369,16 @@
       </div>
   
       <div class="navbar">
-        <div class="tabs">
-          <button class="tab active" data-tab="main">Main</button>
-          <button class="tab" data-tab="visuals">Visuals</button>
-          <button class="tab" data-tab="misc">Misc</button>
-          <button class="tab" data-tab="help">Help</button>
+        <div class="nav-tabs">
+          <button class="nav-tab active" data-tab="main">Main</button>
+          <button class="nav-tab" data-tab="visuals">Visuals</button>
+          <button class="nav-tab" data-tab="misc">Misc</button>
+          <button class="nav-tab" data-tab="help">Help</button>
         </div>
         <button class="close-btn">×</button>
       </div>
   
-      <div class="content active" data-content="main">
+      <div class="content-container active" data-content="main">
         <div class="section">
           <div class="section-title">
             <div class="section-title-container">Aimbot</div>
@@ -440,7 +440,7 @@
         </div>
       </div>
   
-      <div class="content" data-content="visuals">
+      <div class="content-container" data-content="visuals">
         <div class="section">
           <div class="section-title">
             <div class="section-title-container">X-Ray</div>
@@ -484,7 +484,7 @@
         </div>
       </div>
   
-      <div class="content" data-content="misc">
+      <div class="content-container" data-content="misc">
         <div class="section">
           <div class="section-title">
             <div class="section-title-container">Emote Spam</div>
@@ -514,7 +514,7 @@
         </div>
       </div>
   
-      <div class="content" data-content="help">
+      <div class="content-container" data-content="help">
         <div class="section">
           <p style="color: gray">Nothing here</p>
         </div>

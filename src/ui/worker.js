@@ -71,10 +71,9 @@ export default function initUI() {
                 event.stopPropagation(); 
             });
         });
-        
       
-        const tabs = shadow.querySelectorAll('.tab');
-        const contents = shadow.querySelectorAll('.content');
+        const tabs = shadow.querySelectorAll('.nav-tab');
+        const contents = shadow.querySelectorAll('.content-container');
         
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -83,10 +82,9 @@ export default function initUI() {
       
                 tab.classList.add('active');
                 const target = tab.dataset.tab;
-                shadow.querySelector(`.content[data-content="${target}"]`).classList.add('active');
+                shadow.querySelector(`.content-container[data-content="${target}"]`).classList.add('active');
             });
         });
-      
         
         let isDragging = false;
         let startX, startY, initialX, initialY;
