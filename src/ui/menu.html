@@ -1,4 +1,5 @@
 <style>
+    
     * {
       font-family: 'GothamPro', sans-serif;
       box-sizing: border-box;
@@ -21,13 +22,15 @@
   
     .header {
       background: #222;
-      padding: 16px;
+      padding: 10px;
       border-bottom: 1px solid #333;
       user-select: none;
       transition: all 0.1s ease;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
+      position: relative;
     }
   
     .header:hover {
@@ -44,8 +47,10 @@
   
     .menu-icon {
       height: 20px;
-      margin-right: 8px;
       pointer-events: none;
+      position: absolute;
+      left: 6px; 
+      top: 7px; 
     }
   
     .navbar {
@@ -58,15 +63,19 @@
       font-size: 16px;
       font-weight: 600;
       color: #fff;
+      text-align: center;
+      position: relative;
+      z-index: 1;
     }
   
     .credit {
       font-size: 12px;
       font-style: italic;
       color: rgba(255, 255, 255, 0.45);
-      margin-left: auto;
-      margin-top: 1.5px;
-      margin-right: 5.25rem;
+      text-align: center;
+      display: block;
+      position: relative;
+      z-index: 1;
     }
   
     .tabs {
@@ -329,7 +338,7 @@
       align-items: center;
       gap: 10px;
     }
-
+  
     .section-title {
       color: #fff;
       font-size: 13px;
@@ -337,14 +346,14 @@
       margin: 0 0 6px 0;
       letter-spacing: 0.5px;
       display: flex;
-      align-items: center; 
-      justify-content: flex-start; 
+      align-items: center;
+      justify-content: flex-start;
       gap: 10px;
     }
   
     .section-title-container {
-      flex-grow: 1; 
-    } 
+      flex-grow: 1;
+    }
   </style>
   
   <div id="ui">

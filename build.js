@@ -48,39 +48,39 @@ function makeid(length) {
 }
 
 const replacements = [
-  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /autofire-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) },
-  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (1000 - 500 + 1)) + 100) }
+  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /autofire-enable/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) },
+  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (3500 - 1500 + 1)) + 100) }
 ];
 
 
-const htmlPlugin = {
+const htmlPluginObf = {
   name: 'html-plugin',
   setup(build) {
     build.onLoad({ filter: /\.html$/ }, async (args) => {
@@ -96,6 +96,27 @@ const htmlPlugin = {
       for (const { regex, replacement } of replacements) {
         minified = minified.replace(regex, replacement);
       }
+      return {
+        contents: `export default ${JSON.stringify(minified)};`,
+        loader: 'js',
+      };
+    });
+  },
+};
+
+const htmlPlugin = {
+  name: 'html-plugin',
+  setup(build) {
+    build.onLoad({ filter: /\.html$/ }, async (args) => {
+      const content = await fs.promises.readFile(args.path, 'utf8');
+      let minified = await minify(content, {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeEmptyAttributes: true,
+        minifyCSS: true,
+        minifyJS: true,
+      });
       return {
         contents: `export default ${JSON.stringify(minified)};`,
         loader: 'js',
@@ -131,8 +152,13 @@ const regexReplacementPlugin = {
   }
 };
 
-
 async function bundleJS(release = false) {
+  let plugins
+  if (release) {
+    plugins = [htmlPluginObf, regexReplacementPlugin]
+  } else {
+    plugins = [htmlPlugin]
+  }
   esbuild.build({
     entryPoints: ['./src/index.js'],
     bundle: true,
@@ -141,7 +167,7 @@ async function bundleJS(release = false) {
     sourcemap: false,
     treeShaking: true,
     keepNames: false,
-    plugins: [htmlPlugin, regexReplacementPlugin],
+    plugins: plugins,
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'
