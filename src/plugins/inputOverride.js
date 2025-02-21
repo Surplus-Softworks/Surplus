@@ -3,7 +3,7 @@ import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
 
 import { aimTouchMoveDir } from "./aimbot.js";
-
+import { ref_addEventListener } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import initStore, { read, write } from "../utils/store.js";
 import { ed } from "../utils/encryption.js";

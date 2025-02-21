@@ -39,8 +39,8 @@ initSecurity();
   });
 })();
 
-window.log = console.log;
-window.warn = console.warn;
+globalThis.log = console.log;
+globalThis.warn = console.warn;
 
 if (RELEASE) {
   const err = validate(Error, true);

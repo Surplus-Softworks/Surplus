@@ -3,7 +3,7 @@ import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import initStore, { read, write } from "../utils/store.js";
 import { ed } from "../utils/encryption.js";
-
+import { ref_addEventListener } from "../utils/hook.js";
 export default function autoLoot() {
   (() => {
     const dateNow = validate(Date.now, true);
@@ -19,5 +19,5 @@ export default function autoLoot() {
       validate(setTimeout, true)(crash, 300)
     }
   })();
-  window.mobile = settings.autoLoot.enabled; // this copies the primitive but wtv
+  globalThis.mobile = settings.autoLoot.enabled; // this copies the primitive but wtv
 }

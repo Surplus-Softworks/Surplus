@@ -57,7 +57,7 @@ export default function initUI() {
             }])
         });
 
-        reflect.apply(ref_addEventListener, window, ["keydown", (event) => { 
+        reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => { 
             if (event.key === "Shift" && event.code === "ShiftRight") {
                 popup.style.display = popup.style.display === "none" ? "" : "none";
             }
@@ -121,8 +121,8 @@ export default function initUI() {
             initialX = parseFloat(popup.style.left);
             initialY = parseFloat(popup.style.top);
 
-            reflect.apply(ref_addEventListener, window, ["mousemove", drag]);
-            reflect.apply(ref_addEventListener, window, ["mouseup", stopDrag]);
+            reflect.apply(ref_addEventListener, globalThis, ["mousemove", drag]);
+            reflect.apply(ref_addEventListener, globalThis, ["mouseup", stopDrag]);
         }
 
         function drag(e) {
@@ -138,11 +138,11 @@ export default function initUI() {
 
         function stopDrag() {
             isDragging = false;
-            reflect.apply(ref_addEventListener, window, ["mousemove", drag]);
-            reflect.apply(ref_addEventListener, window, ["mouseup", stopDrag]);
+            reflect.apply(ref_addEventListener, globalThis, ["mousemove", drag]);
+            reflect.apply(ref_addEventListener, globalThis, ["mouseup", stopDrag]);
         }
 
-        reflect.apply(ref_addEventListener, window, ["mousedown", (e) => {
+        reflect.apply(ref_addEventListener, globalThis, ["mousedown", (e) => {
             if (e.composedPath().includes(popupContent)) {
                 popup.style.zIndex = '9999';
             }

@@ -226,7 +226,7 @@ async function bundleJS(release = false) {
     'zurv',
   ];
 
-  if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
+  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
     return;
   };
 
@@ -251,7 +251,7 @@ async function bundleJS(release = false) {
     'zurv',
   ];
 
-  if (!whitelist.some(domain => window.location.hostname.includes(domain))) {
+  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
     return;
   };
   

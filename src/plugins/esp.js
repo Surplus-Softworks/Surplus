@@ -12,6 +12,7 @@ import {
   PIXI,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
+import { ref_addEventListener } from "../utils/hook.js";
 
 const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;

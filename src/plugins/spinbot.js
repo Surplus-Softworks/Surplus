@@ -3,6 +3,8 @@ import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
 import { validate } from "../utils/security.js";
+import { reflect } from "../utils/hook.js";
+import { ref_addEventListener } from "../utils/hook.js";
 
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -21,13 +23,13 @@ function updateRotation() {
     if (!gameManager.game.spectating) {
       if (lastAimPos) {
         gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-          lastAimPos.clientY - window.innerHeight / 2,
-          lastAimPos.clientX - window.innerWidth / 2
+          lastAimPos.clientY - globalThis.innerHeight / 2,
+          lastAimPos.clientX - globalThis.innerWidth / 2
         );
       } else {
         gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-          gameManager.game.input.mousePos.y - window.innerHeight / 2,
-          gameManager.game.input.mousePos.x - window.innerWidth / 2
+          gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+          gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
         );
       }
     } else {
@@ -38,8 +40,8 @@ function updateRotation() {
     }
   } else {
     gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-      gameManager.game.input.mousePos.y - window.innerHeight / 2,
-      gameManager.game.input.mousePos.x - window.innerWidth / 2
+      gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+      gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
     );
   }
 }
@@ -54,8 +56,8 @@ function calculateSpinbotMousePosition(axis) {
   }
 
   if (settings.spinbot.realistic) {
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
+    const centerX = globalThis.innerWidth / 2;
+    const centerY = globalThis.innerHeight / 2;
     const radius = Math.min(centerX, centerY) * 0.8;
 
     if (axis === "x") {
@@ -64,7 +66,7 @@ function calculateSpinbotMousePosition(axis) {
       return centerY + Math.sin(currentAngle) * radius;
     }
   } else {
-    return axis === "x" ? Math.random() * window.innerWidth : Math.random() * window.innerHeight;
+    return axis === "x" ? Math.random() * globalThis.innerWidth : Math.random() * globalThis.innerHeight;
   }
 }
 
@@ -114,11 +116,11 @@ export default function spinbot() {
     },
   });
 
-  reflect.apply(ref_addEventListener, window, ["mousedown", () => {
+  reflect.apply(ref_addEventListener, globalThis, ["mousedown", () => {
     isMouseDown = true;
   }]) 
 
-  reflect.apply(ref_addEventListener, window, ["mouseup", () => {
+  reflect.apply(ref_addEventListener, globalThis, ["mouseup", () => {
     isMouseDown = false;
   }]) 
 

@@ -3,7 +3,7 @@ import {
   getTeam,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
-
+import { ref_addEventListener } from "../utils/hook.js";
 export function betterVision_ticker() {
   try {
     if (settings.xray.enabled) {
