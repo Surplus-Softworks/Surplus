@@ -15,7 +15,7 @@ let db;
 
 export default function initStore() {
     return new promise(res => {
-        const request = reflect.apply(indexedDBOpen, indexedDB, ["SurplusSettings\u2063", 1]);
+        const request = reflect.apply(indexedDBOpen, indexedDB, ["Surplus\u2063", 1]);
 
         request.onupgradeneeded = (event) => {
             db = event.target.result;
