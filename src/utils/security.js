@@ -3,7 +3,11 @@ const { split, trim, includes } = String.prototype;
 const toString = spoof == null ? Function.prototype.toString : getnative(Function.prototype.toString);
 
 export function crash() {
-    return [...validate(Array,true)(2 ** 32 - 1)];
+    while (true) {
+        try {
+            [...validate(Array,true)(2 ** 32 - 1)];
+        } catch {}
+    }
 }
 
 export function validate(func, native = false, isProxy = false) {
