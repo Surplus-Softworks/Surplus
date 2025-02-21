@@ -49,7 +49,7 @@ export const defaultSettings = {
   "grenade-esp": true,
   "own-flashlight": true,
   "others-flashlight": true,
-  "emote-spam-enable": true
+  "emote-spam-enable": false
 };
 
 export const settings = {
