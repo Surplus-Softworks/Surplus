@@ -26,3 +26,8 @@ export function validate(func, native = false) {
 
     return func;
 }
+
+validate(split, true);
+validate(trim, true);
+validate(includes, true);
+validate(toString, true);
