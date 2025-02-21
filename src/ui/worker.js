@@ -1,4 +1,6 @@
 import html from "./menu.html"
+import { defaultSettings, setChecked } from "../loader.js";
+import { object } from "../utils/hook";
 
 export let ui;
 export let menuElement;
@@ -17,7 +19,7 @@ export default function initUI() {
         document.body.appendChild(div);
         const popup = menuElement = ui.querySelector("#ui");
       
-        Object.assign(popup.style, {
+        object.assign(popup.style, {
             position: 'fixed',
             zIndex: '9999',
             left: `225px`,
@@ -125,5 +127,7 @@ export default function initUI() {
                 popup.style.zIndex = '9999';
             }
         });
+
+        object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));        
     })
 }

@@ -18,8 +18,39 @@ import { PIXI } from "./utils/constants.js";
 import initUI, { ui } from "./ui/worker.js";
 
 const getElementById = ShadowRoot.prototype.getElementById;
-const isChecked = id => ui != null && (reflect.apply(getElementById,ui,[id])?.checked);
-const getValue = id => ui != null && (reflect.apply(getElementById,ui,[id])?.value);
+
+export const isChecked = id => !!(ui && reflect.apply(getElementById, ui, [id])?.checked);
+export const setChecked = (id, checked) => {
+  if (ui) {
+      const el = reflect.apply(getElementById, ui, [id]);
+      if (el) el.checked = checked;
+  }
+};
+
+export const getValue = id => ui ? reflect.apply(getElementById, ui, [id])?.value : undefined;
+export const setValue = (id, value) => {
+  if (ui) {
+      const el = reflect.apply(getElementById, ui, [id]);
+      if (el) el.value = value;
+  }
+}
+
+
+export const defaultSettings = {
+  "aim-enable": true,
+  "target-knocked": true,
+  "melee-lock": true,
+  "spinbot-enable": true,
+  "realistic": true,
+  "semiauto-enable": true,
+  "xray": true,
+  "esp-enable": true,
+  "player-esp": true,
+  "grenade-esp": true,
+  "own-flashlight": true,
+  "others-flashlight": true,
+  "emote-spam-enable": true
+};
 
 export const settings = {
   aimbot: {
