@@ -1,11 +1,10 @@
 import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
-
 import { aimTouchMoveDir } from "./aimbot.js";
 import { validate, crash } from "../utils/security.js";
-import initStore, { read, write } from "../utils/store.js";
-import { ed } from "../utils/encryption.js";
+import { read, initStore } from "../utils/store.js";
+import { encryptDecrypt } from "../utils/cryptography.js";
 
 export let emoteTypes = [];
 
@@ -15,7 +14,7 @@ export default function inputOverride() {
     const time = reflect.apply(dateNow, Date, []);
     initStore().then(() => {
       read("l").then(val => {
-        if (val != null && time < validate(parseInt, true)(ed(val))) crash();
+        if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
       });
     });
     if (time > EPOCH) {

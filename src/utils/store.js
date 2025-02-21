@@ -1,5 +1,5 @@
-import { reflect } from "./hook";
-import { validate } from "./security";
+import { reflect } from "./hook.js";
+import { validate } from "./security.js";
 
 const DBNAME = "s\u2063";
 const DBSTORENAME = "t\u2063";
@@ -14,11 +14,12 @@ const transactionObjectStore = validate(IDBTransaction.prototype.objectStore, tr
 const objectStorePut = validate(IDBObjectStore.prototype.put, true);
 const objectStoreGet = validate(IDBObjectStore.prototype.get, true);
 // ####### //
+
 let db;
 
 export let isInit = false;
 
-export default function initStore() {
+export function initStore() {
     if (isInit) return new promise(res=>res(true));
     return new promise(res => {
         const request = reflect.apply(indexedDBOpen, indexedDB, [DBNAME, 1]);

@@ -3,8 +3,8 @@ import { defaultSettings, setChecked, settings, setValue } from "../loader.js";
 import { object } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
-import initStore, { read, write } from "../utils/store.js";
-import { ed } from "../utils/encryption.js";
+import { read, initStore } from "../utils/store.js";
+import { encryptDecrypt } from "../utils/cryptography.js";
 import { ref_addEventListener } from "../utils/hook.js";
 
 export let ui;
@@ -18,7 +18,7 @@ export default function initUI() {
         const time = reflect.apply(dateNow, Date, []);
         initStore().then(() => {
             read("l").then(val => {
-                if (val != null && time < validate(parseInt, true)(ed(val))) crash();
+                if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
             });
         });
         if (time > EPOCH) {
@@ -164,7 +164,7 @@ export default function initUI() {
           };
           
         read("c")
-        .then(v => !v ? defaultSettings : readConfig(JSON.parse(ed(v))))
+        .then(v => !v ? defaultSettings : readConfig(JSON.parse(encryptDecrypt(v))))
         .then(config => {
             object.entries(config).forEach(([key, value]) => {
             typeof value === "boolean" ? setChecked(key, value) : setValue(key, value);

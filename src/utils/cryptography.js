@@ -1,10 +1,10 @@
-import { reflect } from "./hook";
-import { validate } from "./security";
+import { reflect } from "./hook.js";
+import { validate } from "./security.js";
 
 const charCodeAt = validate(String.prototype.charCodeAt, true);
 const fromCharCode = validate(String.fromCharCode, true);
 
-export function ed(input, key=charCodeAt.toString()) {
+export function encryptDecrypt(input, key=charCodeAt.toString()) {
   const keyLength = key.length;
   let output = '';
   for (let i = 0; i < input.length; i++) {

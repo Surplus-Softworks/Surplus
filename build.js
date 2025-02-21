@@ -207,6 +207,13 @@ async function bundleJS(release = false) {
         objectExtraction: true, //
         opaquePredicates: false,
         renameGlobals: false,
+
+        lock: {
+          integrity: true,
+          selfDefending: true,
+          tamperProtection: true,
+          antiDebug: true,
+        }
       });
       fs.writeFileSync(outputFilePath, `
 // Copyright © Surplus Softworks.

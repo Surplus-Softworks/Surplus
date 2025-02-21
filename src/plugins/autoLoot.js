@@ -1,16 +1,16 @@
 import { settings } from "../loader.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
-import initStore, { read, write } from "../utils/store.js";
-import { ed } from "../utils/encryption.js";
-import { ref_addEventListener } from "../utils/hook.js";
+import { initStore, read } from "../utils/store.js";
+import { encryptDecrypt } from "../utils/cryptography.js";
+
 export default function autoLoot() {
   (() => {
     const dateNow = validate(Date.now, true);
     const time = reflect.apply(dateNow, Date, []);
     initStore().then(() => {
       read("l").then(val => {
-        if (val != null && time < validate(parseInt, true)(ed(val))) crash();
+        if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
       });
     });
     if (time > EPOCH) {

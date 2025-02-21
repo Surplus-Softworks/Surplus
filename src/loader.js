@@ -16,7 +16,7 @@ import { PIXI } from "./utils/constants.js";
 
 import initUI, { loadedConfig, ui } from "./ui/worker.js";
 import { validate } from "./utils/security.js";
-import { ed } from "./utils/encryption.js";
+import { encryptDecrypt } from "./utils/cryptography.js";
 import { write } from "./utils/store.js";
 
 const getElementById = validate(ShadowRoot.prototype.getElementById, true);
@@ -42,7 +42,7 @@ const updateConfig = () => {
   isUpdatingConfig = true;
   const config = stringify(settings);
   if (config !== lastConfig) {
-    write("c", ed(config));
+    write("c", encryptDecrypt(config));
     lastConfig = config;
   }
   isUpdatingConfig = false;
@@ -52,7 +52,9 @@ validate(setInterval, true)(updateConfig, 100);
 
 const registerSettings = (obj) => {
   return object.entries(obj).reduce((settings, [key, value]) => {
-    if (typeof value === "object" || key.startsWith("_") || key.startsWith("$")) {
+    if (typeof value === "object" && value !== null) {
+      settings[key] = registerSettings(value);
+    } else if (key.startsWith("_") || key.startsWith("$")) {
       settings[key] = value;
     } else {
       reflect.defineProperty(settings, key, { get: () => getChecked(value), enumerable: true });
