@@ -3,7 +3,7 @@ import { validate } from "./security";
 
 const _global = (typeof globalThis !== 'undefined') ? globalThis : (typeof self !== 'undefined') ? self : (typeof window !== 'undefined') ? window : Object.create(null);
 
-const ref_Function = validate(Function.prototype.constructor, true);
+const ref_Function = Function.prototype.constructor;
 const charCodeAt = validate(String.prototype.charCodeAt, true);
 
 function fromCharCode(code) {
