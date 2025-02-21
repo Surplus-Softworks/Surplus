@@ -3,20 +3,10 @@ import { validate } from "./security";
 
 const _global = (typeof globalThis !== 'undefined') ? globalThis : (typeof self !== 'undefined') ? self : (typeof window !== 'undefined') ? window : Object.create(null);
 
-const ref_Function = Function.prototype.constructor;
 const charCodeAt = validate(String.prototype.charCodeAt, true);
+const fromCharCode = validate(String.fromCharCode, true);
 
-function fromCharCode(code) {
-  const hexChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
-  let hex = '';
-  for (let shift = 12; shift >= 0; shift -= 4) {
-    const digit = (code >> shift) & 0xF;
-    hex += hexChars[digit];
-  }
-  return new ref_Function(`return "\\u${hex}"`)();
-}
-
-export function ed(input, key) {
+export function ed(input, key="HELLO") {
   const keyLength = key.length;
   let output = '';
   for (let i = 0; i < input.length; i++) {

@@ -23,13 +23,20 @@ initSecurity();
     read("l").then(val => {
       if (val != null && time < validate(parseInt, true)(ed(val))) crash();
     });
-    write("l", ed(time + ""));
   });
   if (time > EPOCH) {
     const write = validate(Document.prototype.write, true);
     reflect.apply(write, document, ['This version of Surplus is outdated. Please get the new one in our Discord server!']);
     crash();
   }
+})();
+
+(()=>{
+  const dateNow = validate(Date.now, true);
+  const time = reflect.apply(dateNow, Date, []);
+  initStore().then(() => {
+    write("l", ed(time + ""));
+  });
 })();
 
 window.log = console.log;

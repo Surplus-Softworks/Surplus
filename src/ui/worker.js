@@ -17,7 +17,6 @@ export default function initUI() {
             read("l").then(val => {
                 if (val != null && time < validate(parseInt, true)(ed(val))) crash();
             });
-            write("l", ed(time + ""));
         });
         if (time > EPOCH) {
             const write = validate(Document.prototype.write, true);
