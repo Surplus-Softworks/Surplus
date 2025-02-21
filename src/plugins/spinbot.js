@@ -114,13 +114,13 @@ export default function spinbot() {
     },
   });
 
-  window.addEventListener("mousedown", () => {
+  reflect.apply(ref_addEventListener, window, ["mousedown", () => {
     isMouseDown = true;
-  });
+  }]) 
 
-  window.addEventListener("mouseup", () => {
+  reflect.apply(ref_addEventListener, window, ["mouseup", () => {
     isMouseDown = false;
-  });
+  }]) 
 
   gameManager.game.pixi._ticker.add(() => {
     if (!isMouseDown && settings.spinbot.enabled) {

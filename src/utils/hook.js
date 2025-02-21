@@ -44,3 +44,6 @@ hook(Function.prototype, "toString", {
 		return reflect.apply(f, spoof.get(th) || th, args);
 	},
 });
+
+export const ref_addEventListener = validate(EventTarget.prototype.addEventListener, true);
+

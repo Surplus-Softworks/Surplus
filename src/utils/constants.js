@@ -1,5 +1,6 @@
 import { hook, reflect, object } from "./hook.js";
 import { gameManager } from "./injector.js";
+import { validate } from "./security.js";
 
 export const inputCommands = {
     MoveLeft: 0,
