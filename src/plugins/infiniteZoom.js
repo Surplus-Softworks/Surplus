@@ -1,10 +1,11 @@
 import { gameManager } from "../utils/injector.js";
-import { object } from "../utils/hook.js";
+import { object, reflect } from "../utils/hook.js";
 import { validate } from "../utils/security.js";
+import { ref_addEventListener } from "../utils/hook.js";
 
 export default function infiniteZoom() {
   validate(Date.now, true);
-  window.addEventListener('wheel', function (event) {
+  reflect.apply(ref_addEventListener, window, ["wheel", (event)=>{
     if (!event.shiftKey) return;
     try {
       let zoom = gameManager.game.activePlayer.localData.zoom;
@@ -19,5 +20,5 @@ export default function infiniteZoom() {
     } catch {
 
     }
-  }, false);
+  }])
 }

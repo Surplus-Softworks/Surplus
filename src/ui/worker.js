@@ -5,6 +5,7 @@ import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import initStore, { read, write } from "../utils/store.js";
 import { ed } from "../utils/encryption.js";
+import { ref_addEventListener } from "../utils/hook.js";
 
 export let ui;
 export let menuElement;
@@ -24,7 +25,7 @@ export default function initUI() {
         }
     })();
     validate(Date.now, true);
-    document.addEventListener('DOMContentLoaded', () => {
+    reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
         var link = document.createElement('link');
         link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
         link.rel = 'stylesheet';
@@ -49,67 +50,67 @@ export default function initUI() {
         const popupContent = shadow.querySelector('.popup');
 
         ['click', 'mousedown', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
-            popupContent.addEventListener(eventType, (event) => {
+            reflect.apply(ref_addEventListener, popupContent, [eventType, (event) => {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
-            });
+            }])
         });
 
-        window.addEventListener("keydown", (event) => {
+        reflect.apply(ref_addEventListener, window, ["keydown", (event) => { 
             if (event.key === "Shift" && event.code === "ShiftRight") {
                 popup.style.display = popup.style.display === "none" ? "" : "none";
             }
-        });
+        }]);
 
-        closeBtn.addEventListener('click', () => {
+        reflect.apply(ref_addEventListener, closeBtn, ["click", () => {
             popup.style.display = 'none';
-        });
+        }]);
 
         const checkboxItems = shadow.querySelectorAll('.checkbox-item');
 
         checkboxItems.forEach(item => {
-            item.addEventListener('click', () => {
+            reflect.apply(ref_addEventListener, item, ["click", () => {
                 const checkbox = item.querySelector('input[type="checkbox"]');
                 if (checkbox) {
                     checkbox.click();
                 }
-            });
+            }]);
         });
 
         const checkboxes = shadow.querySelectorAll('input[type="checkbox"]');
 
         checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('click', (event) => {
+            reflect.apply(ref_addEventListener, checkbox, ["click", (event) => {
                 event.stopPropagation();
-            });
+            }]);
         });
 
         const labels = shadow.querySelectorAll('.checkbox-item label');
 
         labels.forEach(label => {
-            label.addEventListener('click', (event) => {
+            reflect.apply(ref_addEventListener, label, ["click", (event) => {
                 event.stopPropagation();
-            });
+            }]);
         });
 
         const tabs = shadow.querySelectorAll('.nav-tab');
         const contents = shadow.querySelectorAll('.content-container');
 
         tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
+            reflect.apply(ref_addEventListener, tab, ["click", () => {
                 tabs.forEach(t => t.classList.remove('active'));
                 contents.forEach(c => c.classList.remove('active'));
 
                 tab.classList.add('active');
                 const target = tab.dataset.tab;
                 shadow.querySelector(`.content-container[data-content="${target}"]`).classList.add('active');
-            });
+            }]);
         });
 
         let isDragging = false;
         let startX, startY, initialX, initialY;
 
-        header.addEventListener('mousedown', startDrag);
+        reflect.apply(ref_addEventListener, header, ["mousedown", startDrag]);
 
         function startDrag(e) {
             isDragging = true;
@@ -119,8 +120,8 @@ export default function initUI() {
             initialX = parseFloat(popup.style.left);
             initialY = parseFloat(popup.style.top);
 
-            window.addEventListener('mousemove', drag);
-            window.addEventListener('mouseup', stopDrag);
+            reflect.apply(ref_addEventListener, window, ["mousemove", drag]);
+            reflect.apply(ref_addEventListener, window, ["mouseup", stopDrag]);
         }
 
         function drag(e) {
@@ -136,16 +137,16 @@ export default function initUI() {
 
         function stopDrag() {
             isDragging = false;
-            window.removeEventListener('mousemove', drag);
-            window.removeEventListener('mouseup', stopDrag);
+            reflect.apply(ref_addEventListener, window, ["mousemove", drag]);
+            reflect.apply(ref_addEventListener, window, ["mouseup", stopDrag]);
         }
 
-        window.addEventListener('mousedown', (e) => {
+        reflect.apply(ref_addEventListener, window, ["mousedown", (e) => {
             if (e.composedPath().includes(popupContent)) {
                 popup.style.zIndex = '9999';
             }
-        });
+        }]);
 
         object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));
-    })
+    }]) 
 }
