@@ -15,23 +15,26 @@ import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
-import initUI, { ui } from "./ui/worker.js";
+import initUI, { loadedConfig, ui } from "./ui/worker.js";
+import { validate } from "./utils/security.js";
+import { ed } from "./utils/encryption.js";
+import { write } from "./utils/store.js";
 
 const getElementById = ShadowRoot.prototype.getElementById;
 
 export const isChecked = id => !!(ui && reflect.apply(getElementById, ui, [id])?.checked);
 export const setChecked = (id, checked) => {
   if (ui) {
-      const el = reflect.apply(getElementById, ui, [id]);
-      if (el) el.checked = checked;
+    const el = reflect.apply(getElementById, ui, [id]);
+    if (el) el.checked = checked;
   }
 };
 
 export const getValue = id => ui ? reflect.apply(getElementById, ui, [id])?.value : undefined;
 export const setValue = (id, value) => {
   if (ui) {
-      const el = reflect.apply(getElementById, ui, [id]);
-      if (el) el.value = value;
+    const el = reflect.apply(getElementById, ui, [id]);
+    if (el) el.value = value;
   }
 }
 
@@ -53,11 +56,104 @@ export const defaultSettings = {
   "grenade-esp": true,
   "own-flashlight": true,
   "others-flashlight": true,
-  
-  "emote-spam-enable": false
+
+  "emote-spam-enable": false,
+  "emote-spam-speed": 50
 };
 
+let lastConfig;
+
+const getOwnPropertyNames = validate(Object.getOwnPropertyNames, true);
+const substr = validate(String.prototype.substr, true);
+const stringify = validate(JSON.stringify, true);
+
+let isUpdateConfig = false;
+
+function updateConfig() {
+  //console.log(100, loadedConfig, isUpdateConfig);
+  if (!loadedConfig) return;
+  if (isUpdateConfig) return;
+  isUpdateConfig = true;
+  if (lastConfig == null) return lastConfig = stringify(settings), isUpdateConfig = false;
+  const config = stringify(settings);
+  if (config != lastConfig) {
+    write("c", ed(config));
+  }
+  lastConfig = config;
+  isUpdateConfig = false;
+}
+
+validate(setInterval, true)(()=>{
+  updateConfig();
+}, 100);
+
+const O = (obj) => {
+  const o = {};
+  for (let i of getOwnPropertyNames(obj)) {
+    if (typeof obj[i] == "object") {
+      o[i] = obj[i];
+      continue;
+    } else if (i[0] == "_") {
+      o[i] = obj[i];
+      continue;
+    } else if (i[0] == "$") {
+      reflect.defineProperty(o, reflect.apply(substr, i, [1]), reflect.getOwnPropertyDescriptor(obj, i));
+      continue;
+    }
+    const el = obj[i];
+    reflect.defineProperty(o, i, {
+      get() {
+        return isChecked(el);
+      },
+      enumerable: true
+    });
+    reflect.defineProperty(o, "_" + i, {
+      value: el,
+      enumerable: false
+    });
+  }
+  return o;
+}
+
 export const settings = {
+  aimbot: O({
+    enabled: "aim-enable",
+    targetKnocked: "target-knocked",
+    meleeLock: "melee-lock"
+  }),
+  spinbot: O({
+    enabled: "spinbot-enable",
+    realistic: "realistic"
+  }),
+  autoFire: O({
+    enabled: "semiauto-enable"
+  }),
+  xray: O({
+    enabled: "xray"
+  }),
+  esp: O({
+    enabled: "esp-enable",
+    players: "player-esp",
+    grenades: "grenade-esp",
+    flashlights: {
+      own: "own-flashlight",
+      others: "others-flashlight"
+    }
+  }),
+  autoLoot: {
+    enabled: true
+  },
+  emoteSpam: O({
+    enabled: "emote-spam-enable",
+    get $speed() {
+      updateConfig();
+      return 1001 - (getValue("emote-spam-speed") * 10)
+    },
+    _speed: "emote-spam-speed"
+  })
+};
+
+export const _settings = {
   aimbot: {
     get enabled() {
       return isChecked("aim-enable");

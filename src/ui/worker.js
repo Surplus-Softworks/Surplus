@@ -1,5 +1,5 @@
 import html from "./menu.html"
-import { defaultSettings, setChecked } from "../loader.js";
+import { defaultSettings, setChecked, settings, setValue } from "../loader.js";
 import { object } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
@@ -9,6 +9,8 @@ import { ref_addEventListener } from "../utils/hook.js";
 
 export let ui;
 export let menuElement;
+
+export let loadedConfig = false;
 
 export default function initUI() {
     (() => {
@@ -26,6 +28,7 @@ export default function initUI() {
         }
     })();
     validate(Date.now, true);
+    const parse = validate(JSON.parse, true);
     reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
         var link = document.createElement('link');
         link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
@@ -57,7 +60,11 @@ export default function initUI() {
             }])
         });
 
+<<<<<<< HEAD
         reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => { 
+=======
+        reflect.apply(ref_addEventListener, window, ["keydown", (event) => {
+>>>>>>> 8e33e79020f90c4fd964247a906e0dbf8511d89c
             if (event.key === "Shift" && event.code === "ShiftRight") {
                 popup.style.display = popup.style.display === "none" ? "" : "none";
             }
@@ -148,6 +155,30 @@ export default function initUI() {
             }
         }]);
 
-        object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));
-    }]) 
+        //object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));
+        const readConfig = (config, o = {}, o2 = settings) => {
+            object.entries(config).forEach(([key, value]) => {
+                if (typeof value == "object") {
+                    readConfig(value, o, o2[key]);
+                } else {
+                    if (o2["_"+key] == null) return;
+                    o[o2["_"+key]] = value;
+                }
+            })
+            return o;
+        }
+        read("c").then(v => {
+            if (!v) return defaultSettings;
+            return readConfig(parse(ed(v)));
+        }).then(config => {
+            object.entries(config).forEach(([key, value]) => {
+                if (typeof(value) == "boolean") {
+                    setChecked(key, value);
+                } else {
+                    setValue(key, value);
+                }
+            });
+            loadedConfig = true;
+        });
+    }])
 }

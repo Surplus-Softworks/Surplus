@@ -5,7 +5,7 @@ import { ref_addEventListener } from "../utils/hook.js";
 
 export default function infiniteZoom() {
   validate(Date.now, true);
-  reflect.apply(ref_addEventListener, globalThis, ["wheel", (event)=>{
+  reflect.apply(ref_addEventListener, globalThis, ["wheel", (event) => {
     if (!event.shiftKey) return;
     try {
       let zoom = gameManager.game.activePlayer.localData.zoom;

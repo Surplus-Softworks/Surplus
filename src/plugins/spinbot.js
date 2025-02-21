@@ -1,6 +1,6 @@
 import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
-import { object } from "../utils/hook.js";
+import { object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
 import { validate } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
