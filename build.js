@@ -48,38 +48,38 @@ function makeid(length) {
 }
 
 const replacements = [
-  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /semiauto-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /content-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /nav-tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /nav-tab/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) }
+  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /semiauto-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /content-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /nav-tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /nav-tab/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) }
 ];
 
 
@@ -131,27 +131,27 @@ const htmlPlugin = {
 const regexReplacementPlugin = {
   name: 'regex-replacement',
   setup(build) {
-      build.onLoad({ filter: /.*/ }, async (args) => {
-        if (args.path.includes('loader.js') ||  args.path.includes('worker.js')) {
-          console.log(args.path)
-        } else {
-          return null;
-        }
-          try {
-              let contents = await fs.promises.readFile(args.path, 'utf8');
-              
-              for (const { regex, replacement } of replacements) {
-                  contents = contents.replace(regex, replacement);
-              }
+    build.onLoad({ filter: /.*/ }, async (args) => {
+      if (args.path.includes('loader.js') || args.path.includes('worker.js')) {
+        console.log(args.path)
+      } else {
+        return null;
+      }
+      try {
+        let contents = await fs.promises.readFile(args.path, 'utf8');
 
-              return {
-                  contents,
-                  loader: 'default'
-              };
-          } catch (error) {
-              return null;
-          }
-      });
+        for (const { regex, replacement } of replacements) {
+          contents = contents.replace(regex, replacement);
+        }
+
+        return {
+          contents,
+          loader: 'default'
+        };
+      } catch (error) {
+        return null;
+      }
+    });
   }
 };
 
@@ -173,25 +173,7 @@ async function bundleJS(release = false) {
     keepNames: false,
     plugins: plugins,
     define: {
-      "timebomb_usesValidateCrashReflectInitStoreReadWrite": JSON.stringify(
-        `(isIndex)=>{
-          const dateNow = validate(Date.now, true);
-          const time = reflect.apply(dateNow, Date, []);
-          initStore().then(()=>{
-            read("l").then(val=>{
-              if (val != null && time < val) crash();  
-            });
-            write("l",time);
-          });
-          if (time > ${EPOCH}) {
-            if (isIndex) {
-              const write = validate(Document.prototype.write, true);
-              reflect.apply(write, document, ['This version of Surplus is outdated. Please get the new one in our Discord server!']);
-            } else {
-              crash();
-            }
-          }
-        }`)
+      EPOCH: EPOCH.toString()
     }
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
