@@ -3,8 +3,6 @@ import { gameManager } from "../utils/injector.js";
 import { object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
 import { validate } from "../utils/security.js";
-import { reflect } from "../utils/hook.js";
-import { ref_addEventListener } from "../utils/hook.js";
 
 let currentAngle = 0;
 let angularVelocity = 0;

@@ -3,10 +3,11 @@ import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
 
 import { aimTouchMoveDir } from "./aimbot.js";
-import { ref_addEventListener } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import initStore, { read, write } from "../utils/store.js";
 import { ed } from "../utils/encryption.js";
+
+export let emoteTypes = [];
 
 export default function inputOverride() {
   (() => {
@@ -25,6 +26,15 @@ export default function inputOverride() {
   })();
   hook(gameManager.game, "sendMessage", {
     apply(f, th, args) {
+      if (args[1].loadout) {
+        emoteTypes[0] = args[1].loadout.emotes[0];
+        emoteTypes[1] = args[1].loadout.emotes[1];
+        emoteTypes[2] = args[1].loadout.emotes[2];
+        emoteTypes[3] = args[1].loadout.emotes[3];
+      }
+      if (args[1].name) {
+        args[1].name = "discordgg/surviv"
+      }
       if (!args[1].inputs) {
         return reflect.apply(f, th, args);
       }

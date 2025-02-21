@@ -60,11 +60,7 @@ export default function initUI() {
             }])
         });
 
-<<<<<<< HEAD
         reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => { 
-=======
-        reflect.apply(ref_addEventListener, window, ["keydown", (event) => {
->>>>>>> 8e33e79020f90c4fd964247a906e0dbf8511d89c
             if (event.key === "Shift" && event.code === "ShiftRight") {
                 popup.style.display = popup.style.display === "none" ? "" : "none";
             }
@@ -155,30 +151,26 @@ export default function initUI() {
             }
         }]);
 
-        //object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));
-        const readConfig = (config, o = {}, o2 = settings) => {
+        const readConfig = (config, result = {}, mapping = settings) => {
+            if (!config || typeof config !== "object") return result;
             object.entries(config).forEach(([key, value]) => {
-                if (typeof value == "object") {
-                    readConfig(value, o, o2[key]);
-                } else {
-                    if (o2["_"+key] == null) return;
-                    o[o2["_"+key]] = value;
-                }
-            })
-            return o;
-        }
-        read("c").then(v => {
-            if (!v) return defaultSettings;
-            return readConfig(parse(ed(v)));
-        }).then(config => {
+              if (value && typeof value === "object" && mapping && mapping[key]) {
+                readConfig(value, result, mapping[key]);
+              } else if (mapping && mapping[`_${key}`] != null) {
+                result[mapping[`_${key}`]] = value;
+              }
+            });
+            return result;
+          };
+          
+        read("c")
+        .then(v => !v ? defaultSettings : readConfig(JSON.parse(ed(v))))
+        .then(config => {
             object.entries(config).forEach(([key, value]) => {
-                if (typeof(value) == "boolean") {
-                    setChecked(key, value);
-                } else {
-                    setValue(key, value);
-                }
+            typeof value === "boolean" ? setChecked(key, value) : setValue(key, value);
             });
             loadedConfig = true;
         });
+          
     }])
 }

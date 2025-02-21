@@ -1,8 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { settings } from "../loader.js";
-import { validate, crash } from "../utils/security.js";
-import { ref_addEventListener } from "../utils/hook.js";
-const emoteTypes = ["emote_joyface", "emote_question", "emote_sadface", "emote_headshotface"];
+import { validate } from "../utils/security.js";
+import { emoteTypes } from "./inputOverride.js";
 
 const ref_setTimeout = validate(setTimeout, true)
 
