@@ -11,9 +11,6 @@ export default function inputOverride() {
         return reflect.apply(f, th, args);
       }
 
-      args[1].shootStart = false;
-      args[1].shootHold = false;
-
       if (autoFireEnabled) {
         args[1].shootStart = true;
         args[1].shootHold = true;

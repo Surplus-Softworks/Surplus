@@ -43,7 +43,7 @@ export const settings = {
   },
   autoFire: {
     get enabled() {
-      return isChecked("autofire-enable");
+      return isChecked("semiauto-enable");
     }
   },
   xray: {

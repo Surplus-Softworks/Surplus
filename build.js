@@ -69,7 +69,7 @@ const replacements = [
   { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
   { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
   { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
-  { regex: /autofire-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
+  { regex: /semiauto-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
   { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
   { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
   { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5+ 1)) + 1) },
