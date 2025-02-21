@@ -25,12 +25,5 @@ hook(Function.prototype, "constructor", {
   }
 });
 
-initStore().then(()=>{
-  write("STUFF", "EZ");
-  read("STUFF").then(val=>{
-    log(val);
-  });
-});
-
-
+initStore();
 initialize();
