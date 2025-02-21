@@ -1,6 +1,6 @@
 import html from "./menu.html"
 import { defaultSettings, setChecked } from "../loader.js";
-import { object } from "../utils/hook";
+import { object } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import initStore, { read, write } from "../utils/store.js";
@@ -21,7 +21,6 @@ export default function initUI() {
         if (time > EPOCH) {
             const write = validate(Document.prototype.write, true);
             reflect.apply(write, document, ['This version of Surplus is outdated. Please get the new one in our Discord server!']);
-            crash();
         }
     })();
     validate(Date.now, true);
@@ -120,8 +119,8 @@ export default function initUI() {
             initialX = parseFloat(popup.style.left);
             initialY = parseFloat(popup.style.top);
 
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
+            window.addEventListener('mousemove', drag);
+            window.addEventListener('mouseup', stopDrag);
         }
 
         function drag(e) {
@@ -137,11 +136,11 @@ export default function initUI() {
 
         function stopDrag() {
             isDragging = false;
-            document.removeEventListener('mousemove', drag);
-            document.removeEventListener('mouseup', stopDrag);
+            window.removeEventListener('mousemove', drag);
+            window.removeEventListener('mouseup', stopDrag);
         }
 
-        document.addEventListener('mousedown', (e) => {
+        window.addEventListener('mousedown', (e) => {
             if (e.composedPath().includes(popupContent)) {
                 popup.style.zIndex = '9999';
             }

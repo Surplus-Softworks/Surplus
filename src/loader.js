@@ -40,15 +40,20 @@ export const defaultSettings = {
   "aim-enable": true,
   "target-knocked": true,
   "melee-lock": true,
+
   "spinbot-enable": true,
-  "realistic": true,
+  "realistic": false,
+
   "semiauto-enable": true,
+
   "xray": true,
+
   "esp-enable": true,
   "player-esp": true,
   "grenade-esp": true,
   "own-flashlight": true,
   "others-flashlight": true,
+  
   "emote-spam-enable": false
 };
 
