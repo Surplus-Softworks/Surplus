@@ -1,6 +1,9 @@
 import { reflect } from "./hook";
 import { validate } from "./security";
 
+const DBNAME = "s\u2063";
+const DBSTORENAME = "t\u2063";
+
 // METHODS //
 const promise = validate(Promise, true);
 const indexedDBOpen = validate(IDBFactory.prototype.open, true);
@@ -15,12 +18,12 @@ let db;
 
 export default function initStore() {
     return new promise(res => {
-        const request = reflect.apply(indexedDBOpen, indexedDB, ["Surplus\u2063", 1]);
+        const request = reflect.apply(indexedDBOpen, indexedDB, [DBNAME, 1]);
 
         request.onupgradeneeded = (event) => {
             db = event.target.result;
-            if (!reflect.apply(domStringListContains, db.objectStoreNames, ["Data"])) {
-                reflect.apply(databaseCreateObjectStore, db, ["Data"])
+            if (!reflect.apply(domStringListContains, db.objectStoreNames, [DBSTORENAME])) {
+                reflect.apply(databaseCreateObjectStore, db, [DBSTORENAME])
             }
         };
 
@@ -35,8 +38,8 @@ export function write(key, value) {
     return new promise((res, rej) => {
         if (!db) return res(false);
 
-        const transaction = reflect.apply(databaseTransaction, db, ["Data", "readwrite"]);
-        const store = reflect.apply(transactionObjectStore, transaction, ["Data"]);
+        const transaction = reflect.apply(databaseTransaction, db, [DBSTORENAME, "readwrite"]);
+        const store = reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = reflect.apply(objectStorePut, store, [value, key]);
 
         request.onsuccess = () => res(true);
@@ -48,8 +51,8 @@ export function read(key) {
     return new promise((res, rej) => {
         if (!db) return res(false);
 
-        const transaction = reflect.apply(databaseTransaction, db, ["Data", "readonly"]);
-        const store = reflect.apply(transactionObjectStore, transaction, ["Data"]);
+        const transaction = reflect.apply(databaseTransaction, db, [DBSTORENAME, "readonly"]);
+        const store = reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = reflect.apply(objectStoreGet, store, [key]);
 
         request.onsuccess = () => res(request.result || null);
