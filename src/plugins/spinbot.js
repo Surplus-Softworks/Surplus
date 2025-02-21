@@ -23,23 +23,27 @@ function updateRotation() {
           lastAimPos.clientY - window.innerHeight / 2,
           lastAimPos.clientX - window.innerWidth / 2
         );
+        window.log(1)
       } else {
         gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
           gameManager.game.input.mousePos.y - window.innerHeight / 2,
           gameManager.game.input.mousePos.x - window.innerWidth / 2
         );
+        window.log(2)
       }
     } else {
       gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(
         gameManager.game.activePlayer.dir.y,
         gameManager.game.activePlayer.dir.x
       );
+      window.log(3)
     }
   } else {
     gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
       gameManager.game.input.mousePos.y - window.innerHeight / 2,
       gameManager.game.input.mousePos.x - window.innerWidth / 2
     );
+    window.log(4)
   }
 }
 
