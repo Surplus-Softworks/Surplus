@@ -46,9 +46,7 @@ if (RELEASE) {
   const includes = validate(String.prototype.includes, true);
   const stack = new err("").stack;
   if (!reflect.apply(includes, stack, ["main.js:23:3"])) crash();
-}
-
-if (!RELEASE) {
+} else {
   hook(Function.prototype, "constructor", {
     apply(f, th, args) {
       if (args[0] == "debugger") return reflect.apply(f, th, [""]);
