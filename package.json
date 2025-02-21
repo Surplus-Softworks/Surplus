@@ -5,32 +5,14 @@
     "build": "node build.js",
     "release": "node build.js release"
   },
-"dependencies": {
+  "dependencies": {
     "archiver": "*",
     "crx3": "*",
     "js-confuser": "*",
     "esbuild": "*",
-    "html-minifier-terser": "*",
-
-
     "pixi.js": "7.0.3",
     "react": "*",
     "chalk": "*",
-    "lodash-es": "*",
-    "ramda": "*",
-    "dayjs": "*",
-    "moment": "*",
-    "date-fns": "*",
-    "nanoid": "*",
-    "uuid": "*",
-    "redux": "*",
-    "zustand": "*",
-    "jotai": "*",
-    "vue": "*",
-    "@angular/core": "*",
-    "next": "*",
-    "antd": "*",
-    "@mui/material": "*",
-    "three": "*"
-}
+    "html-minifier-terser": "*"
+  }
 }

@@ -13,6 +13,10 @@ window.warn = console.warn;
 
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
+import { initSecurity } from './utils/security.js';
+import initStore, { read, write } from './utils/store.js';
+
+initSecurity();
 
 hook(Function.prototype, "constructor", {
   apply(f, th, args) {
@@ -20,5 +24,13 @@ hook(Function.prototype, "constructor", {
     return reflect.apply(f, th, args);
   }
 });
+
+initStore().then(()=>{
+  write("STUFF", "EZ");
+  read("STUFF").then(val=>{
+    log(val);
+  });
+});
+
 
 initialize();

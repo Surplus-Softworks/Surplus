@@ -1,12 +1,13 @@
-import { getnative, reflect } from "./hook"
+import { getnative, reflect, spoof } from "./hook"
 const { split, trim, includes } = String.prototype;
-const toString = getnative(Function.prototype.toString);
+const toString = spoof == null ? Function.prototype.toString : getnative(Function.prototype.toString);
 
 export function crash() {
     return [...Array(2 ** 32 - 1)];
 }
 
-export function validate(func, native = false) {
+export function validate(func, native = false, isProxy = false) {
+    if (typeof func != "function") return func;
     try {
         func in 0;
     } catch (e) {
@@ -16,6 +17,7 @@ export function validate(func, native = false) {
             !reflect.apply(includes, e.stack, ["[native code]"])
         ) crash();
     }
+    if (isProxy) return func;
     try {
         reflect.apply(() => ""(), func, []);
     } catch (e) {
@@ -27,7 +29,9 @@ export function validate(func, native = false) {
     return func;
 }
 
-validate(split, true);
-validate(trim, true);
-validate(includes, true);
-validate(toString, true);
+export function initSecurity() {
+    validate(split, true);
+    validate(trim, true);
+    validate(includes, true);
+    validate(toString, true);
+}
