@@ -4,9 +4,7 @@ const toString = spoof == null ? Function.prototype.toString : getnative(Functio
 
 export function crash() {
     while (true) {
-        try {
-            [...validate(Array,true)(2 ** 32 - 1)];
-        } catch {}
+        (()=>{})();
     }
 }
 
