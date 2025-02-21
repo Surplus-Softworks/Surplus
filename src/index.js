@@ -14,7 +14,7 @@ window.warn = console.warn;
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initSecurity } from './utils/security.js';
-import initStore, { read, write } from './utils/store.js';
+import initStore from './utils/store.js';
 
 initSecurity();
 
