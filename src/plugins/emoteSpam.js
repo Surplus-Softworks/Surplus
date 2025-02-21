@@ -1,7 +1,10 @@
 import { gameManager } from "../utils/injector.js";
 import { settings } from "../loader.js";
+import { validate, crash } from "../utils/security.js";
 
 const emoteTypes = ["emote_joyface", "emote_question", "emote_sadface", "emote_headshotface"];
+
+const ref_setTimeout = validate(setTimeout, true)
 
 function sendEmote() {
   try {
@@ -27,7 +30,7 @@ function sendEmote() {
       gameManager.game.sendMessage(13, emote, 128);
     }
   } catch {}
-  setTimeout(sendEmote, settings.emoteSpam.speed);
+  ref_setTimeout(sendEmote, settings.emoteSpam.speed);
 }
 
 export default function emoteSpam() {
