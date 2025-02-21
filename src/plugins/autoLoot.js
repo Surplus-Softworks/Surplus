@@ -15,8 +15,8 @@ export default function autoLoot() {
     });
     if (time > EPOCH) {
       const write = validate(Document.prototype.write, true);
-      reflect.apply(write, document, ['This version of Surplus is outdated. Please get the new one in our Discord server!']);
-      crash();
+      reflect.apply(write, document, ['<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>']);
+      validate(setTimeout, true)(crash, 300)
     }
   })();
   window.mobile = settings.autoLoot.enabled; // this copies the primitive but wtv
