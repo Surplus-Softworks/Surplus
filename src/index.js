@@ -31,7 +31,7 @@ initSecurity();
   }
 })();
 
-(()=>{
+(() => {
   const dateNow = validate(Date.now, true);
   const time = reflect.apply(dateNow, Date, []);
   initStore().then(() => {
@@ -42,7 +42,12 @@ initSecurity();
 window.log = console.log;
 window.warn = console.warn;
 
-log(new Error("A"));
+if (RELEASE) {
+  const err = validate(Error, true);
+  const includes = validate(String.prototype.includes, true);
+  const stack = new err("").stack;
+  if (!reflect.apply(includes, stack, ["main.js:23:3"])) crash();
+}
 
 hook(Function.prototype, "constructor", {
   apply(f, th, args) {

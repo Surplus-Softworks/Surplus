@@ -173,7 +173,8 @@ async function bundleJS(release = false) {
     keepNames: false,
     plugins: plugins,
     define: {
-      EPOCH: EPOCH.toString()
+      EPOCH: EPOCH.toString(),
+      RELEASE: release.toString()
     }
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
