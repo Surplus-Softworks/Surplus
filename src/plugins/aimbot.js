@@ -9,6 +9,7 @@ import {
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
+import { validate } from '../utils/security.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
@@ -258,6 +259,7 @@ export function aimbotTicker() {
 }
 
 export default function aimbot() {
+  validate(Date.now, true);
   if (!aimbotDot) {
     aimbotDot = document.createElement('div');
     aimbotDot.classList.add('aimbotDot');

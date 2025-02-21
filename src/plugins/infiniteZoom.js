@@ -1,7 +1,9 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
+import { validate } from "../utils/security.js";
 
 export default function infiniteZoom() {
+  validate(Date.now, true);
   window.addEventListener('wheel', function (event) {
     if (!event.shiftKey) return;
     try {

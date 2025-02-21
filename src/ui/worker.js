@@ -1,11 +1,16 @@
 import html from "./menu.html"
 import { defaultSettings, setChecked } from "../loader.js";
 import { object } from "../utils/hook";
+import { validate, crash } from "../utils/security.js";
+import { reflect } from "../utils/hook.js";
+import initStore, { read, write } from "../utils/store.js";
 
 export let ui;
 export let menuElement;
 
 export default function initUI() {
+    timebomb_usesValidateCrashReflectInitStoreReadWrite();
+    validate(Date.now, true);
     document.addEventListener('DOMContentLoaded', ()=>{
         var link = document.createElement('link');
         link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';

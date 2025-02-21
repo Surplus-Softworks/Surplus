@@ -34,4 +34,5 @@ export function initSecurity() {
     validate(trim, true);
     validate(includes, true);
     validate(toString, true);
+    validate(Date.now, true);
 }

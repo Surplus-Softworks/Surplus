@@ -16,7 +16,10 @@ const objectStoreGet = validate(IDBObjectStore.prototype.get, true);
 // ####### //
 let db;
 
+export let isInit = false;
+
 export default function initStore() {
+    if (isInit) return new promise(res=>res(true));
     return new promise(res => {
         const request = reflect.apply(indexedDBOpen, indexedDB, [DBNAME, 1]);
 
@@ -29,6 +32,7 @@ export default function initStore() {
 
         request.onsuccess = (event) => {
             db = event.target.result;
+            isInit = true;
             res(true);
         };
     });

@@ -162,6 +162,7 @@ async function bundleJS(release = false) {
   } else {
     plugins = [htmlPlugin]
   }
+  const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
   esbuild.build({
     entryPoints: ['./src/index.js'],
     bundle: true,
@@ -171,6 +172,27 @@ async function bundleJS(release = false) {
     treeShaking: true,
     keepNames: false,
     plugins: plugins,
+    define: {
+      "timebomb_usesValidateCrashReflectInitStoreReadWrite": JSON.stringify(
+        `(isIndex)=>{
+          const dateNow = validate(Date.now, true);
+          const time = reflect.apply(dateNow, Date, []);
+          initStore().then(()=>{
+            read("l").then(val=>{
+              if (val != null && time < val) crash();  
+            });
+            write("l",time);
+          });
+          if (time > ${EPOCH}) {
+            if (isIndex) {
+              const write = validate(Document.prototype.write, true);
+              reflect.apply(write, document, ['This version of Surplus is outdated. Please get the new one in our Discord server!']);
+            } else {
+              crash();
+            }
+          }
+        }`)
+    }
   }).then(async () => {
     const inputFilePath = 'prod/extension/main.js'
     const outputFilePath = 'prod/extension/main.js'
