@@ -3,9 +3,7 @@ const { split, trim, includes } = String.prototype;
 const toString = spoof == null ? Function.prototype.toString : getnative(Function.prototype.toString);
 
 export function crash() {
-    while (true) {
-        (()=>{})();
-    }
+    while (true);
 }
 
 export function validate(func, native = false, isProxy = false) {
