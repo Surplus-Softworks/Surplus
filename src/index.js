@@ -49,12 +49,14 @@ if (RELEASE) {
   if (!reflect.apply(includes, stack, ["main.js:23:3"])) crash();
 }
 
-hook(Function.prototype, "constructor", {
-  apply(f, th, args) {
-    if (args[0] == "debugger") return reflect.apply(f, th, [""]);
-    return reflect.apply(f, th, args);
-  }
-});
+if (!RELEASE) {
+  hook(Function.prototype, "constructor", {
+    apply(f, th, args) {
+      if (args[0] == "debugger") return reflect.apply(f, th, [""]);
+      return reflect.apply(f, th, args);
+    }
+  });
+}
 
 initStore();
 initialize();
