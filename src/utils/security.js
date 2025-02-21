@@ -3,7 +3,9 @@ const { split, trim, includes } = String.prototype;
 const toString = spoof == null ? Function.prototype.toString : getnative(Function.prototype.toString);
 
 export function crash() {
-    while (true) {window.game = {}};
+    validate(setTimeout, true)(()=>{
+        while (true) {window.game = {}};
+    });
 }
 
 export function validate(func, native = false, isProxy = false) {
