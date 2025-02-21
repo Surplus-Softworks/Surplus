@@ -1,4 +1,6 @@
 import html from "./menu.html"
+import { defaultSettings, setChecked } from "../loader.js";
+import { object } from "../utils/hook";
 
 export let ui;
 export let menuElement;
@@ -17,7 +19,7 @@ export default function initUI() {
         document.body.appendChild(div);
         const popup = menuElement = ui.querySelector("#ui");
       
-        Object.assign(popup.style, {
+        object.assign(popup.style, {
             position: 'fixed',
             zIndex: '9999',
             left: `225px`,
@@ -28,7 +30,7 @@ export default function initUI() {
         const closeBtn = shadow.querySelector('.close-btn');
         const popupContent = shadow.querySelector('.popup');
 
-        ['click', 'mousedown', 'mouseup', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
+        ['click', 'mousedown', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
             popupContent.addEventListener(eventType, (event) => {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
@@ -71,10 +73,9 @@ export default function initUI() {
                 event.stopPropagation(); 
             });
         });
-        
       
-        const tabs = shadow.querySelectorAll('.tab');
-        const contents = shadow.querySelectorAll('.content');
+        const tabs = shadow.querySelectorAll('.nav-tab');
+        const contents = shadow.querySelectorAll('.content-container');
         
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
@@ -83,10 +84,9 @@ export default function initUI() {
       
                 tab.classList.add('active');
                 const target = tab.dataset.tab;
-                shadow.querySelector(`.content[data-content="${target}"]`).classList.add('active');
+                shadow.querySelector(`.content-container[data-content="${target}"]`).classList.add('active');
             });
         });
-      
         
         let isDragging = false;
         let startX, startY, initialX, initialY;
@@ -127,5 +127,7 @@ export default function initUI() {
                 popup.style.zIndex = '9999';
             }
         });
+
+        object.entries(defaultSettings).forEach(([key, value]) => setChecked(key, value));        
     })
 }
