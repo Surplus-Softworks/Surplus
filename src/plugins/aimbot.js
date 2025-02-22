@@ -10,7 +10,7 @@ import {
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
 import { validate } from '../utils/security.js';
-import { ref_addEventListener } from "../utils/hook.js";
+
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
 const state = {

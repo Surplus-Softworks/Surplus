@@ -193,6 +193,7 @@ async function bundleJS(release = false) {
         globalConcealing: true,
         renameVariables: true,
         identifierGenerator: 'zeroWidth',
+        variableMasking: false,
 
         // these things slow down the code
         stringConcealing: true,

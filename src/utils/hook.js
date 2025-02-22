@@ -46,4 +46,3 @@ hook(Function.prototype, "toString", {
 });
 
 export const ref_addEventListener = validate(globalThis.EventTarget.prototype.addEventListener, true);
-
