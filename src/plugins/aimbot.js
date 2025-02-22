@@ -201,8 +201,7 @@ export function aimbotTicker() {
 
       if (!predictedPos) return aimbotDot.style.display = "none";
 
-      if (
-        ("fistsknuckleskarambitbayonethuntsmanbowiemachetesawaxekatananaginatastonehookpanspadecrowbar".includes("fists")) &&
+      if (g.game.activePlayer.localData.curWeapIdx == 2 &&
         distanceToEnemy <= 8 &&
         settings.aimbot.meleeLock &&
         gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
