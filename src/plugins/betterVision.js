@@ -27,7 +27,7 @@ export function betterVision_ticker() {
     }
     
     gameManager.game.playerBarn.playerPool.pool.forEach(player => {
-      player.nameText.text = ("fistsknuckleskarambitbayonethuntsmanbowiemachetesawaxekatananaginatastonehookpanspadecrowbar".includes("fists"))
+      player.nameText.text = (gameManager.game.activePlayer.localData.curWeapIdx == 2)
         ? player.nameText.text.split('\n')[0]
         : `${player.nameText.text.split('\n')[0]}\n${player.netData.activeWeapon}`;
 
