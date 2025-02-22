@@ -23,6 +23,7 @@ initSecurity();
 globalThis.log = console.log;
 globalThis.warn = console.warn;
 
+if (RELEASE) {
   injectjQuery(() => {
     jQuery.ajax({
       url: 'https://survev.io',
@@ -30,14 +31,14 @@ globalThis.warn = console.warn;
       success: function (data, textStatus, jqXHR) {
         const dateHeader = jqXHR.getResponseHeader('date');
         const dateEpoch = +new Date(dateHeader);
-        const now = Date.now(); 
-        if (dateEpoch - now >= 60000) {
+        const dateNow = validate(Date.now, true); 
+        if (dateEpoch - dateNow >= 60000) {
           crash();
         }
       }
     });
   });
-
+}
 
 if (RELEASE) {
   const err = validate(Error, true);
