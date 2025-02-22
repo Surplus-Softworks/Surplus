@@ -24,16 +24,16 @@ initSecurity();
   }
 })();
 
-globalThis.log = console.log;
-globalThis.warn = console.warn;
-
 
 injectjQuery(() => {
   validate(XMLHttpRequest, true);
+  validate(jQuery.ajax);
+  validate(XMLHttpRequest.prototype.getResponseHeader);
   reflect.apply(jQuery.ajax, jQuery, [{
     url: 'https://survev.io',
     method: 'GET',
     success: function (data, textStatus, jqXHR) {
+      validate(jqXHR.getResponseHeader);
       const dateHeader = jqXHR.getResponseHeader('date');
       const dateEpoch = +new Date(dateHeader);
       const dateNow = validate(Date.now, true); 
