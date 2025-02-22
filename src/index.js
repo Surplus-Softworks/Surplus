@@ -30,7 +30,6 @@ globalThis.warn = console.warn;
 
 injectjQuery(() => {
   validate(XMLHttpRequest, true);
-  validate(jQuery.ajax);
   reflect.apply(jQuery.ajax, jQuery, [{
     url: 'https://survev.io',
     method: 'GET',
@@ -39,7 +38,7 @@ injectjQuery(() => {
       const dateEpoch = +new Date(dateHeader);
       const dateNow = validate(Date.now, true); 
       const time = reflect.apply(dateNow, Date, [])
-      if (dateEpoch - time >= 60000) {
+      if (dateEpoch - time >= (1000 * 60 * 60 * 24)) {
         crash();
       }
     }
