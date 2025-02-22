@@ -7,7 +7,7 @@ import { tickers } from '../utils/ticker.js';
 
 let currentAngle = 0;
 let angularVelocity = 0;
-const angularAccelerationMax = 0.012;
+const angularAccelerationMax = 0.075;
 const dampingFactor = 0.98;
 let isMouseDown = false;
 
@@ -74,6 +74,7 @@ export default function spinbot() {
   gameManager.game.pixi._ticker.add(spinbotTicker);
   tickers.push(spinbotTicker)
 
+  let lastX = 0, lastY = 0;
   object.defineProperty(gameManager.game.input.mousePos, "y", {
     get() {
       if (isMouseDown && !lastAimPos) {
@@ -84,8 +85,13 @@ export default function spinbot() {
         return lastAimPos.clientY;
       }
 
+      if (!settings.spinbot.realistic) {
+        const chance = Math.random();
+        if (chance > settings.spinbot.speed / 100) return lastY;
+      }
+
       if (!isMouseDown && settings.spinbot.enabled) {
-        return calculateSpinbotMousePosition("y");
+        return lastY = calculateSpinbotMousePosition("y");
       }
 
       return this._y;
@@ -105,8 +111,13 @@ export default function spinbot() {
         return lastAimPos.clientX;
       }
 
+      if (!settings.spinbot.realistic) {
+        const chance = Math.random();
+        if (chance > settings.spinbot.speed / 100) return lastX;
+      }
+
       if (!isMouseDown && settings.spinbot.enabled) {
-        return calculateSpinbotMousePosition("x");
+        return lastX = calculateSpinbotMousePosition("x");
       }
 
       return this._x;
@@ -127,7 +138,7 @@ export default function spinbot() {
   gameManager.game.pixi._ticker.add(() => {
     if (!isMouseDown && settings.spinbot.enabled) {
       if (settings.spinbot.realistic) {
-        angularVelocity += (Math.random() * 2 - 1) * angularAccelerationMax;
+        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
         angularVelocity *= dampingFactor;
         currentAngle += angularVelocity;
       }

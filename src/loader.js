@@ -51,13 +51,25 @@ const updateConfig = () => {
 validate(setInterval, true)(updateConfig, 100);
 
 const registerSettings = (obj) => {
+  const substr = validate(String.prototype.substr, true);
   return object.entries(obj).reduce((settings, [key, value]) => {
     if (typeof value === "object" && value !== null) {
-      settings[key] = registerSettings(value);
-    } else if (key.startsWith("_") || key.startsWith("$")) {
       settings[key] = value;
+    } else if (key[0] == "_") {
+      reflect.defineProperty(settings, key, { value, enumerable: false });
+      settings[key] = value;
+    } else if (key[0] == "$") {
+      reflect.defineProperty(settings, reflect.apply(substr, key, [1]), reflect.getOwnPropertyDescriptor(obj, key));
     } else {
-      reflect.defineProperty(settings, key, { get: () => getChecked(value), enumerable: true });
+      reflect.defineProperty(settings, key, {
+        get() {
+          return getChecked(value)
+        },
+        set(v) {
+          return setChecked(value, v);
+        },
+        enumerable: true
+      });
       reflect.defineProperty(settings, `_${key}`, { value, enumerable: false });
     }
     return settings;
@@ -66,47 +78,77 @@ const registerSettings = (obj) => {
 
 export const settings = {
   aimbot: registerSettings({ enabled: "aim-enable", targetKnocked: "target-knocked", meleeLock: "melee-lock" }),
-  spinbot: registerSettings({ enabled: "spinbot-enable", realistic: "realistic" }),
+  spinbot: registerSettings({
+    enabled: "spinbot-enable",
+    realistic: "realistic",
+    get $speed() {
+      return parseInt(getValue("spinbot-speed"));
+    },
+    set $speed(v) {
+      const el = reflect.apply(getElementById, ui, [this._speed]);
+      el.value = v;
+      el.oninput();
+    },
+    _speed: "spinbot-speed"
+  }),
   autoFire: registerSettings({ enabled: "semiauto-enable" }),
   xray: registerSettings({ enabled: "xray" }),
   esp: registerSettings({
     enabled: "esp-enable",
     players: "player-esp",
     grenades: "grenade-esp",
-    flashlights: { own: "own-flashlight", others: "others-flashlight" }
+    flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" })
   }),
   autoLoot: { enabled: true },
   emoteSpam: registerSettings({
     enabled: "emote-spam-enable",
     get $speed() {
-      updateConfig();
       return 1001 - (getValue("emote-spam-speed") * 10);
+    },
+    set $speed(v) {
+      
+      const el = reflect.apply(getElementById, ui, [this._speed]);
+      el.value = (1001 - parseInt(v)) / 10;
+      el.oninput();
     },
     _speed: "emote-spam-speed"
   })
 };
 
 export const defaultSettings = {
-  "aim-enable": true,
-  "target-knocked": true,
-  "melee-lock": true,
-
-  "spinbot-enable": true,
-  "realistic": false,
-
-  "semiauto-enable": true,
-
-  "xray": true,
-
-  "esp-enable": true,
-  "player-esp": true,
-  "grenade-esp": true,
-  "own-flashlight": true,
-  "others-flashlight": true,
-
-  "emote-spam-enable": false,
-  "emote-spam-speed": 50
-};
+  aimbot: {
+      enabled: true,
+      targetKnocked: true,
+      meleeLock: true
+  },
+  spinbot: {
+      enabled: true,
+      realistic: false,
+      speed: 50
+  },
+  autoFire: {
+      enabled: true
+  },
+  xray: {
+    enabled: true
+  },
+  esp: {
+      enabled: true,
+      players: true,
+      grenades: true,
+      flashlights: {
+          own: true,
+          others: true
+      }
+  },
+  autoLoot: {
+      enabled: true
+  },
+  emoteSpam: {
+      enabled: false,
+      speed: 501
+  }
+}
 
 const loadStaticPlugins = () => {
   infiniteZoom();

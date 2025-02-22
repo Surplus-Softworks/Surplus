@@ -151,24 +151,21 @@ export default function initUI() {
             }
         }]);
 
-        const readConfig = (config, result = {}, mapping = settings) => {
-            if (!config || typeof config !== "object") return result;
+        const readConfig = (config, mapping = settings) => {
+            if (!config || typeof config !== "object") return;
             object.entries(config).forEach(([key, value]) => {
-              if (value && typeof value === "object" && mapping && mapping[key]) {
-                readConfig(value, result, mapping[key]);
-              } else if (mapping && mapping[`_${key}`] != null) {
-                result[mapping[`_${key}`]] = value;
-              }
+                if (value && typeof value === "object" && mapping && mapping[key]) {
+                    readConfig(value, mapping[key]);
+                } else {
+                    mapping[key] = value;
+                }
             });
-            return result;
           };
           
         read("c")
-        .then(v => !v ? defaultSettings : readConfig(JSON.parse(encryptDecrypt(v))))
+        .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
         .then(config => {
-            object.entries(config).forEach(([key, value]) => {
-            typeof value === "boolean" ? setChecked(key, value) : setValue(key, value);
-            });
+            readConfig(config);
             loadedConfig = true;
         });
           
