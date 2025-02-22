@@ -60,9 +60,29 @@ export default function initUI() {
             }])
         });
 
-        reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => { 
-            if (event.key === "Shift" && event.code === "ShiftRight") {
-                popup.style.display = popup.style.display === "none" ? "" : "none";
+        reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => {
+            switch (event.code) {
+                case "ShiftRight":
+                    popup.style.display = popup.style.display === "none" ? "" : "none";
+                    break;
+                case "KeyB":
+                    settings.aimbot.enabled = !settings.aimbot.enabled;
+                    break;
+                case "KeyZ":
+                    settings.spinbot.enabled = !settings.spinbot.enabled;
+                    break;
+                case "KeyC":
+                    settings.autoFire.enabled = !settings.autoFire.enabled
+                    break;
+                case "KeyH":
+                    settings.xray.enabled = !settings.xray.enabled;
+                    break;
+                case "KeyU":
+                    settings.esp.enabled = !settings.esp.enabled;
+                    break;
+                case "KeyX":
+                    settings.emoteSpam.enabled = !settings.emoteSpam.enabled;
+                    break;
             }
         }]);
 
