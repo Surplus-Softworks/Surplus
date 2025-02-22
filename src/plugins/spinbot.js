@@ -85,7 +85,7 @@ export default function spinbot() {
         return lastAimPos.clientY;
       }
 
-      if (!settings.spinbot.realistic) {
+      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
         const chance = Math.random();
         if (chance > settings.spinbot.speed / 100) return lastY;
       }
@@ -111,7 +111,7 @@ export default function spinbot() {
         return lastAimPos.clientX;
       }
 
-      if (!settings.spinbot.realistic) {
+      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
         const chance = Math.random();
         if (chance > settings.spinbot.speed / 100) return lastX;
       }
