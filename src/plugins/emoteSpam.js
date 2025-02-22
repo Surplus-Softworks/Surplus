@@ -6,6 +6,8 @@ import { emoteTypes } from "./inputOverride.js";
 const ref_setTimeout = validate(setTimeout, true)
 
 function sendEmote() {
+  ref_setTimeout(sendEmote, settings.emoteSpam.speed);
+
   try {
     if (settings.emoteSpam.enabled && gameManager.game) {
       if (!gameManager.game.activePlayer) return;
@@ -29,7 +31,6 @@ function sendEmote() {
       gameManager.game.sendMessage(13, emote, 128);
     }
   } catch {}
-  ref_setTimeout(sendEmote, settings.emoteSpam.speed);
 }
 
 export default function emoteSpam() {

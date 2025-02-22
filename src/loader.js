@@ -106,8 +106,8 @@ export const settings = {
       return 1001 - (getValue("emote-spam-speed") * 10);
     },
     set $speed(v) {
-      
       const el = reflect.apply(getElementById, ui, [this._speed]);
+      if (!el) return defaultSettings.emoteSpam.speed;
       el.value = (1001 - parseInt(v)) / 10;
       el.oninput();
     },
