@@ -1,5 +1,5 @@
 import { getnative, reflect, spoof } from "./hook"
-const { split, trim, includes } = String.prototype;
+const { split, trim, includes, substr } = String.prototype;
 const toString = spoof == null ? Function.prototype.toString : getnative(Function.prototype.toString);
 
 export function crash() {
@@ -11,7 +11,7 @@ export function validate(func, native = false, isProxy = false) {
     try {
         func in 0;
     } catch (e) {
-        if (!reflect.apply(includes, e.stack, [reflect.apply(toString, func, [])])) {
+        if (!reflect.apply(includes, e.stack, [reflect.apply(substr, reflect.apply(toString, func, []) , [0,100])])) {
             return crash()
         };
         if (
@@ -41,4 +41,5 @@ export function initSecurity() {
     validate(includes, true);
     validate(toString, true);
     validate(Date.now, true);
+    validate(substr, true);
 }
