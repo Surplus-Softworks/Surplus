@@ -113,6 +113,9 @@ export const settings = {
       el.oninput();
     },
     _speed: "emote-spam-speed"
+  }),
+  infiniteZoom: registerSettings({
+    enabled: "infinite-zoom-enable"
   })
 };
 
@@ -148,6 +151,9 @@ export const defaultSettings = {
   emoteSpam: {
       enabled: false,
       speed: 501
+  },
+  infiniteZoom: {
+    enabled: true
   }
 }
 
