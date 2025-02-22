@@ -19,7 +19,7 @@ const state = {
   lastEnemyFrames: {},
   enemyAimbot: null,
   velocityBuffer: {},
-  velocityBufferSize: 1,
+  velocityBufferSize: 2,
 };
 
 let aimbotDot;
