@@ -263,7 +263,7 @@ export default function aimbot() {
   validate(Date.now, true);
   if (!aimbotDot) {
     aimbotDot = document.createElement('div');
-    aimbotDot.classList.add('aimbotDot');
+    aimbotDot.classList.add('aimbot-dot');
     ui.appendChild(aimbotDot);
   }
   gameManager.game.pixi._ticker.add(aimbotTicker);

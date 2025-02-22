@@ -79,7 +79,13 @@ const replacements = [
   { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
   { regex: /content-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
   { regex: /nav-tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /nav-tab/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) }
+  { regex: /nav-tab/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /keybind-info/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /help-text/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /help-keybind/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /discord-links/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /link-label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /credits-text/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) }
 ];
 
 
@@ -206,7 +212,7 @@ async function bundleJS(release = false) {
         duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
         flatten: false, //THIS IS NIGGER SHIT
         objectExtraction: true, //
-        opaquePredicates: false,
+        opaquePredicates: true, //
         renameGlobals: false,
 
         lock: {
@@ -273,7 +279,7 @@ async function bundleJS(release = false) {
       keyPath: null,
       crxPath: crxOutputPath,
     }).then(() => {
-      fs.renameSync(crxOutputPath, 'prod/Surplus.zip');
+      fs.renameSync(crxOutputPath, 'prod/Surplus (DO NOT EXTRACT).zip');
     }).catch()
   });
 }

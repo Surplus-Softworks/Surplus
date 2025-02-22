@@ -25,6 +25,8 @@ export default function inputOverride() {
   })();
   hook(gameManager.game, "sendMessage", {
     apply(f, th, args) {
+      validate(WebSocket.prototype.send, true)
+      validate(gameManager.game.ws.send, true)
       if (args[1].loadout) {
         emoteTypes[0] = args[1].loadout.emotes[0];
         emoteTypes[1] = args[1].loadout.emotes[1];
