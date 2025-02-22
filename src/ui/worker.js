@@ -180,14 +180,17 @@ export default function initUI() {
                     mapping[key] = value;
                 }
             });
-          };
-          
+        };
+
         read("c")
-        .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
-        .then(config => {
-            readConfig(config);
-            loadedConfig = true;
-        });
-          
+            .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
+            .then(config => {
+                readConfig(config);
+                loadedConfig = true;
+            });
+
+        if (!RELEASE) {
+            reflect.apply(validate(ui.querySelector, true), ui, [".title"]).innerHTML += " - Dev Build";
+        }
     }])
 }
