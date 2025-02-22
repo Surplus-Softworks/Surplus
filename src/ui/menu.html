@@ -1,524 +1,539 @@
 <style>
-    
-    * {
-      font-family: 'GothamPro', sans-serif;
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-  
-    .popup {
-      user-select: none;
-      position: relative;
-      background: #1a1a1a;
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      width: 340px;
-      min-height: 380px;
-      overflow: hidden;
-      border: 1px solid #333;
-      transition: all 0.3s ease-out;
-    }
-  
-    .header {
-      background: #222;
-      padding: 10px;
-      border-bottom: 1px solid #333;
-      user-select: none;
-      transition: all 0.1s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-    }
-  
-    .header:hover {
-      background: #262626;
-      border-bottom: 1px solid #444;
-      transition: all 0.2s ease;
-    }
-  
-    .header:active {
-      background: rgb(45, 45, 45);
-      border-bottom: 1px solid #444;
-      transition: all 0.2s ease;
-    }
-  
-    .menu-icon {
-      height: 20px;
-      pointer-events: none;
-      position: absolute;
-      left: 6px; 
-      top: 7px; 
-    }
-  
-    .navbar {
-      background: #222;
-      padding: 8px;
-      border-bottom: 1px solid #333;
-    }
-  
-    .title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #fff;
-      text-align: center;
-      position: relative;
-      z-index: 1;
-    }
-  
-    .credit {
-      font-size: 12px;
-      font-style: italic;
-      color: rgba(255, 255, 255, 0.45);
-      text-align: center;
-      display: block;
-      position: relative;
-      z-index: 1;
-    }
-  
-    .nav-tabs {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-    }
-  
-    .nav-tab {
-      padding: 6px 12px;
-      background: #333;
-      border: none;
-      border-radius: 4.5px;
-      color: #bababa;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease, transform 0.1s ease;
-    }
-  
-    .nav-tab.active {
-      background: #444;
-      color: #fff;
-      transform: translateY(-1px);
-    }
-  
-    .close-btn {
-      position: absolute;
-      top: 1px;
-      right: 8px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      font-size: 20px;
-      color: #666;
-      transition: all 0.2s ease;
-    }
-  
-    .close-btn:hover {
-      color: #fff;
-      rotate: 45deg;
-      scale: 0.95;
-      transition: all 0.2s ease;
-    }
-  
-    .content-container {
-      padding-top: 10px;
-      padding-left: 16px;
-      padding-right: 16px;
-      display: none;
-    }
-  
-    .content-container.active {
-      display: block;
-    }
-  
-    .section {
-      margin-bottom: 20px;
-    }
-  
-    .section-title {
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      margin: 0 0 6px 0;
-      letter-spacing: 0.5px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    .group .section-title {
-      margin-top: 10px;
-    }
-  
-    .section-title .checkbox-item {
-      border: none;
-      background: none;
-      padding: 4px 6px;
-      margin: 0;
-    }
-  
-    .section-title .checkbox-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 6px;
-    }
-  
-    .section-title label {
-      font-size: 12px;
-      color: #ddd !important;
-    }
-  
-    .subsection-title {
-      color: #bbb;
-      font-size: 12px;
-      font-weight: 500;
-      margin: 14px 0 4px 15px;
-      position: relative;
-    }
-  
-    .subsection-title::before {
-      content: '';
-      position: absolute;
-      left: -10px;
-      top: 50%;
-      height: 1px;
-      width: 6px;
-      background: #666;
-    }
-  
-    .group {
-      display: flex;
-      flex-direction: column;
-      background: rgba(255, 255, 255, 0.03);
-      border-radius: 8px;
-      padding: 10px;
-      margin-bottom: 16px;
-      gap: 6px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      transition: all 0.2s ease, transform 0.2s ease;
-    }
-  
-    .group:hover {
-      background: rgba(255, 255, 255, 0.04);
-      transform: translateY(-1.5px);
-    }
-  
-    .subgroup {
-      margin-left: 15px;
-      border-left: 2px solid rgba(255, 255, 255, 0.1);
-      padding-left: 10px;
-    }
-  
-    .checkbox-item {
-      border: 1px solid #2c2c2c;
-      display: inline-flex;
-      align-items: center;
-      padding: 8px;
-      border-radius: 6px;
-      transition: background 0.2s ease;
-      cursor: pointer;
-      width: fit-content;
-    }
-  
-    .checkbox-item:hover {
-      background: rgba(255, 255, 255, 0.05);
-      transition: background 0.2s ease;
-    }
-  
-    .checkbox-item:active {
-      transform: scale(0.95);
-    }
-  
-    .checkbox-item label {
-      color: #ddd;
-      font-size: 13px;
-      margin-left: 8px;
-      cursor: pointer;
-      pointer-events: none;
-    }
-  
-    input[type='checkbox'] {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      border: 2px solid #888;
-      border-radius: 4px;
-      background: #222;
-      position: relative;
-      transition: all 0.1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-      cursor: pointer;
-    }
-  
-    input[type='checkbox']:checked {
-      background: #66db6a;
-      border-color: #66db6a;
-      box-shadow: 0 0 10px rgba(102, 219, 106, 0.12);
-    }
-  
-    .aimbotDot {
-      position: absolute;
-      background-color: red;
-      width: 10px;
-      height: 10px;
-      opacity: 70%;
-      transform: translateX(-50%) translateY(-50%);
-      display: none;
-      border-radius: 50%;
-    }
-  
-    .slider-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    input[type='range'] {
-      appearance: none;
-      width: 120px;
-      height: 8px;
-      background: #333;
-      border-radius: 5px;
-      outline: none;
-      cursor: pointer;
-      background: linear-gradient(
-        to right,
-        #66db6a 0%,
-        #66db6a var(--slider-value),
-        #333 var(--slider-value),
-        #3b3b3b 100%
-      );
-    }
-  
-    input[type='range']::-webkit-slider-thumb {
-      appearance: none;
-      width: 16px;
-      height: 16px;
-      background: #888;
-      border: 2px solid #2c2c2c;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-  
-    input[type='range']::-moz-range-thumb {
-      width: 16px;
-      height: 16px;
-      background: #888;
-      border: 2px solid #2c2c2c;
-      border-radius: 50%;
-      cursor: pointer;
-    }
-  
-    input[type='range']::-webkit-slider-thumb:hover,
-    input[type='range']::-moz-range-thumb:hover {
-      background: #bbb;
-    }
-  
-    input[type='range']::-webkit-slider-thumb:active,
-    input[type='range']::-moz-range-thumb:active {
-      background: #ddd;
-    }
-  
-    .keybind-slot {
-      width: 24px;
-      height: 12px;
-      background-color: #333;
-      color: #888;
-      font-size: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    }
-  
-    .section-title-container {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-  
-    .section-title {
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      margin: 0 0 6px 0;
-      letter-spacing: 0.5px;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 10px;
-    }
-  
-    .section-title-container {
-      flex-grow: 1;
-    }
-  </style>
-  
-  <div id="ui">
-    <div class="popup">
-      <div class="header">
-        <img
-          src="https://i.postimg.cc/W4g7cxLP/image.png"
-          alt="Menu"
-          class="menu-icon"
-        />
-        <div class="title">Surplus 1.1</div>
-        <div class="credit">by mahdi, noam</div>
+  * {
+    font-family: 'GothamPro', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  .popup {
+    user-select: none;
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    width: 340px;
+    min-height: 380px;
+    overflow: hidden;
+    border: 1px solid #333;
+    transition: all 0.3s ease-out;
+  }
+
+  .header {
+    background: #222;
+    padding: 10px;
+    border-bottom: 1px solid #333;
+    user-select: none;
+    transition: all 0.1s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .header:hover {
+    background: #262626;
+    border-bottom: 1px solid #444;
+    transition: all 0.2s ease;
+  }
+
+  .header:active {
+    background: rgb(45, 45, 45);
+    border-bottom: 1px solid #444;
+    transition: all 0.2s ease;
+  }
+
+  .menu-icon {
+    height: 20px;
+    pointer-events: none;
+    position: absolute;
+    left: 6px;
+    top: 7px;
+  }
+
+  .navbar {
+    background: #222;
+    padding: 8px;
+    border-bottom: 1px solid #333;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .credit {
+    font-size: 12px;
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: center;
+    display: block;
+    position: relative;
+    z-index: 1;
+  }
+
+  .nav-tabs {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .nav-tab {
+    padding: 6px 12px;
+    background: #333;
+    border: none;
+    border-radius: 4.5px;
+    color: #bababa;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease, transform 0.1s ease;
+  }
+
+  .nav-tab.active {
+    background: #444;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 1px;
+    right: 8px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 20px;
+    color: #666;
+    transition: all 0.2s ease;
+  }
+
+  .close-btn:hover {
+    color: #fff;
+    rotate: 45deg;
+    scale: 0.95;
+    transition: all 0.2s ease;
+  }
+
+  .content-container {
+    padding-top: 10px;
+    padding-left: 16px;
+    padding-right: 16px;
+    display: none;
+  }
+
+  .content-container.active {
+    display: block;
+  }
+
+  .section {
+    margin-bottom: 20px;
+  }
+
+  .section-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .group .section-title {
+    margin-top: 10px;
+  }
+
+  .section-title .checkbox-item {
+    border: none;
+    background: none;
+    padding: 4px 6px;
+    margin: 0;
+  }
+
+  .section-title .checkbox-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+  }
+
+  .section-title label {
+    font-size: 12px;
+    color: #ddd !important;
+  }
+
+  .subsection-title {
+    color: #bbb;
+    font-size: 12px;
+    font-weight: 500;
+    margin: 14px 0 4px 15px;
+    position: relative;
+  }
+
+  .subsection-title::before {
+    content: '';
+    position: absolute;
+    left: -10px;
+    top: 50%;
+    height: 1px;
+    width: 6px;
+    background: #666;
+  }
+
+  .group {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 16px;
+    gap: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease, transform 0.2s ease;
+  }
+
+  .group:hover {
+    background: rgba(255, 255, 255, 0.04);
+    transform: translateY(-1.5px);
+  }
+
+  .subgroup {
+    margin-left: 15px;
+    border-left: 2px solid rgba(255, 255, 255, 0.1);
+    padding-left: 10px;
+  }
+
+  .checkbox-item {
+    border: 1px solid #2c2c2c;
+    display: inline-flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    cursor: pointer;
+    width: fit-content;
+  }
+
+  .checkbox-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+    transition: background 0.2s ease;
+  }
+
+  .checkbox-item:active {
+    transform: scale(0.95);
+  }
+
+  .checkbox-item label {
+    color: #ddd;
+    font-size: 13px;
+    margin-left: 8px;
+    cursor: pointer;
+    pointer-events: none;
+  }
+
+  input[type='checkbox'] {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #888;
+    border-radius: 4px;
+    background: #222;
+    position: relative;
+    transition: all 0.1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    cursor: pointer;
+  }
+
+  input[type='checkbox']:checked {
+    background: #66db6a;
+    border-color: #66db6a;
+    box-shadow: 0 0 10px rgba(102, 219, 106, 0.12);
+  }
+
+  .aimbotDot {
+    position: absolute;
+    background-color: red;
+    width: 10px;
+    height: 10px;
+    opacity: 70%;
+    transform: translateX(-50%) translateY(-50%);
+    display: none;
+    border-radius: 50%;
+  }
+
+  .slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type='range'] {
+    appearance: none;
+    width: 120px;
+    height: 8px;
+    background: #333;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    background: linear-gradient(
+      to right,
+      #66db6a 0%,
+      #66db6a var(--slider-value),
+      #333 var(--slider-value),
+      #3b3b3b 100%
+    );
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #888;
+    border: 2px solid #2c2c2c;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  input[type='range']::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: #888;
+    border: 2px solid #2c2c2c;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  input[type='range']::-webkit-slider-thumb:hover,
+  input[type='range']::-moz-range-thumb:hover {
+    background: #bbb;
+  }
+
+  input[type='range']::-webkit-slider-thumb:active,
+  input[type='range']::-moz-range-thumb:active {
+    background: #ddd;
+  }
+
+  .keybind-slot {
+    width: 24px;
+    height: 12px;
+    background-color: #333;
+    color: #888;
+    font-size: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+
+  .section-title-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .section-title-container {
+    flex-grow: 1;
+  }
+</style>
+
+<div id="ui">
+  <div class="popup">
+    <div class="header">
+      <img
+        src="https://i.postimg.cc/W4g7cxLP/image.png"
+        alt="Menu"
+        class="menu-icon"
+      />
+      <div class="title">Surplus 1.1</div>
+      <div class="credit">by mahdi, noam</div>
+    </div>
+
+    <div class="navbar">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="main">Main</button>
+        <button class="nav-tab" data-tab="visuals">Visuals</button>
+        <button class="nav-tab" data-tab="misc">Misc</button>
+        <button class="nav-tab" data-tab="help">Help</button>
       </div>
-  
-      <div class="navbar">
-        <div class="nav-tabs">
-          <button class="nav-tab active" data-tab="main">Main</button>
-          <button class="nav-tab" data-tab="visuals">Visuals</button>
-          <button class="nav-tab" data-tab="misc">Misc</button>
-          <button class="nav-tab" data-tab="help">Help</button>
-        </div>
-        <button class="close-btn">×</button>
-      </div>
-  
-      <div class="content-container active" data-content="main">
-        <div class="section">
-          <div class="section-title">
-            <div class="section-title-container">Aimbot</div>
-            <div class="keybind-slot">B</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="aim-enable" />
-              <label for="aim-enable">Enabled</label>
-            </div>
-          </div>
-          <div class="group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="target-knocked" />
-              <label for="target-knocked">Target Knocked</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="melee-lock" />
-              <label for="melee-lock">Melee Lock (follow)</label>
-            </div>
-          </div>
-  
-          <div class="section-title">
-            <div class="section-title-container">Spinbot</div>
-            <div class="keybind-slot">Z</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="spinbot-enable" />
-              <label for="spinbot-enable">Enabled</label>
-            </div>
-          </div>
-          <div class="group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="realistic" />
-              <label for="realistic">Realistic</label>
-            </div>
-            <div class="checkbox-item slider-container">
-              <label for="spinbot-speed">Speed:</label>
-              <input
-                type="range"
-                id="spinbot-speed"
-                min="0"
-                max="100"
-                value="50"
-                style="--slider-value: 50%"
-                oninput="this.style.setProperty(
-                  '--slider-value',
-                  this.value + '%'
-                )"
-              />
-            </div>
-          </div>
-  
-          <div class="section-title">
-            <div class="section-title-container">Semiauto</div>
-            <div class="keybind-slot">C</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="semiauto-enable" />
-              <label for="semiauto-enable">Enabled</label>
-            </div>
+      <button class="close-btn">×</button>
+    </div>
+
+    <div class="content-container active" data-content="main">
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">Aimbot</div>
+          <div class="keybind-slot">B</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="aim-enable" />
+            <label for="aim-enable">Enabled</label>
           </div>
         </div>
-      </div>
-  
-      <div class="content-container" data-content="visuals">
-        <div class="section">
-          <div class="section-title">
-            <div class="section-title-container">X-Ray</div>
-            <div class="keybind-slot">H</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="xray" />
-              <label for="xray">Enabled</label>
-            </div>
+        <div class="group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="target-knocked" />
+            <label for="target-knocked">Target Knocked</label>
           </div>
-  
-          <div class="section-title">
-            <div class="section-title-container">ESP</div>
-            <div class="keybind-slot">U</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="esp-enable" />
-              <label for="esp-enable">Enabled</label>
-            </div>
-          </div>
-          <div class="group">
-            <div class="checkbox-item">
-              <input type="checkbox" id="player-esp" />
-              <label for="player-esp">Players</label>
-            </div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="grenade-esp" />
-              <label for="grenade-esp">Grenades</label>
-            </div>
-  
-            <div class="section-title">Flashlights</div>
-            <div class="subgroup">
-              <div class="checkbox-item">
-                <input type="checkbox" id="own-flashlight" />
-                <label for="own-flashlight">Own</label>
-              </div>
-              <div class="checkbox-item">
-                <input type="checkbox" id="others-flashlight" />
-                <label for="others-flashlight">Others</label>
-              </div>
-            </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="melee-lock" />
+            <label for="melee-lock">Melee Lock (follow)</label>
           </div>
         </div>
-      </div>
-  
-      <div class="content-container" data-content="misc">
-        <div class="section">
-          <div class="section-title">
-            <div class="section-title-container">Emote Spam</div>
-            <div class="keybind-slot">X</div>
-            <div class="checkbox-item">
-              <input type="checkbox" id="emote-spam-enable" />
-              <label for="emote-spam-enable">Enabled</label>
-            </div>
-          </div>
-          <div class="group">
-            <div class="checkbox-item slider-container">
-              <label for="emote-spam-speed">Speed:</label>
-              <input
-                type="range"
-                id="emote-spam-speed"
-                min="0"
-                max="100"
-                value="50"
-                style="--slider-value: 50%"
-                oninput="this.style.setProperty(
-                  '--slider-value',
-                  this.value + '%'
-                )"
-              />
-            </div>
+
+        <div class="section-title">
+          <div class="section-title-container">Spinbot</div>
+          <div class="keybind-slot">Z</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="spinbot-enable" />
+            <label for="spinbot-enable">Enabled</label>
           </div>
         </div>
-      </div>
-  
-      <div class="content-container" data-content="help">
-        <div class="section">
-          <p style="color: gray">Nothing here</p>
+        <div class="group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="realistic" />
+            <label for="realistic">Realistic</label>
+          </div>
+          <div class="checkbox-item slider-container">
+            <label for="spinbot-speed">Speed:</label>
+            <input
+              type="range"
+              id="spinbot-speed"
+              min="0"
+              max="100"
+              value="50"
+              style="--slider-value: 50%"
+              oninput="this.style.setProperty(
+                '--slider-value',
+                this.value + '%'
+              )"
+            />
+          </div>
+        </div>
+
+        <div class="section-title">
+          <div class="section-title-container">Semiauto</div>
+          <div class="keybind-slot">C</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="semiauto-enable" />
+            <label for="semiauto-enable">Enabled</label>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="content-container" data-content="visuals">
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">X-Ray</div>
+          <div class="keybind-slot">H</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="xray" />
+            <label for="xray">Enabled</label>
+          </div>
+        </div>
+
+        <div class="section-title">
+          <div class="section-title-container">ESP</div>
+          <div class="keybind-slot">U</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="esp-enable" />
+            <label for="esp-enable">Enabled</label>
+          </div>
+        </div>
+        <div class="group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="player-esp" />
+            <label for="player-esp">Players</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="grenade-esp" />
+            <label for="grenade-esp">Grenades</label>
+          </div>
+
+          <div class="section-title">Flashlights</div>
+          <div class="subgroup">
+            <div class="checkbox-item">
+              <input type="checkbox" id="own-flashlight" />
+              <label for="own-flashlight">Own</label>
+            </div>
+            <div class="checkbox-item">
+              <input type="checkbox" id="others-flashlight" />
+              <label for="others-flashlight">Others</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-container" data-content="misc">
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">Emote Spam</div>
+          <div class="keybind-slot">X</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="emote-spam-enable" />
+            <label for="emote-spam-enable">Enabled</label>
+          </div>
+        </div>
+        <div class="group">
+          <div class="checkbox-item slider-container">
+            <label for="emote-spam-speed">Speed:</label>
+            <input
+              type="range"
+              id="emote-spam-speed"
+              min="0"
+              max="100"
+              value="50"
+              style="--slider-value: 50%"
+              oninput="this.style.setProperty(
+                '--slider-value',
+                this.value + '%'
+              )"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-container" data-content="help">
+      <div class="section">
+        <p style="color: #ddd; margin-bottom: 10px;">
+          This tab provides helpful information about the cheat.
+        </p>
+        <p style="color: #ddd; margin-bottom: 10px;">
+          Keybinds are displayed next to each feature's title, inside a small
+          box like this: <div class="keybind-slot" style="display:inline-flex; margin: 0 5px;">
+            B
+          </div>.
+          This indicates the default key to toggle the feature.
+        </p>
+        <p style="color: #ddd; margin-bottom: 10px;">
+          Remember to configure your settings to your preference for optimal
+          performance.
+        </p>
+        <p style="color: #ddd; margin-bottom: 10px;">
+          For additional support, visit our community forums or contact our
+          support team.
+        </p>
+      </div>
+    </div>
   </div>
-  
+</div>
