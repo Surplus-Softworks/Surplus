@@ -32,7 +32,8 @@ if (RELEASE) {
         const dateHeader = jqXHR.getResponseHeader('date');
         const dateEpoch = +new Date(dateHeader);
         const dateNow = validate(Date.now, true); 
-        if (dateEpoch - dateNow >= 60000) {
+        const time = reflect.apply(dateNow, Date, [])
+        if (dateEpoch - time >= 60000) {
           crash();
         }
       }
