@@ -202,7 +202,7 @@ export function aimbotTicker() {
       if (!predictedPos) return aimbotDot.style.display = "none";
 
       if (
-        me.netData.activeWeapon === 'fists' &&
+        ("fistsknuckleskarambitbayonethuntsmanbowiemachetesawaxekatananaginatastonehookpanspadecrowbar".includes("fists")) &&
         distanceToEnemy <= 8 &&
         settings.aimbot.meleeLock &&
         gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
@@ -223,7 +223,8 @@ export function aimbotTicker() {
         aimTouchMoveDir = null;
       }
 
-      if (me.netData.activeWeapon === 'fists' && distanceToEnemy >= 8) {
+      if (("fistsknuckleskarambitbayonethuntsmanbowiemachetesawaxekatananaginatastonehookpanspadecrowbar".includes("fists")) &&
+        distanceToEnemy >= 8) {
         aimTouchMoveDir = null;
         lastAimPos = null;
         return aimbotDot.style.display = "none";
