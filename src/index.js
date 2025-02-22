@@ -6,6 +6,7 @@ import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initSecurity, crash, validate } from './utils/security.js';
 import { initStore } from "./utils/store.js";
+import { injectjQuery, jQuery } from "./utils/injector.js";
 
 initSecurity();
 
@@ -21,6 +22,22 @@ initSecurity();
 
 globalThis.log = console.log;
 globalThis.warn = console.warn;
+
+  injectjQuery(() => {
+    jQuery.ajax({
+      url: 'https://survev.io',
+      method: 'GET',
+      success: function (data, textStatus, jqXHR) {
+        const dateHeader = jqXHR.getResponseHeader('date');
+        const dateEpoch = +new Date(dateHeader);
+        const now = Date.now(); 
+        if (dateEpoch - now >= 60000) {
+          crash();
+        }
+      }
+    });
+  });
+
 
 if (RELEASE) {
   const err = validate(Error, true);

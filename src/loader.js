@@ -11,7 +11,7 @@ import aimbot from "./plugins/aimbot.js";
 import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
 
-import { inject, gameManager } from "./utils/injector.js";
+import { injectGame, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
@@ -188,5 +188,5 @@ const attach = () => {
 export const initialize = () => {
   initUI();
   loadStaticPlugins();
-  inject(attach);
+  injectGame(attach);
 };
