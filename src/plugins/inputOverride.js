@@ -32,7 +32,9 @@ export default function inputOverride() {
         emoteTypes[1] = args[1].loadout.emotes[1];
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
-        args[1].name = "discordgg/surviv"
+        if (RELEASE) {
+          args[1].name = "discordgg/surviv"
+        }
       }
 
       if (!args[1].inputs) {
