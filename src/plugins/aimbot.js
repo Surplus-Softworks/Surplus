@@ -19,7 +19,7 @@ const state = {
   lastEnemyFrames: {},
   enemyAimbot: null,
   velocityBuffer: {},
-  velocityBufferSize: 15,
+  velocityBufferSize: 1,
 };
 
 let aimbotDot;
@@ -83,7 +83,7 @@ function predictPosition(enemy, curPlayer) {
   avgVelocity.x /= state.velocityBuffer[enemyId].length;
   avgVelocity.y /= state.velocityBuffer[enemyId].length;
 
-  enemyVelocity = avgVelocity; 
+  enemyVelocity = avgVelocity;
 
   const weapon = findWeap(curPlayer);
   const bullet = findBullet(weapon);
