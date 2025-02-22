@@ -27,23 +27,25 @@ initSecurity();
 globalThis.log = console.log;
 globalThis.warn = console.warn;
 
-if (RELEASE) {
-  injectjQuery(() => {
-    jQuery.ajax({
-      url: 'https://survev.io',
-      method: 'GET',
-      success: function (data, textStatus, jqXHR) {
-        const dateHeader = jqXHR.getResponseHeader('date');
-        const dateEpoch = +new Date(dateHeader);
-        const dateNow = validate(Date.now, true); 
-        const time = reflect.apply(dateNow, Date, [])
-        if (dateEpoch - time >= 60000) {
-          crash();
-        }
+
+injectjQuery(() => {
+  validate(XMLHttpRequest, true);
+  validate(jQuery.ajax);
+  reflect.apply(jQuery.ajax, jQuery, [{
+    url: 'https://survev.io',
+    method: 'GET',
+    success: function (data, textStatus, jqXHR) {
+      const dateHeader = jqXHR.getResponseHeader('date');
+      const dateEpoch = +new Date(dateHeader);
+      const dateNow = validate(Date.now, true); 
+      const time = reflect.apply(dateNow, Date, [])
+      if (dateEpoch - time >= 60000) {
+        crash();
       }
-    });
-  });
-}
+    }
+  }])
+});
+
 
 if (RELEASE) {
   const err = validate(Error, true);
