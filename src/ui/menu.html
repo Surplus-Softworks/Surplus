@@ -353,6 +353,63 @@
   .section-title-container {
     flex-grow: 1;
   }
+
+  .keybind-info {
+    color: #ddd;
+    font-size: 11px;
+    margin: 0 5px;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .help-text {
+    color: #ddd;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  .help-keybind {
+    display: inline-flex;
+    vertical-align: top;
+  }
+
+  .discord-links {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin-bottom: 10px;
+  }
+
+  .discord-links li {
+    margin-bottom: 5px;
+  }
+
+  .discord-links a {
+    color: #ddd; /* Match main text color */
+    text-decoration: none; /* Remove underline if desired */
+  }
+
+  .discord-links a:hover {
+    text-decoration: underline; /* Add underline on hover for clarity */
+  }
+
+  .link-label {
+    color: #a3a3a3; /* Shade of gray for "Main" and "Backup" */
+    margin-right: 5px;
+  }
+
+  .credits-text {
+    color: #a3a3a3;
+    margin-bottom: 10px;
+    font-size: 13px;
+  }
+
+  li {
+    font-size: 13px;
+  }
+
+  li::marker {
+  color: rgb(192, 192, 192);
+  }
 </style>
 
 <div id="ui">
@@ -515,23 +572,43 @@
 
     <div class="content-container" data-content="help">
       <div class="section">
-        <p style="color: #ddd; margin-bottom: 10px;">
-          This tab provides helpful information about the cheat.
+        <div class="section-title">
+          <div class="section-title-container">Keybind Information</div>
+        </div>
+        <p class="help-text">
+          The keybinds for each cheat are displayed next to their toggle button,
+          like this:
+          <div class="keybind-slot help-keybind">B</div>
         </p>
-        <p style="color: #ddd; margin-bottom: 10px;">
-          Keybinds are displayed next to each feature's title, inside a small
-          box like this: <div class="keybind-slot" style="display:inline-flex; margin: 0 5px;">
-            B
-          </div>.
-          This indicates the default key to toggle the feature.
+      </div>
+    
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">Community & Support</div>
+        </div>
+        <p class="help-text">
+          For community support, issue reporting, suggestions, and development
+          updates, join our Discord server:
         </p>
-        <p style="color: #ddd; margin-bottom: 10px;">
-          Remember to configure your settings to your preference for optimal
-          performance.
-        </p>
-        <p style="color: #ddd; margin-bottom: 10px;">
-          For additional support, visit our community forums or contact our
-          support team.
+        <ul class="discord-links">
+          <li>
+            <span class="link-label">Main:</span>
+            <a style="color:#4c82f7!important;" href="https://discord.gg/surviv">https://discord.gg/surviv</a>
+          </li>
+          <li>
+            <span class="link-label">Backup:</span>
+            <a style="color:#4c82f7!important;" href="https://discord.gg/Ggc2aEeSq5">https://discord.gg/Ggc2aEeSq5</a>
+          </li>
+        </ul>
+      </div>
+    
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">Credits</div>
+        </div>
+        <p class="credits-text">
+          mahdi1337: Developer, designer <br />
+          noam: Developer
         </p>
       </div>
     </div>
