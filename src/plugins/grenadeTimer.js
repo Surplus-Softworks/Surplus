@@ -1,10 +1,11 @@
 import { gameManager } from "../utils/injector.js";
+import { tickers } from '../utils/ticker.js';
 
 let lastTime = Date.now();
 let showing = false;
 let timer = null;
 
-function grenadeTimer_ticker() {
+function grenadeTimerTicker() {
   if (
     !(
       gameManager.game?.ws &&
@@ -48,5 +49,6 @@ function grenadeTimer_ticker() {
 }
 
 export default function grenadeTimer() {
-  gameManager.game.pixi._ticker.add(grenadeTimer_ticker);
+  gameManager.game.pixi._ticker.add(grenadeTimerTicker);
+  tickers.push(grenadeTimerTicker)
 }

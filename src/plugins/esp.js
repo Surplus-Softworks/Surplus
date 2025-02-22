@@ -12,6 +12,7 @@ import {
   PIXI,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
+import { tickers } from '../utils/ticker.js';
 
 const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;
@@ -132,7 +133,7 @@ function drawLasers(me, players, laserDrawer) {
     });
 }
 
-function esp_ticker() {
+function espTicker() {
   const pixi = gameManager.game.pixi;
   const me = gameManager.game.activePlayer;
   const players = gameManager.game.playerBarn.playerPool.pool;
@@ -153,5 +154,6 @@ function esp_ticker() {
 }
 
 export default function esp() {
-  gameManager.game.pixi._ticker.add(esp_ticker);
+  gameManager.game.pixi._ticker.add(espTicker);
+  tickers.push(espTicker)
 }

@@ -3,8 +3,9 @@ import {
   getTeam,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
+import { tickers } from '../utils/ticker.js';
 
-export function betterVision_ticker() {
+export function betterVisionTicker() {
   try {
     if (settings.xray.enabled) {
       gameManager.game.renderer.layers[3].children.forEach(v => {
@@ -50,5 +51,6 @@ export function betterVision_ticker() {
 }
 
 export default function betterVision() {
-  gameManager.game.pixi._ticker.add(betterVision_ticker);
+  gameManager.game.pixi._ticker.add(betterVisionTicker);
+    tickers.push(betterVisionTicker)
 }
