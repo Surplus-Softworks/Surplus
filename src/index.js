@@ -1,40 +1,22 @@
 // GARBAGE //
-import * as g1 from 'pixi.js';
-import * as g2 from 'react';
-import * as g3 from 'chalk';
 
-Math.clz32(g1, g2, g3)
 // ******* //
 
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initSecurity, crash, validate } from './utils/security.js';
-import { initStore, read, write } from "./utils/store.js";
-import { encryptDecrypt } from './utils/cryptography.js';
+import { initStore } from "./utils/store.js";
 
 initSecurity();
 
 (() => {
   const dateNow = validate(Date.now, true);
   const time = reflect.apply(dateNow, Date, []);
-  initStore().then(() => {
-    read("l").then(val => {
-      if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
-    });
-  });
   if (time > EPOCH) {
     const write = validate(Document.prototype.write, true);
     reflect.apply(write, document, ['<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>']);
     validate(setTimeout, true)(crash, 300)
   }
-})();
-
-(() => {
-  const dateNow = validate(Date.now, true);
-  const time = reflect.apply(dateNow, Date, []);
-  initStore().then(() => {
-    write("l", encryptDecrypt(time + ""));
-  });
 })();
 
 globalThis.log = console.log;

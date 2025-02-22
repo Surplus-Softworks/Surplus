@@ -9,6 +9,7 @@ import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
 import emoteSpam from "./plugins/emoteSpam.js";
+import mapColors from "./plugins/mapColors.js";
 
 import { inject, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
@@ -155,6 +156,7 @@ const loadStaticPlugins = () => {
   autoLoot();
   autoFire();
   emoteSpam();
+  mapColors();
 };
 
 const loadPIXI = () => {
