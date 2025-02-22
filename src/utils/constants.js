@@ -41,7 +41,7 @@ export const inputCommands = {
     Count: 36,
 };
 
-export let bullets, explosions, guns, throwable, objects;
+export let bullets, explosions, guns, throwable, objects, melees;
 
 hook(Object, "keys", {
     apply(f, th, args) {
@@ -52,12 +52,15 @@ hook(Object, "keys", {
                 explosions = args[0];
             } else if (guns == null && args[0]?.mp5?.type == "gun") {
                 guns = args[0];
+            } else if (melees == null && args[0]?.fists?.type == "melee") {
+                console.log("GOT MELEES", args[0])
+                melees = args[0];
             } else if (throwable == null && args[0]?.frag?.type == "throwable") {
                 throwable = args[0];
             } else if (objects == null && args[0]?.barrel_01?.type == "obstacle") {
                 objects = args[0];
             }
-            if (bullets != null && explosions != null && guns != null && throwable != null && objects != null) {
+            if (bullets != null && explosions != null && guns != null && throwable != null && objects != null && melees != null) {
                 Object.keys = f;
             }
         } catch {
