@@ -3,7 +3,7 @@ import { gameManager } from "../utils/injector.js";
 import { object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
 import { validate } from "../utils/security.js";
-import { tickers } from '../utils/ticker.js';
+
 
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -72,7 +72,6 @@ function calculateSpinbotMousePosition(axis) {
 export default function spinbot() {
   validate(Date.now, true);
   gameManager.game.pixi._ticker.add(spinbotTicker);
-  tickers.push(spinbotTicker)
 
   let lastX = 0, lastY = 0;
   object.defineProperty(gameManager.game.input.mousePos, "y", {

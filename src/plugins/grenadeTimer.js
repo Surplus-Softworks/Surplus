@@ -1,5 +1,5 @@
 import { gameManager } from "../utils/injector.js";
-import { tickers } from '../utils/ticker.js';
+
 
 let lastTime = Date.now();
 let showing = false;
@@ -50,5 +50,4 @@ function grenadeTimerTicker() {
 
 export default function grenadeTimer() {
   gameManager.game.pixi._ticker.add(grenadeTimerTicker);
-  tickers.push(grenadeTimerTicker)
 }

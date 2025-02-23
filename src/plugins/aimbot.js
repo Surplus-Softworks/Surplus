@@ -10,7 +10,7 @@ import {
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
 import { validate } from '../utils/security.js';
-import { tickers } from '../utils/ticker.js';
+
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
@@ -267,5 +267,4 @@ export default function aimbot() {
     ui.appendChild(aimbotDot);
   }
   gameManager.game.pixi._ticker.add(aimbotTicker);
-  tickers.push(aimbotTicker)
 }

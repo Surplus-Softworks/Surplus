@@ -3,7 +3,7 @@ import {
   getTeam,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
-import { tickers } from '../utils/ticker.js';
+
 
 export function betterVisionTicker() {
   try {
@@ -52,5 +52,4 @@ export function betterVisionTicker() {
 
 export default function betterVision() {
   gameManager.game.pixi._ticker.add(betterVisionTicker);
-    tickers.push(betterVisionTicker)
 }

@@ -212,7 +212,7 @@ async function bundleJS(release = false) {
         duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
         flatten: false, //THIS IS NIGGER SHIT
         objectExtraction: true, //
-        opaquePredicates: true, //
+        opaquePredicates: false, //
         renameGlobals: false,
 
         lock: {
