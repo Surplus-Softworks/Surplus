@@ -167,7 +167,7 @@ const loadStaticPlugins = () => {
 
 const loadPIXI = () => {
   PIXI.Container = gameManager.game.pixi.stage.constructor;
-  PIXI.Graphics = gameManager.pixi.stage.children.find(child => child.lineStyle)?.constructor;
+  PIXI.Graphics = gameManager.game.pixi.stage.children.find(child => child.lineStyle)?.constructor;
 };
 
 const loadPlugins = () => {
