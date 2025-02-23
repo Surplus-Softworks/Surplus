@@ -20,7 +20,7 @@ function updateRotation() {
 
   if (isMouseDown) {
     if (!gameManager.game.spectating) {
-      if (lastAimPos) {
+      if (lastAimPos && settings.aimbot.enabled) {
         gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
           lastAimPos.clientY - globalThis.innerHeight / 2,
           lastAimPos.clientX - globalThis.innerWidth / 2
