@@ -68,17 +68,8 @@ export default function initUI() {
                 case "KeyB":
                     settings.aimbot.enabled = !settings.aimbot.enabled;
                     break;
-                case "KeyZ":
-                    settings.spinbot.enabled = !settings.spinbot.enabled;
-                    break;
                 case "KeyC":
-                    settings.autoFire.enabled = !settings.autoFire.enabled
-                    break;
-                case "KeyH":
-                    settings.xray.enabled = !settings.xray.enabled;
-                    break;
-                case "KeyU":
-                    settings.esp.enabled = !settings.esp.enabled;
+                    settings.spinbot.enabled = !settings.spinbot.enabled;
                     break;
                 case "KeyX":
                     settings.emoteSpam.enabled = !settings.emoteSpam.enabled;
