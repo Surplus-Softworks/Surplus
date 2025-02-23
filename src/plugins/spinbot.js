@@ -80,7 +80,7 @@ export default function spinbot() {
         return this._y;
       }
 
-      if (isMouseDown && lastAimPos) {
+      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
         return lastAimPos.clientY;
       }
 
@@ -106,7 +106,7 @@ export default function spinbot() {
         return this._x;
       }
 
-      if (isMouseDown && lastAimPos) {
+      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
         return lastAimPos.clientX;
       }
 
