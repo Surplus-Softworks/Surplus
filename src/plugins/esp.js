@@ -19,7 +19,7 @@ const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
-const ref_Function = validate(Function.prototype.constructor, true)
+const ref_Function = validate(Function.prototype.constructor, true);
 
 const createDrawer = new ref_Function('container', 'key', 'PIXI', `
   if (!container[key]) {
