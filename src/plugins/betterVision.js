@@ -3,7 +3,7 @@ import {
   getTeam,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
-
+import { object, reflect, hook } from "../utils/hook.js";
 
 export function betterVisionTicker() {
   try {
@@ -26,30 +26,54 @@ export function betterVisionTicker() {
         }
       });
     }
-    
-    gameManager.game.playerBarn.playerPool.pool.forEach(player => {
-      player.nameText.text = (gameManager.game.activePlayer.localData.curWeapIdx == 2)
-        ? player.nameText.text.split('\n')[0]
-        : `${player.nameText.text.split('\n')[0]}\n${player.netData.activeWeapon}`;
-
-      player.nameText.visible = true
-      const me = gameManager.game.activePlayer;
-      const meTeam = getTeam(me);
-      const playerTeam = getTeam(player);
-
-      if (playerTeam == meTeam) {
-        player.tint = 0x3a88f4
-        player.nameText.style.fill = "3a88f4"
-      } else {
-        player.tint = 0xff2828
-        player.nameText.style.fill = "ff2828"
-      }
-      player.nameText.style.fontSize = 20;
-      player.nameText.style.dropShadowBlur = 0.1;
-    })
   } catch { }
 }
 
 export default function betterVision() {
-  gameManager.game.pixi._ticker.add(betterVisionTicker);
+  hook(gameManager.game.playerBarn.playerPool.pool, "push", {
+    apply(f, th, args) {
+      args.forEach(arg => {
+        object.defineProperty(arg, "bleedTicker", {
+          configurable: true,
+          set(value) {
+            this._bleedTicker = value;
+            const me = gameManager.game.activePlayer;
+            const meTeam = getTeam(me);
+            const playerTeam = getTeam(arg);
+
+            object.defineProperty(arg.nameText, "visible", {
+              configurable: true,
+              value: true,
+            });
+
+            object.defineProperty(arg, "tint", {
+              configurable: true,
+              value: playerTeam == meTeam ? 0x3a88f4 : 0xff2828,
+            });
+
+            object.defineProperty(arg.nameText.style, "fill", {
+              configurable: true,
+              value: playerTeam == meTeam ? "#3a88f4" : "#ff2828",
+            });
+
+            object.defineProperty(arg.nameText.style, "fontSize", {
+              configurable: true,
+              value: 20,
+            });
+
+            object.defineProperty(arg.nameText.style, "dropShadowBlur", {
+              configurable: true,
+              value: 0.1,
+            });
+          },
+          get() {
+            return this._bleedTicker;
+          }
+        });
+      });
+
+      return reflect.apply(f, th, args);
+    }
+  });
+  setInterval(betterVisionTicker, 250);
 }
