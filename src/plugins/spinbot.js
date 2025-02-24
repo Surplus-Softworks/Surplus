@@ -14,7 +14,8 @@ let isMouseDown = false;
 function updateRotation() {
   if (
     !gameManager.game.activePlayer ||
-    !gameManager.game.activePlayer.bodyContainer
+    !gameManager.game.activePlayer.bodyContainer ||
+    gameManager.game.spectating
   )
     return;
 
