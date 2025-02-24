@@ -10,6 +10,7 @@ import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot/main.js";
 import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
+import autoSwitch from "./plugins/autoSwitch.js";
 
 import { injectGame, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
@@ -116,44 +117,52 @@ export const settings = {
   }),
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
-  })
+  }),
+  autoSwitch: {
+    enabled: true,
+    useOneGun: false
+  }
 };
 
 export const defaultSettings = {
   aimbot: {
-      enabled: true,
-      targetKnocked: true,
-      meleeLock: true
+    enabled: true,
+    targetKnocked: true,
+    meleeLock: true
   },
   spinbot: {
-      enabled: true,
-      realistic: false,
-      speed: 50
+    enabled: true,
+    realistic: false,
+    speed: 50
   },
   autoFire: {
-      enabled: true
+    enabled: true
   },
   xray: {
     enabled: true
   },
   esp: {
-      enabled: true,
-      players: true,
-      grenades: true,
-      flashlights: {
-          own: true,
-          others: true
-      }
+    enabled: true,
+    players: true,
+    grenades: true,
+    flashlights: {
+      own: true,
+      others: true
+    }
   },
   autoLoot: {
-      enabled: true
+    enabled: true
   },
   emoteSpam: {
-      enabled: false,
-      speed: 501
+    enabled: false,
+    speed: 501
   },
   infiniteZoom: {
     enabled: true
+  },
+  autoSwitch: {
+    enabled: true,
+    useOneGun: false
   }
 }
 
@@ -178,6 +187,7 @@ const loadPlugins = () => {
   optimizer();
   spinbot();
   aimbot();
+  autoSwitch();
 };
 
 const attach = () => {

@@ -40,6 +40,30 @@ export const inputCommands = {
     TeamPingSingle: 35,
     Count: 36,
 };
+export const packetTypes = {
+    None: 0,
+    Join: 1,
+    Disconnect: 2,
+    Input: 3,
+    Edit: 4,
+    Joined: 5,
+    Update: 6,
+    Kill: 7,
+    GameOver: 8,
+    Pickup: 9,
+    Map: 10,
+    Spectate: 11,
+    DropItem: 12,
+    Emote: 13,
+    PlayerStats: 14,
+    AdStatus: 15,
+    Loadout: 16,
+    RoleAnnouncement: 17,
+    Stats: 18,
+    UpdatePass: 19,
+    AliveCounts: 20,
+    PerkModeRoleSelect: 21
+}
 
 export let bullets, explosions, guns, throwable, objects;
 

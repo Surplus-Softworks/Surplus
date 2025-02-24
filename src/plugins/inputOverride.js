@@ -5,8 +5,10 @@ import { aimTouchMoveDir } from "./aimbot/main.js";
 import { validate, crash } from "../utils/security.js";
 import { read, initStore } from "../utils/store.js";
 import { encryptDecrypt } from "../utils/cryptography.js";
+import { inputCommands, packetTypes } from "../utils/constants.js";
 
 export let emoteTypes = [];
+export let inputs = [];
 
 export default function inputOverride() {
   (() => {
@@ -25,8 +27,14 @@ export default function inputOverride() {
   })();
   hook(gameManager.game, "sendMessage", {
     apply(f, th, args) {
-      validate(WebSocket.prototype.send, true)
-      validate(gameManager.game.ws.send, true)
+      validate(WebSocket.prototype.send, true);
+      validate(gameManager.game.ws.send, true);
+      if (args[0] == packetTypes.Input) {
+        for (const command of inputs) {
+          args[1].addInput(inputCommands[command]);
+        }
+        inputs.length = 0;
+      }
       if (args[1].loadout) {
         emoteTypes[0] = args[1].loadout.emotes[0];
         emoteTypes[1] = args[1].loadout.emotes[1];
