@@ -22,7 +22,7 @@ const WHITE = 0xffffff;
 
 const ref_Function = validate(Function.prototype.constructor, true);
 
-const espTickerModule = { exports: {} }
+const espTickerModule = { exports: {} };
 
 new ref_Function(
   "module",
