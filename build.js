@@ -222,7 +222,7 @@ async function bundleJS(release = false) {
         preset: "medium",
         pack: true,
 
-        deadCode: 1, //
+        deadCode: 0.5, //
         dispatcher: true,
         globalConcealing: true,
         renameVariables: true,
