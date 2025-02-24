@@ -1,7 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
-import { aimTouchMoveDir } from "./aimbot.js";
+import { aimTouchMoveDir } from "./aimbot/main.js";
 import { validate, crash } from "../utils/security.js";
 import { read, initStore } from "../utils/store.js";
 import { encryptDecrypt } from "../utils/cryptography.js";

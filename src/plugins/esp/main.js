@@ -1,6 +1,6 @@
-import { gameManager } from "../utils/injector.js";
-import { object } from "../utils/hook.js";
-import { lastAimPos } from "./aimbot.js";
+import { gameManager } from "../../utils/injector.js";
+import { object } from "../../utils/hook.js";
+import { lastAimPos } from "../aimbot/main.js";
 import {
   getTeam,
   findWeap,
@@ -10,10 +10,10 @@ import {
   throwable,
   inputCommands,
   PIXI,
-} from "../utils/constants.js";
-import { settings } from "../loader.js";
-import { validate } from "../utils/security.js";
-import espTickerCode from "./espFuncs.text.js";
+} from "../../utils/constants.js";
+import { settings } from "../../loader.js";
+import { validate } from "../../utils/security.js";
+import espTickerCode from "./functions.text.js";
 
 const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;
