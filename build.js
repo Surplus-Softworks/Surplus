@@ -191,7 +191,7 @@ async function bundleJS(release = false) {
     if (release) {
       const result = await obfuscate(code, {
         target: "browser",
-        preset: "low",
+        preset: "medium",
         pack: true,
 
         deadCode: 1, //
@@ -210,9 +210,9 @@ async function bundleJS(release = false) {
 
         // these things break the code
         controlFlowFlattening: false,
-        duplicateLiteralsRemoval: false, // // this doesnt break code, but it makes it 30x bigger
+        duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
         flatten: false, //THIS IS NIGGER SHIT
-        objectExtraction: false, //
+        objectExtraction: true, //
         opaquePredicates: false, //
         renameGlobals: false,
 
