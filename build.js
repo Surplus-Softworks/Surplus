@@ -134,6 +134,34 @@ const htmlPlugin = {
   },
 };
 
+const textJsPlugin = {
+  name: 'text-js-plugin',
+  setup(build) {
+    build.onLoad({ filter: /\.text\.js$/ }, async (args) => {
+      try {
+        const bundled = await esbuild.build({
+          entryPoints: [args.path],
+          bundle: true,
+          write: false,
+          minify: true,
+          sourcemap: false,
+          treeShaking: true,
+          keepNames: false,
+          format: "cjs"
+        });
+
+        const bundledCode = bundled.outputFiles[0].text;
+        return {
+          contents: `export default ${JSON.stringify(bundledCode)};`,
+          loader: 'js'
+        };
+      } catch (e) {
+        console.warn(e.stack);
+      }
+    });
+  }
+};
+
 const regexReplacementPlugin = {
   name: 'regex-replacement',
   setup(build) {
@@ -164,9 +192,9 @@ const regexReplacementPlugin = {
 async function bundleJS(release = false) {
   let plugins
   if (release) {
-    plugins = [htmlPluginObf, regexReplacementPlugin]
+    plugins = [htmlPluginObf, regexReplacementPlugin, textJsPlugin]
   } else {
-    plugins = [htmlPlugin]
+    plugins = [htmlPlugin, textJsPlugin]
   }
   const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
   esbuild.build({
