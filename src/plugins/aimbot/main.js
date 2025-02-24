@@ -1,16 +1,16 @@
 //import { updateOverlay, aimbotDot } from '../overlay.js';
 
-import { settings } from '../loader.js';
+import { settings } from '../../loader.js';
 import {
   getTeam,
   findBullet,
   findWeap,
   inputCommands,
-} from '../utils/constants.js';
-import { gameManager } from '../utils/injector.js';
-import { ui } from '../ui/worker.js';
-import { validate } from '../utils/security.js';
-import aimbotTickerCode from "./aimbotFuncs.text.js";
+} from '../../utils/constants.js';
+import { gameManager } from '../../utils/injector.js';
+import { ui } from '../../ui/worker.js';
+import { validate } from '../../utils/security.js';
+import aimbotTickerCode from "./functions.text.js";
 
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
