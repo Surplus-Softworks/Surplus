@@ -118,10 +118,10 @@ export const settings = {
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
   }),
-  autoSwitch: {
-    enabled: true,
-    useOneGun: false
-  }
+  autoSwitch: registerSettings({
+    enabled: "autoswitch-enable",
+    useOneGun: "useonegun"
+  }),
 };
 
 export const defaultSettings = {
