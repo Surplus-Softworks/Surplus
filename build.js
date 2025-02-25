@@ -229,6 +229,7 @@ async function bundleJS(release = false) {
         renameVariables: true,
         identifierGenerator: 'zeroWidth',
         variableMasking: false,
+        renameLabels: true,
 
         // these things slow down the code
         stringConcealing: true,
