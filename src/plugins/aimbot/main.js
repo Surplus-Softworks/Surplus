@@ -22,6 +22,8 @@ const state = {
   enemyAimbot: null,
   velocityBuffer: {},
   velocityBufferSize: 1,
+  quantumPredictions: {},
+  velocityHistory: {},
 };
 
 let aimbotDot;

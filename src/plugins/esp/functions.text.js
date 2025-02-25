@@ -33,7 +33,7 @@ function drawGrenades(me, grenadeDrawer, object, gameManager, objects, explosion
             );
             grenadeDrawer.endFill();
 
-            grenadeDrawer.lineStyle(2, 0x000000, 0.5); 
+            grenadeDrawer.lineStyle(2, 0x000000, 0.2); 
             grenadeDrawer.drawCircle(
                 (obj.pos.x - meX) * 16,
                 (meY - obj.pos.y) * 16,
