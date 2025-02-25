@@ -12,38 +12,40 @@ const dampingFactor = 0.98;
 let isMouseDown = false;
 
 function spinbotTicker() {
-  if (
-    !gameManager.game.activePlayer ||
-    !gameManager.game.activePlayer.bodyContainer ||
-    gameManager.game.spectating
-  )
-    return;
-
-  if (isMouseDown) {
-    if (!gameManager.game.spectating) {
-      if (lastAimPos && settings.aimbot.enabled) {
-        gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-          lastAimPos.clientY - globalThis.innerHeight / 2,
-          lastAimPos.clientX - globalThis.innerWidth / 2
-        );
+  try {
+    if (
+      !gameManager.game.activePlayer ||
+      !gameManager.game.activePlayer.bodyContainer ||
+      gameManager.game.spectating
+    )
+      return;
+  
+    if (isMouseDown) {
+      if (!gameManager.game.spectating) {
+        if (lastAimPos && settings.aimbot.enabled) {
+          gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+            lastAimPos.clientY - globalThis.innerHeight / 2,
+            lastAimPos.clientX - globalThis.innerWidth / 2
+          );
+        } else {
+          gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+            gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+            gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
+          );
+        }
       } else {
-        gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-          gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
-          gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
+        gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(
+          gameManager.game.activePlayer.dir.y,
+          gameManager.game.activePlayer.dir.x
         );
       }
     } else {
-      gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(
-        gameManager.game.activePlayer.dir.y,
-        gameManager.game.activePlayer.dir.x
+      gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+        gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+        gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
       );
     }
-  } else {
-    gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-      gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
-      gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
-    );
-  }
+  } catch {}
 }
 
 function calculateSpinbotMousePosition(axis) {
