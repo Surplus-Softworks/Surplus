@@ -75,5 +75,5 @@ export default function betterVision() {
       return reflect.apply(f, th, args);
     }
   });
-  setInterval(betterVisionTicker, 250);
+  setInterval(betterVisionTicker, 150);
 }
