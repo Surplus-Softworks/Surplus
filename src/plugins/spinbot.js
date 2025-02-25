@@ -11,7 +11,7 @@ const angularAccelerationMax = 0.075;
 const dampingFactor = 0.98;
 let isMouseDown = false;
 
-function updateRotation() {
+function spinbotTicker() {
   if (
     !gameManager.game.activePlayer ||
     !gameManager.game.activePlayer.bodyContainer ||
@@ -44,10 +44,6 @@ function updateRotation() {
       gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
     );
   }
-}
-
-function spinbotTicker() {
-  updateRotation();
 }
 
 function calculateSpinbotMousePosition(axis) {
@@ -136,12 +132,14 @@ export default function spinbot() {
   }]) 
 
   gameManager.game.pixi._ticker.add(() => {
-    if (!isMouseDown && settings.spinbot.enabled) {
-      if (settings.spinbot.realistic) {
-        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
-        angularVelocity *= dampingFactor;
-        currentAngle += angularVelocity;
+    try {
+      if (!isMouseDown && settings.spinbot.enabled) {
+        if (settings.spinbot.realistic) {
+          angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
+          angularVelocity *= dampingFactor;
+          currentAngle += angularVelocity;
+        }
       }
-    }
+    } catch {}
   });
 }
