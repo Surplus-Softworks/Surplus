@@ -63,7 +63,7 @@ export const packetTypes = {
     UpdatePass: 19,
     AliveCounts: 20,
     PerkModeRoleSelect: 21
-}
+};
 
 export let bullets, explosions, guns, throwable, objects;
 
