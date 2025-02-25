@@ -18,7 +18,7 @@ import { PIXI } from "./utils/constants.js";
 
 import initUI, { loadedConfig, ui } from "./ui/worker.js";
 import { validate } from "./utils/security.js";
-import { encryptDecrypt } from "./utils/cryptography.js";
+import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
 
 const getElementById = validate(ShadowRoot.prototype.getElementById, true);
