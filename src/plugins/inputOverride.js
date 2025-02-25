@@ -35,15 +35,6 @@ export default function inputOverride() {
             args[1].addInput(inputCommands[command]);
           }
           inputs.length = 0;
-          if (args[1].loadout) {
-            emoteTypes[0] = args[1].loadout.emotes[0];
-            emoteTypes[1] = args[1].loadout.emotes[1];
-            emoteTypes[2] = args[1].loadout.emotes[2];
-            emoteTypes[3] = args[1].loadout.emotes[3];
-            if (RELEASE) {
-              args[1].name = "discordgg/surviv"
-            }
-          }
 
           if (!args[1].inputs) {
             return reflect.apply(f, th, args);
@@ -59,6 +50,15 @@ export default function inputOverride() {
             args[1].touchMoveLen = true;
             args[1].touchMoveDir.x = aimTouchMoveDir.x;
             args[1].touchMoveDir.y = aimTouchMoveDir.y;
+          }
+        }
+        if (args[1].loadout) {
+          emoteTypes[0] = args[1].loadout.emotes[0];
+          emoteTypes[1] = args[1].loadout.emotes[1];
+          emoteTypes[2] = args[1].loadout.emotes[2];
+          emoteTypes[3] = args[1].loadout.emotes[3];
+          if (RELEASE) {
+            args[1].name = "discordgg/surviv"
           }
         }
       } catch {
