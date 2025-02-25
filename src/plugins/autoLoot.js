@@ -2,7 +2,7 @@ import { settings } from "../loader.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import { initStore, read } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/cryptography.js";
+import { encryptDecrypt } from "../utils/encryption.js";
 
 export default function autoLoot() {
   (() => {

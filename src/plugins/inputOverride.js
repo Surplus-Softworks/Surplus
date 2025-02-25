@@ -4,7 +4,7 @@ import { autoFireEnabled } from "./autoFire.js";
 import { aimTouchMoveDir } from "./aimbot/main.js";
 import { validate, crash } from "../utils/security.js";
 import { read, initStore } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/cryptography.js";
+import { encryptDecrypt } from "../utils/encryption.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
 
 export let emoteTypes = [];
