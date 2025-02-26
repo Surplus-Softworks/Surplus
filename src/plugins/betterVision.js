@@ -5,7 +5,8 @@ import {
 import { settings } from "../loader.js";
 import { object, reflect, hook } from "../utils/hook.js";
 
-export function betterVisionTicker() {
+function betterVisionTicker() {
+  if (!(gameManager.game?.initialized)) return;
   try {
     if (settings.xray.enabled) {
       gameManager.game.renderer.layers[3].children.forEach(v => {

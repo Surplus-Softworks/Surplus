@@ -82,7 +82,7 @@ export default function(gameManager, settings, PIXI, getTeam, BLUE, RED, WHITE, 
     const pixi = gameManager.game.pixi;
     const me = gameManager.game.activePlayer;
     const players = gameManager.game.playerBarn.playerPool.pool;
-    if (!pixi || !me || me.container == undefined || !settings.esp.enabled) return;
+    if (!pixi || !me || me.container == undefined || !settings.esp.enabled || !(gameManager.game?.initialized)) return;
     try {
         const lineDrawer = createDrawer(me.container, 'lineDrawer', PIXI);
         lineDrawer.clear();

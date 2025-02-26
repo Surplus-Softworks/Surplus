@@ -196,6 +196,7 @@ const attach = () => {
     apply(f, th, args) {
       const result = reflect.apply(f, th, args);
       loadPlugins();
+      delete gameManager.game.init; // will only run once
       return result;
     }
   });

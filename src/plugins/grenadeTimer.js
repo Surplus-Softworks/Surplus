@@ -10,7 +10,8 @@ function grenadeTimerTicker() {
     !(
       gameManager.game?.ws &&
       gameManager.game?.activePlayer?.localData?.curWeapIdx != null &&
-      gameManager.game?.activePlayer?.netData?.activeWeapon != null
+      gameManager.game?.activePlayer?.netData?.activeWeapon != null &&
+      gameManager.game?.initialized
     )
   )
     return;

@@ -28,7 +28,7 @@ const ammo = [
     },
 ]
 function autoSwitchTicker() {
-    if (!(gameManager.game?.ws && gameManager.game?.activePlayer?.localData?.curWeapIdx != null)) return;
+    if (!(gameManager.game?.ws && gameManager.game?.activePlayer?.localData?.curWeapIdx != null && gameManager.game?.initialized)) return;
 
     if (!settings.autoSwitch.enabled) return;
 

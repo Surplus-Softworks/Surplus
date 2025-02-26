@@ -7,9 +7,11 @@ const ref_setTimeout = validate(setTimeout, true)
 
 function sendEmote() {
   ref_setTimeout(sendEmote, settings.emoteSpam.speed);
+  
 
   try {
     if (settings.emoteSpam.enabled && gameManager.game) {
+      if (!(gameManager.game?.initialized)) return;
       if (!gameManager.game.activePlayer) return;
       const emote = {
         pos: {x: 0, y: 0},

@@ -141,7 +141,7 @@ function findTarget(players, me, gameManager, settings, getTeam) {
 }
 
 export default function(gameManager, settings, state, getTeam, findBullet, findWeap, inputCommands, aimbotDot, setLastAimPos, setAimTouchMoveDir) {
-    if (!settings.aimbot.enabled) return aimbotDot.style.display = "none";
+    if (!settings.aimbot.enabled || !(gameManager.game?.initialized)) return aimbotDot.style.display = "none";
 
     const players = gameManager.game.playerBarn.playerPool.pool;
     const me = gameManager.game.activePlayer;

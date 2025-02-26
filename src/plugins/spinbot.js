@@ -47,6 +47,7 @@ function updateRotation() {
 }
 
 function spinbotTicker() {
+  if (!(gameManager.game?.initialized)) return;
   updateRotation();
 }
 
