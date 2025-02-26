@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Surplus",
   "description": "A cheat for survev.io & more",
-  "version": "1.6",
+  "version": "1.5",
   "permissions": [
     "activeTab",
     "tabs"

@@ -11,48 +11,43 @@ const angularAccelerationMax = 0.075;
 const dampingFactor = 0.98;
 let isMouseDown = false;
 
-function spinbotTicker() {
-  try {
-    if (!isMouseDown && settings.spinbot.enabled) {
-      if (settings.spinbot.realistic) {
-        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
-        angularVelocity *= dampingFactor;
-        currentAngle += angularVelocity;
-      }
-    }
-  
-    if (
-      !gameManager.game.activePlayer ||
-      !gameManager.game.activePlayer.bodyContainer ||
-      gameManager.game.spectating
-    ) return;
-  
-    if (isMouseDown) {
-      if (!gameManager.game.spectating) {
-        if (lastAimPos && settings.aimbot.enabled) {
-          gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-            lastAimPos.clientY - globalThis.innerHeight / 2,
-            lastAimPos.clientX - globalThis.innerWidth / 2
-          );
-        } else {
-          gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-            gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
-            gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
-          );
-        }
+function updateRotation() {
+  if (
+    !gameManager.game.activePlayer ||
+    !gameManager.game.activePlayer.bodyContainer ||
+    gameManager.game.spectating
+  )
+    return;
+
+  if (isMouseDown) {
+    if (!gameManager.game.spectating) {
+      if (lastAimPos && settings.aimbot.enabled) {
+        gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+          lastAimPos.clientY - globalThis.innerHeight / 2,
+          lastAimPos.clientX - globalThis.innerWidth / 2
+        );
       } else {
-        gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(
-          gameManager.game.activePlayer.dir.y,
-          gameManager.game.activePlayer.dir.x
+        gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+          gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+          gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
         );
       }
     } else {
-      gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
-        gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
-        gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
+      gameManager.game.activePlayer.bodyContainer.rotation = -Math.atan2(
+        gameManager.game.activePlayer.dir.y,
+        gameManager.game.activePlayer.dir.x
       );
     }
-  } catch {}
+  } else {
+    gameManager.game.activePlayer.bodyContainer.rotation = Math.atan2(
+      gameManager.game.input.mousePos.y - globalThis.innerHeight / 2,
+      gameManager.game.input.mousePos.x - globalThis.innerWidth / 2
+    );
+  }
+}
+
+function spinbotTicker() {
+  updateRotation();
 }
 
 function calculateSpinbotMousePosition(axis) {
@@ -82,24 +77,22 @@ export default function spinbot() {
   let lastX = 0, lastY = 0;
   object.defineProperty(gameManager.game.input.mousePos, "y", {
     get() {
-      try {
-        if (isMouseDown && !lastAimPos) {
-          return this._y;
-        }
-  
-        if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
-          return lastAimPos.clientY;
-        }
-  
-        if (!settings.spinbot.realistic && settings.spinbot.enabled) {
-          const chance = Math.random();
-          if (chance > settings.spinbot.speed / 100) return lastY;
-        }
-  
-        if (!isMouseDown && settings.spinbot.enabled) {
-          return lastY = calculateSpinbotMousePosition("y");
-        }
-      } catch {}
+      if (isMouseDown && !lastAimPos) {
+        return this._y;
+      }
+
+      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
+        return lastAimPos.clientY;
+      }
+
+      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
+        const chance = Math.random();
+        if (chance > settings.spinbot.speed / 100) return lastY;
+      }
+
+      if (!isMouseDown && settings.spinbot.enabled) {
+        return lastY = calculateSpinbotMousePosition("y");
+      }
 
       return this._y;
     },
@@ -110,24 +103,22 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, "x", {
     get() {
-      try {
-        if (isMouseDown && !lastAimPos) {
-          return this._x;
-        }
-  
-        if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
-          return lastAimPos.clientX;
-        }
-  
-        if (!settings.spinbot.realistic && settings.spinbot.enabled) {
-          const chance = Math.random();
-          if (chance > settings.spinbot.speed / 100) return lastX;
-        }
-  
-        if (!isMouseDown && settings.spinbot.enabled) {
-          return lastX = calculateSpinbotMousePosition("x");
-        }
-      } catch {}
+      if (isMouseDown && !lastAimPos) {
+        return this._x;
+      }
+
+      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
+        return lastAimPos.clientX;
+      }
+
+      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
+        const chance = Math.random();
+        if (chance > settings.spinbot.speed / 100) return lastX;
+      }
+
+      if (!isMouseDown && settings.spinbot.enabled) {
+        return lastX = calculateSpinbotMousePosition("x");
+      }
 
       return this._x;
     },
@@ -143,4 +134,14 @@ export default function spinbot() {
   reflect.apply(ref_addEventListener, globalThis, ["mouseup", () => {
     isMouseDown = false;
   }]) 
+
+  gameManager.game.pixi._ticker.add(() => {
+    if (!isMouseDown && settings.spinbot.enabled) {
+      if (settings.spinbot.realistic) {
+        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
+        angularVelocity *= dampingFactor;
+        currentAngle += angularVelocity;
+      }
+    }
+  });
 }
