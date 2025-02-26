@@ -39,26 +39,6 @@ function predictPosition(enemy, curPlayer, gameManager, state, findBullet, findW
             deltaTime,
     };
 
-    if (!state.velocityBuffer[enemyId]) {
-        state.velocityBuffer[enemyId] = [];
-    }
-
-    state.velocityBuffer[enemyId].push(enemyVelocity);
-
-    if (state.velocityBuffer[enemyId].length > state.velocityBufferSize) {
-        state.velocityBuffer[enemyId].shift();
-    }
-
-    let avgVelocity = { x: 0, y: 0 };
-    for (const velocity of state.velocityBuffer[enemyId]) {
-        avgVelocity.x += velocity.x;
-        avgVelocity.y += velocity.y;
-    }
-    avgVelocity.x /= state.velocityBuffer[enemyId].length;
-    avgVelocity.y /= state.velocityBuffer[enemyId].length;
-
-    enemyVelocity = avgVelocity;
-
     const weapon = findWeap(curPlayer);
     const bullet = findBullet(weapon);
     const bulletSpeed = bullet?.speed || 1000;
@@ -111,8 +91,8 @@ function findTarget(players, me, gameManager, settings, getTeam) {
             continue;
 
         const screenPos = gameManager.game.camera.pointToScreen({
-            x: player._pos.x,
-            y: player._pos.y,
+            x: player.pos.x,
+            y: player.pos.y,
         });
         const distance = getDistance(
             screenPos.x,
@@ -148,10 +128,10 @@ export default function(gameManager, settings, state, getTeam, findBullet, findW
         }
 
         if (enemy) {
-            const meX = me._pos.x;
-            const meY = me._pos.y;
-            const enemyX = enemy._pos.x;
-            const enemyY = enemy._pos.y;
+            const meX = me.pos.x;
+            const meY = me.pos.y;
+            const enemyX = enemy.pos.x;
+            const enemyY = enemy.pos.y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
@@ -170,7 +150,7 @@ export default function(gameManager, settings, state, getTeam, findBullet, findW
                 settings.aimbot.meleeLock &&
                 gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
             ) {
-                const moveAngle = calcAngle(enemy._pos, me._pos) + Math.PI;
+                const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
                 setAimTouchMoveDir({
                     touchMoveActive: true,
                     touchMoveLen: 255,

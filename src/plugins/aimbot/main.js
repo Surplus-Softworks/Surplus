@@ -21,7 +21,7 @@ const state = {
   lastEnemyFrames: {},
   enemyAimbot: null,
   velocityBuffer: {},
-  velocityBufferSize: 3,
+  velocityBufferSize: 1,
   quantumPredictions: {},
   velocityHistory: {},
 };
