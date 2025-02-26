@@ -1,7 +1,7 @@
 import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { object, ref_addEventListener, reflect } from "../utils/hook.js";
-import { lastAimPos } from "./aimbot/main.js";
+import { lastAimPos } from "./aimbot.js";
 import { validate } from "../utils/security.js";
 
 
@@ -14,8 +14,7 @@ let isMouseDown = false;
 function updateRotation() {
   if (
     !gameManager.game.activePlayer ||
-    !gameManager.game.activePlayer.bodyContainer ||
-    gameManager.game.spectating
+    !gameManager.game.activePlayer.bodyContainer
   )
     return;
 

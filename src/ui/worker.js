@@ -4,7 +4,7 @@ import { object } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import { read, initStore } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/encryption.js";
+import { encryptDecrypt } from "../utils/cryptography.js";
 import { ref_addEventListener } from "../utils/hook.js";
 
 export let ui;
