@@ -32,6 +32,13 @@ function drawGrenades(me, grenadeDrawer, object, gameManager, objects, explosion
                 (explosions[throwable[obj.type]?.explosionType || objects[obj.type].explosion].rad.max + 1) * 16
             );
             grenadeDrawer.endFill();
+
+            grenadeDrawer.lineStyle(2, 0x000000, 0.2); 
+            grenadeDrawer.drawCircle(
+                (obj.pos.x - meX) * 16,
+                (meY - obj.pos.y) * 16,
+                (explosions[throwable[obj.type]?.explosionType || objects[obj.type].explosion].rad.max + 1) * 16
+            );
         });
 }
 

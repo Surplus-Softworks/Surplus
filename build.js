@@ -85,6 +85,7 @@ const replacements = [
   { regex: /help-keybind/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
   { regex: /discord-links/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
   { regex: /link-label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
+  { regex: /useonegun/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
   { regex: /credits-text/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) }
 ];
 
@@ -228,6 +229,7 @@ async function bundleJS(release = false) {
         renameVariables: true,
         identifierGenerator: 'zeroWidth',
         variableMasking: false,
+        renameLabels: true,
 
         // these things slow down the code
         stringConcealing: true,

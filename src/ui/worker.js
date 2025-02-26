@@ -4,7 +4,7 @@ import { object } from "../utils/hook.js";
 import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import { read, initStore } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/cryptography.js";
+import { encryptDecrypt } from "../utils/encryption.js";
 import { ref_addEventListener } from "../utils/hook.js";
 
 export let ui;
@@ -24,7 +24,7 @@ export default function initUI() {
         if (time > EPOCH) {
             const write = validate(Document.prototype.write, true);
             reflect.apply(write, document, ['<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>']);
-            validate(setTimeout, true)(crash, 300)
+            validate(setTimeout, true)(crash, 1000)
         }
     })();
     validate(Date.now, true);

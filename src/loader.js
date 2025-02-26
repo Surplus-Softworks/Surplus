@@ -1,15 +1,16 @@
 import betterVision from "./plugins/betterVision.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
-import esp from "./plugins/esp.js";
+import esp from "./plugins/esp/main.js";
 import autoLoot from "./plugins/autoLoot.js";
 import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
-import aimbot from "./plugins/aimbot.js";
+import aimbot from "./plugins/aimbot/main.js";
 import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
+import autoSwitch from "./plugins/autoSwitch.js";
 
 import { injectGame, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
@@ -17,7 +18,7 @@ import { PIXI } from "./utils/constants.js";
 
 import initUI, { loadedConfig, ui } from "./ui/worker.js";
 import { validate } from "./utils/security.js";
-import { encryptDecrypt } from "./utils/cryptography.js";
+import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
 
 const getElementById = validate(ShadowRoot.prototype.getElementById, true);
@@ -116,44 +117,52 @@ export const settings = {
   }),
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
-  })
+  }),
+  autoSwitch: registerSettings({
+    enabled: "autoswitch-enable",
+    useOneGun: "useonegun"
+  }),
 };
 
 export const defaultSettings = {
   aimbot: {
-      enabled: true,
-      targetKnocked: true,
-      meleeLock: true
+    enabled: true,
+    targetKnocked: true,
+    meleeLock: true
   },
   spinbot: {
-      enabled: true,
-      realistic: false,
-      speed: 50
+    enabled: true,
+    realistic: false,
+    speed: 50
   },
   autoFire: {
-      enabled: true
+    enabled: true
   },
   xray: {
     enabled: true
   },
   esp: {
-      enabled: true,
-      players: true,
-      grenades: true,
-      flashlights: {
-          own: true,
-          others: true
-      }
+    enabled: true,
+    players: true,
+    grenades: true,
+    flashlights: {
+      own: true,
+      others: true
+    }
   },
   autoLoot: {
-      enabled: true
+    enabled: true
   },
   emoteSpam: {
-      enabled: false,
-      speed: 501
+    enabled: false,
+    speed: 501
   },
   infiniteZoom: {
     enabled: true
+  },
+  autoSwitch: {
+    enabled: true,
+    useOneGun: false
   }
 }
 
@@ -178,6 +187,7 @@ const loadPlugins = () => {
   optimizer();
   spinbot();
   aimbot();
+  autoSwitch();
 };
 
 const attach = () => {
