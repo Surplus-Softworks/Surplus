@@ -78,23 +78,13 @@ function predictPosition(enemy, curPlayer, gameManager, state, findBullet, findW
         t = -c / b;
     } else {
         const discriminant = b ** 2 - 4 * a * c;
-        if (discriminant < 0)
-            return gameManager.game.camera.pointToScreen({
-                x: enemyPos.x,
-                y: enemyPos.y,
-            });
+
 
         const sqrtD = Math.sqrt(discriminant);
         const t1 = (-b - sqrtD) / (2 * a);
         const t2 = (-b + sqrtD) / (2 * a);
         t = Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2);
     }
-
-    if (t < 0)
-        return gameManager.game.camera.pointToScreen({
-            x: enemyPos.x,
-            y: enemyPos.y,
-        });
 
     const predictedPos = {
         x: enemyPos.x + vex * t,

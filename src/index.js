@@ -65,4 +65,4 @@ initSecurity();
 
 // GARBAGE //
 Math.clz32(g3);
-// ******* //
+// ******* //itialize();
