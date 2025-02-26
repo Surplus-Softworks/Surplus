@@ -39,6 +39,26 @@ function predictPosition(enemy, curPlayer, gameManager, state, findBullet, findW
             deltaTime,
     };
 
+    if (!state.velocityBuffer[enemyId]) {
+        state.velocityBuffer[enemyId] = [];
+    }
+
+    state.velocityBuffer[enemyId].push(enemyVelocity);
+
+    if (state.velocityBuffer[enemyId].length > state.velocityBufferSize) {
+        state.velocityBuffer[enemyId].shift();
+    }
+
+    let avgVelocity = { x: 0, y: 0 };
+    for (const velocity of state.velocityBuffer[enemyId]) {
+        avgVelocity.x += velocity.x;
+        avgVelocity.y += velocity.y;
+    }
+    avgVelocity.x /= state.velocityBuffer[enemyId].length;
+    avgVelocity.y /= state.velocityBuffer[enemyId].length;
+
+    enemyVelocity = avgVelocity;
+
     const weapon = findWeap(curPlayer);
     const bullet = findBullet(weapon);
     const bulletSpeed = bullet?.speed || 1000;
@@ -58,13 +78,23 @@ function predictPosition(enemy, curPlayer, gameManager, state, findBullet, findW
         t = -c / b;
     } else {
         const discriminant = b ** 2 - 4 * a * c;
-
+        if (discriminant < 0)
+            return gameManager.game.camera.pointToScreen({
+                x: enemyPos.x,
+                y: enemyPos.y,
+            });
 
         const sqrtD = Math.sqrt(discriminant);
         const t1 = (-b - sqrtD) / (2 * a);
         const t2 = (-b + sqrtD) / (2 * a);
         t = Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2);
     }
+
+    if (t < 0)
+        return gameManager.game.camera.pointToScreen({
+            x: enemyPos.x,
+            y: enemyPos.y,
+        });
 
     const predictedPos = {
         x: enemyPos.x + vex * t,
@@ -91,8 +121,8 @@ function findTarget(players, me, gameManager, settings, getTeam) {
             continue;
 
         const screenPos = gameManager.game.camera.pointToScreen({
-            x: player.pos.x,
-            y: player.pos.y,
+            x: player._pos.x,
+            y: player._pos.y,
         });
         const distance = getDistance(
             screenPos.x,
@@ -111,7 +141,7 @@ function findTarget(players, me, gameManager, settings, getTeam) {
 }
 
 export default function(gameManager, settings, state, getTeam, findBullet, findWeap, inputCommands, aimbotDot, setLastAimPos, setAimTouchMoveDir) {
-    if (!settings.aimbot.enabled || !(gameManager.game?.initialized)) return aimbotDot.style.display = "none";
+    if (!settings.aimbot.enabled) return aimbotDot.style.display = "none";
 
     const players = gameManager.game.playerBarn.playerPool.pool;
     const me = gameManager.game.activePlayer;
@@ -128,10 +158,10 @@ export default function(gameManager, settings, state, getTeam, findBullet, findW
         }
 
         if (enemy) {
-            const meX = me.pos.x;
-            const meY = me.pos.y;
-            const enemyX = enemy.pos.x;
-            const enemyY = enemy.pos.y;
+            const meX = me._pos.x;
+            const meY = me._pos.y;
+            const enemyX = enemy._pos.x;
+            const enemyY = enemy._pos.y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
@@ -150,7 +180,7 @@ export default function(gameManager, settings, state, getTeam, findBullet, findW
                 settings.aimbot.meleeLock &&
                 gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
             ) {
-                const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
+                const moveAngle = calcAngle(enemy._pos, me._pos) + Math.PI;
                 setAimTouchMoveDir({
                     touchMoveActive: true,
                     touchMoveLen: 255,

@@ -220,15 +220,16 @@ async function bundleJS(release = false) {
     if (release) {
       const result = await obfuscate(code, {
         target: "browser",
-        preset: "medium",
+        preset: "low",
         pack: true,
 
-        deadCode: 0.5, //
+        deadCode: 1, //
         dispatcher: true,
         globalConcealing: true,
         renameVariables: true,
         identifierGenerator: 'zeroWidth',
         variableMasking: false,
+        renameLabels: true,
 
         // these things slow down the code
         stringConcealing: true,
