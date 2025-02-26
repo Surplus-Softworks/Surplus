@@ -194,7 +194,6 @@ const loadPlugins = () => {
   optimizer();
 };
 const attach = () => {
-  let first = true;
   inputOverride();
   hook(gameManager.game, "init", {
     apply(f, th, args) {
