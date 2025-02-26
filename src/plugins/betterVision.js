@@ -29,7 +29,7 @@ function betterVisionTicker() {
     }
   } catch { }
 }
-
+let first = true;
 export default function betterVision() {
   hook(gameManager.game.playerBarn.playerPool.pool, "push", {
     apply(f, th, args) {
@@ -76,5 +76,8 @@ export default function betterVision() {
       return reflect.apply(f, th, args);
     }
   });
-  setInterval(betterVisionTicker, 150);
+  if (first) {
+    setInterval(betterVisionTicker, 150);
+    first = false;
+  }
 }
