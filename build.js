@@ -245,6 +245,7 @@ async function bundleJS(release = false) {
         objectExtraction: true, //
         opaquePredicates: false, //
         renameGlobals: false,
+        astScrambler: true,
 
         lock: {
           integrity: true,
