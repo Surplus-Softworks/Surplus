@@ -179,24 +179,28 @@ const loadPIXI = () => {
   PIXI.Graphics = gameManager.game.pixi.stage.children.find(child => child.lineStyle)?.constructor;
 };
 
-const loadPlugins = () => {
-  loadPIXI();
-  esp();
-  betterVision();
-  grenadeTimer();
-  optimizer();
-  spinbot();
-  aimbot();
-  autoSwitch();
-};
+let ranPlugins = false;
 
+const loadPlugins = () => {
+  if (!ranPlugins) {
+    loadPIXI();
+    esp();
+    betterVision();
+    grenadeTimer();
+    spinbot();
+    aimbot();
+    autoSwitch();
+  }
+  optimizer();
+};
 const attach = () => {
+  let first = true;
   inputOverride();
   hook(gameManager.game, "init", {
     apply(f, th, args) {
       const result = reflect.apply(f, th, args);
       loadPlugins();
-      delete gameManager.game.init; // will only run once
+      ranPlugins = true;
       return result;
     }
   });
