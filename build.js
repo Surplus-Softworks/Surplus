@@ -233,16 +233,16 @@ async function bundleJS(release = false) {
 
         // these things slow down the code
         stringConcealing: true,
-        stringEncoding: false,
-        stringSplitting: false,
+        stringEncoding: true,
+        stringSplitting: true,
         stringCompression: false,
         rgf: false,
 
         // these things break the code
         controlFlowFlattening: false,
-        duplicateLiteralsRemoval: false, // // this doesnt break code, but it makes it 30x bigger
+        duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
         flatten: false, //THIS IS NIGGER SHIT
-        objectExtraction: false, //
+        objectExtraction: true, //
         opaquePredicates: false, //
         renameGlobals: false,
         astScrambler: true,
@@ -251,7 +251,7 @@ async function bundleJS(release = false) {
           integrity: true,
           selfDefending: true,
           tamperProtection: true,
-          antiDebug: false,
+          antiDebug: true,
         }
       });
       fs.writeFileSync(outputFilePath, `

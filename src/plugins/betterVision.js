@@ -29,13 +29,8 @@ function betterVisionTicker() {
     }
   } catch { }
 }
-<<<<<<< HEAD
-
-export default function betterVision(first) {
-=======
 let first = true;
 export default function betterVision() {
->>>>>>> 6541e663d91206c1c6517b01be4793a0a0b52529
   hook(gameManager.game.playerBarn.playerPool.pool, "push", {
     apply(f, th, args) {
       args.forEach(arg => {
@@ -81,13 +76,8 @@ export default function betterVision() {
       return reflect.apply(f, th, args);
     }
   });
-<<<<<<< HEAD
-  if (!first) {
-    setInterval(betterVisionTicker, 150);
-=======
   if (first) {
     setInterval(betterVisionTicker, 150);
     first = false;
->>>>>>> 6541e663d91206c1c6517b01be4793a0a0b52529
   }
 }

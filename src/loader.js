@@ -20,6 +20,7 @@ import initUI, { loadedConfig, ui } from "./ui/worker.js";
 import { validate } from "./utils/security.js";
 import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
+import noEmoteCooldown from "./plugins/noEmoteCooldown.js";
 
 const getElementById = validate(ShadowRoot.prototype.getElementById, true);
 
@@ -190,11 +191,8 @@ const loadPlugins = () => {
     aimbot();
     autoSwitch();
   }
-<<<<<<< HEAD
-  betterVision(ranPlugins);
-=======
+  noEmoteCooldown();
   betterVision();
->>>>>>> 6541e663d91206c1c6517b01be4793a0a0b52529
   optimizer();
 };
 const attach = () => {
