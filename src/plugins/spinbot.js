@@ -128,11 +128,13 @@ export default function spinbot() {
     },
   });
 
-  reflect.apply(ref_addEventListener, globalThis, ["mousedown", () => {
+  reflect.apply(ref_addEventListener, globalThis, ["mousedown", e => {
+    if (e.button != 1) return;
     isMouseDown = true;
   }]) 
 
-  reflect.apply(ref_addEventListener, globalThis, ["mouseup", () => {
+  reflect.apply(ref_addEventListener, globalThis, ["mouseup", e => {
+    if (e.button != 1) return;
     isMouseDown = false;
   }]) 
 
