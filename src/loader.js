@@ -185,12 +185,12 @@ const loadPlugins = () => {
   if (!ranPlugins) {
     loadPIXI();
     esp();
-    betterVision();
     grenadeTimer();
     spinbot();
     aimbot();
     autoSwitch();
   }
+  betterVision(ranPlugins);
   optimizer();
 };
 const attach = () => {

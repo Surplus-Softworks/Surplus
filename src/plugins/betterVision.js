@@ -30,7 +30,7 @@ function betterVisionTicker() {
   } catch { }
 }
 
-export default function betterVision() {
+export default function betterVision(first) {
   hook(gameManager.game.playerBarn.playerPool.pool, "push", {
     apply(f, th, args) {
       args.forEach(arg => {
@@ -76,5 +76,7 @@ export default function betterVision() {
       return reflect.apply(f, th, args);
     }
   });
-  setInterval(betterVisionTicker, 150);
+  if (!first) {
+    setInterval(betterVisionTicker, 150);
+  }
 }
