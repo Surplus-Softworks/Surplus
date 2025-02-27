@@ -219,40 +219,39 @@ async function bundleJS(release = false) {
 
     if (release) {
       const result = await obfuscate(code, {
-        target: "browser",
-        preset: "low",
-        pack: true,
-
-        deadCode: 1, //
-        dispatcher: true,
-        globalConcealing: true,
-        renameVariables: true,
+        target: 'browser',
+        compact: true,
+        hexadecimalNumbers: false,
+        minify: false,
         identifierGenerator: 'zeroWidth',
-        variableMasking: false,
         renameLabels: true,
-
-        // these things slow down the code
-        stringConcealing: true,
-        stringEncoding: true,
-        stringSplitting: true,
-        stringCompression: false,
-        rgf: false,
-
-        // these things break the code
-        controlFlowFlattening: false,
-        duplicateLiteralsRemoval: true, // // this doesnt break code, but it makes it 30x bigger
-        flatten: false, //THIS IS NIGGER SHIT
-        objectExtraction: true, //
-        opaquePredicates: false, //
+        renameVariables: true,
         renameGlobals: false,
+        variableMasking: false,
+        globalConcealing: false,
+        stringConcealing: true,
+        stringEncoding: false,
+        stringSplitting: false,
+        stringCompression: false,
+        duplicateLiteralsRemoval: false,
+        dispatcher: false,
+        rgf: false,
+        controlFlowFlattening: false,
+        calculator: false,
+        flatten: false,
+        movedDeclarations: true,
+        opaquePredicates: false,
+        shuffle: false,
+        preserveFunctionLength: false,
         astScrambler: true,
-
+        objectExtraction: true,
+        deadCode: false,
+        pack: true,
         lock: {
           integrity: true,
           selfDefending: true,
           tamperProtection: true,
-          antiDebug: true,
-        }
+        },
       });
       fs.writeFileSync(outputFilePath, `
 // Copyright © Surplus Softworks.
