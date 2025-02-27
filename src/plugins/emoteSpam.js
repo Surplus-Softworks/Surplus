@@ -2,6 +2,7 @@ import { gameManager } from "../utils/injector.js";
 import { settings } from "../loader.js";
 import { validate } from "../utils/security.js";
 import { emoteTypes } from "./inputOverride.js";
+import { object } from "../utils/hook.js";
 
 const ref_setTimeout = validate(setTimeout, true)
 
