@@ -1,6 +1,6 @@
 import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
-import { object, ref_addEventListener, reflect } from "../utils/hook.js";
+import { hook, object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot/main.js";
 import { validate } from "../utils/security.js";
 
@@ -76,9 +76,25 @@ export default function spinbot() {
   gameManager.game.pixi._ticker.add(spinbotTicker);
 
   let lastX = 0, lastY = 0;
+  let isEmoteUpdate = false;
+
+  hook(gameManager.game.emoteBarn.__proto__, "update", {
+    apply(f, th, args) {
+      isEmoteUpdate = true;
+      try {
+        const r = reflect.apply(f, th, args);
+        isEmoteUpdate = false;
+        return r;
+      } catch(e) {
+        isEmoteUpdate = false;
+        throw e;
+      }
+    }
+  });
+
   object.defineProperty(gameManager.game.input.mousePos, "y", {
     get() {
-      if (isMouseDown && !lastAimPos) {
+      if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._y;
       }
 
@@ -104,7 +120,7 @@ export default function spinbot() {
 
   object.defineProperty(gameManager.game.input.mousePos, "x", {
     get() {
-      if (isMouseDown && !lastAimPos) {
+      if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._x;
       }
 
@@ -129,12 +145,12 @@ export default function spinbot() {
   });
 
   reflect.apply(ref_addEventListener, globalThis, ["mousedown", e => {
-    if (e.button != 1) return;
+    if (e.button != 0) return;
     isMouseDown = true;
   }]) 
 
   reflect.apply(ref_addEventListener, globalThis, ["mouseup", e => {
-    if (e.button != 1) return;
+    if (e.button != 0) return;
     isMouseDown = false;
   }]) 
 
