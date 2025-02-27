@@ -190,11 +190,14 @@ const loadPlugins = () => {
     aimbot();
     autoSwitch();
   }
+<<<<<<< HEAD
   betterVision(ranPlugins);
+=======
+  betterVision();
+>>>>>>> 6541e663d91206c1c6517b01be4793a0a0b52529
   optimizer();
 };
 const attach = () => {
-  let first = true;
   inputOverride();
   hook(gameManager.game, "init", {
     apply(f, th, args) {
