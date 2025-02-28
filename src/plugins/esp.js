@@ -12,7 +12,6 @@ import {
   PIXI,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
-import { validate } from "../utils/security.js";
 import espTickerCode from "./espFuncs.text.js";
 
 const GREEN = 0x399d37;
@@ -20,7 +19,7 @@ const BLUE = 0x3a88f4;
 const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
-const ref_Function = validate(Function.prototype.constructor, true);
+const ref_Function = Function.prototype.constructor;
 
 const espTickerModule = { exports: {} };
 

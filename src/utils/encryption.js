@@ -1,8 +1,7 @@
 import { reflect } from "./hook.js";
-import { validate } from "./security.js";
 
-const charCodeAt = validate(String.prototype.charCodeAt, true);
-const fromCharCode = validate(String.fromCharCode, true);
+const charCodeAt = String.prototype.charCodeAt;
+const fromCharCode = String.fromCharCode;
 
 export function encryptDecrypt(input, key=charCodeAt.toString()) {
   const keyLength = key.length;

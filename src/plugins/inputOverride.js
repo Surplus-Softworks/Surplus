@@ -2,33 +2,14 @@ import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
 import { aimTouchMoveDir } from "./aimbot/main.js";
-import { validate, crash } from "../utils/security.js";
-import { read, initStore } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/encryption.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
 
 export let emoteTypes = [];
 export let inputs = [];
 
 export default function inputOverride() {
-  (() => {
-    const dateNow = validate(Date.now, true);
-    const time = reflect.apply(dateNow, Date, []);
-    initStore().then(() => {
-      read("l").then(val => {
-        if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
-      });
-    });
-    if (time > EPOCH) {
-      const write = validate(Document.prototype.write, true);
-      reflect.apply(write, document, ['<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>']);
-      validate(setTimeout, true)(crash, 1000)
-    }
-  })();
   hook(gameManager.game, "sendMessage", {
     apply(f, th, args) {
-      validate(WebSocket.prototype.send, true);
-      validate(gameManager.game.ws.send, true);
       if (args[0] == packetTypes.Input) {
         for (const command of inputs) {
           args[1].addInput(inputCommands[command]);

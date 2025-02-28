@@ -1,11 +1,9 @@
 import { gameManager } from "../utils/injector.js";
 import { object, reflect } from "../utils/hook.js";
-import { validate } from "../utils/security.js";
 import { ref_addEventListener } from "../utils/hook.js";
 import { settings } from "../loader.js";
 
 export default function infiniteZoom() {
-  validate(Date.now, true);
   reflect.apply(ref_addEventListener, globalThis, ["wheel", (event) => {
     if (!event.shiftKey) return;
     if (!settings.infiniteZoom.enabled) return;

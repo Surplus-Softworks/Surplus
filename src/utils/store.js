@@ -1,18 +1,17 @@
 import { reflect } from "./hook.js";
-import { validate } from "./security.js";
 
 const DBNAME = "s\u2063";
 const DBSTORENAME = "t\u2063";
 
 // METHODS //
-const promise = validate(Promise, true);
-const indexedDBOpen = validate(IDBFactory.prototype.open, true);
-const domStringListContains = validate(DOMStringList.prototype.contains, true);
-const databaseCreateObjectStore = validate(IDBDatabase.prototype.createObjectStore, true);
-const databaseTransaction = validate(IDBDatabase.prototype.transaction, true);
-const transactionObjectStore = validate(IDBTransaction.prototype.objectStore, true);
-const objectStorePut = validate(IDBObjectStore.prototype.put, true);
-const objectStoreGet = validate(IDBObjectStore.prototype.get, true);
+const promise = Promise;
+const indexedDBOpen = IDBFactory.prototype.open;
+const domStringListContains = DOMStringList.prototype.contains;
+const databaseCreateObjectStore = IDBDatabase.prototype.createObjectStore;
+const databaseTransaction = IDBDatabase.prototype.transaction;
+const transactionObjectStore = IDBTransaction.prototype.objectStore;
+const objectStorePut = IDBObjectStore.prototype.put;
+const objectStoreGet = IDBObjectStore.prototype.get;
 // ####### //
 
 let db;

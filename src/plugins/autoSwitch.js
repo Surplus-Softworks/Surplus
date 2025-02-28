@@ -2,10 +2,9 @@ import { gameManager } from '../utils/injector.js';
 import { settings } from '../loader.js';
 import { guns, inputCommands } from '../utils/constants.js';
 import { inputs } from './inputOverride.js';
-import { validate } from '../utils/security.js';
 import { reflect } from '../utils/hook.js';
 
-const arrayPush = validate(Array.prototype.push, true);
+const arrayPush = Array.prototype.push;
 
 const ammo = [
     {

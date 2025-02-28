@@ -1,5 +1,3 @@
-import { validate } from "./security";
-
 export const object = {};
 for (const prop of Object.getOwnPropertyNames(Object)) {
 	object[prop] = Object[prop];
@@ -10,11 +8,8 @@ for (const prop of object.getOwnPropertyNames(Reflect)) {
 	reflect[prop] = Reflect[prop];
 }
 
-for (let i in object) validate(object[i], true);
-for (let i in reflect) validate(reflect[i], true);
-
-export const spoof = new (validate(WeakMap, true))();
-export const proxy = validate(Proxy, true, true);
+export const spoof = new WeakMap();
+export const proxy = Proxy;
 spoof.set = spoof.set;
 spoof.get = spoof.get;
 spoof.delete = spoof.delete;
@@ -45,4 +40,4 @@ hook(Function.prototype, "toString", {
 	},
 });
 
-export const ref_addEventListener = validate(globalThis.EventTarget.prototype.addEventListener, true);
+export const ref_addEventListener = globalThis.EventTarget.prototype.addEventListener;

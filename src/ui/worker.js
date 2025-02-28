@@ -1,7 +1,6 @@
 import html from "./menu.html"
 import { defaultSettings, setChecked, settings, setValue } from "../loader.js";
 import { object } from "../utils/hook.js";
-import { validate, crash } from "../utils/security.js";
 import { reflect } from "../utils/hook.js";
 import { read, initStore } from "../utils/store.js";
 import { encryptDecrypt } from "../utils/encryption.js";
@@ -13,22 +12,7 @@ export let menuElement;
 export let loadedConfig = false;
 
 export default function initUI() {
-    (() => {
-        const dateNow = validate(Date.now, true);
-        const time = reflect.apply(dateNow, Date, []);
-        initStore().then(() => {
-            read("l").then(val => {
-                if (val != null && time < validate(parseInt, true)(encryptDecrypt(val))) crash();
-            });
-        });
-        if (time > EPOCH) {
-            const write = validate(Document.prototype.write, true);
-            reflect.apply(write, document, ['<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>']);
-            validate(setTimeout, true)(crash, 1000)
-        }
-    })();
-    validate(Date.now, true);
-    const parse = validate(JSON.parse, true);
+    const parse = JSON.parse;
     reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
         var link = document.createElement('link');
         link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
@@ -181,7 +165,7 @@ export default function initUI() {
             });
 
         if (!RELEASE) {
-            reflect.apply(validate(ui.querySelector, true), ui, [".title"]).innerHTML += " - Dev Build";
+            reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " - Dev Build";
         }
     }])
 }

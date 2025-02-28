@@ -22,7 +22,7 @@ import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
 import noEmoteCooldown from "./plugins/noEmoteCooldown.js";
 
-const getElementById = validate(ShadowRoot.prototype.getElementById, true);
+const getElementById = ShadowRoot.prototype.getElementById;
 
 export const getChecked = (id) => !!(ui && reflect.apply(getElementById, ui, [id])?.checked);
 export const setChecked = (id, checked) => {
@@ -37,7 +37,7 @@ export const setValue = (id, value) => {
 };
 
 let lastConfig;
-const stringify = validate(JSON.stringify, true);
+const stringify = JSON.stringify;
 let isUpdatingConfig = false;
 
 const updateConfig = () => {
@@ -51,10 +51,10 @@ const updateConfig = () => {
   isUpdatingConfig = false;
 };
 
-validate(setInterval, true)(updateConfig, 100);
+setInterval(updateConfig, 100);
 
 const registerSettings = (obj) => {
-  const substr = validate(String.prototype.substr, true);
+  const substr = String.prototype.substr;
   return object.entries(obj).reduce((settings, [key, value]) => {
     if (typeof value === "object" && value !== null) {
       settings[key] = value;

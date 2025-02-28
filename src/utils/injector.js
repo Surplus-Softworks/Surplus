@@ -1,7 +1,6 @@
 import { hook, reflect } from "./hook.js";
 
 export let gameManager;
-export let jQuery;
 
 export function injectGame(oninject) {
     hook(Function.prototype, "bind", {
@@ -17,21 +16,6 @@ export function injectGame(oninject) {
                 }
             } catch { }
             return reflect.apply(f, th, args);
-        }
-    });
-}
-
-export function injectjQuery(oninject) {
-    hook(Function.prototype, "call", {
-        apply(f, th, args) {
-            try {
-                if (args[0].constructor.ajax != null) {
-                    Function.prototype.call = f;
-                    jQuery = args[0].constructor;
-                    oninject();
-                }
-            } catch { }
-            return reflect.apply(f,th,args);
         }
     });
 }

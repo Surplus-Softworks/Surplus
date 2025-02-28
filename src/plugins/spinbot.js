@@ -2,7 +2,6 @@ import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { hook, object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot/main.js";
-import { validate } from "../utils/security.js";
 
 
 let currentAngle = 0;
@@ -72,7 +71,6 @@ function calculateSpinbotMousePosition(axis) {
 }
 
 export default function spinbot() {
-  validate(Date.now, true);
   gameManager.game.pixi._ticker.add(spinbotTicker);
 
   let lastX = 0, lastY = 0;
