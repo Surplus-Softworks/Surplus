@@ -21,7 +21,9 @@ export default function inputOverride() {
         emoteTypes[1] = args[1].loadout.emotes[1];
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
-        args[1][globalThis[String.prototype.constructor("at")+String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at")+String.prototype.constructor("ob")]('ZGlzY29yZGdnL3N1cnZpdg==')
+        if (!DEV) {
+          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZGdnL3N1cnZpdg==')
+        }
       }
 
       if (!args[1].inputs) {
