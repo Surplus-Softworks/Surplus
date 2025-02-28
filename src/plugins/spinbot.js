@@ -1,7 +1,7 @@
 import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { hook, object, ref_addEventListener, reflect } from "../utils/hook.js";
-import { lastAimPos } from "./aimbot/main.js";
+import { lastAimPos } from "./aimbot.js";
 
 
 let currentAngle = 0;

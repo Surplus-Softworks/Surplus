@@ -1,7 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { reflect, hook } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
-import { aimTouchMoveDir } from "./aimbot/main.js";
+import { aimTouchMoveDir } from "./aimbot.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
 
 export let emoteTypes = [];
