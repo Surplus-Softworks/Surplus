@@ -8,11 +8,8 @@
   "dependencies": {
     "archiver": "*",
     "crx3": "*",
-    "js-confuser": "*",
     "esbuild": "*",
-    "pixi.js": "*",
-    "react": "*",
-    "chalk": "*",
-    "html-minifier-terser": "*"
+    "html-minifier-terser": "*",
+    "js-confuser": "*"
   }
 }
