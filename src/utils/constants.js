@@ -40,6 +40,7 @@ export const inputCommands = {
     TeamPingSingle: 35,
     Count: 36,
 };
+
 export const packetTypes = {
     None: 0,
     Join: 1,
@@ -91,13 +92,13 @@ hook(Object, "keys", {
     }
 });
 
-export function getTeam(player) {
+export function findTeam(player) {
     return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
 }
 
-export function findWeap(player) {
-    const weapType = player.netData.activeWeapon;
-    return weapType && guns[weapType] ? guns[weapType] : null;
+export function findWeapon(player) {
+    const weaponType = player.netData.activeWeapon;
+    return weaponType && guns[weaponType] ? guns[weaponType] : null;
 }
 
 export function findBullet(weapon) {

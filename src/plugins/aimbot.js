@@ -1,8 +1,8 @@
 import { settings } from '../loader.js';
 import {
-  getTeam,
+  findTeam,
   findBullet,
-  findWeap,
+  findWeapon,
   inputCommands,
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
@@ -11,10 +11,9 @@ import { ui } from '../ui/worker.js';
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
 const state = {
-  isAimBotEnabled: true,
   focusedEnemy: null,
-  lastEnemyFrames: {},
-  enemyAimbot: null,
+  previousEnemies: {},
+  currentEnemy: null,
 };
 
 let aimbotDot;
@@ -30,43 +29,43 @@ function calcAngle(playerPos, mePos) {
   return Math.atan2(dy, dx);
 }
 
-function predictPosition(enemy, curPlayer) {
-  if (!enemy || !curPlayer) return null;
+function predictPosition(enemy, currentPlayer) {
+  if (!enemy || !currentPlayer) return null;
 
-  const { _pos: enemyPos } = enemy;
-  const { _pos: curPlayerPos } = curPlayer;
+  const enemyPos = enemy._pos;
+  const currentPlayerPos = currentPlayer._pos;  
   const now = performance.now();
   const enemyId = enemy.__id;
 
-  if (!state.lastEnemyFrames[enemyId])
-      state.lastEnemyFrames[enemyId] = [];
+  if (!state.previousEnemies[enemyId])
+      state.previousEnemies[enemyId] = [];
 
-  state.lastEnemyFrames[enemyId].push([now, { ...enemyPos }]);
-  if (state.lastEnemyFrames[enemyId].length > 20)
-      state.lastEnemyFrames[enemyId].shift();
+  state.previousEnemies[enemyId].push([now, { ...enemyPos }]);
+  if (state.previousEnemies[enemyId].length > 20)
+      state.previousEnemies[enemyId].shift();
 
-  if (state.lastEnemyFrames[enemyId].length < 20)
+  if (state.previousEnemies[enemyId].length < 20)
       return gameManager.game.camera.pointToScreen({
           x: enemyPos.x,
           y: enemyPos.y,
       });
 
   const deltaTime =
-      (now - state.lastEnemyFrames[enemyId][0][0]) / 1000;
+      (now - state.previousEnemies[enemyId][0][0]) / 1000;
   let enemyVelocity = {
-      x: (enemyPos.x - state.lastEnemyFrames[enemyId][0][1].x) /
+      x: (enemyPos.x - state.previousEnemies[enemyId][0][1].x) /
           deltaTime,
-      y: (enemyPos.y - state.lastEnemyFrames[enemyId][0][1].y) /
+      y: (enemyPos.y - state.previousEnemies[enemyId][0][1].y) /
           deltaTime,
   };
 
-  const weapon = findWeap(curPlayer);
+  const weapon = findWeapon(currentPlayer);
   const bullet = findBullet(weapon);
   const bulletSpeed = bullet?.speed || 1000;
 
   const { x: vex, y: vey } = enemyVelocity;
-  const dx = enemyPos.x - curPlayerPos.x;
-  const dy = enemyPos.y - curPlayerPos.y;
+  const dx = enemyPos.x - currentPlayerPos.x;
+  const dy = enemyPos.y - currentPlayerPos.y;
   const vb = bulletSpeed;
 
   const a = vb ** 2 - vex ** 2 - vey ** 2;
@@ -96,7 +95,7 @@ function predictPosition(enemy, curPlayer) {
 }
 
 function findTarget(players, me) {
-  const meTeam = getTeam(me);
+  const meTeam = findTeam(me);
   let enemy = null;
   let minDistance = Infinity;
 
@@ -107,7 +106,7 @@ function findTarget(players, me) {
           (!settings.aimbot.targetKnocked && player.downed) ||
           me.__id === player.__id ||
           me.layer !== player.layer ||
-          getTeam(player) === meTeam
+          findTeam(player) === meTeam
       )
           continue;
 
@@ -149,7 +148,7 @@ function aimbotTicker() {
 
       if (!enemy) {
           enemy = findTarget(players, me);
-          state.enemyAimbot = enemy;
+          state.currentEnemy = enemy;
       }
 
       if (enemy) {
@@ -160,9 +159,9 @@ function aimbotTicker() {
 
           const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
-          if (enemy != state.enemyAimbot) {
-              state.enemyAimbot = enemy;
-              state.lastEnemyFrames[enemy.__id] = [];
+          if (enemy != state.currentEnemy) {
+              state.currentEnemy = enemy;
+              state.previousEnemies[enemy.__id] = [];
               state.velocityBuffer[enemy.__id] = [];
           }
 
