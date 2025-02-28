@@ -2,7 +2,8 @@
   "name": "surplus",
   "version": "1.0.0",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "dev": "node build.js dev"
   },
   "dependencies": {
     "archiver": "*",
