@@ -1,10 +1,3 @@
-// GARBAGE //
-import * as g1 from 'pixi.js';
-import * as g2 from 'react';
-
-Math.clz32(g1, g2, {})
-// ******* //
-
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initStore } from "./utils/store.js";
@@ -28,10 +21,4 @@ import { initStore } from "./utils/store.js";
 
   initStore();
   initialize();
-
 })();
-
-// GARBAGE //
-import * as g3 from 'chalk';
-Math.clz32(g3);
-// ******* //itialize();

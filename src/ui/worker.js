@@ -163,9 +163,5 @@ export default function initUI() {
                 readConfig(config);
                 loadedConfig = true;
             });
-
-        if (!RELEASE) {
-            reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " - Dev Build";
-        }
     }])
 }
