@@ -3,8 +3,8 @@ import { object } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
 
 import {
-  getTeam,
-  findWeap,
+  findTeam,
+  findWeapon,
   findBullet,
   objects,
   explosions,
@@ -29,10 +29,10 @@ function createDrawer(container, key) {
 }
 
 function drawLines(me, players, lineDrawer) {
-  const meX = me.pos.x, meY = me.pos.y, myTeam = getTeam(me);
+  const meX = me.pos.x, meY = me.pos.y, myTeam = findTeam(me);
   players.forEach(player => {
       if (!player.active || player.netData.dead || me.__id === player.__id) return;
-      const playerTeam = getTeam(player);
+      const playerTeam = findTeam(player);
       const lineColor = playerTeam === myTeam ? BLUE : me.layer === player.layer && !player.downed ? RED : WHITE;
       lineDrawer.lineStyle(2, lineColor, 0.45);
       lineDrawer.moveTo(0, 0);
@@ -63,7 +63,7 @@ function drawGrenades(me, grenadeDrawer) {
 }
 
 function drawLasers(me, players, laserDrawer) {
-  const curWeapon = findWeap(me);
+  const curWeapon = findWeapon(me);
   const curBullet = findBullet(curWeapon);
 
   function laserPointer(acPlayer, curBullet, curWeapon, color = 0x0000ff, opacity = 0.1) {
@@ -92,9 +92,9 @@ function drawLasers(me, players, laserDrawer) {
   }
   if (settings.esp.flashlights.own) laserPointer(me, curBullet, curWeapon);
   players.filter(player =>
-      player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && getTeam(player) !== getTeam(me)
+      player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && findTeam(player) !== findTeam(me)
   ).forEach(enemy => {
-      if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeap(enemy)), findWeap(enemy), 0, 0.05);
+      if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeapon(enemy)), findWeapon(enemy), 0, 0.05);
   });
 }
 

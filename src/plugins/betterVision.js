@@ -1,6 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 import {
-  getTeam,
+  findTeam,
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
 import { object, reflect, hook } from "../utils/hook.js";
@@ -39,8 +39,8 @@ export default function betterVision() {
           set(value) {
             this._bleedTicker = value;
             const me = gameManager.game.activePlayer;
-            const meTeam = getTeam(me);
-            const playerTeam = getTeam(arg);
+            const meTeam = findTeam(me);
+            const playerTeam = findTeam(arg);
 
             object.defineProperty(arg.nameText, "visible", {
               configurable: true,

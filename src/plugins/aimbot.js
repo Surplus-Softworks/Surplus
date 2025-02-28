@@ -1,8 +1,8 @@
 import { settings } from '../loader.js';
 import {
-  getTeam,
+  findTeam,
   findBullet,
-  findWeap,
+  findWeapon,
   inputCommands,
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
@@ -60,7 +60,7 @@ function predictPosition(enemy, curPlayer) {
           deltaTime,
   };
 
-  const weapon = findWeap(curPlayer);
+  const weapon = findWeapon(curPlayer);
   const bullet = findBullet(weapon);
   const bulletSpeed = bullet?.speed || 1000;
 
@@ -96,7 +96,7 @@ function predictPosition(enemy, curPlayer) {
 }
 
 function findTarget(players, me) {
-  const meTeam = getTeam(me);
+  const meTeam = findTeam(me);
   let enemy = null;
   let minDistance = Infinity;
 
@@ -107,7 +107,7 @@ function findTarget(players, me) {
           (!settings.aimbot.targetKnocked && player.downed) ||
           me.__id === player.__id ||
           me.layer !== player.layer ||
-          getTeam(player) === meTeam
+          findTeam(player) === meTeam
       )
           continue;
 

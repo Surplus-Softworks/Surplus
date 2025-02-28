@@ -6,7 +6,6 @@ const ref_setTimeout = setTimeout;
 
 function sendEmote() {
   ref_setTimeout(sendEmote, settings.emoteSpam.speed);
-  
 
   try {
     if (settings.emoteSpam.enabled && gameManager.game) {
