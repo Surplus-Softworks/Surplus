@@ -1,132 +1,74 @@
 const fs = require("fs");
-const { obfuscate } = require("js-confuser");
-const { exec } = require("child_process")
 const { promisify } = require("util");
-const path = require("path");
-const crx3 = require("crx3");
 const esbuild = require("esbuild");
 const { minify } = require('html-minifier-terser');
+const path = require("path");
+const archiver = require("archiver");
 
-
-const error = console.error;
-console.error = function (...args) {
-  if (args.some(arg => arg && arg.code === 'ERR_INVALID_ARG_TYPE')) {
-    console.log('crx3 key blabla');
-    return;
-  }
-  error.apply(console, args);
+const DIST_DIR = 'dist/extension';
+const HTML_MINIFY_OPTIONS = {
+  collapseWhitespace: true,
+  removeComments: true,
+  removeRedundantAttributes: true,
+  removeEmptyAttributes: true,
+  minifyCSS: true,
+  minifyJS: true,
 };
-
-
-const execPromise = promisify(exec)
 
 async function clear() {
-  const prodDir = 'prod'
   try {
-    if (fs.existsSync(prodDir)) {
-      fs.rmSync(prodDir, { recursive: true, force: true })
+    if (fs.existsSync('dist')) {
+      fs.rmSync('dist', { recursive: true, force: true });
     }
   } catch (err) {
-    console.error("Error clearing the directory:", err)
+    console.error("Error clearing directory:", err);
   }
 }
 
-async function copyExtension() {
-  await execPromise('xcopy /E /I src\\extension prod\\extension\\')
-}
+async function copyDirectory(src, dest) {
+  await fs.promises.mkdir(dest, { recursive: true });
+  const entries = await fs.promises.readdir(src, { withFileTypes: true });
 
-function makeid(length) {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
+  for (const entry of entries) {
+    const srcPath = path.join(src, entry.name);
+    const destPath = path.join(dest, entry.name);
+    if (entry.isDirectory()) {
+      await copyDirectory(srcPath, destPath);
+    } else {
+      await fs.promises.copyFile(srcPath, destPath);
+    }
   }
-  return result;
 }
 
-const replacements = [
-  { regex: /popup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /header/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /menu-icon/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /navbar/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /credit/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /close-btn/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /section/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /section-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /keybind-slot/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /checkbox-item/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /subgroup/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /slider-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /subsection-title/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /section-title label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /section-title-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /aim-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /target-knocked/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /melee-lock/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /semiauto-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /esp-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /player-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /grenade-esp/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /own-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /others-flashlight/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /emote-spam-enable/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /emote-spam-speed/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /content-container/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /nav-tabs/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /nav-tab/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /keybind-info/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /help-text/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /help-keybind/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /discord-links/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /link-label/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /useonegun/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) },
-  { regex: /credits-text/g, replacement: makeid(Math.floor(Math.random() * (15 - 5 + 1)) + 1) }
-];
+async function copyFiles() {
+  await fs.promises.mkdir(DIST_DIR, { recursive: true });
+  await copyDirectory("src/extension", DIST_DIR);
+}
 
+async function zipAndRemove(filename = 'Surplus Extension (DO NOT EXTRACT).zip') {
+  const zipPath = `dist/${filename}`;
+  return new Promise((resolve, reject) => {
+    const output = fs.createWriteStream(zipPath);
+    const archive = archiver("zip", { zlib: { level: 9 } });
 
-const htmlPluginObf = {
-  name: 'html-plugin',
-  setup(build) {
-    build.onLoad({ filter: /\.html$/ }, async (args) => {
-      const content = await fs.promises.readFile(args.path, 'utf8');
-      let minified = await minify(content, {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        removeEmptyAttributes: true,
-        minifyCSS: true,
-        minifyJS: true,
-      });
-      for (const { regex, replacement } of replacements) {
-        minified = minified.replace(regex, replacement);
-      }
-      return {
-        contents: `export default ${JSON.stringify(minified)};`,
-        loader: 'js',
-      };
+    output.on("close", async () => {
+      await fs.promises.rm(DIST_DIR, { recursive: true, force: true });
+      resolve();
     });
-  },
-};
+
+    archive.on("error", (err) => reject(err));
+    archive.pipe(output);
+    archive.directory(DIST_DIR, false);
+    archive.finalize();
+  });
+}
 
 const htmlPlugin = {
   name: 'html-plugin',
   setup(build) {
     build.onLoad({ filter: /\.html$/ }, async (args) => {
       const content = await fs.promises.readFile(args.path, 'utf8');
-      let minified = await minify(content, {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        removeEmptyAttributes: true,
-        minifyCSS: true,
-        minifyJS: true,
-      });
+      const minified = await minify(content, HTML_MINIFY_OPTIONS);
       return {
         contents: `export default ${JSON.stringify(minified)};`,
         loader: 'js',
@@ -135,196 +77,70 @@ const htmlPlugin = {
   },
 };
 
-const textJsPlugin = {
-  name: 'text-js-plugin',
-  setup(build) {
-    build.onLoad({ filter: /\.text\.js$/ }, async (args) => {
-      try {
-        const bundled = await esbuild.build({
-          entryPoints: [args.path],
-          bundle: true,
-          write: false,
-          minify: true,
-          sourcemap: false,
-          treeShaking: true,
-          keepNames: false,
-          format: "cjs"
-        });
-
-        const bundledCode = bundled.outputFiles[0].text;
-        return {
-          contents: `export default ${JSON.stringify(bundledCode)};`,
-          loader: 'js'
-        };
-      } catch (e) {
-        console.warn(e.stack);
-      }
-    });
-  }
-};
-
-const regexReplacementPlugin = {
-  name: 'regex-replacement',
-  setup(build) {
-    build.onLoad({ filter: /.*/ }, async (args) => {
-      if (args.path.includes('loader.js') || args.path.includes('worker.js')) {
-        console.log(args.path)
-      } else {
-        return null;
-      }
-      try {
-        let contents = await fs.promises.readFile(args.path, 'utf8');
-
-        for (const { regex, replacement } of replacements) {
-          contents = contents.replace(regex, replacement);
-        }
-
-        return {
-          contents,
-          loader: 'default'
-        };
-      } catch (error) {
-        return null;
-      }
-    });
-  }
-};
-
-async function bundleJS(release = false) {
-  let plugins
-  if (release) {
-    plugins = [htmlPluginObf, regexReplacementPlugin, textJsPlugin]
-  } else {
-    plugins = [htmlPlugin, textJsPlugin]
-  }
+async function buildBundle(isRelease) {
   const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
-  esbuild.build({
+  await esbuild.build({
     entryPoints: ['./src/index.js'],
     bundle: true,
-    outfile: 'prod/extension/main.js',
+    outfile: `${DIST_DIR}/main.js`,
     minify: true,
     sourcemap: false,
     treeShaking: true,
-    keepNames: false,
-    plugins: plugins,
+    plugins: [htmlPlugin],
     define: {
-      EPOCH: EPOCH.toString(),
-      RELEASE: release.toString()
+      RELEASE: isRelease.toString(),
+      EPOCH: EPOCH.toString()
     }
-  }).then(async () => {
-    const inputFilePath = 'prod/extension/main.js'
-    const outputFilePath = 'prod/extension/main.js'
-
-    const code = fs.readFileSync(inputFilePath, 'utf-8')
-
-    if (release) {
-      const result = await obfuscate(code, {
-        target: 'browser',
-        compact: true,
-        hexadecimalNumbers: false,
-        minify: false,
-        identifierGenerator: 'zeroWidth',
-        renameLabels: true,
-        renameVariables: true,
-        renameGlobals: false,
-        variableMasking: false,
-        globalConcealing: false,
-        stringConcealing: true,
-        stringEncoding: false,
-        stringSplitting: false,
-        stringCompression: false,
-        duplicateLiteralsRemoval: false,
-        dispatcher: false,
-        rgf: false,
-        controlFlowFlattening: false,
-        calculator: false,
-        flatten: false,
-        movedDeclarations: true,
-        opaquePredicates: false,
-        shuffle: false,
-        preserveFunctionLength: false,
-        astScrambler: true,
-        objectExtraction: true,
-        deadCode: false,
-        pack: true,
-        lock: {
-          integrity: true,
-          selfDefending: true,
-          tamperProtection: true,
-        },
-      });
-      fs.writeFileSync(outputFilePath, `
-// Copyright © Surplus Softworks.
-// trust me, you will not get anywhere bro!
-
-(function() {
-  const whitelist = [
-    'surviv',
-    'survev',
-    'resurviv',
-    'zurviv',
-    'expandedwater',
-    '66.179.254.36',
-    'eu-comp',
-    '50v50',
-    'surv',
-    'zurv',
-  ];
-
-  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
-    return;
-  };
-
-  ${result.code}
-})();`)
-
-    } else {
-      fs.writeFileSync(outputFilePath, `
-// Copyright © Surplus Softworks.
-
-(function() {
-  const whitelist = [
-    'surviv',
-    'survev',
-    'resurviv',
-    'zurviv',
-    'expandedwater',
-    '66.179.254.36',
-    'eu-comp',
-    '50v50',
-    'surv',
-    'zurv',
-  ];
-
-  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
-    return;
-  };
-  
-  ${code}
-})();`)
-    }
-
-    const extensionDir = path.resolve('prod/extension')
-    const crxOutputPath = path.resolve('prod/Surplus.crx')
-    crx3([extensionDir], {
-      keyPath: null,
-      crxPath: crxOutputPath,
-    }).then(() => {
-      fs.renameSync(crxOutputPath, 'prod/Surplus (DO NOT EXTRACT).zip');
-    }).catch()
   });
+
+  const mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+  const wrapperCode = `// Copyright © Surplus Softworks\n
+(function() {
+  const whitelist = [
+    'surviv',
+    'survev',
+    'resurviv',
+    'zurviv',
+    'expandedwater',
+    '66.179.254.36',
+    'eu-comp',
+    '50v50',
+    'surv',
+    'zurv',
+  ];
+
+  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
+    return;
+  };
+
+  ${mainContent}
+})();`;
+
+  fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
+  fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
+// @name         Surplus
+// @version      1.8
+// @description  A cheat for survev.io & more
+// @author       mahdi, noam
+// @match        *://*/*
+// @run-at       document-start
+// @icon         https://i.postimg.cc/W4g7cxLP/image.png
+// ==/UserScript==
+
+${wrapperCode}`);
 }
 
-async function build(argv) {
+async function build() {
   try {
-    await clear().then(async () => {
-      await copyExtension().then(async () => {
-        await bundleJS(argv.some(v => v.toLowerCase() == "release"))
-      })
-    })
+    await clear();
+    await copyFiles();
+    await buildBundle(process.argv.includes('release'));
+    await zipAndRemove();
+    console.log('Build completed successfully');
   } catch (err) {
-    console.log(err);
+    console.error('Build failed:', err);
+    process.exit(1);
   }
 }
 
-build(process.argv.slice(2))
+build();

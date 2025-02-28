@@ -21,5 +21,4 @@ import { initStore } from "./utils/store.js";
 
   initStore();
   initialize();
-
 })();
