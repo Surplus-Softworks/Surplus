@@ -1,5 +1,3 @@
-//import { updateOverlay, aimbotDot } from '../overlay.js';
-
 import { settings } from '../loader.js';
 import {
   getTeam,
@@ -9,7 +7,6 @@ import {
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
-
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 

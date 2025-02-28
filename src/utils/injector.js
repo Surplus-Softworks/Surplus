@@ -9,9 +9,6 @@ export function injectGame(oninject) {
                 if (args[0]?.nameInput != null && args[0]?.game != null) {
                     Function.prototype.bind = f;
                     gameManager = args[0];
-                    if (!RELEASE) {
-                        window.gameManager = gameManager;
-                    }
                     oninject();
                 }
             } catch { }

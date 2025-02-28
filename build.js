@@ -1,10 +1,10 @@
 const fs = require("fs");
-const { promisify } = require("util");
 const esbuild = require("esbuild");
 const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
 
+const VERSION = "1.9"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
@@ -45,7 +45,7 @@ async function copyFiles() {
   await copyDirectory("src/extension", DIST_DIR);
 }
 
-async function zipAndRemove(filename = 'Surplus Extension (DO NOT EXTRACT).zip') {
+async function zipAndRemove(filename = 'Surplus (DO NOT EXTRACT).zip') {
   const zipPath = `dist/${filename}`;
   return new Promise((resolve, reject) => {
     const output = fs.createWriteStream(zipPath);
@@ -77,7 +77,7 @@ const htmlPlugin = {
   },
 };
 
-async function buildBundle(isRelease) {
+async function buildBundle() {
   const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
   await esbuild.build({
     entryPoints: ['./src/index.js'],
@@ -88,8 +88,8 @@ async function buildBundle(isRelease) {
     treeShaking: true,
     plugins: [htmlPlugin],
     define: {
-      RELEASE: isRelease.toString(),
-      EPOCH: EPOCH.toString()
+      EPOCH: EPOCH.toString(),
+      VERSION: VERSION
     }
   });
 
@@ -134,7 +134,7 @@ async function build() {
   try {
     await clear();
     await copyFiles();
-    await buildBundle(process.argv.includes('release'));
+    await buildBundle();
     await zipAndRemove();
     console.log('Build completed successfully');
   } catch (err) {
