@@ -10,12 +10,14 @@ import { initStore } from "./utils/store.js";
     ""()
   }
 
-  hook(Function.prototype, "constructor", {
-    apply(f, th, args) {
-      if (args[0] == "debugger") return reflect.apply(f, th, [""]);
-      return reflect.apply(f, th, args);
-    }
-  });
+  if (DEV) {
+    hook(Function.prototype, "constructor", {
+      apply(f, th, args) {
+        if (args[0] == "debugger") return reflect.apply(f, th, [""]);
+        return reflect.apply(f, th, args);
+      }
+    });
+  }
 
   initStore();
   initialize();

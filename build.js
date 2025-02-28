@@ -43,16 +43,18 @@ async function copyDirectory(src, dest) {
 async function copyFiles() {
   await fs.promises.mkdir(DIST_DIR, { recursive: true });
   await copyDirectory("src/extension", DIST_DIR);
+  let manifestContents = fs.readFileSync(DIST_DIR + "/manifest.json", "utf-8");
+  manifestContents = manifestContents.replace("%VERSION%", VERSION);
+  fs.writeFileSync(DIST_DIR + "/manifest.json", manifestContents);
 }
 
-async function zipAndRemove(filename = 'Surplus (DO NOT EXTRACT).zip') {
+async function zip(filename = 'Surplus (DO NOT EXTRACT).zip') {
   const zipPath = `dist/${filename}`;
   return new Promise((resolve, reject) => {
     const output = fs.createWriteStream(zipPath);
     const archive = archiver("zip", { zlib: { level: 9 } });
 
-    output.on("close", async () => {
-      await fs.promises.rm(DIST_DIR, { recursive: true, force: true });
+    output.on("close", () => {
       resolve();
     });
 
@@ -77,7 +79,7 @@ const htmlPlugin = {
   },
 };
 
-async function buildBundle(release = true) {
+async function buildBundle(dev = true) {
   const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
   await esbuild.build({
     entryPoints: ['./src/index.js'],
@@ -90,7 +92,7 @@ async function buildBundle(release = true) {
     define: {
       EPOCH: EPOCH.toString(),
       VERSION: VERSION,
-      RELEASE: release
+      DEV: dev.toString()
     }
   });
 
@@ -136,7 +138,7 @@ async function build(argv) {
     await clear();
     await copyFiles();
     await buildBundle(argv.some(v => v.toLowerCase() == "dev"));
-    await zipAndRemove();
+    await zip();
     console.log('Build completed successfully');
   } catch (err) {
     console.error('Build failed:', err);
