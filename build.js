@@ -77,7 +77,7 @@ const htmlPlugin = {
   },
 };
 
-async function buildBundle() {
+async function buildBundle(release = true) {
   const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 7);
   await esbuild.build({
     entryPoints: ['./src/index.js'],
@@ -89,7 +89,8 @@ async function buildBundle() {
     plugins: [htmlPlugin],
     define: {
       EPOCH: EPOCH.toString(),
-      VERSION: VERSION
+      VERSION: VERSION,
+      RELEASE: release
     }
   });
 
@@ -130,7 +131,7 @@ async function buildBundle() {
 ${wrapperCode}`);
 }
 
-async function build() {
+async function build(argv) {
   try {
     await clear();
     await copyFiles();
@@ -143,4 +144,4 @@ async function build() {
   }
 }
 
-build();
+build(process.argv.slice(2));
