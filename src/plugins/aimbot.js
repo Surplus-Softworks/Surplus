@@ -131,7 +131,7 @@ function findTarget(players, me) {
 }
 
 function aimbotTicker() {
-  if (!settings.aimbot.enabled) {
+  if (!settings.aimbot.enabled || gameManager.game.activePlayer == null) {
       lastAimPos = null;
       aimbotDot.style.display = "none";
       return
