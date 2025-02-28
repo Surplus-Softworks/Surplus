@@ -79,7 +79,6 @@ function predictPosition(enemy, currentPlayer) {
   } else {
       const discriminant = b ** 2 - 4 * a * c;
 
-
       const sqrtD = Math.sqrt(discriminant);
       const t1 = (-b - sqrtD) / (2 * a);
       const t2 = (-b + sqrtD) / (2 * a);
