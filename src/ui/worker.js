@@ -164,6 +164,6 @@ export default function initUI() {
                 loadedConfig = true;
             });
 
-        reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += VERSION;
+        reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION;
     }])
 }
