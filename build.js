@@ -135,7 +135,7 @@ async function build(argv) {
   try {
     await clear();
     await copyFiles();
-    await buildBundle();
+    await buildBundle(argv.some(v => v.toLowerCase() == "dev"));
     await zipAndRemove();
     console.log('Build completed successfully');
   } catch (err) {
