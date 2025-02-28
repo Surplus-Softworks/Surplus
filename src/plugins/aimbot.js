@@ -11,10 +11,9 @@ import { ui } from '../ui/worker.js';
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
 const state = {
-  isAimBotEnabled: true,
   focusedEnemy: null,
-  lastEnemyFrames: {},
-  enemyAimbot: null,
+  previousEnemies: {},
+  currentEnemy: null,
 };
 
 let aimbotDot;
@@ -38,25 +37,25 @@ function predictPosition(enemy, curPlayer) {
   const now = performance.now();
   const enemyId = enemy.__id;
 
-  if (!state.lastEnemyFrames[enemyId])
-      state.lastEnemyFrames[enemyId] = [];
+  if (!state.previousEnemies[enemyId])
+      state.previousEnemies[enemyId] = [];
 
-  state.lastEnemyFrames[enemyId].push([now, { ...enemyPos }]);
-  if (state.lastEnemyFrames[enemyId].length > 20)
-      state.lastEnemyFrames[enemyId].shift();
+  state.previousEnemies[enemyId].push([now, { ...enemyPos }]);
+  if (state.previousEnemies[enemyId].length > 20)
+      state.previousEnemies[enemyId].shift();
 
-  if (state.lastEnemyFrames[enemyId].length < 20)
+  if (state.previousEnemies[enemyId].length < 20)
       return gameManager.game.camera.pointToScreen({
           x: enemyPos.x,
           y: enemyPos.y,
       });
 
   const deltaTime =
-      (now - state.lastEnemyFrames[enemyId][0][0]) / 1000;
+      (now - state.previousEnemies[enemyId][0][0]) / 1000;
   let enemyVelocity = {
-      x: (enemyPos.x - state.lastEnemyFrames[enemyId][0][1].x) /
+      x: (enemyPos.x - state.previousEnemies[enemyId][0][1].x) /
           deltaTime,
-      y: (enemyPos.y - state.lastEnemyFrames[enemyId][0][1].y) /
+      y: (enemyPos.y - state.previousEnemies[enemyId][0][1].y) /
           deltaTime,
   };
 
@@ -149,7 +148,7 @@ function aimbotTicker() {
 
       if (!enemy) {
           enemy = findTarget(players, me);
-          state.enemyAimbot = enemy;
+          state.currentEnemy = enemy;
       }
 
       if (enemy) {
@@ -160,9 +159,9 @@ function aimbotTicker() {
 
           const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
-          if (enemy != state.enemyAimbot) {
-              state.enemyAimbot = enemy;
-              state.lastEnemyFrames[enemy.__id] = [];
+          if (enemy != state.currentEnemy) {
+              state.currentEnemy = enemy;
+              state.previousEnemies[enemy.__id] = [];
               state.velocityBuffer[enemy.__id] = [];
           }
 
