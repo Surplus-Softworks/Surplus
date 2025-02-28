@@ -29,11 +29,11 @@ function calcAngle(playerPos, mePos) {
   return Math.atan2(dy, dx);
 }
 
-function predictPosition(enemy, curPlayer) {
-  if (!enemy || !curPlayer) return null;
+function predictPosition(enemy, currentPlayer) {
+  if (!enemy || !currentPlayer) return null;
 
-  const { _pos: enemyPos } = enemy;
-  const { _pos: curPlayerPos } = curPlayer;
+  const enemyPos = enemy._pos;
+  const currentPlayerPos = currentPlayer._pos;  
   const now = performance.now();
   const enemyId = enemy.__id;
 
@@ -59,13 +59,13 @@ function predictPosition(enemy, curPlayer) {
           deltaTime,
   };
 
-  const weapon = findWeapon(curPlayer);
+  const weapon = findWeapon(currentPlayer);
   const bullet = findBullet(weapon);
   const bulletSpeed = bullet?.speed || 1000;
 
   const { x: vex, y: vey } = enemyVelocity;
-  const dx = enemyPos.x - curPlayerPos.x;
-  const dy = enemyPos.y - curPlayerPos.y;
+  const dx = enemyPos.x - currentPlayerPos.x;
+  const dy = enemyPos.y - currentPlayerPos.y;
   const vb = bulletSpeed;
 
   const a = vb ** 2 - vex ** 2 - vey ** 2;
