@@ -1,13 +1,13 @@
 import betterVision from "./plugins/betterVision.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
-import esp from "./plugins/esp/main.js";
+import esp from "./plugins/esp.js";
 import autoLoot from "./plugins/autoLoot.js";
 import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
-import aimbot from "./plugins/aimbot/main.js";
+import aimbot from "./plugins/aimbot.js";
 import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
 import autoSwitch from "./plugins/autoSwitch.js";
@@ -17,7 +17,6 @@ import { hook, reflect, object } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
 
 import initUI, { loadedConfig, ui } from "./ui/worker.js";
-import { validate } from "./utils/security.js";
 import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
 import noEmoteCooldown from "./plugins/noEmoteCooldown.js";
