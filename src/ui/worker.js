@@ -157,12 +157,15 @@ export default function initUI() {
             });
         };
 
-        read("c")
-            .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
-            .then(config => {
-                readConfig(config);
-                loadedConfig = true;
-            });
+        setTimeout(() => {
+            read("c")
+                .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
+                .then(config => {
+                    readConfig(config);
+                    loadedConfig = true;
+                });
+        }, 1000)
+
 
         reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION;
     }])
