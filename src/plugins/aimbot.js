@@ -130,7 +130,7 @@ function findTarget(players, me) {
 }
 
 function aimbotTicker() {
-  if (!settings.aimbot.enabled || !gameManager.initialized) {
+  if (!settings.aimbot.enabled || !gameManager.game.initialized) {
       lastAimPos = null;
       aimbotDot.style.display = "none";
       return
