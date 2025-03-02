@@ -170,7 +170,7 @@ const loadPlugins = () => {
     //aimbot();
     //autoSwitch();
   }
-  //betterVision();
+  betterVision();
   //optimizer();
 };
 const attach = () => {

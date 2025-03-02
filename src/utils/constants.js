@@ -1,5 +1,6 @@
 import { hook, reflect, object } from "./hook.js";
 import { gameManager } from "./injector.js";
+import { translator } from "./obfuscatedNameTranslator.js";
 
 export const inputCommands = {
     MoveLeft: 0,
@@ -93,7 +94,7 @@ hook(Object, "keys", {
 });
 
 export function findTeam(player) {
-    return object.keys(obfuscatedNameTranslator.playerBarn.teamInfo).find(team => obfuscatedNameTranslator.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+    return object.keys(gameManager.game[translator.playerBarn].teamInfo).find(team => gameManager.game[translator.playerBarn].teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeapon(player) {

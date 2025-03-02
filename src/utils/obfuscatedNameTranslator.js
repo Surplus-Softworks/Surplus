@@ -37,7 +37,7 @@ function getSignature(obj) {
 }
 
 export function translate(gameManager) {
-  if (!location.hostname.includes("survev") && false) return new Promise((resolve) => {
+  if (!location.hostname.includes("survev")) return new Promise((resolve) => {
     translator = new Proxy({}, {
       get(th, p) {
         return p;
@@ -185,7 +185,7 @@ export function translate(gameManager) {
                 const cameraKeys = getOwnPropertyNames(game[translated.camera]);
                 translated.zoom = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData][v] == "number");
               }
-              console.log(translated);
+              //console.log(translated);
               if (translated.netData == null) continue;
               if (translated.activePlayer != null) {
                 try {
@@ -211,7 +211,7 @@ export function translate(gameManager) {
                 .filter(v => typeof newplr[v] == "object" && newplr[v] != null)
                 .filter(v => getOwnPropertyNames(newplr[v]).length == 2)
                 .filter(v => newplr[v].x != null);
-              console.log(vectors);
+              //console.log(vectors);
               vectors.forEach(key => {
                 const val = newplr[key];
                 if (val.x == 0) {
@@ -358,6 +358,9 @@ export function translate(gameManager) {
 
     const intervalId = setInterval(() => {
       translator = matchGameProperties();
+      if (DEV) {
+        window.translator = translator;
+      }
 
       if (allKeysFound()) {
         clearInterval(intervalId);

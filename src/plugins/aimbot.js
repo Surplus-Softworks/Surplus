@@ -137,8 +137,8 @@ function aimbotTicker() {
       return
   };
 
-  const players = translator.playerPoolPool;
-  const me = translator.activePlayer;
+  const players = gameManager.game[translator.playerBarn].playerPool[translator.pool];
+  const me = gameManager.game[translator.activePlayer];
 
   try {
       let enemy =
@@ -152,10 +152,10 @@ function aimbotTicker() {
       }
 
       if (enemy) {
-          const meX = me.pos.x;
-          const meY = me.pos.y;
-          const enemyX = enemy.pos.x;
-          const enemyY = enemy.pos.y;
+          const meX = me[translator.pos].x;
+          const meY = me[translator.pos].y;
+          const enemyX = enemy[translator.pos].x;
+          const enemyY = enemy[translator.pos].y;
 
           const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
@@ -169,12 +169,12 @@ function aimbotTicker() {
 
           if (!predictedPos) return aimbotDot.style.display = "none";
 
-          if (translator.activePlayer.localData.curWeapIdx == 2 &&
+          if (gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] == 2 &&
               distanceToEnemy <= 8 &&
               settings.aimbot.meleeLock &&
-              translator.inputBinds.isBindDown(inputCommands.Fire)
+              gameManager[translator.inputBinds].isBindDown(inputCommands.Fire)
           ) {
-              const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
+              const moveAngle = calcAngle(enemy[translator.pos], me[translator.pos]) + Math.PI;
               aimTouchMoveDir = {
                   touchMoveActive: true,
                   touchMoveLen: 255,
@@ -190,7 +190,7 @@ function aimbotTicker() {
               aimTouchMoveDir = null;
           }
 
-          if (gameManager.game[translator.activePlayer][translator.localData].curWeapIdx == 2 &&
+          if (gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] == 2 &&
               distanceToEnemy >= 8) {
               aimTouchMoveDir = null;
               lastAimPos = null;

@@ -3,7 +3,7 @@ import { reflect, hook, object } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
 import { aimTouchMoveDir } from "./aimbot.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
-import { obfuscatedNameTranslator } from "../utils/obfuscatedNameTranslator.js";
+import { translator } from "../utils/obfuscatedNameTranslator.js";
 
 export let emoteTypes = [];
 export let inputs = [];
