@@ -269,7 +269,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.emoteBarn != null && translated.screenToPoint == null) {
-          emotebarn = new gameManager.game[translated.emoteBarn].constructor();
+          emotebarn = new game[translated.emoteBarn].constructor();
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = "ping_danger";
           emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
@@ -279,6 +279,12 @@ export function translate(gameManager) {
             }
           })
           emotebarn.triggerPing();
+        }
+      } catch { }
+
+      try {
+        if (translated.emoteBarn != null && translated.update == null) {
+          translated.update = getOwnPropertyNames(game[translated.emoteBarn].__proto__).find(v => game[translated.emoteBarn][v].length == 10);
         }
       } catch { }
 
