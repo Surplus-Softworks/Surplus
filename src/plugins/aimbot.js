@@ -33,8 +33,8 @@ function calcAngle(playerPos, mePos) {
 function predictPosition(enemy, currentPlayer) {
     if (!enemy || !currentPlayer) return null;
 
-    const enemyPos = enemy._pos;
-    const currentPlayerPos = currentPlayer._pos;
+    const enemyPos = enemy[translator.posOld];
+    const currentPlayerPos = currentPlayer[translator.posOld];
     const now = performance.now();
     const enemyId = enemy.__id;
 
