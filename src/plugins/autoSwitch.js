@@ -3,7 +3,7 @@ import { settings } from '../loader.js';
 import { guns, inputCommands } from '../utils/constants.js';
 import { inputs } from './inputOverride.js';
 import { reflect } from '../utils/hook.js';
-import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
+import { translator } from '../utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
 
@@ -33,8 +33,8 @@ function autoSwitchTicker() {
     if (!settings.autoSwitch.enabled) return;
 
     try {
-        const curWeapIdx = obfuscatedNameTranslator.activePlayer.localData.curWeapIdx;
-        const weaps = obfuscatedNameTranslator.activePlayer.localData.weapons;
+        const curWeapIdx = translator.activePlayer.localData.curWeapIdx;
+        const weaps = translator.activePlayer.localData.weapons;
         const curWeap = weaps[curWeapIdx];
         const shouldSwitch = gun => {
             let s = false;
@@ -52,7 +52,7 @@ function autoSwitchTicker() {
         if (curWeap.ammo !== ammo[curWeapIdx].ammo) {
             const otherWeapIdx = (curWeapIdx == 0) ? 1 : 0
             const otherWeap = weaps[otherWeapIdx]
-            if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (gameManager.game.touch.shotDetected || obfuscatedNameTranslator.inputBinds.isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
+            if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (gameManager.game.touch.shotDetected || translator.inputBinds.isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
                 ammo[curWeapIdx].lastShotDate = Date.now();
                 //console.log("Switching weapon due to ammo change");
                 if (shouldSwitch(otherWeap.type) && otherWeap.ammo && !settings.autoSwitch.useOneGun) { // && ammo[curWeapIdx].ammo !== 0

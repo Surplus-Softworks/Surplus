@@ -1,7 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { object } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
-import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
+import { translator } from '../utils/obfuscatedNameTranslator.js';
 
 import {
   findTeam,
@@ -71,10 +71,10 @@ function drawLasers(me, players, laserDrawer) {
       if (!curBullet) return;
       const center = { x: (acPlayer.pos.x - me.pos.x) * 16, y: (me.pos.y - acPlayer.pos.y) * 16 };
       let atan;
-      if (acPlayer === me && (!lastAimPos || (lastAimPos && !(gameManager.game.touch.shotDetected || obfuscatedNameTranslator.inputBinds.isBindDown(inputCommands.Fire))))) {
+      if (acPlayer === me && (!lastAimPos || (lastAimPos && !(gameManager.game.touch.shotDetected || translator.inputBinds.isBindDown(inputCommands.Fire))))) {
           atan = Math.atan2(
-              obfuscatedNameTranslator.input.mousePos._y - innerHeight / 2,
-              obfuscatedNameTranslator.input.mousePos._x - innerWidth / 2
+              translator.input.mousePos._y - innerHeight / 2,
+              translator.input.mousePos._x - innerWidth / 2
           );
       } else if (acPlayer === me && lastAimPos) {
           const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos.x, y: acPlayer.pos.y });
@@ -101,8 +101,8 @@ function drawLasers(me, players, laserDrawer) {
 
 function espTicker() {
   const pixi = gameManager.pixi;
-  const me = obfuscatedNameTranslator.activePlayer;
-  const players = obfuscatedNameTranslator.playerPoolPool;
+  const me = translator.activePlayer;
+  const players = translator.playerPoolPool;
   if (!pixi || !me || me.container == undefined || !settings.esp.enabled || !(gameManager.game?.initialized)) return;
   try {
       const lineDrawer = createDrawer(me.container, 'lineDrawer');

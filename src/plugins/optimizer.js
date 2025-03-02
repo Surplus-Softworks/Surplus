@@ -1,13 +1,13 @@
 import { gameManager } from "../utils/injector.js";
 import { hook, reflect, object } from "../utils/hook.js";
-import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
+import { translator } from '../utils/obfuscatedNameTranslator.js';
 
 export default function optimizer() {
   console.log("HELLO");
-  hook(gameManager.game[obfuscatedNameTranslator.playerBarn].playerPool[obfuscatedNameTranslator.pool], "push", {
+  hook(gameManager.game[translator.playerBarn].playerPool[translator.pool], "push", {
     apply(f, th, args) {
       args.forEach(plr => {
-        object.defineProperty(plr, obfuscatedNameTranslator.pos, {
+        object.defineProperty(plr, translator.pos, {
           get() {
             return this._pos;
           },
@@ -26,7 +26,7 @@ export default function optimizer() {
             }
           }
         });
-        plr[obfuscatedNameTranslator.pos] = plr[obfuscatedNameTranslator.netData][obfuscatedNameTranslator.pos];
+        plr[translator.pos] = plr[translator.netData][translator.pos];
       });
       return reflect.apply(f, th, args);
     }

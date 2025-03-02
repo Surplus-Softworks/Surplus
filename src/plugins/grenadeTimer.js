@@ -1,5 +1,5 @@
 import { gameManager } from "../utils/injector.js";
-import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
+import { translator } from '../utils/obfuscatedNameTranslator.js';
 
 
 let lastTime = Date.now();
@@ -19,11 +19,11 @@ function grenadeTimerTicker() {
 
   try {
     let elapsed = (Date.now() - lastTime) / 1000;
-    const player = obfuscatedNameTranslator.activePlayer;
+    const player = translator.activePlayer;
     const activeItem = player.netData.activeWeapon;
 
     if (
-      3 !== obfuscatedNameTranslator.activePlayer.localData.curWeapIdx ||
+      3 !== translator.activePlayer.localData.curWeapIdx ||
       player.throwableState !== "cook" ||
       (!activeItem.includes("frag") &&
         !activeItem.includes("mirv") &&
@@ -39,7 +39,7 @@ function grenadeTimerTicker() {
       if (timer) {
         timer.destroy();
       }
-      timer = new obfuscatedNameTranslator.uiManager[obfuscatedNameTranslator.pieTimer].constructor;
+      timer = new gameManager.game[translator.uiManager][translator.pieTimer].constructor;
       gameManager.pixi.stage.addChild(timer.container);
       timer.start("Grenade", 0, time);
       showing = true;

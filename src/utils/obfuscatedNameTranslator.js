@@ -5,7 +5,7 @@ const { getOwnPropertyNames, getPrototypeOf } = object;
 const { __lookupGetter__: lookupGetter } = object.prototype;
 const { isArray } = Array;
 
-export let obfuscatedNameTranslator = {};
+export let translator = {};
 
 function getAllProperties(obj) {
   return [
@@ -38,12 +38,12 @@ function getSignature(obj) {
 
 export function translate(gameManager) {
   if (!location.hostname.includes("survev") && false) return new Promise((resolve) => {
-    obfuscatedNameTranslator = new Proxy({}, {
+    translator = new Proxy({}, {
       get(th, p) {
         return p;
       }
     });
-    resolve(obfuscatedNameTranslator);
+    resolve(translator);
   });
   return new Promise((resolve) => {
     const signatureMap = {
@@ -146,7 +146,7 @@ export function translate(gameManager) {
       }
 
       const game = gameManager.game;
-      const translated = { ...obfuscatedNameTranslator };
+      const translated = { ...translator };
 
       for (const prop in game) {
         if (game.hasOwnProperty(prop)) {
@@ -312,23 +312,23 @@ export function translate(gameManager) {
 
     function allKeysFound() {
       const signatureKeys = Object.keys(signatureMap);
-      const translatorKeys = Object.keys(obfuscatedNameTranslator);
+      const translatorKeys = Object.keys(translator);
       return signatureKeys.every(key => translatorKeys.includes(key));
     }
 
     const intervalId = setInterval(() => {
-      obfuscatedNameTranslator = matchGameProperties();
+      translator = matchGameProperties();
 
       if (allKeysFound()) {
         clearInterval(intervalId);
-        resolve(obfuscatedNameTranslator);
+        resolve(translator);
       }
     });
 
     setTimeout(() => {
       if (!allKeysFound()) {
         clearInterval(intervalId);
-        resolve(obfuscatedNameTranslator);
+        resolve(translator);
       }
     }, 1000);
   });
