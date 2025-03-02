@@ -94,6 +94,7 @@ export function translate(gameManager) {
       obstaclePool: "",
       pointToScreen: "",
       screenToPoint: "",
+      curWeapIdx: ""
     };
 
     // Convert signature strings to character-based format for comparison
@@ -285,6 +286,18 @@ export function translate(gameManager) {
       try {
         if (translated.emoteBarn != null && translated.update == null) {
           translated.update = getOwnPropertyNames(game[translated.emoteBarn].__proto__).find(v => game[translated.emoteBarn][v].length == 10);
+        }
+      } catch { }
+
+      try {
+        if (translated.touch != null && translated.curWeapIdx == null) {
+          game[translated.touch].getAimMovement.call({},{
+            [translated.localData]: new Proxy({}, {
+              get(th, p) {
+                translated.curWeapIdx = p;
+              }
+            })
+          })
         }
       } catch { }
 

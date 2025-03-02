@@ -190,14 +190,14 @@ function aimbotTicker() {
               aimTouchMoveDir = null;
           }
 
-          if (obfuscatedNameTranslator.activePlayer.localData.curWeapIdx == 2 &&
+          if (gameManager.game[obfuscatedNameTranslator.activePlayer][obfuscatedNameTranslator.localData].curWeapIdx == 2 &&
               distanceToEnemy >= 8) {
               aimTouchMoveDir = null;
               lastAimPos = null;
               return aimbotDot.style.display = "none";
           }
 
-          if (obfuscatedNameTranslator.activePlayer.throwableState === 'cook') {
+          if (gameManager.game[obfuscatedNameTranslator.activePlayer].throwableState === 'cook') {
               lastAimPos = null;
               return aimbotDot.style.display = "none";
           }
