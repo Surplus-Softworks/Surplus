@@ -164,14 +164,14 @@ let ranPlugins = false;
 const loadPlugins = () => {
   if (!ranPlugins) {
     loadPIXI();
-    //esp();
+    esp();
     grenadeTimer();
     spinbot();
-    //aimbot();
-    //autoSwitch();
+    aimbot();
+    autoSwitch();
   }
   betterVision();
-  //optimizer();
+  optimizer();
 };
 const attach = () => {
   hook(gameManager.game, "init", {

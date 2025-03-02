@@ -30,20 +30,20 @@ function createDrawer(container, key) {
 }
 
 function drawLines(me, players, lineDrawer) {
-  const meX = me.pos.x, meY = me.pos.y, myTeam = findTeam(me);
+  const meX = me[translator.pos].x, meY = me[translator.pos].y, myTeam = findTeam(me);
   players.forEach(player => {
-      if (!player.active || player.netData.dead || me.__id === player.__id) return;
+      if (!player.active || player[translator.netData][translator.dead] || me.__id === player.__id) return;
       const playerTeam = findTeam(player);
       const lineColor = playerTeam === myTeam ? BLUE : me.layer === player.layer && !player.downed ? RED : WHITE;
       lineDrawer.lineStyle(2, lineColor, 0.45);
       lineDrawer.moveTo(0, 0);
-      lineDrawer.lineTo((player.pos.x - meX) * 16, (meY - player.pos.y) * 16);
+      lineDrawer.lineTo((player[translator.pos].x - meX) * 16, (meY - player[translator.pos].y) * 16);
   });
 }
 
 function drawGrenades(me, grenadeDrawer) {
-  const meX = me.pos.x, meY = me.pos.y;
-  object.values(gameManager.game.objectCreator.idToObj)
+  const meX = me[translator.pos].x, meY = me[translator.pos].y;
+  object.values(gameManager.game[translator.objectCreator][translator.idToObj])
       .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || (obj.smokeEmitter && objects[obj.type].explosion))
       .forEach(obj => {
           grenadeDrawer.beginFill(obj.layer !== me.layer ? 0xffffff : 0xff0000, obj.layer !== me.layer ? 0.2 : 0.1);
@@ -69,21 +69,21 @@ function drawLasers(me, players, laserDrawer) {
 
   function laserPointer(acPlayer, curBullet, curWeapon, color = 0x0000ff, opacity = 0.1) {
       if (!curBullet) return;
-      const center = { x: (acPlayer.pos.x - me.pos.x) * 16, y: (me.pos.y - acPlayer.pos.y) * 16 };
+      const center = { x: (acPlayer[translator.pos].x - me[translator.pos].x) * 16, y: (me[translator.pos].y - acPlayer[translator.pos].y) * 16 };
       let atan;
-      if (acPlayer === me && (!lastAimPos || (lastAimPos && !(gameManager.game.touch.shotDetected || translator.inputBinds.isBindDown(inputCommands.Fire))))) {
+      if (acPlayer === me && (!lastAimPos || (lastAimPos && !(gameManager.game[translator.touch].shotDetected || gameManager.game[translator.inputBinds].isBindDown(inputCommands.Fire))))) {
           atan = Math.atan2(
-              translator.input.mousePos._y - innerHeight / 2,
-              translator.input.mousePos._x - innerWidth / 2
+              gameManager.game[translator.input].mousePos._y - innerHeight / 2,
+              gameManager.game[translator.input].mousePos._x - innerWidth / 2
           );
       } else if (acPlayer === me && lastAimPos) {
-          const playerPointToScreen = gameManager.game.camera.pointToScreen({ x: acPlayer.pos.x, y: acPlayer.pos.y });
+          const playerPointToScreen = gameManager.game[translator.camera][translator.pointToScreen]({ x: acPlayer[translator.pos].x, y: acPlayer[translator.pos].y });
           atan = Math.atan2(
               playerPointToScreen.y - lastAimPos.clientY,
               playerPointToScreen.x - lastAimPos.clientX
           ) - Math.PI;
       } else {
-          atan = Math.atan2(acPlayer.dir.x, acPlayer.dir.y) - Math.PI / 2;
+          atan = Math.atan2(acPlayer[translator.dir].x, acPlayer[translator.dir].y) - Math.PI / 2;
       }
       laserDrawer.beginFill(color, opacity);
       laserDrawer.moveTo(center.x, center.y);
@@ -93,7 +93,7 @@ function drawLasers(me, players, laserDrawer) {
   }
   if (settings.esp.flashlights.own) laserPointer(me, curBullet, curWeapon);
   players.filter(player =>
-      player.active && !player.netData.dead && me.__id !== player.__id && me.layer === player.layer && findTeam(player) !== findTeam(me)
+      player.active && !player[translator.netData][translator.dead] && me.__id !== player.__id && me.layer === player.layer && findTeam(player) !== findTeam(me)
   ).forEach(enemy => {
       if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeapon(enemy)), findWeapon(enemy), 0, 0.05);
   });
@@ -101,8 +101,8 @@ function drawLasers(me, players, laserDrawer) {
 
 function espTicker() {
   const pixi = gameManager.pixi;
-  const me = translator.activePlayer;
-  const players = translator.playerPoolPool;
+  const me = gameManager.game[translator.activePlayer];
+  const players = gameManager.game[translator.playerBarn].playerPool[translator.pool];
   if (!pixi || !me || me.container == undefined || !settings.esp.enabled || !(gameManager.game?.initialized)) return;
   try {
       const lineDrawer = createDrawer(me.container, 'lineDrawer');

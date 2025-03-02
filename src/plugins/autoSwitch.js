@@ -28,13 +28,13 @@ const ammo = [
     },
 ]
 function autoSwitchTicker() {
-    if (!(gameManager.game?.ws && gameManager.game?.activePlayer?.localData?.curWeapIdx != null && gameManager.game?.initialized)) return;
+    if (!(gameManager.game?.[translator.ws] && gameManager.game?.[translator.activePlayer]?.[translator.localData]?.[translator.curWeapIdx] != null && gameManager.game?.initialized)) return;
 
     if (!settings.autoSwitch.enabled) return;
 
     try {
-        const curWeapIdx = translator.activePlayer.localData.curWeapIdx;
-        const weaps = translator.activePlayer.localData.weapons;
+        const curWeapIdx = gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx];
+        const weaps = gameManager.game[translator.activePlayer][translator.localData][translator.weapons];
         const curWeap = weaps[curWeapIdx];
         const shouldSwitch = gun => {
             let s = false;
@@ -52,7 +52,7 @@ function autoSwitchTicker() {
         if (curWeap.ammo !== ammo[curWeapIdx].ammo) {
             const otherWeapIdx = (curWeapIdx == 0) ? 1 : 0
             const otherWeap = weaps[otherWeapIdx]
-            if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (gameManager.game.touch.shotDetected || translator.inputBinds.isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
+            if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (gameManager.game[translator.touch].shotDetected || gameManager.game[translator.inputBinds].isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
                 ammo[curWeapIdx].lastShotDate = Date.now();
                 //console.log("Switching weapon due to ammo change");
                 if (shouldSwitch(otherWeap.type) && otherWeap.ammo && !settings.autoSwitch.useOneGun) { // && ammo[curWeapIdx].ammo !== 0

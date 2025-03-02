@@ -3,7 +3,6 @@ import { hook, reflect, object } from "../utils/hook.js";
 import { translator } from '../utils/obfuscatedNameTranslator.js';
 
 export default function optimizer() {
-  console.log("HELLO");
   hook(gameManager.game[translator.playerBarn].playerPool[translator.pool], "push", {
     apply(f, th, args) {
       args.forEach(plr => {
@@ -14,7 +13,6 @@ export default function optimizer() {
           set(value) {
             const prevPos = this._pos;
             this._pos = value;
-
             if (prevPos) {
               const deltaX = Math.abs(value.x - prevPos.x);
               const deltaY = Math.abs(value.y - prevPos.y);
@@ -26,7 +24,7 @@ export default function optimizer() {
             }
           }
         });
-        plr[translator.pos] = plr[translator.netData][translator.pos];
+        plr[translator.pos] = plr[translator.netData]?.[translator.pos] || {x:0,y:0};
       });
       return reflect.apply(f, th, args);
     }

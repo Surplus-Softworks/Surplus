@@ -46,7 +46,7 @@ function predictPosition(enemy, currentPlayer) {
       state.previousEnemies[enemyId].shift();
 
   if (state.previousEnemies[enemyId].length < 20)
-      return gameManager.game.camera.pointToScreen({
+      return gameManager.game[translator.camera][translator.pointToScreen]({
           x: enemyPos.x,
           y: enemyPos.y,
       });
@@ -91,7 +91,7 @@ function predictPosition(enemy, currentPlayer) {
       y: enemyPos.y + vey * t,
   };
 
-  return gameManager.game.camera.pointToScreen(predictedPos);
+  return gameManager.game[translator.camera][translator.pointToScreen](predictedPos);
 }
 
 function findTarget(players, me) {
@@ -102,7 +102,7 @@ function findTarget(players, me) {
   for (const player of players) {
       if (
           !player.active ||
-          player.netData.dead ||
+          player[translator.netData][translator.dead] ||
           (!settings.aimbot.targetKnocked && player.downed) ||
           me.__id === player.__id ||
           me.layer !== player.layer ||
@@ -110,15 +110,15 @@ function findTarget(players, me) {
       )
           continue;
 
-      const screenPos = gameManager.game.camera.pointToScreen({
-          x: player.pos.x,
-          y: player.pos.y,
+      const screenPos = gameManager.game[translator.camera][translator.pointToScreen]({
+          x: player[translator.pos].x,
+          y: player[translator.pos].y,
       });
       const distance = getDistance(
           screenPos.x,
           screenPos.y,
-          translator.input.mousePos._x,
-          translator.input.mousePos._y,
+          gameManager.game[translator.input].mousePos._x,
+          gameManager.game[translator.input].mousePos._y,
       );
 
       if (distance < minDistance) {
