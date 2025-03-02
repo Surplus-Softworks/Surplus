@@ -342,19 +342,19 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.smokeBarn != null && translator.particles == null) {
+        if (translated.smokeBarn != null && translated.particles == null) {
           translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v => gameManager.game[translated.smokeBarn][v] instanceof Array);
         }
       } catch { }
 
       try {
-        if (translated.objectCreator != null && translator.idToObj == null) {
-          f = object.getOwnPropertyNames(gameManager.game[translator.objectCreator].__proto__).find(v => gameManager.game[translator.objectCreator][v].length == 4)
-          gameManager.game[translator.objectCreator][f].call(new proxy(gameManager.game[translator.objectCreator], {
+        if (translated.objectCreator != null && translated.idToObj == null) {
+          f = object.getOwnPropertyNames(gameManager.game[translated.objectCreator].__proto__).find(v => gameManager.game[translated.objectCreator][v].length == 4)
+          gameManager.game[translated.objectCreator][f].call(new proxy(gameManager.game[translated.objectCreator], {
             get(th, p) {
               return th[p].bind(new proxy({}, {
                 get(th, p) {
-                  translator.idToObj = p;
+                  translated.idToObj = p;
                 }
               }))
             }
