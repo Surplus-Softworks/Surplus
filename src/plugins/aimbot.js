@@ -7,6 +7,7 @@ import {
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
+import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
@@ -116,8 +117,8 @@ function findTarget(players, me) {
       const distance = getDistance(
           screenPos.x,
           screenPos.y,
-          gameManager.game.input.mousePos._x,
-          gameManager.game.input.mousePos._y,
+          obfuscatedNameTranslator.input.mousePos._x,
+          obfuscatedNameTranslator.input.mousePos._y,
       );
 
       if (distance < minDistance) {
@@ -136,8 +137,8 @@ function aimbotTicker() {
       return
   };
 
-  const players = gameManager.game.playerBarn.playerPool.pool;
-  const me = gameManager.game.activePlayer;
+  const players = obfuscatedNameTranslator.playerPoolPool;
+  const me = obfuscatedNameTranslator.activePlayer;
 
   try {
       let enemy =
@@ -168,10 +169,10 @@ function aimbotTicker() {
 
           if (!predictedPos) return aimbotDot.style.display = "none";
 
-          if (gameManager.game.activePlayer.localData.curWeapIdx == 2 &&
+          if (obfuscatedNameTranslator.activePlayer.localData.curWeapIdx == 2 &&
               distanceToEnemy <= 8 &&
               settings.aimbot.meleeLock &&
-              gameManager.game.inputBinds.isBindDown(inputCommands.Fire)
+              obfuscatedNameTranslator.inputBinds.isBindDown(inputCommands.Fire)
           ) {
               const moveAngle = calcAngle(enemy.pos, me.pos) + Math.PI;
               aimTouchMoveDir = {
@@ -189,14 +190,14 @@ function aimbotTicker() {
               aimTouchMoveDir = null;
           }
 
-          if (gameManager.game.activePlayer.localData.curWeapIdx == 2 &&
+          if (obfuscatedNameTranslator.activePlayer.localData.curWeapIdx == 2 &&
               distanceToEnemy >= 8) {
               aimTouchMoveDir = null;
               lastAimPos = null;
               return aimbotDot.style.display = "none";
           }
 
-          if (gameManager.game.activePlayer.throwableState === 'cook') {
+          if (obfuscatedNameTranslator.activePlayer.throwableState === 'cook') {
               lastAimPos = null;
               return aimbotDot.style.display = "none";
           }
@@ -231,5 +232,5 @@ export default function aimbot() {
     aimbotDot.classList.add('aimbot-dot');
     ui.appendChild(aimbotDot);
   }
-  gameManager.game.pixi._ticker.add(aimbotTicker);
+  gameManager.pixi._ticker.add(aimbotTicker);
 }

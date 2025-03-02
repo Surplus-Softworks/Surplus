@@ -8,7 +8,7 @@ export let emoteTypes = [];
 export let inputs = [];
 
 export default function inputOverride() {
-  hook(gameManager.game, "sendMessage", {
+  hook(gameManager.game, Object.getOwnPropertyNames(gameManager.game.__proto__).filter(v=>typeof gameManager.game[v] == "function").find(v=>gameManager.game[v].length==3), {
     apply(f, th, args) {
       if (args[0] == packetTypes.Input) {
         for (const command of inputs) {

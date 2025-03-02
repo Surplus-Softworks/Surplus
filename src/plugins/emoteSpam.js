@@ -1,6 +1,7 @@
 import { gameManager } from "../utils/injector.js";
 import { settings } from "../loader.js";
 import { emoteTypes } from "./inputOverride.js";
+import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
 
 const ref_setTimeout = setTimeout;
 
@@ -10,7 +11,7 @@ function sendEmote() {
   try {
     if (settings.emoteSpam.enabled && gameManager.game) {
       if (!(gameManager.game?.initialized)) return;
-      if (!gameManager.game.activePlayer) return;
+      if (!obfuscatedNameTranslator.activePlayer) return;
       const emote = {
         pos: {x: 0, y: 0},
         type: emoteTypes[Math.floor(Math.random() * emoteTypes.length)],

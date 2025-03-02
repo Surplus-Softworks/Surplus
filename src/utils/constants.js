@@ -93,7 +93,7 @@ hook(Object, "keys", {
 });
 
 export function findTeam(player) {
-    return object.keys(gameManager.game.playerBarn.teamInfo).find(team => gameManager.game.playerBarn.teamInfo[team].playerIds.includes(player.__id));
+    return object.keys(obfuscatedNameTranslator.playerBarn.teamInfo).find(team => obfuscatedNameTranslator.playerBarn.teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeapon(player) {

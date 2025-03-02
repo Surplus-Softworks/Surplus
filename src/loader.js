@@ -11,7 +11,7 @@ import aimbot from "./plugins/aimbot.js";
 import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
 import autoSwitch from "./plugins/autoSwitch.js";
-
+import { translate } from "./utils/obfuscatedNameTranslator.js";
 import { injectGame, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
 import { PIXI } from "./utils/constants.js";
@@ -175,8 +175,8 @@ const loadStaticPlugins = () => {
 };
 
 const loadPIXI = () => {
-  PIXI.Container = gameManager.game.pixi.stage.constructor;
-  PIXI.Graphics = gameManager.game.pixi.stage.children.find(child => child.lineStyle)?.constructor;
+  PIXI.Container = gameManager.pixi.stage.constructor;
+  PIXI.Graphics = gameManager.pixi.stage.children.find(child => child.lineStyle)?.constructor;
 };
 
 let ranPlugins = false;
@@ -195,12 +195,14 @@ const loadPlugins = () => {
   optimizer();
 };
 const attach = () => {
-  inputOverride();
+  inputOverride()
   hook(gameManager.game, "init", {
     apply(f, th, args) {
       const result = reflect.apply(f, th, args);
-      loadPlugins();
-      ranPlugins = true;
+      translate(gameManager).then(translator => {
+        loadPlugins();
+        ranPlugins = true;
+      });
       return result;
     }
   });

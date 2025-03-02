@@ -1,8 +1,9 @@
 import { gameManager } from "../utils/injector.js";
 import { hook, reflect, object } from "../utils/hook.js";
+import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
 
 export default function optimizer() {
-  hook(gameManager.game.playerBarn.playerPool.pool, "push", {
+  hook(obfuscatedNameTranslator.playerPoolPool, "push", {
     apply(f, th, args) {
       args.forEach(plr => {
         object.defineProperty(plr, 'pos', {

@@ -4,6 +4,7 @@ import {
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
 import { object, reflect, hook } from "../utils/hook.js";
+import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
 
 function betterVisionTicker() {
   if (!(gameManager.game?.initialized)) return;
@@ -31,14 +32,14 @@ function betterVisionTicker() {
 }
 let first = true;
 export default function betterVision() {
-  hook(gameManager.game.playerBarn.playerPool.pool, "push", {
+  hook(obfuscatedNameTranslator.playerPoolPool, "push", {
     apply(f, th, args) {
       args.forEach(arg => {
         object.defineProperty(arg, "bleedTicker", {
           configurable: true,
           set(value) {
             this._bleedTicker = value;
-            const me = gameManager.game.activePlayer;
+            const me = obfuscatedNameTranslator.activePlayer;
             const meTeam = findTeam(me);
             const playerTeam = findTeam(arg);
 

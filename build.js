@@ -4,7 +4,7 @@ const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
 
-const VERSION = "1.9"
+const VERSION = "1.10"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
