@@ -1,4 +1,5 @@
-import { object } from "./hook";
+import { objects } from "./constants";
+import { object, proxy } from "./hook";
 
 const { getOwnPropertyNames, getPrototypeOf } = object;
 const { __lookupGetter__: lookupGetter } = object.prototype;
@@ -89,7 +90,10 @@ export function translate(gameManager) {
       zoom: "",
       update: "",
       pool: "",
-      sendMessage: ""
+      sendMessage: "",
+      obstaclePool: "",
+      pointToScreen: "",
+      screenToPoint: "",
     };
 
     // Convert signature strings to character-based format for comparison
@@ -235,7 +239,47 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        translated.sendMessage = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
+        if (translated.sendMessage == null) {
+          translated.sendMessage = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
+        }
+      } catch { }
+
+      try {
+        if (translated.map != null && translated.obstaclePool == null) {
+          const objectProps = object.getOwnPropertyNames(game[translated.map]).filter(v => typeof game[translated.map][v] == "object" && game[translated.map][v] != null);
+          translated.obstaclePool = objectProps.filter(v => translated.pool in game[translated.map][v]).find(v => {
+            const pool = game[translated.map][v][translated.pool]
+            if (pool.some(V => objects[V.type] != null)) {
+              return true;
+            }
+          });
+        }
+      } catch { }
+
+      try {
+        if (translated.obstaclePool != null && translated.pointToScreen == null) {
+          const pool = game[translated.map][translated.obstaclePool][translated.pool];
+          pool[0].render.call({}, new proxy({}, {
+            get(th, p) {
+              translated.pointToScreen = p;
+            }
+          }))
+        }
+      } catch { }
+
+      try {
+        if (translated.emoteBarn != null && translated.screenToPoint == null) {
+          emotebarn = new gameManager.game[translated.emoteBarn].constructor();
+          emotebarn.activePlayer = 1;
+          emotebarn.emoteSelector.ping = "ping_danger";
+          emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
+          emotebarn.camera = new Proxy({}, {
+            get(th, p) {
+              translated.screenToPoint = p;
+            }
+          })
+          emotebarn.triggerPing();
+        }
       } catch { }
 
 
