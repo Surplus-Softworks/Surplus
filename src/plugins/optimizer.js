@@ -8,11 +8,11 @@ export default function optimizer() {
       args.forEach(plr => {
         object.defineProperty(plr, translator.pos, {
           get() {
-            return this._pos;
+            return this[translator.posOld];
           },
           set(value) {
-            const prevPos = this._pos;
-            this._pos = value;
+            const prevPos = this[translator.posOld];
+            this[translator.posOld] = value;
             if (prevPos) {
               const deltaX = Math.abs(value.x - prevPos.x);
               const deltaY = Math.abs(value.y - prevPos.y);
