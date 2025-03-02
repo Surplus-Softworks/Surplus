@@ -207,6 +207,11 @@ export function translate(gameManager) {
             }
             if (game[prop].hasOwnProperty("topLeft")) {
               translated["uiManager"] = prop;
+              object.getOwnPropertyNames(game[prop]).forEach(v=>{
+                if (v.startsWith("_0x")) {
+                  translated["pieTimer"] = v;
+                }
+              })
               continue;
             }
 

@@ -165,7 +165,7 @@ const loadPlugins = () => {
   if (!ranPlugins) {
     loadPIXI();
     //esp();
-    //grenadeTimer();
+    grenadeTimer();
     spinbot();
     //aimbot();
     //autoSwitch();

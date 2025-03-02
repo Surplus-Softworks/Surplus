@@ -39,7 +39,7 @@ function grenadeTimerTicker() {
       if (timer) {
         timer.destroy();
       }
-      timer = new gameManager.game.uiManager.pieTimer.constructor();
+      timer = new obfuscatedNameTranslator.uiManager[obfuscatedNameTranslator.pieTimer].constructor;
       gameManager.pixi.stage.addChild(timer.container);
       timer.start("Grenade", 0, time);
       showing = true;
