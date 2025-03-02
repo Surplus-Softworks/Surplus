@@ -167,11 +167,11 @@ const loadPlugins = () => {
     //esp();
     //grenadeTimer();
     spinbot();
-    aimbot();
-    autoSwitch();
+    //aimbot();
+    //autoSwitch();
   }
   //betterVision();
-  optimizer();
+  //optimizer();
 };
 const attach = () => {
   hook(gameManager.game, "init", {
