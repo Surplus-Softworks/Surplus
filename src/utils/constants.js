@@ -98,7 +98,7 @@ export function findTeam(player) {
 }
 
 export function findWeapon(player) {
-    const weaponType = player.netData.activeWeapon;
+    const weaponType = player[translator.netData][translator.activeWeapon];
     return weaponType && guns[weaponType] ? guns[weaponType] : null;
 }
 
