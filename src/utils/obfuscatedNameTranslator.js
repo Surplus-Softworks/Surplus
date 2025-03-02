@@ -94,7 +94,10 @@ export function translate(gameManager) {
       obstaclePool: "",
       pointToScreen: "",
       screenToPoint: "",
-      curWeapIdx: ""
+      curWeapIdx: "",
+      pieTimer: "",
+      weapons: "",
+
     };
 
     // Convert signature strings to character-based format for comparison
@@ -170,6 +173,9 @@ export function translate(gameManager) {
                     }
                   }
                 } catch { }
+              }
+              if (translated.localData != null) {
+                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v=>game[prop][translated.localData][v] instanceof Array);
               }
               if (translated.localData != null && translated.camera != null) { // get zoom
                 const localDataKeys = getOwnPropertyNames(game[prop][translated.localData]);
