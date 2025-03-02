@@ -172,7 +172,7 @@ function aimbotTicker() {
             if (gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] == 2 &&
                 distanceToEnemy <= 8 &&
                 settings.aimbot.meleeLock &&
-                gameManager[translator.inputBinds].isBindDown(inputCommands.Fire)
+                gameManager.game[translator.inputBinds].isBindDown(inputCommands.Fire)
             ) {
                 const moveAngle = calcAngle(enemy[translator.pos], me[translator.pos]) + Math.PI;
                 aimTouchMoveDir = {
