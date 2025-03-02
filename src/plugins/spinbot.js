@@ -12,8 +12,8 @@ let isMouseDown = false;
 
 function updateRotation() {
   if (
-    !obfuscatedNameTranslator.activePlayer ||
-    !obfuscatedNameTranslator.activePlayer.bodyContainer ||
+    !gameManager.game[obfuscatedNameTranslator.activePlayer] ||
+    !gameManager.game[obfuscatedNameTranslator.activePlayer].bodyContainer ||
     gameManager.game.spectating
   )
     return;
@@ -21,26 +21,26 @@ function updateRotation() {
   if (isMouseDown) {
     if (!gameManager.game.spectating) {
       if (lastAimPos && settings.aimbot.enabled) {
-        obfuscatedNameTranslator.activePlayer.bodyContainer.rotation = Math.atan2(
+        gameManager.game[obfuscatedNameTranslator.activePlayer].bodyContainer.rotation = Math.atan2(
           lastAimPos.clientY - globalThis.innerHeight / 2,
           lastAimPos.clientX - globalThis.innerWidth / 2
         );
       } else {
-        obfuscatedNameTranslator.activePlayer.bodyContainer.rotation = Math.atan2(
-          obfuscatedNameTranslator.input.mousePos.y - globalThis.innerHeight / 2,
-          obfuscatedNameTranslator.input.mousePos.x - globalThis.innerWidth / 2
+        gameManager.game[obfuscatedNameTranslator.activePlayer].bodyContainer.rotation = Math.atan2(
+          gameManager.game[obfuscatedNameTranslator.input].mousePos.y - globalThis.innerHeight / 2,
+          gameManager.game[obfuscatedNameTranslator.input].mousePos.x - globalThis.innerWidth / 2
         );
       }
     } else {
-      obfuscatedNameTranslator.activePlayer.bodyContainer.rotation = -Math.atan2(
-        obfuscatedNameTranslator.activePlayer.dir.y,
-        obfuscatedNameTranslator.activePlayer.dir.x
+      gameManager.game[obfuscatedNameTranslator.activePlayer].bodyContainer.rotation = -Math.atan2(
+        gameManager.game[obfuscatedNameTranslator.activePlayer][obfuscatedNameTranslator.dir].y,
+        gameManager.game[obfuscatedNameTranslator.activePlayer][obfuscatedNameTranslator.dir].x
       );
     }
   } else {
-    obfuscatedNameTranslator.activePlayer.bodyContainer.rotation = Math.atan2(
-      obfuscatedNameTranslator.input.mousePos.y - globalThis.innerHeight / 2,
-      obfuscatedNameTranslator.input.mousePos.x - globalThis.innerWidth / 2
+    gameManager.game[obfuscatedNameTranslator.activePlayer].bodyContainer.rotation = Math.atan2(
+      gameManager.game[obfuscatedNameTranslator.input].mousePos.y - globalThis.innerHeight / 2,
+      gameManager.game[obfuscatedNameTranslator.input].mousePos.x - globalThis.innerWidth / 2
     );
   }
 }
@@ -51,8 +51,8 @@ function spinbotTicker() {
 }
 
 function calculateSpinbotMousePosition(axis) {
-  if (obfuscatedNameTranslator.activePlayer.throwableState === "cook") {
-    return axis === "x" ? obfuscatedNameTranslator.input.mousePos._x : obfuscatedNameTranslator.input.mousePos._y;
+  if (gameManager.game[obfuscatedNameTranslator.activePlayer].throwableState === "cook") {
+    return axis === "x" ? gameManager.game[obfuscatedNameTranslator.input].mousePos._x : gameManager.game[obfuscatedNameTranslator.input].mousePos._y;
   }
 
   if (settings.spinbot.realistic) {
@@ -75,28 +75,22 @@ export default function spinbot() {
 
   let lastX = 0, lastY = 0;
   let isEmoteUpdate = false;
-  console.log(obfuscatedNameTranslator)
-  for (let key in obfuscatedNameTranslator.emoteBarn.__proto__) {
-    let v = obfuscatedNameTranslator.emoteBarn.__proto__[key];
-    if (v.length === 10) {
-      hook(obfuscatedNameTranslator.emoteBarn.__proto__, "update", {
-        apply(f, th, args) {
-          isEmoteUpdate = true;
-          try {
-            const r = Reflect.apply(f, th, args);
-            isEmoteUpdate = false;
-            return r;
-          } catch (e) {
-            isEmoteUpdate = false;
-            throw e;
-          }
-        }
-      });
+  hook(gameManager.game[obfuscatedNameTranslator.emoteBarn].__proto__, obfuscatedNameTranslator.update, {
+    apply(f, th, args) {
+      isEmoteUpdate = true;
+      try {
+        const r = Reflect.apply(f, th, args);
+        isEmoteUpdate = false;
+        return r;
+      } catch (e) {
+        isEmoteUpdate = false;
+        throw e;
+      }
     }
-  }
-  
+  });
 
-  object.defineProperty(obfuscatedNameTranslator.input.mousePos, "y", {
+
+  object.defineProperty(gameManager.game[obfuscatedNameTranslator.input].mousePos, "y", {
     get() {
       if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._y;
@@ -122,7 +116,7 @@ export default function spinbot() {
     },
   });
 
-  object.defineProperty(obfuscatedNameTranslator.input.mousePos, "x", {
+  object.defineProperty(gameManager.game[obfuscatedNameTranslator.input].mousePos, "x", {
     get() {
       if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._x;
@@ -151,17 +145,17 @@ export default function spinbot() {
   reflect.apply(ref_addEventListener, globalThis, ["mousedown", e => {
     if (e.button != 0) return;
     isMouseDown = true;
-  }]) 
+  }])
 
   reflect.apply(ref_addEventListener, globalThis, ["mouseup", e => {
     if (e.button != 0) return;
     isMouseDown = false;
-  }]) 
+  }])
 
   gameManager.pixi._ticker.add(() => {
     if (!isMouseDown && settings.spinbot.enabled) {
       if (settings.spinbot.realistic) {
-        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed/50 * angularAccelerationMax);
+        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed / 50 * angularAccelerationMax);
         angularVelocity *= dampingFactor;
         currentAngle += angularVelocity;
       }

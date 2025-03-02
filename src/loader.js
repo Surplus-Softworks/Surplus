@@ -8,7 +8,6 @@ import autoFire from "./plugins/autoFire.js";
 import optimizer from "./plugins/optimizer.js";
 import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
-import emoteSpam from "./plugins/emoteSpam.js";
 import mapColors from "./plugins/mapColors.js";
 import autoSwitch from "./plugins/autoSwitch.js";
 import { translate } from "./utils/obfuscatedNameTranslator.js";
@@ -19,7 +18,6 @@ import { PIXI } from "./utils/constants.js";
 import initUI, { loadedConfig, ui } from "./ui/worker.js";
 import { encryptDecrypt } from "./utils/encryption.js";
 import { write } from "./utils/store.js";
-import noEmoteCooldown from "./plugins/noEmoteCooldown.js";
 
 const getElementById = ShadowRoot.prototype.getElementById;
 
@@ -102,19 +100,6 @@ export const settings = {
     flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" })
   }),
   autoLoot: { enabled: true },
-  emoteSpam: registerSettings({
-    enabled: "emote-spam-enable",
-    get $speed() {
-      return 1001 - (getValue("emote-spam-speed") * 10);
-    },
-    set $speed(v) {
-      const el = reflect.apply(getElementById, ui, [this._speed]);
-      if (!el) return defaultSettings.emoteSpam.speed;
-      el.value = (1001 - parseInt(v)) / 10;
-      el.oninput();
-    },
-    _speed: "emote-spam-speed"
-  }),
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
   }),
@@ -153,10 +138,6 @@ export const defaultSettings = {
   autoLoot: {
     enabled: true
   },
-  emoteSpam: {
-    enabled: false,
-    speed: 501
-  },
   infiniteZoom: {
     enabled: true
   },
@@ -170,7 +151,6 @@ const loadStaticPlugins = () => {
   infiniteZoom();
   autoLoot();
   autoFire();
-  emoteSpam();
   mapColors();
 };
 
@@ -184,18 +164,16 @@ let ranPlugins = false;
 const loadPlugins = () => {
   if (!ranPlugins) {
     loadPIXI();
-    esp();
-    grenadeTimer();
+    //esp();
+    //grenadeTimer();
     spinbot();
     aimbot();
     autoSwitch();
   }
-  noEmoteCooldown();
   betterVision();
   optimizer();
 };
 const attach = () => {
-  inputOverride()
   hook(gameManager.game, "init", {
     apply(f, th, args) {
       const result = reflect.apply(f, th, args);
@@ -206,6 +184,7 @@ const attach = () => {
       return result;
     }
   });
+  inputOverride()
 };
 
 export const initialize = () => {

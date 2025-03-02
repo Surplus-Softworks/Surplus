@@ -14,7 +14,7 @@ function getAllProperties(obj) {
 }
 
 function isAsync(func) {
-  return getPrototypeOf(func) === getPrototypeOf(async () => {});
+  return getPrototypeOf(func) === getPrototypeOf(async () => { });
 }
 
 function getSignature(obj) {
@@ -36,6 +36,14 @@ function getSignature(obj) {
 }
 
 export function translate(gameManager) {
+  if (!location.hostname.includes("survev") && false) return new Promise((resolve) => {
+    obfuscatedNameTranslator = new Proxy({}, {
+      get(th, p) {
+        return p;
+      }
+    });
+    resolve(obfuscatedNameTranslator);
+  });
   return new Promise((resolve) => {
     const signatureMap = {
       ws: "10-7-0-0-17",
@@ -72,11 +80,25 @@ export function translate(gameManager) {
       inputBindUi: "0-3-2-0-5",
       ambience: "3-5-1-1-10",
       resourceManager: "5-7-4-0-16",
+      netData: "21-11-3-1-36",
+      localData: "6-11-2-1-20",
+      pos: "",
+      posOld: "",
+      dir: "",
+      dirOld: "",
+      zoom: "",
+      update: "",
+      pool: "",
+      sendMessage: ""
     };
 
     // Convert signature strings to character-based format for comparison
     const convertedSignatureMap = {};
     for (const [key, value] of Object.entries(signatureMap)) {
+      if (value == "") {
+        convertedSignatureMap[key] = "";
+        continue;
+      }
       const parts = value.split("-").map(Number);
       const converted = parts.map((n) => String.fromCharCode(97 + n)).join("");
       convertedSignatureMap[key] = converted;
@@ -123,21 +145,67 @@ export function translate(gameManager) {
 
       for (const prop in game) {
         if (game.hasOwnProperty(prop)) {
-					try {
-						if (game[prop].hasOwnProperty("bones")) {
-							translated["activePlayer"] = game[prop];
-							continue;
-						}
-						if (game[prop].hasOwnProperty("mapTexture")) {
-							translated["map"] = game[prop];
-							continue;
-						}
-						if (game[prop].hasOwnProperty("topLeft")) {
-							translated["uiManager"] = game[prop];
-							continue;
-						}
+          try {
+            if (game[prop].hasOwnProperty("bones")) {
+              translated["activePlayer"] = prop;
+              const newplr = new game[prop].constructor();
+              for (const pProp in newplr) {
+                try {
+                  const objSignature = getSignature(game[prop][pProp]);
+                  if (objSignature) {
+                    for (const [signatureName, signatureValue] of Object.entries(
+                      convertedSignatureMap
+                    )) {
+                      if (translated[signatureName]) continue;
 
-					} catch {}
+                      if (signatureValue === objSignature) {
+                        translated[signatureName] = pProp;
+                        break;
+                      }
+                    }
+                  }
+                } catch { }
+              }
+              if (translated.localData != null && translated.camera != null) { // get zoom
+                const localDataKeys = getOwnPropertyNames(game[prop][translated.localData]);
+                const cameraKeys = getOwnPropertyNames(game[translated.camera]);
+                translated.zoom = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData][v] == "number");
+              }
+              console.log(translated);
+              if (translated.netData == null) continue;
+              const vectors = getOwnPropertyNames(newplr).filter(v => v.startsWith("_0x")).filter(v => typeof newplr[v] == "object").filter(v => getOwnPropertyNames(newplr[v]).length == 2);
+              vectors.forEach(key => {
+                const val = newplr[key];
+                if (val.x == 0) {
+                  if (key in game[prop][translated.netData]) {
+                    // pos
+                    translated.pos = key;
+                  } else {
+                    // posOld
+                    translated.posOld = key;
+                  }
+                } else if (val.x == 1) {
+                  if (key in game[prop][translated.netData]) {
+                    // dir
+                    translated.dir = key;
+                  } else {
+                    // dirOld
+                    translated.dirOld = key;
+                  }
+                }
+              })
+              continue;
+            }
+            if (game[prop].hasOwnProperty("mapTexture")) {
+              translated["map"] = prop;
+              continue;
+            }
+            if (game[prop].hasOwnProperty("topLeft")) {
+              translated["uiManager"] = prop;
+              continue;
+            }
+
+          } catch { }
           try {
             const objSignature = getSignature(game[prop]);
             if (objSignature) {
@@ -145,9 +213,9 @@ export function translate(gameManager) {
                 convertedSignatureMap
               )) {
                 if (translated[signatureName]) continue;
-                
+
                 if (signatureValue === objSignature) {
-                  translated[signatureName] = game[prop];
+                  translated[signatureName] = prop;
                   break;
                 }
               }
@@ -156,6 +224,20 @@ export function translate(gameManager) {
           }
         }
       }
+      try {
+        if (translated.playerBarn != null) {
+          object.getOwnPropertyNames(game[translated.playerBarn].playerPool).forEach(v => {
+            if (Array.isArray(game[translated.playerBarn].playerPool[v])) {
+              translated.pool = v
+            }
+          })
+        }
+      } catch { }
+
+      try {
+        translated.sendMessage = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
+      } catch { }
+
 
       return translated;
     }
@@ -171,20 +253,15 @@ export function translate(gameManager) {
 
       if (allKeysFound()) {
         clearInterval(intervalId);
-				object.getOwnPropertyNames(obfuscatedNameTranslator.playerBarn.playerPool).forEach(v=>{
-					if (Array.isArray(obfuscatedNameTranslator.playerBarn.playerPool[v])) {
-						obfuscatedNameTranslator.playerPoolPool = obfuscatedNameTranslator.playerBarn.playerPool[v]
-					}
-				})
         resolve(obfuscatedNameTranslator);
       }
-    }, 100);
-    
+    });
+
     setTimeout(() => {
       if (!allKeysFound()) {
         clearInterval(intervalId);
         resolve(obfuscatedNameTranslator);
       }
-    }, 1000); 
+    }, 1000);
   });
 }

@@ -9,14 +9,18 @@ export default function infiniteZoom() {
     if (!event.shiftKey) return;
     if (!settings.infiniteZoom.enabled) return;
     try {
-      let zoom = obfuscatedNameTranslator.activePlayer.localData.zoom;
+      let zoom = gameManager.game[obfuscatedNameTranslator.activePlayer][obfuscatedNameTranslator.localData][obfuscatedNameTranslator.zoom];
       if (event.deltaY > 0) {
         zoom += 20;
       } else {
         zoom -= 30;
         zoom = Math.max(36, zoom)
       }
-      object.defineProperty(obfuscatedNameTranslator.activePlayer.localData, "zoom", { configurable: true, get() { return zoom }, set() { } });
+      object.defineProperty(gameManager.game[obfuscatedNameTranslator.activePlayer][obfuscatedNameTranslator.localData], obfuscatedNameTranslator.zoom, {
+        configurable: true,
+        get() { return zoom },
+        set() { }
+      });
       event.stopImmediatePropagation();
     } catch {
 

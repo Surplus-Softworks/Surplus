@@ -3,10 +3,11 @@ import { hook, reflect, object } from "../utils/hook.js";
 import { obfuscatedNameTranslator } from '../utils/obfuscatedNameTranslator.js';
 
 export default function optimizer() {
-  hook(obfuscatedNameTranslator.playerPoolPool, "push", {
+  console.log("HELLO");
+  hook(gameManager.game[obfuscatedNameTranslator.playerBarn].playerPool[obfuscatedNameTranslator.pool], "push", {
     apply(f, th, args) {
       args.forEach(plr => {
-        object.defineProperty(plr, 'pos', {
+        object.defineProperty(plr, obfuscatedNameTranslator.pos, {
           get() {
             return this._pos;
           },
@@ -25,7 +26,7 @@ export default function optimizer() {
             }
           }
         });
-        plr.pos = plr.netData.pos;
+        plr[obfuscatedNameTranslator.pos] = plr[obfuscatedNameTranslator.netData][obfuscatedNameTranslator.pos];
       });
       return reflect.apply(f, th, args);
     }
