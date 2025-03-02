@@ -97,7 +97,8 @@ export function translate(gameManager) {
       curWeapIdx: "",
       pieTimer: "",
       weapons: "",
-
+      activeWeapon: "",
+      
     };
 
     // Convert signature strings to character-based format for comparison
@@ -175,7 +176,7 @@ export function translate(gameManager) {
                 } catch { }
               }
               if (translated.localData != null) {
-                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v=>game[prop][translated.localData][v] instanceof Array);
+                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v => game[prop][translated.localData][v] instanceof Array);
               }
               if (translated.localData != null && translated.camera != null) { // get zoom
                 const localDataKeys = getOwnPropertyNames(game[prop][translated.localData]);
@@ -184,6 +185,17 @@ export function translate(gameManager) {
               }
               console.log(translated);
               if (translated.netData == null) continue;
+              try {
+                if (translated.activePlayer != null) {
+                  game[translated.activePlayer].selectIdlePose.call({
+                    [translated.netData]: new proxy({},{
+                      get(th, p) {
+                        translated.activeWeapon = p;
+                      }
+                    })
+                  })
+                }
+              } catch { }
               const vectors = getOwnPropertyNames(newplr).filter(v => v.startsWith("_0x")).filter(v => typeof newplr[v] == "object").filter(v => getOwnPropertyNames(newplr[v]).length == 2);
               vectors.forEach(key => {
                 const val = newplr[key];
@@ -213,7 +225,7 @@ export function translate(gameManager) {
             }
             if (game[prop].hasOwnProperty("topLeft")) {
               translated["uiManager"] = prop;
-              object.getOwnPropertyNames(game[prop]).forEach(v=>{
+              object.getOwnPropertyNames(game[prop]).forEach(v => {
                 if (v.startsWith("_0x")) {
                   translated["pieTimer"] = v;
                 }
@@ -302,7 +314,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.touch != null && translated.curWeapIdx == null) {
-          game[translated.touch].getAimMovement.call({},{
+          game[translated.touch].getAimMovement.call({}, {
             [translated.localData]: new Proxy({}, {
               get(th, p) {
                 translated.curWeapIdx = p;
