@@ -98,7 +98,9 @@ export function translate(gameManager) {
       pieTimer: "",
       weapons: "",
       activeWeapon: "",
-      
+      dead: "",
+      particles: ""
+
     };
 
     // Convert signature strings to character-based format for comparison
@@ -185,17 +187,26 @@ export function translate(gameManager) {
               }
               console.log(translated);
               if (translated.netData == null) continue;
-              try {
-                if (translated.activePlayer != null) {
+              if (translated.activePlayer != null) {
+                try {
                   game[translated.activePlayer].selectIdlePose.call({
-                    [translated.netData]: new proxy({},{
+                    [translated.netData]: new proxy({}, {
                       get(th, p) {
                         translated.activeWeapon = p;
                       }
                     })
                   })
-                }
-              } catch { }
+                } catch { }
+                try {
+                  game[translated.activePlayer].canInteract.call({
+                    [translated.netData]: new proxy({}, {
+                      get(th, p) {
+                        translated.dead = p;
+                      }
+                    })
+                  })
+                } catch { }
+              }
               const vectors = getOwnPropertyNames(newplr).filter(v => v.startsWith("_0x")).filter(v => typeof newplr[v] == "object").filter(v => getOwnPropertyNames(newplr[v]).length == 2);
               vectors.forEach(key => {
                 const val = newplr[key];
@@ -321,6 +332,12 @@ export function translate(gameManager) {
               }
             })
           })
+        }
+      } catch { }
+
+      try {
+        if (translated.smokeBarn != null) {
+          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v=>gameManager.game[translated.smokeBarn][v] instanceof Array);
         }
       } catch { }
 
