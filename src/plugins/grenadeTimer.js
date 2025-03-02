@@ -9,9 +9,8 @@ let timer = null;
 function grenadeTimerTicker() {
   if (
     !(
-      gameManager.game?.ws &&
-      gameManager.game?.activePlayer?.localData?.curWeapIdx != null &&
-      gameManager.game?.activePlayer?.netData?.activeWeapon != null &&
+      gameManager.game?.[translator.activePlayer]?.[translator.localData]?.[translator.curWeapIdx] != null &&
+      gameManager.game?.[translator.activePlayer]?.[translator.netData]?.[translator.activeWeapon] != null &&
       gameManager.game?.initialized
     )
   )
@@ -19,11 +18,11 @@ function grenadeTimerTicker() {
 
   try {
     let elapsed = (Date.now() - lastTime) / 1000;
-    const player = translator.activePlayer;
-    const activeItem = player.netData.activeWeapon;
+    const player = gameManager.game[translator.activePlayer];
+    const activeItem = gameManager.game[translator.activePlayer][translator.netData][translator.activeWeapon];
 
     if (
-      3 !== translator.activePlayer.localData.curWeapIdx ||
+      3 !== gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] ||
       player.throwableState !== "cook" ||
       (!activeItem.includes("frag") &&
         !activeItem.includes("mirv") &&
@@ -46,7 +45,7 @@ function grenadeTimerTicker() {
       lastTime = Date.now();
       return;
     }
-    timer.update(elapsed - timer.elapsed, gameManager.game.camera);
+    timer.update(elapsed - timer.elapsed, gameManager.game[translator.camera]);
   } catch {}
 }
 

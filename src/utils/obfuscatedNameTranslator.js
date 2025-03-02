@@ -118,24 +118,24 @@ export function translate(gameManager) {
       if (!obj || typeof obj !== "object" || obj instanceof Array) return null;
 
       let counts = {
-        primitives: 0,
-        functions: 0,
-        objects: 0,
-        arrays: 0,
-        total: 0,
+        v: 0,
+        t: 0,
+        j: 0,
+        y: 0,
+        l: 0,
       };
       let allProps = new Set([
         ...Object.keys(obj),
         ...Object.getOwnPropertyNames(Object.getPrototypeOf(obj) || {}),
       ]);
-
+      
       allProps.forEach((prop) => {
         let v = obj[prop];
-        if (Array.isArray(v)) counts.arrays++;
-        else if (typeof v === "object" && v !== null) counts.objects++;
-        else if (typeof v === "function") counts.functions++;
-        else counts.primitives++;
-        counts.total++;
+        if (Array.isArray(v)) counts.y++;
+        else if (typeof v === "object" && v !== null) counts.j++;
+        else if (typeof v === "function") counts.t++;
+        else counts.v++;
+        counts.l++;
       });
 
       return Object.values(counts)
