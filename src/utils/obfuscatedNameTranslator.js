@@ -99,6 +99,7 @@ export function translate(gameManager) {
       weapons: "",
       activeWeapon: "",
       dead: "",
+      particles: ""
 
     };
 
@@ -331,6 +332,12 @@ export function translate(gameManager) {
               }
             })
           })
+        }
+      } catch { }
+
+      try {
+        if (translated.smokeBarn != null) {
+          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v=>gameManager.game[translated.smokeBarn][v] instanceof Array);
         }
       } catch { }
 
