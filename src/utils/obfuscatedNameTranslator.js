@@ -83,6 +83,7 @@ export function translate(gameManager) {
       resourceManager: "5-7-4-0-16",
       netData: "21-11-3-1-36",
       localData: "6-11-2-1-20",
+      pieTimer: "6-6-5-0-17",
       pos: "",
       posOld: "",
       dir: "",
@@ -95,7 +96,6 @@ export function translate(gameManager) {
       pointToScreen: "",
       screenToPoint: "",
       curWeapIdx: "",
-      pieTimer: "",
       weapons: "",
       activeWeapon: "",
       dead: "",
@@ -130,7 +130,7 @@ export function translate(gameManager) {
         ...Object.keys(obj),
         ...Object.getOwnPropertyNames(Object.getPrototypeOf(obj) || {}),
       ]);
-      
+
       allProps.forEach((prop) => {
         let v = obj[prop];
         if (Array.isArray(v)) counts.y++;
@@ -207,7 +207,11 @@ export function translate(gameManager) {
                   })
                 } catch { }
               }
-              const vectors = getOwnPropertyNames(newplr).filter(v => v.startsWith("_0x")).filter(v => typeof newplr[v] == "object").filter(v => getOwnPropertyNames(newplr[v]).length == 2);
+              const vectors = getOwnPropertyNames(newplr)
+                .filter(v => typeof newplr[v] == "object" && newplr[v] != null)
+                .filter(v => getOwnPropertyNames(newplr[v]).length == 2)
+                .filter(v => newplr[v].x != null);
+              console.log(vectors);
               vectors.forEach(key => {
                 const val = newplr[key];
                 if (val.x == 0) {
@@ -237,9 +241,10 @@ export function translate(gameManager) {
             if (game[prop].hasOwnProperty("topLeft")) {
               translated["uiManager"] = prop;
               object.getOwnPropertyNames(game[prop]).forEach(v => {
-                if (v.startsWith("_0x")) {
-                  translated["pieTimer"] = v;
-                }
+                if (typeof game[prop][v] == "object" && game[prop][v] != null)
+                  if (getSignature(game[prop][v]) == convertedSignatureMap.pieTimer) {
+                    translated.pieTimer = v;
+                  }
               })
               continue;
             }
@@ -337,7 +342,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.smokeBarn != null) {
-          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v=>gameManager.game[translated.smokeBarn][v] instanceof Array);
+          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v => gameManager.game[translated.smokeBarn][v] instanceof Array);
         }
       } catch { }
 
