@@ -104,7 +104,7 @@ function espTicker() {
   const me = gameManager.game[translator.activePlayer];
   const players = gameManager.game[translator.playerBarn].playerPool[translator.pool];
   if (!pixi || !me || me.container == undefined || !settings.esp.enabled || !(gameManager.game?.initialized)) return;
-  try {
+
       const lineDrawer = createDrawer(me.container, 'lineDrawer');
       lineDrawer.clear();
       if (settings.esp.players) drawLines(me, players, lineDrawer);
@@ -116,7 +116,7 @@ function espTicker() {
       const laserDrawer = createDrawer(me.container, 'laserDrawer');
       laserDrawer.clear();
       if (settings.esp.flashlights.others || settings.esp.flashlights.own) drawLasers(me, players, laserDrawer);
-  } catch (e) { }
+
 }
 
 export default function esp() {
