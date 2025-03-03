@@ -3,8 +3,9 @@ const esbuild = require("esbuild");
 const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
+const { obfuscate } = require("js-confuser")
 
-const VERSION = "1.10"
+const VERSION = "1.12"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
@@ -14,6 +15,34 @@ const HTML_MINIFY_OPTIONS = {
   minifyCSS: true,
   minifyJS: true,
 };
+const OBFUSCATE_OPTIONS = {
+  target: 'browser',
+  minify: true,
+  identifierGenerator: 'zeroWidth',
+  renameLabels: true,
+  renameVariables: true,
+  renameGlobals: true,
+  variableMasking: false,
+  stringEncoding: false,
+  stringSplitting: false,
+  stringCompression: false,
+  duplicateLiteralsRemoval: false,
+  dispatcher: false,
+  rgf: false,
+  controlFlowFlattening: false,
+  calculator: false,
+  movedDeclarations: true,
+  opaquePredicates: false,
+  shuffle: false,
+  preserveFunctionLength: false,
+  astScrambler: false,
+  objectExtraction: false,
+  deadCode: false,
+  compact: true,
+  pack: true, 
+
+  preset: false,
+}
 
 async function clear() {
   try {
@@ -96,7 +125,11 @@ async function buildBundle(dev = true) {
     }
   });
 
-  const mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+  let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+  if (!dev) {
+    const obfuscated = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
+    mainContent = obfuscated.code
+  }
   const wrapperCode = `// Copyright © Surplus Softworks\n
 (function() {
   const whitelist = [

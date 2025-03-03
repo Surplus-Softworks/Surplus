@@ -2,7 +2,7 @@ import { settings } from "../loader.js";
 import { gameManager } from "../utils/injector.js";
 import { hook, object, ref_addEventListener, reflect } from "../utils/hook.js";
 import { lastAimPos } from "./aimbot.js";
-import { translator } from '../utils/obfuscatedNameTranslator.js';
+import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -12,8 +12,8 @@ let isMouseDown = false;
 
 function updateRotation() {
   if (
-    !gameManager.game[translator.activePlayer] ||
-    !gameManager.game[translator.activePlayer].bodyContainer ||
+    !gameManager.game[tr.activePlayer] ||
+    !gameManager.game[tr.activePlayer].bodyContainer ||
     gameManager.game.spectating
   )
     return;
@@ -21,26 +21,26 @@ function updateRotation() {
   if (isMouseDown) {
     if (!gameManager.game.spectating) {
       if (lastAimPos && settings.aimbot.enabled) {
-        gameManager.game[translator.activePlayer].bodyContainer.rotation = Math.atan2(
+        gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
           lastAimPos.clientY - globalThis.innerHeight / 2,
           lastAimPos.clientX - globalThis.innerWidth / 2
         );
       } else {
-        gameManager.game[translator.activePlayer].bodyContainer.rotation = Math.atan2(
-          gameManager.game[translator.input].mousePos.y - globalThis.innerHeight / 2,
-          gameManager.game[translator.input].mousePos.x - globalThis.innerWidth / 2
+        gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
+          gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
+          gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
         );
       }
     } else {
-      gameManager.game[translator.activePlayer].bodyContainer.rotation = -Math.atan2(
-        gameManager.game[translator.activePlayer][translator.dir].y,
-        gameManager.game[translator.activePlayer][translator.dir].x
+      gameManager.game[tr.activePlayer].bodyContainer.rotation = -Math.atan2(
+        gameManager.game[tr.activePlayer][tr.dir].y,
+        gameManager.game[tr.activePlayer][tr.dir].x
       );
     }
   } else {
-    gameManager.game[translator.activePlayer].bodyContainer.rotation = Math.atan2(
-      gameManager.game[translator.input].mousePos.y - globalThis.innerHeight / 2,
-      gameManager.game[translator.input].mousePos.x - globalThis.innerWidth / 2
+    gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
+      gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
+      gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
     );
   }
 }
@@ -51,8 +51,8 @@ function spinbotTicker() {
 }
 
 function calculateSpinbotMousePosition(axis) {
-  if (gameManager.game[translator.activePlayer].throwableState === "cook") {
-    return axis === "x" ? gameManager.game[translator.input].mousePos._x : gameManager.game[translator.input].mousePos._y;
+  if (gameManager.game[tr.activePlayer].throwableState === "cook") {
+    return axis === "x" ? gameManager.game[tr.input].mousePos._x : gameManager.game[tr.input].mousePos._y;
   }
 
   if (settings.spinbot.realistic) {
@@ -75,7 +75,7 @@ export default function spinbot() {
 
   let lastX = 0, lastY = 0;
   let isEmoteUpdate = false;
-  hook(gameManager.game[translator.emoteBarn].__proto__, translator.update, {
+  hook(gameManager.game[tr.emoteBarn].__proto__, tr.update, {
     apply(f, th, args) {
       isEmoteUpdate = true;
       try {
@@ -90,7 +90,7 @@ export default function spinbot() {
   });
 
 
-  object.defineProperty(gameManager.game[translator.input].mousePos, "y", {
+  object.defineProperty(gameManager.game[tr.input].mousePos, "y", {
     get() {
       if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._y;
@@ -116,7 +116,7 @@ export default function spinbot() {
     },
   });
 
-  object.defineProperty(gameManager.game[translator.input].mousePos, "x", {
+  object.defineProperty(gameManager.game[tr.input].mousePos, "x", {
     get() {
       if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
         return this._x;

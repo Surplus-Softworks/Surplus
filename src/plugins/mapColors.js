@@ -1,6 +1,6 @@
 import { hook } from "../utils/hook";
 import { reflect } from "../utils/hook";
-import { translator } from '../utils/obfuscatedNameTranslator.js';
+import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 let colors = {
   container_06: 0xC20E0F,

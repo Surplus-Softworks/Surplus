@@ -5,7 +5,7 @@ const { getOwnPropertyNames, getPrototypeOf } = object;
 const { __lookupGetter__: lookupGetter } = object.prototype;
 const { isArray } = Array;
 
-export let translator = {};
+export let tr = {};
 
 function getAllProperties(obj) {
   return [
@@ -38,12 +38,12 @@ function getSignature(obj) {
 
 export function translate(gameManager) {
   if (!location.hostname.includes("survev")) return new Promise((resolve) => {
-    translator = new Proxy({}, {
+    tr = new Proxy({}, {
       get(th, p) {
         return p;
       }
     });
-    resolve(translator);
+    resolve(tr);
   });
   return new Promise((resolve) => {
     const signatureMap = {
@@ -153,7 +153,7 @@ export function translate(gameManager) {
       }
 
       const game = gameManager.game;
-      const translated = { ...translator };
+      const translated = { ...tr };
 
       for (const prop in game) {
         if (game.hasOwnProperty(prop)) {
@@ -368,26 +368,26 @@ export function translate(gameManager) {
 
     function allKeysFound() {
       const signatureKeys = Object.keys(signatureMap);
-      const translatorKeys = Object.keys(translator);
+      const translatorKeys = Object.keys(tr);
       return signatureKeys.every(key => translatorKeys.includes(key));
     }
 
     const intervalId = setInterval(() => {
-      translator = matchGameProperties();
+      tr = matchGameProperties();
       if (DEV) {
-        window.translator = translator;
+        window.translator = tr;
       }
 
       if (allKeysFound()) {
         clearInterval(intervalId);
-        resolve(translator);
+        resolve(tr);
       }
     });
 
     setTimeout(() => {
       if (!allKeysFound()) {
         clearInterval(intervalId);
-        resolve(translator);
+        resolve(tr);
       }
     }, 1000);
   });

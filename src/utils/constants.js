@@ -1,6 +1,6 @@
 import { hook, reflect, object } from "./hook.js";
 import { gameManager } from "./injector.js";
-import { translator } from "./obfuscatedNameTranslator.js";
+import { tr } from "./obfuscatedNameTranslator.js";
 
 export const inputCommands = {
     MoveLeft: 0,
@@ -94,11 +94,11 @@ hook(Object, "keys", {
 });
 
 export function findTeam(player) {
-    return object.keys(gameManager.game[translator.playerBarn].teamInfo).find(team => gameManager.game[translator.playerBarn].teamInfo[team].playerIds.includes(player.__id));
+    return object.keys(gameManager.game[tr.playerBarn].teamInfo).find(team => gameManager.game[tr.playerBarn].teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeapon(player) {
-    const weaponType = player[translator.netData][translator.activeWeapon];
+    const weaponType = player[tr.netData][tr.activeWeapon];
     return weaponType && guns[weaponType] ? guns[weaponType] : null;
 }
 

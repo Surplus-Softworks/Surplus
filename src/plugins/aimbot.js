@@ -7,7 +7,7 @@ import {
 } from '../utils/constants.js';
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
-import { translator } from '../utils/obfuscatedNameTranslator.js';
+import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
@@ -33,8 +33,8 @@ function calcAngle(playerPos, mePos) {
 function predictPosition(enemy, currentPlayer) {
     if (!enemy || !currentPlayer) return null;
 
-    const enemyPos = enemy[translator.posOld];
-    const currentPlayerPos = currentPlayer[translator.posOld];
+    const enemyPos = enemy[tr.posOld];
+    const currentPlayerPos = currentPlayer[tr.posOld];
     const now = performance.now();
     const enemyId = enemy.__id;
 
@@ -46,7 +46,7 @@ function predictPosition(enemy, currentPlayer) {
         state.previousEnemies[enemyId].shift();
 
     if (state.previousEnemies[enemyId].length < 20)
-        return gameManager.game[translator.camera][translator.pointToScreen]({
+        return gameManager.game[tr.camera][tr.pointToScreen]({
             x: enemyPos.x,
             y: enemyPos.y,
         });
@@ -91,7 +91,7 @@ function predictPosition(enemy, currentPlayer) {
         y: enemyPos.y + vey * t,
     };
 
-    return gameManager.game[translator.camera][translator.pointToScreen](predictedPos);
+    return gameManager.game[tr.camera][tr.pointToScreen](predictedPos);
 }
 
 function findTarget(players, me) {
@@ -102,7 +102,7 @@ function findTarget(players, me) {
     for (const player of players) {
         if (
             !player.active ||
-            player[translator.netData][translator.dead] ||
+            player[tr.netData][tr.dead] ||
             (!settings.aimbot.targetKnocked && player.downed) ||
             me.__id === player.__id ||
             me.layer !== player.layer ||
@@ -110,15 +110,15 @@ function findTarget(players, me) {
         )
             continue;
 
-        const screenPos = gameManager.game[translator.camera][translator.pointToScreen]({
-            x: player[translator.pos].x,
-            y: player[translator.pos].y,
+        const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
+            x: player[tr.pos].x,
+            y: player[tr.pos].y,
         });
         const distance = getDistance(
             screenPos.x,
             screenPos.y,
-            gameManager.game[translator.input].mousePos._x,
-            gameManager.game[translator.input].mousePos._y,
+            gameManager.game[tr.input].mousePos._x,
+            gameManager.game[tr.input].mousePos._y,
         );
 
         if (distance < minDistance) {
@@ -137,12 +137,12 @@ function aimbotTicker() {
         return
     };
 
-    const players = gameManager.game[translator.playerBarn].playerPool[translator.pool];
-    const me = gameManager.game[translator.activePlayer];
+    const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
+    const me = gameManager.game[tr.activePlayer];
 
     try {
         let enemy =
-            state.focusedEnemy?.active && !state.focusedEnemy[translator.netData][translator.dead]
+            state.focusedEnemy?.active && !state.focusedEnemy[tr.netData][tr.dead]
                 ? state.focusedEnemy
                 : null;
 
@@ -152,10 +152,10 @@ function aimbotTicker() {
         }
 
         if (enemy) {
-            const meX = me[translator.pos].x;
-            const meY = me[translator.pos].y;
-            const enemyX = enemy[translator.pos].x;
-            const enemyY = enemy[translator.pos].y;
+            const meX = me[tr.pos].x;
+            const meY = me[tr.pos].y;
+            const enemyX = enemy[tr.pos].x;
+            const enemyY = enemy[tr.pos].y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
@@ -169,12 +169,12 @@ function aimbotTicker() {
 
             if (!predictedPos) return aimbotDot.style.display = "none";
 
-            if (gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] == 2 &&
+            if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 &&
                 distanceToEnemy <= 8 &&
                 settings.aimbot.meleeLock &&
-                gameManager.game[translator.inputBinds].isBindDown(inputCommands.Fire)
+                gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)
             ) {
-                const moveAngle = calcAngle(enemy[translator.pos], me[translator.pos]) + Math.PI;
+                const moveAngle = calcAngle(enemy[tr.pos], me[tr.pos]) + Math.PI;
                 aimTouchMoveDir = {
                     touchMoveActive: true,
                     touchMoveLen: 255,
@@ -190,14 +190,14 @@ function aimbotTicker() {
                 aimTouchMoveDir = null;
             }
 
-            if (gameManager.game[translator.activePlayer][translator.localData][translator.curWeapIdx] == 2 &&
+            if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 &&
                 distanceToEnemy >= 8) {
                 aimTouchMoveDir = null;
                 lastAimPos = null;
                 return aimbotDot.style.display = "none";
             }
 
-            if (gameManager.game[translator.activePlayer].throwableState === 'cook') {
+            if (gameManager.game[tr.activePlayer].throwableState === 'cook') {
                 lastAimPos = null;
                 return aimbotDot.style.display = "none";
             }

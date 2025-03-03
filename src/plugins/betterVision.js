@@ -4,13 +4,13 @@ import {
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
 import { object, reflect, hook } from "../utils/hook.js";
-import { translator } from '../utils/obfuscatedNameTranslator.js';
+import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 function betterVisionTicker() {
   if (!(gameManager.game?.initialized)) return;
   try {
     if (settings.xray.enabled) {
-      gameManager.game[translator.renderer].layers[3].children.forEach(v => {
+      gameManager.game[tr.renderer].layers[3].children.forEach(v => {
         if (
           v._texture?.textureCacheIds != null &&
           v._texture.textureCacheIds.some(texture => texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05") || texture.includes("map-snow-"))
@@ -18,8 +18,8 @@ function betterVisionTicker() {
           v.visible = false
         }
       })
-      gameManager.game[translator.smokeBarn][translator.particles].forEach(v => { v.pos = { x: 1000000, y: 100000 } })
-      gameManager.game[translator.map][translator.obstaclePool][translator.pool].forEach(obstacle => {
+      gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { v.pos = { x: 1000000, y: 100000 } })
+      gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
         if (['tree', 'table', 'stairs'].some(substring => obstacle.type.includes(substring))) {
           obstacle.sprite.alpha = 0.55;
         };
@@ -37,7 +37,7 @@ export default function betterVision() {
       configurable: true,
       set(value) {
         this._bleedTicker = value;
-        const me = gameManager.game[translator.activePlayer];
+        const me = gameManager.game[tr.activePlayer];
         const meTeam = findTeam(me);
         const playerTeam = findTeam(arg);
 
@@ -71,7 +71,7 @@ export default function betterVision() {
       }
     });
   }
-  hook(gameManager.game[translator.playerBarn].playerPool[translator.pool], "push", {
+  hook(gameManager.game[tr.playerBarn].playerPool[tr.pool], "push", {
     apply(f, th, args) {
       args.forEach(arg => {
         nameTag(arg);
@@ -80,11 +80,16 @@ export default function betterVision() {
       return reflect.apply(f, th, args);
     }
   });
-  gameManager.game[translator.playerBarn].playerPool[translator.pool].forEach(v=>{
+  gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(v=>{
     nameTag(v);
   });
   if (first) {
     setInterval(betterVisionTicker, 150);
+    setInterval(()=>{
+      gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(v=>{
+        nameTag(v);
+      });
+    }, 1000)
     first = false;
   }
 }
