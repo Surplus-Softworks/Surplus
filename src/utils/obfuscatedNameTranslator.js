@@ -66,7 +66,7 @@ export function translate(gameManager) {
       gas: "3-8-3-0-14",
       uiManager: "51-64-87-2-204",
       ui2Manager: "1-28-5-4-38",
-      emoteBarn: "27-16-24-8-75",
+      emoteBarn: "",
       shotBarn: "0-3-0-1-4",
       objectCreator: "1-7-2-0-10",
       debugDisplay: "36-42-12-3-93",
@@ -233,6 +233,10 @@ export function translate(gameManager) {
                   }
                 }
               })
+              continue;
+            }
+            if (game[prop].hasOwnProperty("triggerPing")) {
+              translated["emoteBarn"] = prop;
               continue;
             }
             if (game[prop].hasOwnProperty("mapTexture")) {

@@ -5,7 +5,7 @@ const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser")
 
-const VERSION = "1.12"
+const VERSION = "1.13"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
@@ -155,7 +155,7 @@ async function buildBundle(dev = true) {
   fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
   fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
 // @name         Surplus
-// @version      1.8
+// @version      ${VERSION}
 // @description  A cheat for survev.io & more
 // @author       mahdi, noam
 // @match        *://*/*

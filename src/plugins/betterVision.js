@@ -6,6 +6,37 @@ import { settings } from "../loader.js";
 import { object, reflect, hook } from "../utils/hook.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 
+function nameTag(player) {
+  const me = gameManager.game[tr.activePlayer];
+  const meTeam = findTeam(me);
+  const playerTeam = findTeam(player);
+
+  reflect.defineProperty(player.nameText, "visible", {
+    get: () => true,
+    set: () => {}
+  });
+  
+  reflect.defineProperty(player.nameText, "tint", {
+    get: () => (playerTeam == meTeam ? 0x3a88f4 : 0xff2828),
+    set: () => {}
+  });
+  
+  reflect.defineProperty(player.nameText.style, "fill", {
+    get: () => (playerTeam == meTeam ? "#3a88f4" : "#ff2828"),
+    set: () => {}
+  });
+  
+  reflect.defineProperty(player.nameText.style, "fontSize", {
+    get: () => 20,
+    set: () => {}
+  });
+  
+  reflect.defineProperty(player.nameText.style, "dropShadowBlur", {
+    get: () => 0.1,
+    set: () => {}
+  });        
+}
+
 function betterVisionTicker() {
   if (!(gameManager.game?.initialized)) return;
   try {
@@ -27,69 +58,19 @@ function betterVisionTicker() {
           obstacle.sprite.alpha = 0;
         }
       });
+      gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(v=>{
+        nameTag(v);
+      });
     }
   } catch { }
 }
 let first = true;
 export default function betterVision() {
-  function nameTag(arg) {
-    object.defineProperty(arg, "bleedTicker", {
-      configurable: true,
-      set(value) {
-        this._bleedTicker = value;
-        const me = gameManager.game[tr.activePlayer];
-        const meTeam = findTeam(me);
-        const playerTeam = findTeam(arg);
-
-        object.defineProperty(arg.nameText, "visible", {
-          configurable: true,
-          value: true,
-        });
-
-        object.defineProperty(arg.nameText, "tint", {
-          configurable: true,
-          value: playerTeam == meTeam ? 0x3a88f4 : 0xff2828,
-        });
-
-        object.defineProperty(arg.nameText.style, "fill", {
-          configurable: true,
-          value: playerTeam == meTeam ? "#3a88f4" : "#ff2828",
-        });
-
-        object.defineProperty(arg.nameText.style, "fontSize", {
-          configurable: true,
-          value: 20,
-        });
-
-        object.defineProperty(arg.nameText.style, "dropShadowBlur", {
-          configurable: true,
-          value: 0.1,
-        });
-      },
-      get() {
-        return this._bleedTicker;
-      }
-    });
+  if (first) {
+    setInterval(betterVisionTicker, 150);
+    first = false;
   }
-  hook(gameManager.game[tr.playerBarn].playerPool[tr.pool], "push", {
-    apply(f, th, args) {
-      args.forEach(arg => {
-        nameTag(arg);
-      });
-
-      return reflect.apply(f, th, args);
-    }
-  });
   gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(v=>{
     nameTag(v);
   });
-  if (first) {
-    setInterval(betterVisionTicker, 150);
-    setInterval(()=>{
-      gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(v=>{
-        nameTag(v);
-      });
-    }, 1000)
-    first = false;
-  }
 }
