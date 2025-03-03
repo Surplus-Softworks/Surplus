@@ -8,8 +8,6 @@ import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 function nameTag(player) {
   const me = gameManager.game[tr.activePlayer];
-  const meTeam = findTeam(me);
-  const playerTeam = findTeam(player);
 
   reflect.defineProperty(player.nameText, "visible", {
     get: () => true,
@@ -17,12 +15,12 @@ function nameTag(player) {
   });
   
   reflect.defineProperty(player.nameText, "tint", {
-    get: () => (playerTeam == meTeam ? 0x3a88f4 : 0xff2828),
+    get: () => (findTeam(player) == findTeam(me) ? 0x3a88f4 : 0xff2828),
     set: () => {}
   });
   
   reflect.defineProperty(player.nameText.style, "fill", {
-    get: () => (playerTeam == meTeam ? "#3a88f4" : "#ff2828"),
+    get: () => (findTeam(player) == findTeam(me) ? "#3a88f4" : "#ff2828"),
     set: () => {}
   });
   
