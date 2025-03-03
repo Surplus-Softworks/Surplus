@@ -23,7 +23,7 @@ export default function inputOverride() {
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
         if (!DEV) {
-          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZGdnL3N1cnZpdg==')
+          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('aHR0cHMvL3MudXJwbC51cw==')
         }
       }
 
