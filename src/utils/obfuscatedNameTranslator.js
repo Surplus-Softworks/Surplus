@@ -313,7 +313,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.emoteBarn != null && translated.screenToPoint == null) {
-          emotebarn = new game[translated.emoteBarn].constructor();
+          let emotebarn = new game[translated.emoteBarn].constructor();
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = "ping_danger";
           emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
