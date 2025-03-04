@@ -10,7 +10,6 @@
     "crx3": "*",
     "esbuild": "*",
     "html-minifier-terser": "*",
-    "js-confuser": "*",
-    "terser": "*"
+    "js-confuser": "*"
   }
 }
