@@ -14,7 +14,7 @@ function updateRotation() {
   if (
     !gameManager.game[tr.activePlayer] ||
     !gameManager.game[tr.activePlayer].bodyContainer ||
-    gameManager.game.spectating
+    gameManager.game[tr.uiManager].spectating
   )
     return;
 
