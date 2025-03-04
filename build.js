@@ -4,8 +4,9 @@ const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser")
+const Terser = require("terser");
 
-const VERSION = "1.13"
+const VERSION = "1.14"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
@@ -15,6 +16,23 @@ const HTML_MINIFY_OPTIONS = {
   minifyCSS: true,
   minifyJS: true,
 };
+const MINIFY_OPTIONS = {
+  compress: {
+      passes: 3,
+      drop_console: true,
+      drop_debugger: true,
+      unsafe: true,
+      unsafe_math: true,
+      unsafe_comps: true,
+      unsafe_proto: true
+  },
+  mangle: {
+      toplevel: true
+  },
+  output: {
+      comments: false
+  }
+}
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
   minify: true,
@@ -126,8 +144,9 @@ async function buildBundle(dev = true) {
   });
 
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+  const minified = await Terser.minify(mainContent)
   if (!dev) {
-    const obfuscated = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
+    const obfuscated = await obfuscate(minified.code, OBFUSCATE_OPTIONS)
     mainContent = obfuscated.code
   }
   const wrapperCode = `// Copyright © Surplus Softworks\n

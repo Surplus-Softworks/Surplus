@@ -164,7 +164,7 @@ export default function initUI() {
                     readConfig(config);
                     loadedConfig = true;
                 });
-        }, 1000)
+        }, 300)
 
 
         reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION;

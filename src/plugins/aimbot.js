@@ -8,6 +8,8 @@ import {
 import { gameManager } from '../utils/injector.js';
 import { ui } from '../ui/worker.js';
 import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { reflect, ref_addEventListener } from '../utils/hook.js';
+import { inputs } from './inputOverride.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 
@@ -17,7 +19,24 @@ const state = {
     currentEnemy: null,
 };
 
+const arrayPush = Array.prototype.push;
+
+reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => {
+    switch (event.code) {
+        case "KeyN":
+            if (state.focusedEnemy) {
+                state.focusedEnemy = null;
+                break;
+            }
+            if (settings.aimbot.stickyTarget) {
+                state.focusedEnemy = state.currentEnemy;
+            }
+            break;
+    }
+}]);
+
 let aimbotDot;
+let stickyDot;
 
 function getDistance(x1, y1, x2, y2) {
     return (x1 - x2) ** 2 + (y1 - y2) ** 2;
@@ -131,7 +150,7 @@ function findTarget(players, me) {
 }
 
 function aimbotTicker() {
-    if (!settings.aimbot.enabled || !gameManager.game.initialized) {
+    if (!gameManager.game.initialized) {
         lastAimPos = null;
         aimbotDot.style.display = "none";
         return
@@ -145,6 +164,13 @@ function aimbotTicker() {
             state.focusedEnemy?.active && !state.focusedEnemy[tr.netData][tr.dead]
                 ? state.focusedEnemy
                 : null;
+
+        if (enemy) {
+            aimbotDot.style.backgroundColor = 'rgb(190, 12, 185)'
+        } else {
+            aimbotDot.style.backgroundColor = 'red'
+            state.focusedEnemy = null;
+        }
 
         if (!enemy) {
             enemy = findTarget(players, me);
@@ -169,9 +195,9 @@ function aimbotTicker() {
 
             if (!predictedPos) return aimbotDot.style.display = "none";
 
-            if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 &&
+            if ((gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 || settings.meleeLock.autoMelee) &&
                 distanceToEnemy <= 8 &&
-                settings.aimbot.meleeLock &&
+                settings.meleeLock.enabled &&
                 gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)
             ) {
                 const moveAngle = calcAngle(enemy[tr.pos], me[tr.pos]) + Math.PI;
@@ -185,6 +211,9 @@ function aimbotTicker() {
                     clientX: predictedPos.x,
                     clientY: predictedPos.y,
                 };
+                if (settings.meleeLock.autoMelee) {
+                    reflect.apply(arrayPush, inputs, ['EquipMelee']);
+                }
                 return aimbotDot.style.display = "none";
             } else {
                 aimTouchMoveDir = null;

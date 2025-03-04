@@ -148,7 +148,6 @@ export function translate(gameManager) {
 
     function matchGameProperties() {
       if (!gameManager || !gameManager.game) {
-        console.error("gameManager.game not found");
         return {};
       }
 

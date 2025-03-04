@@ -77,7 +77,8 @@ const registerSettings = (obj) => {
 };
 
 export const settings = {
-  aimbot: registerSettings({ enabled: "aim-enable", targetKnocked: "target-knocked", meleeLock: "melee-lock" }),
+  aimbot: registerSettings({ enabled: "aim-enable", targetKnocked: "target-knocked", stickyTarget: "sticky-target" }),
+  meleeLock: registerSettings({ enabled: "melee-lock", autoMelee: "auto-melee"}),
   spinbot: registerSettings({
     enabled: "spinbot-enable",
     realistic: "realistic",
@@ -90,6 +91,18 @@ export const settings = {
       el.oninput();
     },
     _speed: "spinbot-speed"
+  }),
+  mobileMovement: registerSettings({
+    enabled: "mobile-movement-enable",
+    get $smooth() {
+      return parseInt(getValue("mobile-movement-smooth"));
+    },
+    set $smooth(v) {
+      const el = reflect.apply(getElementById, ui, [this._smooth]);
+      el.value = v;
+      el.oninput();
+    },
+    _smooth: "mobile-movement-smooth"
   }),
   autoFire: registerSettings({ enabled: "semiauto-enable" }),
   xray: registerSettings({ enabled: "xray" }),
@@ -113,12 +126,20 @@ export const defaultSettings = {
   aimbot: {
     enabled: true,
     targetKnocked: true,
-    meleeLock: true
+    stickyTarget: true
+  },
+  meleeLock: {
+    enabled: true,
+    autoMelee: false
   },
   spinbot: {
     enabled: true,
     realistic: false,
     speed: 50
+  },
+  mobileMovement: {
+    enabled: false,
+    smooth: 50
   },
   autoFire: {
     enabled: true

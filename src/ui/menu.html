@@ -443,7 +443,7 @@
       <div class="nav-tabs">
         <button class="nav-tab active" data-tab="main">Main</button>
         <button class="nav-tab" data-tab="visuals">Visuals</button>
-        <!--<button class="nav-tab" data-tab="misc">Misc</button>-->
+        <button class="nav-tab" data-tab="experimental">Experimental</button>
         <button class="nav-tab" data-tab="help">Help</button>
       </div>
       <button class="close-btn">×</button>
@@ -466,10 +466,28 @@
             <label for="target-knocked">Target Knocked</label>
           </div>
           <div class="checkbox-item">
-            <input type="checkbox" id="melee-lock" />
-            <label for="melee-lock">Melee Lock (follow)</label>
+            <input type="checkbox" id="sticky-target" />
+            <label for="sticky-target">Sticky Target</label>
+            <div class="keybind-slot" style="margin-left:10px">N</div>
           </div>
         </div>
+
+
+        <div class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#ffffff" height="16px" width="16px" version="1.1" id="Capa_1" viewBox="0 0 445.167 445.167" xml:space="preserve" stroke="#ffffff"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M341.096,330.36l-11.788-25.336c-4.408-9.48-14.788-16.102-25.244-16.102h-33.804V70.595c0-5.453-2.346-12.943-5.457-17.423 l-33.55-48.314C229.109,1.771,225.95,0,222.584,0s-6.526,1.771-8.67,4.858l-33.55,48.313c-3.11,4.479-5.456,11.97-5.456,17.423 v218.328h-33.804c-10.453,0-20.833,6.619-25.243,16.097L104.07,330.36c-4.66,10.016-0.318,21.911,9.696,26.57 c10.014,4.659,21.91,0.319,26.57-9.695l8.52-18.313h41.912l8.426,40.698c-10.87,7.47-18.015,19.985-18.015,34.142 c0,22.83,18.574,41.404,41.405,41.404c22.831,0,41.405-18.574,41.405-41.404c0-14.157-7.145-26.672-18.015-34.142l8.425-40.698 h41.911l8.521,18.313c3.39,7.285,10.606,11.568,18.146,11.567c2.824,0,5.695-0.602,8.425-1.872 C341.416,352.271,345.757,340.376,341.096,330.36z"></path> </g></svg>
+          <div class="section-title-container">Melee Lock</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="melee-lock" />
+            <label for="melee-lock">Enabled</label>
+          </div>
+        </div>
+        <div class="group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="auto-melee"/>
+            <label for="auto-melee">Auto Equip</label>
+          </div>
+        </div>
+
 
         <div class="section-title">
           <svg xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" class="svg-icon" style="vertical-align: middle;fill: white;overflow: hidden;" viewBox="0 0 1024 1024" version="1.1"><path d="M554.666667 128a298.666667 298.666667 0 0 0 0 597.333333 213.333333 213.333333 0 0 0 0-426.666666 128 128 0 0 0 0 256 42.666667 42.666667 0 0 0 0-85.333334 42.666667 42.666667 0 0 1 0-85.333333 128 128 0 0 1 0 256 213.333333 213.333333 0 0 1 0-426.666667 298.666667 298.666667 0 0 1 0 597.333334 384 384 0 0 1-384-384 42.666667 42.666667 0 0 0-85.333334 0 469.333333 469.333333 0 0 0 469.333334 469.333333 384 384 0 0 0 0-768z"></path></svg>
@@ -581,24 +599,23 @@
         </div>
       </div>
     </div>
-    <!--
-    <div class="content-container" data-content="misc">
+
+    <div class="content-container" data-content="experimental">
       <div class="section">
         <div class="section-title">
-          <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3"><path d="M480-420q-68 0-123.5 38.5T276-280h408q-25-63-80.5-101.5T480-420Zm-168-60 44-42 42 42 42-42-42-42 42-44-42-42-42 42-44-42-42 42 42 44-42 42 42 42Zm250 0 42-42 44 42 42-42-42-42 42-44-42-42-44 42-42-42-42 42 42 44-42 42 42 42ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-400Zm0 320q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg>
-          <div class="section-title-container">Emote Spam</div>
-          <div class="keybind-slot">X</div>
+          <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227H480v-320q-134 0-227 93t-93 227q0 134 93 227t227 93Z"/></svg>
+          <div class="section-title-container">Mobile Movement</div>
           <div class="checkbox-item">
-            <input type="checkbox" id="emote-spam-enable" />
-            <label for="emote-spam-enable">Enabled</label>
+            <input type="checkbox" id="mobile-movement-enable" />
+            <label for="mobile-movement-enable">Enabled</label>
           </div>
         </div>
         <div class="group">
           <div class="checkbox-item slider-container">
-            <label for="emote-spam-speed">Speed:</label>
+            <label for="mobile-movement-smooth">Smooth:</label>
             <input
               type="range"
-              id="emote-spam-speed"
+              id="mobile-movement-smooth"
               min="0"
               max="100"
               value="50"
@@ -612,7 +629,7 @@
         </div>
       </div>
     </div>
-  -->
+
     <div class="content-container" data-content="help">
       <div class="section">
         <div class="section-title">
@@ -636,16 +653,25 @@
         </p>
         <ul class="discord-links">
           <li>
-            <span class="link-label">Main:</span>
-            <a style="color:#4c82f7!important;" href="https://discord.gg/surviv">https://discord.gg/surviv</a>
-          </li>
-          <li>
-            <span class="link-label">Backup:</span>
             <a style="color:#4c82f7!important;" href="https://discord.gg/Ggc2aEeSq5">https://discord.gg/Ggc2aEeSq5</a>
           </li>
         </ul>
       </div>
     
+      <div class="section">
+        <div class="section-title">
+          <div class="section-title-container">Website</div>
+        </div>
+        <p class="help-text">
+          To get the latest updates & find our Discord server in case of deletion, bookmark our site
+        </p>
+        <ul class="discord-links">
+          <li>
+            <a style="color:#69f74c!important;" href="https://s.urpl.us">https://s.urpl.us</a>
+          </li>
+        </ul>
+      </div>
+
       <div class="section">
         <div class="section-title">
           <div class="section-title-container">Credits</div>
