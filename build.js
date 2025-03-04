@@ -144,9 +144,8 @@ async function buildBundle(dev = true) {
   });
 
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
-  const minified = await Terser.minify(mainContent)
   if (!dev) {
-    const obfuscated = await obfuscate(minified.code, OBFUSCATE_OPTIONS)
+    const obfuscated = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
     mainContent = obfuscated.code
   }
   const wrapperCode = `// Copyright © Surplus Softworks\n
