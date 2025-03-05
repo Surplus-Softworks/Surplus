@@ -150,8 +150,8 @@ function findTarget(players, me) {
 }
 
 function aimbotTicker() {
-    if (!gameManager.game.initialized) {
-        lastAimPos = null;
+    lastAimPos = null;
+    if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled)) {
         aimbotDot.style.display = "none";
         return
     };
@@ -231,18 +231,20 @@ function aimbotTicker() {
                 return aimbotDot.style.display = "none";
             }
 
-            lastAimPos = {
-                clientX: predictedPos.x,
-                clientY: predictedPos.y,
-            };
-
-            if (
-                aimbotDot.style.left !== predictedPos.x + 'px' ||
-                aimbotDot.style.top !== predictedPos.y + 'px'
-            ) {
-                aimbotDot.style.left = predictedPos.x + 'px';
-                aimbotDot.style.top = predictedPos.y + 'px';
-                aimbotDot.style.display = 'block';
+            if (settings.aimbot.enabled)  {
+                lastAimPos = {
+                    clientX: predictedPos.x,
+                    clientY: predictedPos.y,
+                };
+    
+                if (
+                    aimbotDot.style.left !== predictedPos.x + 'px' ||
+                    aimbotDot.style.top !== predictedPos.y + 'px'
+                ) {
+                    aimbotDot.style.left = predictedPos.x + 'px';
+                    aimbotDot.style.top = predictedPos.y + 'px';
+                    aimbotDot.style.display = 'block';
+                }
             }
         } else {
             aimTouchMoveDir = null;
