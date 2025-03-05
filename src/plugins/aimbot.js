@@ -150,8 +150,8 @@ function findTarget(players, me) {
 }
 
 function aimbotTicker() {
+    lastAimPos = null;
     if (!gameManager.game.initialized) {
-        lastAimPos = null;
         aimbotDot.style.display = "none";
         return
     };
