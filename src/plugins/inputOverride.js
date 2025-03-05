@@ -26,7 +26,7 @@ export default function inputOverride() {
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
         if (!DEV) {
-          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('aHR0cHMvL3MudXJwbC51cw==')
+          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZC5nZy9zdXI=')
         }
       }
 
@@ -55,6 +55,11 @@ export default function inputOverride() {
         }
       }
       
+      if (!args[1].moveRight && !args[1].moveLeft && !args[1].moveDown && !args[1].moveUp) {
+        cachedMoveDir.x = 0; 
+        cachedMoveDir.y = 0; 
+      } 
+
       if (aimTouchMoveDir) {
         args[1].touchMoveActive = true;
         args[1].touchMoveLen = true;

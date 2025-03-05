@@ -6,7 +6,7 @@ const archiver = require("archiver");
 const { obfuscate } = require("js-confuser")
 const Terser = require("terser");
 
-const VERSION = "1.14"
+const VERSION = "1.15"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,

@@ -15,7 +15,6 @@ import {
 } from "../utils/constants.js";
 import { settings } from "../loader.js";
 
-
 const GREEN = 0x399d37;
 const BLUE = 0x3a88f4;
 const RED = 0xdc3734;

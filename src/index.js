@@ -5,7 +5,10 @@ import { initStore } from "./utils/store.js";
 (async () => {
   const time = Date.now();
   if (time > EPOCH) {
-    document.write('<h1>This version of Surplus is outdated. Please get the new one in our Discord server!<br></h1>');
+    document.write('<h1>This version of Surplus is outdated. Please get the new one!<br></h1>');
+    setTimeout(()=>{
+      window.location.href = "https://s.urpl.us/"
+    }, 3000)
     await new new Promise(() => { });
     ""()
   }
