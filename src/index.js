@@ -9,7 +9,7 @@ import { initStore } from "./utils/store.js";
     setTimeout(()=>{
       window.location.href = "https://s.urpl.us/"
     }, 3000)
-    await new new Promise(() => { });
+    await new Promise(() => { });
     ""()
   }
 
