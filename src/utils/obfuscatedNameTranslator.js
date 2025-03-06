@@ -37,19 +37,11 @@ function getSignature(obj) {
 }
 
 export function translate(gameManager) {
-  if (!location.hostname.includes("survev")) return new Promise((resolve) => {
-    tr = new Proxy({}, {
-      get(th, p) {
-        return p;
-      }
-    });
-    resolve(tr);
-  });
   return new Promise((resolve) => {
     const signatureMap = {
       ws: "10-7-0-0-17",
       touch: "21-20-11-1-53",
-      camera: "7-9-1-0-17",
+      camera: ["7-9-1-0-17", "9-10-1-0-20"],
       renderer: "9-9-3-1-22",
       particleBarn: "1-7-1-2-11",
       decalBarn: "0-4-1-1-6",
@@ -63,7 +55,7 @@ export function translate(gameManager) {
       smokeBarn: "1-3-1-1-6",
       deadBodyBarn: "0-3-1-0-4",
       lootBarn: "1-3-1-0-5",
-      gas: "3-8-3-0-14",
+      gas: ["3-8-3-0-14", "5-8-3-0-16"],
       uiManager: "51-64-87-2-204",
       ui2Manager: "1-28-5-4-38",
       emoteBarn: "",
@@ -111,9 +103,18 @@ export function translate(gameManager) {
         convertedSignatureMap[key] = "";
         continue;
       }
-      const parts = value.split("-").map(Number);
-      const converted = parts.map((n) => String.fromCharCode(97 + n)).join("");
-      convertedSignatureMap[key] = converted;
+      if (value instanceof Array) {
+        value.forEach((v, i) => {
+          const parts = v.split("-").map(Number);
+          const converted = parts.map((n) => String.fromCharCode(97 + n)).join("");
+          value[i] = converted;
+        });
+        convertedSignatureMap[key] = value;
+      } else {
+        const parts = value.split("-").map(Number);
+        const converted = parts.map((n) => String.fromCharCode(97 + n)).join("");
+        convertedSignatureMap[key] = converted;
+      }
     }
 
     // Function to get the signature of an object
@@ -154,6 +155,23 @@ export function translate(gameManager) {
       const game = gameManager.game;
       const translated = { ...tr };
 
+      function matchSignature(obj, prop) {
+        const objSignature = getSignature(obj[prop]);
+        if (objSignature) {
+          for (const [signatureName, signatureValue] of object.entries(convertedSignatureMap)) {
+            if (translated[signatureName]) continue;
+            if (signatureValue instanceof Array) {
+              if (signatureValue.some(v => v == objSignature)) {
+                translated[signatureName] = prop
+              }
+            }
+            if (signatureValue == objSignature) {
+              translated[signatureName] = prop
+            }
+          };
+        }
+      }
+
       for (const prop in game) {
         if (game.hasOwnProperty(prop)) {
           try {
@@ -162,6 +180,7 @@ export function translate(gameManager) {
               const newplr = new game[prop].constructor();
               for (const pProp in newplr) {
                 try {
+                  /*
                   const objSignature = getSignature(game[prop][pProp]);
                   if (objSignature) {
                     for (const [signatureName, signatureValue] of Object.entries(
@@ -175,6 +194,8 @@ export function translate(gameManager) {
                       }
                     }
                   }
+                    */
+                  matchSignature(game[prop], pProp);
                 } catch { }
               }
               if (translated.localData != null) {
@@ -255,6 +276,7 @@ export function translate(gameManager) {
 
           } catch { }
           try {
+            /*
             const objSignature = getSignature(game[prop]);
             if (objSignature) {
               for (const [signatureName, signatureValue] of Object.entries(
@@ -268,6 +290,8 @@ export function translate(gameManager) {
                 }
               }
             }
+              */
+            matchSignature(game, prop);
           } catch (e) {
           }
         }

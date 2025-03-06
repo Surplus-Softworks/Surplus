@@ -151,7 +151,7 @@ function findTarget(players, me) {
 
 function aimbotTicker() {
     lastAimPos = null;
-    if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled)) {
+    if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || gameManager.game[tr.uiManager].spectating) {
         aimbotDot.style.display = "none";
         return
     };
@@ -231,7 +231,7 @@ function aimbotTicker() {
                 return aimbotDot.style.display = "none";
             }
 
-            if (settings.aimbot.enabled)  {
+            if (settings.aimbot.enabled || (settings.meleeLock.enabled && distanceToEnemy <= 8))  {
                 lastAimPos = {
                     clientX: predictedPos.x,
                     clientY: predictedPos.y,
@@ -245,6 +245,8 @@ function aimbotTicker() {
                     aimbotDot.style.top = predictedPos.y + 'px';
                     aimbotDot.style.display = 'block';
                 }
+            } else {
+                aimbotDot.style.display = "none";
             }
         } else {
             aimTouchMoveDir = null;

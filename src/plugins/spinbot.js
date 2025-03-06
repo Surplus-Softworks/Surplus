@@ -19,7 +19,7 @@ function updateRotation() {
     return;
 
   if (isMouseDown) {
-    if (!gameManager.game.spectating) {
+    if (!gameManager.game[tr.uiManager].spectating) {
       if (lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
         gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
           lastAimPos.clientY - globalThis.innerHeight / 2,
