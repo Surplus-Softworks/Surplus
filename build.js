@@ -4,9 +4,8 @@ const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser")
-const Terser = require("terser");
 
-const VERSION = "1.16"
+const VERSION = "1.17"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
