@@ -8,7 +8,7 @@ function nameTag(player) {
   const me = gameManager.game[tr.activePlayer];
   reflect.defineProperty(player.nameText, "visible", {
     get: () => true,
-    set: () => {this.visible = true}
+    set: () => {}
   });
   player.nameText.visible = true;
   player.nameText.tint = findTeam(player) == findTeam(me) ? 0xcbddf5 : 0xff2828;
