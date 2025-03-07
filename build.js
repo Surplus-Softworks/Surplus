@@ -159,7 +159,7 @@ async function buildBundle(dev = true) {
     '50v50',
     'surv',
     'zurv',
-  ];
+  ]; // add site names here to play on other surviv clones
 
   if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
     return;
