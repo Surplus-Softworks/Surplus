@@ -153,7 +153,6 @@ async function buildBundle(dev = true) {
     'surviv',
     'survev',
     'resurviv',
-    'zurviv',
     'expandedwater',
     '66.179.254.36',
     'eu-comp',
