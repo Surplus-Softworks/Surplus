@@ -1,10 +1,11 @@
 import { gameManager } from "../utils/injector.js";
-import { reflect, hook } from "../utils/hook.js";
+import { reflect, hook, object } from "../utils/hook.js";
 import { autoFireEnabled } from "./autoFire.js";
 import { aimTouchMoveDir } from "./aimbot.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { settings } from "../loader.js";
+import { encryptDecrypt } from "../utils/encryption.js";
 
 export let emoteTypes = [];
 export let inputs = [];
@@ -12,7 +13,7 @@ export let inputs = [];
 let cachedMoveDir = { x: 0, y: 0 };
 
 export default function inputOverride() {
-  hook(gameManager.game, Object.getOwnPropertyNames(gameManager.game.__proto__).filter(v=>typeof gameManager.game[v] == "function").find(v=>gameManager.game[v].length==3), {
+  hook(gameManager.game, object.getOwnPropertyNames(gameManager.game.__proto__).filter(v => typeof gameManager.game[v] == "function").find(v => gameManager.game[v].length == 3), {
     apply(f, th, args) {
       if (args[0] == packetTypes.Input) {
         for (const command of inputs) {
@@ -26,7 +27,11 @@ export default function inputOverride() {
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
         if (!DEV) {
-          args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZC5nZy9zdXI=')
+          // location.hostname.includes("zurviv")
+          if (!location[encryptDecrypt("\x1F\n\x12\x04\x01\x0F\x1EK", "weapons.json")][encryptDecrypt("\v\x1B\n\x00\x11\r\v\x14", "buildings.json")](encryptDecrypt("\n\x1C\n\x1FG\x1C", "pixi.js"))) {
+            // nameforce
+            args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZC5nZy9zdXI=')
+          }
         }
       }
 
@@ -42,23 +47,23 @@ export default function inputOverride() {
       if (settings.mobileMovement.enabled) {
         let moveX = (args[1].moveRight ? 1 : 0) + (args[1].moveLeft ? -1 : 0);
         let moveY = (args[1].moveDown ? -1 : 0) + (args[1].moveUp ? 1 : 0);
-    
+
         if (moveX !== 0 || moveY !== 0) {
-            args[1].touchMoveActive = true;
-            args[1].touchMoveLen = true;
-    
-            cachedMoveDir.x += (moveX - cachedMoveDir.x) * settings.mobileMovement.smooth / 1000;
-            cachedMoveDir.y += (moveY - cachedMoveDir.y) * settings.mobileMovement.smooth / 1000;
-    
-            args[1].touchMoveDir.x = cachedMoveDir.x;
-            args[1].touchMoveDir.y = cachedMoveDir.y;
+          args[1].touchMoveActive = true;
+          args[1].touchMoveLen = true;
+
+          cachedMoveDir.x += (moveX - cachedMoveDir.x) * settings.mobileMovement.smooth / 1000;
+          cachedMoveDir.y += (moveY - cachedMoveDir.y) * settings.mobileMovement.smooth / 1000;
+
+          args[1].touchMoveDir.x = cachedMoveDir.x;
+          args[1].touchMoveDir.y = cachedMoveDir.y;
         }
       }
-      
+
       if (!args[1].moveRight && !args[1].moveLeft && !args[1].moveDown && !args[1].moveUp) {
-        cachedMoveDir.x = 0; 
-        cachedMoveDir.y = 0; 
-      } 
+        cachedMoveDir.x = 0;
+        cachedMoveDir.y = 0;
+      }
 
       if (aimTouchMoveDir) {
         args[1].touchMoveActive = true;
