@@ -51,6 +51,7 @@ export default function initUI() {
                     break;
                 case "KeyB":
                     settings.aimbot.enabled = !settings.aimbot.enabled;
+                    break;
                 case "KeyH":
                     settings.spinbot.enabled = !settings.spinbot.enabled;
                     break;
