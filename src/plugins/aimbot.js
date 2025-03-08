@@ -53,8 +53,8 @@ function calcAngle(playerPos, mePos) {
 function predictPosition(enemy, currentPlayer) {
     if (!enemy || !currentPlayer) return null;
 
-    const enemyPos = enemy[tr.posOld];
-    const currentPlayerPos = currentPlayer[tr.posOld];
+    const enemyPos = enemy[tr.visualPos];
+    const currentPlayerPos = currentPlayer[tr.visualPos];
     const now = performance.now();
     const enemyId = enemy.__id;
 
@@ -131,8 +131,8 @@ function findTarget(players, me) {
             continue;
 
         const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
-            x: player[tr.pos].x,
-            y: player[tr.pos].y,
+            x: player[tr.visualPos].x,
+            y: player[tr.visualPos].y,
         });
         const distance = getDistance(
             screenPos.x,
@@ -191,10 +191,10 @@ function aimbotTicker() {
         }
 
         if (enemy) {
-            const meX = me[tr.pos].x;
-            const meY = me[tr.pos].y;
-            const enemyX = enemy[tr.pos].x;
-            const enemyY = enemy[tr.pos].y;
+            const meX = me[tr.visualPos].x;
+            const meY = me[tr.visualPos].y;
+            const enemyX = enemy[tr.visualPos].x;
+            const enemyY = enemy[tr.visualPos].y;
 
             const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
 
@@ -213,7 +213,7 @@ function aimbotTicker() {
                 settings.meleeLock.enabled &&
                 gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)
             ) {
-                const moveAngle = calcAngle(enemy[tr.pos], me[tr.pos]) + Math.PI;
+                const moveAngle = calcAngle(enemy[tr.visualPos], me[tr.visualPos]) + Math.PI;
                 aimTouchMoveDir = {
                     touchMoveActive: true,
                     touchMoveLen: 255,
@@ -268,7 +268,7 @@ function aimbotTicker() {
         }
     } catch (error) {
         aimbotDot.style.display = "none";
-        //console.error("Error in aimbotTicker:", error);
+        console.error("Error in aimbotTicker:", error);
     }
 }
 

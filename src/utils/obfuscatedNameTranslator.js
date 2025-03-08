@@ -78,6 +78,7 @@ export function translate(gameManager) {
       pieTimer: "6-6-5-0-17",
       pos: "",
       posOld: "",
+      visualPos: "",
       dir: "",
       dirOld: "",
       zoom: "",
@@ -228,31 +229,42 @@ export function translate(gameManager) {
                   })
                 } catch { }
               }
-              const vectors = getOwnPropertyNames(newplr)
-                .filter(v => typeof newplr[v] == "object" && newplr[v] != null)
-                .filter(v => getOwnPropertyNames(newplr[v]).length == 2)
-                .filter(v => newplr[v].x != null);
-              //console.log(vectors);
-              vectors.forEach(key => {
-                const val = newplr[key];
-                if (val.x == 0) {
-                  if (key in game[prop][translated.netData]) {
-                    // pos
-                    translated.pos = key;
-                  } else {
-                    // posOld
-                    translated.posOld = key;
-                  }
-                } else if (val.x == 1) {
-                  if (key in game[prop][translated.netData]) {
-                    // dir
-                    translated.dir = key;
-                  } else {
-                    // dirOld
-                    translated.dirOld = key;
-                  }
-                }
-              })
+              (() => {
+                let nextIsVisual = false;
+                let cameraInteracted = false;
+                const GET = [null, null, "pos", "dir"];
+                const SET = ["posOld", "dirOld", null];
+                const UPDATE = getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
+                try {
+                  newplr[UPDATE].call(new Proxy({}, {
+                    get(th, p) {
+                      const val = GET.shift();
+                      if (val) translated[val] = p;
+                      return new Proxy({ x: 0, y: 0 }, {
+                        get(th, p) {
+                          return th[p] || { x: 0, y: 0 }
+                        }
+                      })
+                    },
+                    set(th, p, v) {
+                      if (nextIsVisual) {
+                        nextIsVisual = false;
+                        translated.visualPos = p;
+                      }
+                      const val = SET.shift();
+                      if (val) translated[val] = p;
+                      return true;
+                    }
+                  }), null, { getPlayerById: () => { } }, null, null, null, null, new Proxy({}, {
+                    get(th, p) {
+                      nextIsVisual = true;
+                      cameraInteracted = true;
+                    }
+                  }))
+                } catch { }
+                if (!cameraInteracted) translated.visualPos = translated.pos;
+              })();
+
               continue;
             }
             if (game[prop].hasOwnProperty("triggerPing")) {
