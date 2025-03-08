@@ -236,11 +236,11 @@ export function translate(gameManager) {
                 const SET = ["posOld", "dirOld", null];
                 const UPDATE = getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
                 try {
-                  newplr[UPDATE].call(new Proxy({}, {
+                  newplr[UPDATE].call(new proxy({}, {
                     get(th, p) {
                       const val = GET.shift();
                       if (val) translated[val] = p;
-                      return new Proxy({ x: 0, y: 0 }, {
+                      return new proxy({ x: 0, y: 0 }, {
                         get(th, p) {
                           return th[p] || { x: 0, y: 0 }
                         }
@@ -255,7 +255,7 @@ export function translate(gameManager) {
                       if (val) translated[val] = p;
                       return true;
                     }
-                  }), null, { getPlayerById: () => { } }, null, null, null, null, new Proxy({}, {
+                  }), null, { getPlayerById: () => { } }, null, null, null, null, new proxy({}, {
                     get(th, p) {
                       nextIsVisual = true;
                       cameraInteracted = true;
@@ -353,7 +353,7 @@ export function translate(gameManager) {
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = "ping_danger";
           emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
-          emotebarn.camera = new Proxy({}, {
+          emotebarn.camera = new proxy({}, {
             get(th, p) {
               translated.screenToPoint = p;
             }
@@ -371,7 +371,7 @@ export function translate(gameManager) {
       try {
         if (translated.touch != null && translated.curWeapIdx == null) {
           game[translated.touch].getAimMovement.call({}, {
-            [translated.localData]: new Proxy({}, {
+            [translated.localData]: new proxy({}, {
               get(th, p) {
                 translated.curWeapIdx = p;
               }
