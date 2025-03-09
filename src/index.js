@@ -2,8 +2,6 @@ import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initStore } from "./utils/store.js";
 
-console.log(1);
-
 (async () => {
   const time = Date.now();
   if (time > EPOCH) {

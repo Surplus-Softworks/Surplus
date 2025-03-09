@@ -6,7 +6,7 @@ const archiver = require("archiver");
 const { obfuscate } = require("js-confuser");
 
 
-const VERSION = "1.19"
+const VERSION = "1.20"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
