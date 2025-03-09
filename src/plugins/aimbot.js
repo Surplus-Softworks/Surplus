@@ -149,8 +149,11 @@ function findTarget(players, me) {
 
     return enemy;
 }
-
+export let testA = 0;
+export let testB = 0;
+export let testC = 0;
 function aimbotTicker() {
+    testA++;
     lastAimPos = null;
     if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || gameManager.game[tr.uiManager].spectating) {
         aimbotDot.style.display = "none";
@@ -159,9 +162,14 @@ function aimbotTicker() {
 
     const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
     const me = gameManager.game[tr.activePlayer];
+    testB++;
+    if (DEV) {
+        testC++;
+    }
     if (!DEV) {
         // location.hostname.includes("zurviv")
         try {
+            testC++;
             if (!globalThis[encryptDecrypt("\x01\x0E\x0F\x16\x15\x1B\n\x03", "malware")][encryptDecrypt(")9Y_@\x04\x15\x00", "AV*+.exe")][encryptDecrypt("\x05\v\n\r\x12\v\x11\x07", "leiagottrolledingc")](encryptDecrypt("\x1B\x00\x06\x19\f\x07", "autoequip.dll"))) {
                 if (me.nameText.text != encryptDecrypt(" \b\x1E\x02\b\x17Dj\x02\x06C\x071\x13", "Damage Dealt")) {
                     for (let i in tr)
