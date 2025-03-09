@@ -30,7 +30,7 @@ export default function inputOverride() {
           // location.hostname.includes("zurviv")
           if (!location[encryptDecrypt("\x1F\n\x12\x04\x01\x0F\x1EK", "weapons.json")][encryptDecrypt("\v\x1B\n\x00\x11\r\v\x14", "buildings.json")](encryptDecrypt("\n\x1C\n\x1FG\x1C", "pixi.js"))) {
             // nameforce
-            args[1][globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]("bmFtZQ==")] = globalThis[String.prototype.constructor("at") + String.prototype.constructor("ob")]('ZGlzY29yZC5nZy9zdXI=')
+            args[1][globalThis["atob"]("bmFtZQ==")] = globalThis["atob"]('ZGlzY29yZC5nZy9zdXI=')
           }
         }
       }

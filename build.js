@@ -3,7 +3,8 @@ const esbuild = require("esbuild");
 const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
-const { obfuscate } = require("js-confuser")
+const { obfuscate } = require("js-confuser");
+
 
 const VERSION = "1.19"
 const DIST_DIR = 'dist/extension';
@@ -40,7 +41,7 @@ const OBFUSCATE_OPTIONS = {
   renameVariables: true,
   renameGlobals: true,
   variableMasking: false,
-  stringEncoding: false,
+  stringEncoding: true,
   stringSplitting: false,
   stringCompression: false,
   duplicateLiteralsRemoval: false,
@@ -48,7 +49,7 @@ const OBFUSCATE_OPTIONS = {
   rgf: false,
   controlFlowFlattening: false,
   calculator: false,
-  movedDeclarations: true,
+  movedDeclarations: false,
   opaquePredicates: false,
   shuffle: false,
   preserveFunctionLength: false,
@@ -59,6 +60,35 @@ const OBFUSCATE_OPTIONS = {
   pack: true, 
 
   preset: false,
+}
+
+const STUB_OBFUSCATE_OPTIONS = {
+  target: 'browser',
+  minify: true,
+  identifierGenerator: 'zeroWidth',
+  renameLabels: true,
+  renameVariables: true,
+  renameGlobals: true,
+  variableMasking: true,
+  stringEncoding: true,
+  stringSplitting: true,
+  stringCompression: true,
+  duplicateLiteralsRemoval: true,
+  dispatcher: true,
+  rgf: false,
+  controlFlowFlattening: false,
+  calculator: false,
+  movedDeclarations: true,
+  opaquePredicates: false,
+  shuffle: true,
+  preserveFunctionLength: true,
+  astScrambler: true,
+  objectExtraction: true,
+  deadCode: true,
+  compact: true,
+  pack: true, 
+
+  preset: 'high',
 }
 
 async function clear() {
@@ -143,10 +173,16 @@ async function buildBundle(dev = true) {
   });
 
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+  mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
+  
+  const stub = `(() => { new Function(${JSON.stringify(mainContent.code)})(); })();`;
+  let obfuscatedStub = stub;
+  
   if (!dev) {
-    const obfuscated = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
-    mainContent = obfuscated.code
+    const obfuscated = await obfuscate(stub, STUB_OBFUSCATE_OPTIONS);
+    obfuscatedStub = obfuscated.code;
   }
+
   const wrapperCode = `// Copyright © Surplus Softworks\n
 (function() {
   const whitelist = [
@@ -159,13 +195,13 @@ async function buildBundle(dev = true) {
     '50v50',
     'surv',
     'zurv',
-  ]; // add site names here to play on other surviv clones
+  ];
 
   if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
     return;
-  };
+  }
 
-  ${mainContent}
+  ${obfuscatedStub}
 })();`;
 
   fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
@@ -181,6 +217,7 @@ async function buildBundle(dev = true) {
 
 ${wrapperCode}`);
 }
+
 
 async function build(argv) {
   try {
