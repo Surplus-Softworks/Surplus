@@ -157,7 +157,9 @@ function aimbotTicker() {
     lastAimPos = null;
     if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || gameManager.game[tr.uiManager].spectating) {
         aimbotDot.style.display = "none";
-        return
+        testB++;
+        testC++;
+        return;
     };
 
     const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
