@@ -167,7 +167,7 @@ async function buildBundle(dev = true) {
     plugins: [htmlPlugin],
     define: {
       EPOCH: EPOCH.toString(),
-      VERSION: VERSION,
+      VERSION: JSON.stringify(VERSION),
       DEV: dev.toString()
     }
   });
