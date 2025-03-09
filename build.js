@@ -49,12 +49,12 @@ const OBFUSCATE_OPTIONS = {
   rgf: false,
   controlFlowFlattening: false,
   calculator: false,
-  movedDeclarations: false,
+  movedDeclarations: true,
   opaquePredicates: false,
   shuffle: false,
   preserveFunctionLength: false,
   astScrambler: false,
-  objectExtraction: false,
+  objectExtraction: true,
   deadCode: false,
   compact: true,
   pack: true, 
@@ -77,9 +77,9 @@ const STUB_OBFUSCATE_OPTIONS = {
   dispatcher: true,
   rgf: false,
   controlFlowFlattening: false,
-  calculator: false,
+  calculator: true,
   movedDeclarations: true,
-  opaquePredicates: false,
+  opaquePredicates: true,
   shuffle: true,
   preserveFunctionLength: true,
   astScrambler: true,
@@ -175,7 +175,7 @@ async function buildBundle(dev = true) {
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
   mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
   
-  const stub = `(() => { new Function(${JSON.stringify(mainContent.code)})(); })();`;
+  const stub = `try { (() => { new Function(${JSON.stringify(mainContent.code)})(); })(); } catch {}`;
   let obfuscatedStub = stub;
   
   if (!dev) {
