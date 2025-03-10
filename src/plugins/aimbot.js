@@ -219,7 +219,7 @@ function aimbotTicker() {
             if (!predictedPos) return aimbotDot.style.display = "none";
 
             if ((gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 || settings.meleeLock.autoMelee) &&
-                distanceToEnemy <= 8 &&
+                distanceToEnemy <= 5.5 &&
                 settings.meleeLock.enabled &&
                 gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)
             ) {
@@ -243,7 +243,7 @@ function aimbotTicker() {
             }
 
             if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 &&
-                distanceToEnemy >= 8) {
+                distanceToEnemy >= 5.5) {
                 aimTouchMoveDir = null;
                 lastAimPos = null;
                 return aimbotDot.style.display = "none";

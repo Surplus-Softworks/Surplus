@@ -114,7 +114,8 @@ export const settings = {
       el.value = v;
       el.oninput();
     },
-    _smokeTransparency: "smoke-transparency"
+    _smokeTransparency: "smoke-transparency",
+    darkerSmokes: "darker-smokes"
   }),
   esp: registerSettings({
     enabled: "esp-enable",
@@ -156,7 +157,8 @@ export const defaultSettings = {
   },
   xray: {
     enabled: true,
-    smokeTransparency: 50
+    smokeTransparency: 50,
+    darkerSmokes: true,
   },
   esp: {
     enabled: true,

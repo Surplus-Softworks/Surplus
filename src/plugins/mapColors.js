@@ -12,7 +12,6 @@ let colors = {
   bunker_storm_01: 0x6a329f,
   bunker_hydra_01: 0x990dd2,
 
-  bunker_crossing_01: 0xcf149a,
   bunker_crossing_stairs_01b: 0xcf149a,
   bunker_crossing_stairs_01: 0xcf149a,
 };
@@ -24,6 +23,9 @@ let sizes = {
   stone_05: 6,
   bunker_storm_01: 1.75,
   bunker_hydra_01: 1.75,
+
+  bunker_crossing_stairs_01b: 2,
+  bunker_crossing_stairs_01: 2,
 };
 
 const colorize = (map) => {
@@ -41,7 +43,7 @@ export default function mapColors() {
   hook(Array.prototype, "sort", {
     apply(f, th, args) {
       try {
-        if (th[0].obj.ori) {
+        if (th.some(v=>v?.obj?.ori != null)) {
           colorize(th);
         }
       } catch {
