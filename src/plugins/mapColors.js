@@ -22,7 +22,6 @@ let sizes = {
 
 const colorize = (map) => {
   map.forEach(object => {
-    console.log(object);
     if (!colors[object.obj.type]) return;
     object.shapes.forEach(shape => {
       if (!sizes[object.obj.type]) return;
