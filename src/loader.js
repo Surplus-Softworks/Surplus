@@ -106,15 +106,15 @@ export const settings = {
   autoFire: registerSettings({ enabled: "semiauto-enable" }),
   xray: registerSettings({ 
     enabled: "xray",
-    get $smokeTransparency() {
-      return parseInt(getValue("smoke-transparency"));
+    get $smokeOpacity() {
+      return parseInt(getValue("smoke-opacity"));
     },
-    set $smokeTransparency(v) {
-      const el = reflect.apply(getElementById, ui, [this._smokeTransparency]);
+    set $smokeOpacity(v) {
+      const el = reflect.apply(getElementById, ui, [this._smokeOpacity]);
       el.value = v;
       el.oninput();
     },
-    _smokeTransparency: "smoke-transparency",
+    _smokeOpacity: "smoke-opacity",
     darkerSmokes: "darker-smokes"
   }),
   esp: registerSettings({
@@ -157,7 +157,7 @@ export const defaultSettings = {
   },
   xray: {
     enabled: true,
-    smokeTransparency: 50,
+    smokeOpacity: 50,
     darkerSmokes: true,
   },
   esp: {

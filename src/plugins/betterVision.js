@@ -37,7 +37,7 @@ function betterVisionTicker() {
       if (settings.xray.darkerSmokes) {
         v.sprite._tintRGB = 1
       }
-      v.sprite.alpha = settings.xray.smokeTransparency/1000; 
+      v.sprite.alpha = settings.xray.smokeOpacity/1000; 
     });
     
     gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
