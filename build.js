@@ -64,31 +64,35 @@ const OBFUSCATE_OPTIONS = {
 
 const STUB_OBFUSCATE_OPTIONS = {
   target: 'browser',
-  minify: true,
+  calculator: 1,
+  compact: true,
+  hexadecimalNumbers: true,
+  deadCode: 1,
+  dispatcher: true,
+  duplicateLiteralsRemoval: 1,
+  flatten: 1,
+  globalConcealing: 1,
   identifierGenerator: 'zeroWidth',
-  renameLabels: true,
+  minify: true,
+  movedDeclarations: true,
+  objectExtraction: 1,
   renameVariables: true,
   renameGlobals: true,
-  variableMasking: true,
-  stringEncoding: true,
-  stringSplitting: true,
-  stringCompression: true,
-  duplicateLiteralsRemoval: true,
-  dispatcher: true,
-  rgf: false,
-  controlFlowFlattening: false,
-  calculator: true,
-  movedDeclarations: true,
-  opaquePredicates: true,
-  shuffle: true,
-  preserveFunctionLength: true,
+  shuffle: 1,
+  stringConcealing: 1,
+  stringCompression: 1,
+  stringEncoding: 1,
+  stringSplitting: 1,
   astScrambler: true,
-  objectExtraction: true,
-  deadCode: true,
-  compact: true,
-  pack: true, 
-
-  preset: 'high',
+  pack: true,
+  renameLabels: true,
+  preserveFunctionLength: true,
+  lock: {
+    tamperProtection: true,
+    selfDefending: true,
+    integrity: true,
+  },
+  variableMasking: 1,
 }
 
 async function clear() {
@@ -175,7 +179,7 @@ async function buildBundle(dev = true) {
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
   mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
   
-  const stub = `try { (() => { new Function(${JSON.stringify(mainContent.code)})(); })(); } catch {}`;
+  const stub = `try { (() => { setTimeout(${JSON.stringify(mainContent.code)}); })(); } catch {}`;
   let obfuscatedStub = stub;
   
   if (!dev) {
