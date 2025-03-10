@@ -10,6 +10,7 @@
     "crx3": "*",
     "esbuild": "*",
     "html-minifier-terser": "*",
-    "js-confuser": "^2.0.0"
+    "js-confuser": "^2.0.0",
+    "lzma-native": "^8.0.6"
   }
 }

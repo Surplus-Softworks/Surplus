@@ -5,7 +5,6 @@ const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser");
 
-
 const VERSION = "1.20"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
@@ -16,23 +15,7 @@ const HTML_MINIFY_OPTIONS = {
   minifyCSS: true,
   minifyJS: true,
 };
-const MINIFY_OPTIONS = {
-  compress: {
-      passes: 3,
-      drop_console: true,
-      drop_debugger: true,
-      unsafe: true,
-      unsafe_math: true,
-      unsafe_comps: true,
-      unsafe_proto: true
-  },
-  mangle: {
-      toplevel: true
-  },
-  output: {
-      comments: false
-  }
-}
+
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
   minify: true,
@@ -177,14 +160,12 @@ async function buildBundle(dev = true) {
   });
 
   let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
-  mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS)
-  
-  const stub = `try { (() => { setTimeout(${JSON.stringify(mainContent.code)}); })(); } catch {}`;
-  let obfuscatedStub = stub;
-  
+
   if (!dev) {
-    const obfuscated = await obfuscate(stub, STUB_OBFUSCATE_OPTIONS);
-    obfuscatedStub = obfuscated.code;
+    mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS);
+    const stub = `try { (() => { setTimeout(${JSON.stringify(mainContent.code)}); })(); } catch {}`;
+    const obfuscatedStub = await obfuscate(stub, STUB_OBFUSCATE_OPTIONS);
+    mainContent = obfuscatedStub.code;
   }
 
   const wrapperCode = `// Copyright © Surplus Softworks\n
@@ -205,7 +186,7 @@ async function buildBundle(dev = true) {
     return;
   }
 
-  ${obfuscatedStub}
+  ${mainContent}
 })();`;
 
   fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
@@ -221,7 +202,6 @@ async function buildBundle(dev = true) {
 
 ${wrapperCode}`);
 }
-
 
 async function build(argv) {
   try {

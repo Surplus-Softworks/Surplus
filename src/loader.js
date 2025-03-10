@@ -104,7 +104,18 @@ export const settings = {
     _smooth: "mobile-movement-smooth"
   }),
   autoFire: registerSettings({ enabled: "semiauto-enable" }),
-  xray: registerSettings({ enabled: "xray" }),
+  xray: registerSettings({ 
+    enabled: "xray",
+    get $smokeTransparency() {
+      return parseInt(getValue("smoke-transparency"));
+    },
+    set $smokeTransparency(v) {
+      const el = reflect.apply(getElementById, ui, [this._smokeTransparency]);
+      el.value = v;
+      el.oninput();
+    },
+    _smokeTransparency: "smoke-transparency"
+  }),
   esp: registerSettings({
     enabled: "esp-enable",
     players: "player-esp",
@@ -144,7 +155,8 @@ export const defaultSettings = {
     enabled: true
   },
   xray: {
-    enabled: true
+    enabled: true,
+    smokeTransparency: 50
   },
   esp: {
     enabled: true,

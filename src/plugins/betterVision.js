@@ -33,7 +33,7 @@ function betterVisionTicker() {
       }
     });
     
-    gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { v.pos = { x: 1000000, y: 100000 }; });
+    gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { v.sprite.alpha = settings.xray.smokeTransparency/1000; });
     
     gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
       if (["tree", "table", "stairs"].some(substring => obstacle.type.includes(substring))) {

@@ -10,6 +10,11 @@ let colors = {
   stone_04: 0xeb175a,
   stone_05: 0xeb175a,
   bunker_storm_01: 0x6a329f,
+  bunker_hydra_01: 0x990dd2,
+
+  bunker_crossing_01: 0xcf149a,
+  bunker_crossing_stairs_01b: 0xcf149a,
+  bunker_crossing_stairs_01: 0xcf149a,
 };
 
 sizes = {
@@ -18,10 +23,12 @@ sizes = {
   stone_04: 6,
   stone_05: 6,
   bunker_storm_01: 1.75,
+  bunker_hydra_01: 1.75,
 };
 
 const colorize = (map) => {
   map.forEach(object => {
+    console.log(object.obj.type)
       if ( !colors[object.obj.type] ) return;
       object.shapes.forEach(shape => {
           shape.color = colors[object.obj.type];
