@@ -17,7 +17,7 @@ let colors = {
   bunker_crossing_stairs_01: 0xcf149a,
 };
 
-sizes = {
+let sizes = {
   stone_02: 6,
   tree_03: 8,
   stone_04: 6,
@@ -28,13 +28,12 @@ sizes = {
 
 const colorize = (map) => {
   map.forEach(object => {
-    console.log(object.obj.type)
-      if ( !colors[object.obj.type] ) return;
-      object.shapes.forEach(shape => {
-          shape.color = colors[object.obj.type];
-          if ( !sizes[object.obj.type] ) return;
-          shape.scale = sizes[object.obj.type];
-      });
+    if (!colors[object.obj.type]) return;
+    object.shapes.forEach(shape => {
+      if (!sizes[object.obj.type]) return;
+      shape.color = colors[object.obj.type];
+      shape.scale = sizes[object.obj.type];
+    });
   });
 }
 
@@ -46,7 +45,7 @@ export default function mapColors() {
           colorize(th);
         }
       } catch {
-        
+
       }
       return reflect.apply(f, th, args);
     }
