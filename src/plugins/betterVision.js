@@ -7,7 +7,7 @@ import { reflect } from "../utils/hook.js";
 function nameTag(player) {
   const me = gameManager.game[tr.activePlayer];
   reflect.defineProperty(player.nameText, "visible", {
-    get: () => true,
+    get: () => settings.xray.visibleNametags,
     set: () => {}
   });
   player.nameText.visible = true;
@@ -21,17 +21,19 @@ function betterVisionTicker() {
   if (!gameManager.game?.initialized) return;
 
   if (settings.xray.enabled) {
-    gameManager.game[tr.renderer].layers[3].children.forEach(v => {
-      if (
-        v._texture?.textureCacheIds &&
-        v._texture.textureCacheIds.some(texture => 
-          (texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05")) || 
-          texture.includes("map-snow-")
-        )
-      ) {
-        v.visible = false;
-      }
-    });
+    if (settings.xray.removeCeilings) {
+      gameManager.game[tr.renderer].layers[3].children.forEach(v => {
+        if (
+          v._texture?.textureCacheIds &&
+          v._texture.textureCacheIds.some(texture => 
+            (texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05")) || 
+            texture.includes("map-snow-")
+          )
+        ) {
+          v.visible = false;
+        }
+      });
+    }
     
     gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { 
       if (settings.xray.darkerSmokes) {
@@ -42,7 +44,7 @@ function betterVisionTicker() {
     
     gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
       if (["tree", "table", "stairs"].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = 0.55;
+        obstacle.sprite.alpha = settings.xray.treeOpacity/100;
       }
       if (["bush"].some(substring => obstacle.type.includes(substring))) {
         obstacle.sprite.alpha = 0;

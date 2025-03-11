@@ -5,7 +5,7 @@ const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser");
 
-const VERSION = "1.21"
+const VERSION = "1.22"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,

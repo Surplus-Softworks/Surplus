@@ -28,9 +28,9 @@ export default function initUI() {
 
         object.assign(popup.style, {
             position: 'fixed',
-            zIndex: '9999',
-            left: `225px`,
-            top: `250px`
+            zIndex: '99999',
+            left: `175px`,
+            top: `125px`
         });
 
         const header = shadow.querySelector('.header');

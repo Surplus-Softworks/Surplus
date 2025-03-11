@@ -115,6 +115,17 @@ export const settings = {
       el.oninput();
     },
     _smokeOpacity: "smoke-opacity",
+    get $treeOpacity() {
+      return parseInt(getValue("tree-opacity"));
+    },
+    set $treeOpacity(v) {
+      const el = reflect.apply(getElementById, ui, [this._treeOpacity]);
+      el.value = v;
+      el.oninput();
+    },
+    _treeOpacity: "tree-opacity",
+    removeCeilings: "remove-ceilings",
+    visibleNametags: "visible-nametags",
     darkerSmokes: "darker-smokes"
   }),
   esp: registerSettings({
@@ -159,6 +170,8 @@ export const defaultSettings = {
     enabled: true,
     smokeOpacity: 50,
     darkerSmokes: true,
+    treeOpacity: 50,
+    visibleNametags: true,
   },
   esp: {
     enabled: true,
