@@ -171,6 +171,7 @@ export const defaultSettings = {
     smokeOpacity: 50,
     darkerSmokes: true,
     treeOpacity: 50,
+    removeCeilings: true,
     visibleNametags: true,
   },
   esp: {
