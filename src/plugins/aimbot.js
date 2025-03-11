@@ -228,23 +228,6 @@ function aimbotTicker() {
                 !state.meleeLockEnemy.active || 
                 state.meleeLockEnemy[tr.netData][tr.dead]) {
                 state.meleeLockEnemy = findClosestTarget(players, me);
-            } else {
-                const newClosestEnemy = findClosestTarget(players, me);
-                if (newClosestEnemy && newClosestEnemy.__id !== state.meleeLockEnemy.__id) {
-                    const currentDistance = getDistance(
-                        me[tr.visualPos].x, me[tr.visualPos].y,
-                        state.meleeLockEnemy[tr.visualPos].x, state.meleeLockEnemy[tr.visualPos].y
-                    );
-                    
-                    const newDistance = getDistance(
-                        me[tr.visualPos].x, me[tr.visualPos].y,
-                        newClosestEnemy[tr.visualPos].x, newClosestEnemy[tr.visualPos].y
-                    );
-                    
-                    if (newDistance < currentDistance) {
-                        state.meleeLockEnemy = newClosestEnemy;
-                    }
-                }
             }
             
             if (state.meleeLockEnemy) {
