@@ -10,6 +10,8 @@ const angularAccelerationMax = 0.075;
 const dampingFactor = 0.98;
 let isMouseDown = false;
 
+
+
 function updateRotation() {
   if (
     !gameManager.game[tr.activePlayer] ||

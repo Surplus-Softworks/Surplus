@@ -18,6 +18,8 @@ const state = {
     focusedEnemy: null,
     previousEnemies: {},
     currentEnemy: null,
+    meleeLockEnemy: null,
+    velocityBuffer: {},
 };
 
 const arrayPush = Array.prototype.push;
@@ -149,6 +151,36 @@ function findTarget(players, me) {
 
     return enemy;
 }
+
+function findClosestTarget(players, me) {
+    const meTeam = findTeam(me);
+    let enemy = null;
+    let minDistance = Infinity;
+
+    for (const player of players) {
+        if (
+            !player.active ||
+            player[tr.netData][tr.dead] ||
+            (!settings.aimbot.targetKnocked && player.downed) ||
+            me.__id === player.__id ||
+            me.layer !== player.layer ||
+            findTeam(player) === meTeam
+        )
+            continue;
+
+        const mePos = me[tr.visualPos];
+        const playerPos = player[tr.visualPos];
+        const distance = getDistance(mePos.x, mePos.y, playerPos.x, playerPos.y);
+
+        if (distance < minDistance) {
+            minDistance = distance;
+            enemy = player;
+        }
+    }
+
+    return enemy;
+}
+
 export let testA = 0;
 export let testB = 0;
 export let testC = 0;
@@ -181,8 +213,78 @@ function aimbotTicker() {
         } catch { }
     }
 
-
     try {
+        const isMeleeEquipped = gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2;
+        const isMeleeLockActive = settings.meleeLock.enabled && 
+                                 (isMeleeEquipped || settings.meleeLock.autoMelee) &&
+                                 gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
+        
+        if (isMeleeLockActive) {
+            if (!gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)) {
+                state.meleeLockEnemy = null;
+            }
+            
+            if (!state.meleeLockEnemy || 
+                !state.meleeLockEnemy.active || 
+                state.meleeLockEnemy[tr.netData][tr.dead]) {
+                state.meleeLockEnemy = findClosestTarget(players, me);
+            } else {
+                const newClosestEnemy = findClosestTarget(players, me);
+                if (newClosestEnemy && newClosestEnemy.__id !== state.meleeLockEnemy.__id) {
+                    const currentDistance = getDistance(
+                        me[tr.visualPos].x, me[tr.visualPos].y,
+                        state.meleeLockEnemy[tr.visualPos].x, state.meleeLockEnemy[tr.visualPos].y
+                    );
+                    
+                    const newDistance = getDistance(
+                        me[tr.visualPos].x, me[tr.visualPos].y,
+                        newClosestEnemy[tr.visualPos].x, newClosestEnemy[tr.visualPos].y
+                    );
+                    
+                    if (newDistance < currentDistance) {
+                        state.meleeLockEnemy = newClosestEnemy;
+                    }
+                }
+            }
+            
+            if (state.meleeLockEnemy) {
+                const meX = me[tr.visualPos].x;
+                const meY = me[tr.visualPos].y;
+                const enemyX = state.meleeLockEnemy[tr.visualPos].x;
+                const enemyY = state.meleeLockEnemy[tr.visualPos].y;
+                
+                const distanceToEnemy = Math.hypot(meX - enemyX, meY - enemyY);
+                
+                if (distanceToEnemy <= 5.5) {
+                    const moveAngle = calcAngle(state.meleeLockEnemy[tr.visualPos], me[tr.visualPos]) + Math.PI;
+                    aimTouchMoveDir = {
+                        touchMoveActive: true,
+                        touchMoveLen: 255,
+                        x: Math.cos(moveAngle),
+                        y: Math.sin(moveAngle),
+                    };
+                    
+                    const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
+                        x: state.meleeLockEnemy[tr.visualPos].x,
+                        y: state.meleeLockEnemy[tr.visualPos].y,
+                    });
+                    
+                    lastAimPos = {
+                        clientX: screenPos.x,
+                        clientY: screenPos.y,
+                    };
+                    
+                    if (settings.meleeLock.autoMelee) {
+                        reflect.apply(arrayPush, inputs, ['EquipMelee']);
+                    }
+                    
+                    return aimbotDot.style.display = "none";
+                }
+            }
+        } else {
+            state.meleeLockEnemy = null;
+        }
+        
         let enemy =
             state.focusedEnemy?.active && !state.focusedEnemy[tr.netData][tr.dead]
                 ? state.focusedEnemy
@@ -218,7 +320,7 @@ function aimbotTicker() {
 
             if (!predictedPos) return aimbotDot.style.display = "none";
 
-            if ((gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 || settings.meleeLock.autoMelee) &&
+            if ((isMeleeEquipped || settings.meleeLock.autoMelee) &&
                 distanceToEnemy <= 5.5 &&
                 settings.meleeLock.enabled &&
                 gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)
@@ -242,8 +344,7 @@ function aimbotTicker() {
                 aimTouchMoveDir = null;
             }
 
-            if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 2 &&
-                distanceToEnemy >= 5.5) {
+            if (isMeleeEquipped && distanceToEnemy >= 5.5) {
                 aimTouchMoveDir = null;
                 lastAimPos = null;
                 return aimbotDot.style.display = "none";

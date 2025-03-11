@@ -3,8 +3,8 @@ import { reflect } from "../utils/hook";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 let colors = {
-  container_06: 0xC20E0F,
-  barn_02: 0x6a329f,
+  container_06: 0xd6c313,
+  barn_01: 0x6a329f,
   stone_02: 0x191f1f,
   tree_03: 0xffffff,
   stone_04: 0xeb175a,
@@ -17,8 +17,10 @@ let colors = {
 };
 
 let sizes = {
+  container_06: 1,
   stone_02: 6,
   tree_03: 8,
+  barn_01: 1,
   stone_04: 6,
   stone_05: 6,
   bunker_storm_01: 1.75,
