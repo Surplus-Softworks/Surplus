@@ -127,7 +127,8 @@ function findTarget(players, me) {
             player[tr.netData][tr.dead] ||
             (!settings.aimbot.targetKnocked && player.downed) ||
             me.__id === player.__id ||
-            me.layer !== player.layer ||
+            //me.layer !== player.layer ||
+            !player.container.worldVisible ||
             findTeam(player) === meTeam
         )
             continue;
@@ -163,7 +164,8 @@ function findClosestTarget(players, me) {
             player[tr.netData][tr.dead] ||
             (!settings.aimbot.targetKnocked && player.downed) ||
             me.__id === player.__id ||
-            me.layer !== player.layer ||
+            //me.layer !== player.layer ||
+            !player.container.worldVisible ||
             findTeam(player) === meTeam
         )
             continue;
