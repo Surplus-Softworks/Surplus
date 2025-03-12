@@ -81,6 +81,114 @@ function drawGrenades(me, grenadeDrawer) {
         });
 }
 
+function drawGrenadeTrajectory(me, grenadeTrajectoryDrawer) {
+    // Check if player is holding a grenade
+    if (me[tr.localData][tr.curWeapIdx] !== 3) return; // 3 is the index for grenades
+    
+    const activeItem = me[tr.netData][tr.activeWeapon];
+    if (!activeItem) return;
+    
+    // Determine grenade type and set appropriate line length
+    let lineLength = 30; // Default length
+    
+    if (activeItem.includes("smoke")) {
+        lineLength = 11;
+    } else if (activeItem.includes("frag") || activeItem.includes("mirv") || activeItem.includes("martyr")) {
+        lineLength = 13;
+    } else {
+        // If it's not one of the specific types we're checking, don't draw
+        return;
+    }
+    
+    // Get player's position
+    const meX = me[tr.pos].x;
+    const meY = me[tr.pos].y;
+    
+    // Calculate the direction
+    let dirX, dirY;
+    
+    if (!gameManager.game[tr.uiManager].spectating && (!lastAimPos || (lastAimPos && !(gameManager.game[tr.touch].shotDetected || gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire))))) {
+        // Using mouse position
+        const mouseX = gameManager.game[tr.input].mousePos._x - innerWidth / 2;
+        const mouseY = gameManager.game[tr.input].mousePos._y - innerHeight / 2;
+        
+        // Normalize
+        const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
+        dirX = mouseX / magnitude;
+        dirY = mouseY / magnitude;
+    } else if (!gameManager.game[tr.uiManager].spectating && lastAimPos) {
+        // Using last aim position
+        const playerPointToScreen = gameManager.game[tr.camera][tr.pointToScreen]({ x: meX, y: meY });
+        const aimX = lastAimPos.clientX - playerPointToScreen.x;
+        const aimY = lastAimPos.clientY - playerPointToScreen.y;
+        
+        // Normalize
+        const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
+        dirX = -aimX / magnitude; // Negate because of coordinate system difference
+        dirY = -aimY / magnitude; // Negate because of coordinate system difference
+    } else {
+        // Using player direction
+        dirX = me[tr.dir].x;
+        dirY = me[tr.dir].y;
+    }
+    
+    // Add 5 degree offset to the right
+    const offsetAngle = 5 * (Math.PI / 180); // Convert 5 degrees to radians
+    const offsetDirX = dirX * Math.cos(offsetAngle) - dirY * Math.sin(offsetAngle);
+    const offsetDirY = dirX * Math.sin(offsetAngle) + dirY * Math.cos(offsetAngle);
+    
+    // Use the offset direction for calculations
+    dirX = offsetDirX;
+    dirY = offsetDirY;
+    
+    // Calculate end position (lineLength units in direction)
+    const endX = meX + dirX * lineLength;
+    const endY = meY - dirY * lineLength; // Negate dirY to fix up/down inversion
+    
+    // Choose color based on grenade type
+    let lineColor = 0xff9900; // Default orange
+    
+    if (activeItem.includes("smoke")) {
+        lineColor = 0xaaaaaa; // Gray for smoke
+    } else if (activeItem.includes("frag")) {
+        lineColor = 0xff5500; // Orange-red for frag
+    } else if (activeItem.includes("mirv")) {
+        lineColor = 0xff0000; // Red for mirv
+    } else if (activeItem.includes("martyr")) {
+        lineColor = 0xee3333; // Different red for martyr
+    }
+    
+    // Draw the trajectory line
+    grenadeTrajectoryDrawer.lineStyle(3, lineColor, 0.7);
+    grenadeTrajectoryDrawer.moveTo(0, 0);
+    grenadeTrajectoryDrawer.lineTo((endX - meX) * 16, (meY - endY) * 16);
+    
+    // Get the grenade type to determine explosion radius
+    const grenadeType = activeItem.replace("_cook", "");
+    const explosionType = throwable[grenadeType]?.explosionType || objects[grenadeType]?.explosion;
+    
+    if (explosionType && explosions[explosionType]) {
+        const radius = (explosions[explosionType].rad.max + 1) * 16;
+        
+        // Draw the explosion circle at the end of the line
+        grenadeTrajectoryDrawer.beginFill(lineColor, 0.2);
+        grenadeTrajectoryDrawer.drawCircle(
+            (endX - meX) * 16,
+            (meY - endY) * 16,
+            radius
+        );
+        grenadeTrajectoryDrawer.endFill();
+        
+        // Draw the circle outline
+        grenadeTrajectoryDrawer.lineStyle(2, lineColor, 0.4);
+        grenadeTrajectoryDrawer.drawCircle(
+            (endX - meX) * 16,
+            (meY - endY) * 16,
+            radius
+        );
+    }
+}
+
 function drawLasers(me, players, laserDrawer) {
     const curWeapon = findWeapon(me);
     const curBullet = findBullet(curWeapon);
@@ -157,6 +265,12 @@ function espTicker() {
     grenadeDrawer.clear();
     if (settings.esp.enabled && settings.esp.grenades) {
         drawGrenades(me, grenadeDrawer);
+    }
+
+    const grenadeTrajectoryDrawer = createDrawer(me.container, 'grenadeTrajectoryDrawer');
+    grenadeTrajectoryDrawer.clear();
+    if (settings.esp.enabled && settings.esp.grenades) {
+        drawGrenadeTrajectory(me, grenadeTrajectoryDrawer);
     }
 
     const laserDrawer = createDrawer(me.container, 'laserDrawer');
