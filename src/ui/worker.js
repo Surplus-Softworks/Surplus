@@ -151,7 +151,7 @@ export default function initUI() {
             object.entries(config).forEach(([key, value]) => {
                 if (value && typeof value === "object" && mapping && mapping[key]) {
                     readConfig(value, mapping[key]);
-                } else {
+                } else if (typeof value == typeof mapping[key]) {
                     mapping[key] = value;
                 }
             });
