@@ -125,10 +125,10 @@ export const settings = {
     },
     _treeOpacity: "tree-opacity",
     removeCeilings: "remove-ceilings",
-    visibleNametags: "visible-nametags",
     darkerSmokes: "darker-smokes"
   }),
   esp: registerSettings({
+    visibleNametags: "visible-nametags",
     enabled: "esp-enable",
     players: "player-esp",
     grenades: "grenade-esp",
@@ -172,9 +172,9 @@ export const defaultSettings = {
     darkerSmokes: true,
     treeOpacity: 50,
     removeCeilings: true,
-    visibleNametags: true,
   },
   esp: {
+    visibleNametags: true,
     enabled: true,
     players: true,
     grenades: true,

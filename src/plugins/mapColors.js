@@ -9,6 +9,7 @@ let colors = {
   tree_03: 0xffffff,
   stone_04: 0xeb175a,
   stone_05: 0xeb175a,
+  crate_03: 0x51855d,
   bunker_storm_01: 0x6a329f,
   bunker_hydra_01: 0x990dd2,
 
@@ -23,6 +24,7 @@ let sizes = {
   barn_01: 1,
   stone_04: 6,
   stone_05: 6,
+  crate_03: 1.8,
   bunker_storm_01: 1.75,
   bunker_hydra_01: 1.75,
 

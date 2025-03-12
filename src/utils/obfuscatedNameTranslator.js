@@ -414,7 +414,7 @@ export function translate(gameManager) {
     const intervalId = setInterval(() => {
       tr = matchGameProperties();
       if (DEV) {
-        window.translator = tr;
+        window.tr = tr;
       }
 
       if (allKeysFound()) {

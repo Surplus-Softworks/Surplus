@@ -4,19 +4,6 @@ import { settings } from "../loader.js";
 import { tr } from "../utils/obfuscatedNameTranslator.js";
 import { reflect } from "../utils/hook.js";
 
-function nameTag(player) {
-  const me = gameManager.game[tr.activePlayer];
-  reflect.defineProperty(player.nameText, "visible", {
-    get: () => settings.xray.visibleNametags,
-    set: () => {}
-  });
-  player.nameText.visible = true;
-  player.nameText.tint = findTeam(player) == findTeam(me) ? 0xcbddf5 : 0xff2828;
-  player.nameText.style.fill = findTeam(player) == findTeam(me) ? "#3a88f4" : "#ff2828";
-  player.nameText.style.fontSize = 20;
-  player.nameText.style.dropShadowBlur = 0.1;
-}
-
 function betterVisionTicker() {
   if (!gameManager.game?.initialized) return;
 
@@ -51,7 +38,6 @@ function betterVisionTicker() {
       }
     });
   }
-  gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(nameTag);
 }
 
 let first = true;

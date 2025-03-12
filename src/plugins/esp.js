@@ -2,6 +2,7 @@ import { gameManager } from "../utils/injector.js";
 import { object, proxy } from "../utils/hook.js";
 import { lastAimPos, testA, testB, testC } from "./aimbot.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { reflect } from "../utils/hook.js";
 
 import {
     findTeam,
@@ -21,6 +22,19 @@ const RED = 0xdc3734;
 const WHITE = 0xffffff;
 
 const drawers = {};
+
+function nameTag(player) {
+    const me = gameManager.game[tr.activePlayer];
+    reflect.defineProperty(player.nameText, "visible", {
+      get: () => {return (settings.esp.visibleNametags && settings.esp.enabled)},
+      set: () => {}
+    });
+    player.nameText.visible = true;
+    player.nameText.tint = findTeam(player) == findTeam(me) ? 0xcbddf5 : 0xff2828;
+    player.nameText.style.fill = findTeam(player) == findTeam(me) ? "#3a88f4" : "#ff2828";
+    player.nameText.style.fontSize = 20;
+    player.nameText.style.dropShadowBlur = 0.1;
+  }
 
 function createDrawer(container, key) {
     if (!container[key]) {
@@ -130,20 +144,28 @@ function espTicker() {
     const pixi = gameManager.pixi;
     const me = gameManager.game[tr.activePlayer];
     const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
-    if (!pixi || !me || me.container == undefined || !settings.esp.enabled || !(gameManager.game?.initialized)) return;
+    
+    if (!pixi || !me || me.container == undefined || !(gameManager.game?.initialized)) return;
 
     const lineDrawer = createDrawer(me.container, 'lineDrawer');
     lineDrawer.clear();
-    if (settings.esp.players) drawLines(me, players, lineDrawer);
+    if (settings.esp.enabled && settings.esp.players) {
+        drawLines(me, players, lineDrawer);
+    }
 
     const grenadeDrawer = createDrawer(me.container, 'grenadeDrawer');
     grenadeDrawer.clear();
-    if (settings.esp.grenades) drawGrenades(me, grenadeDrawer);
+    if (settings.esp.enabled && settings.esp.grenades) {
+        drawGrenades(me, grenadeDrawer);
+    }
 
     const laserDrawer = createDrawer(me.container, 'laserDrawer');
     laserDrawer.clear();
-    if (settings.esp.flashlights.others || settings.esp.flashlights.own) drawLasers(me, players, laserDrawer);
+    if (settings.esp.enabled && (settings.esp.flashlights.others || settings.esp.flashlights.own)) {
+        drawLasers(me, players, laserDrawer);
+    }
 
+    gameManager.game[tr.playerBarn].playerPool[tr.pool].forEach(nameTag);
 }
 
 export default function esp() {
