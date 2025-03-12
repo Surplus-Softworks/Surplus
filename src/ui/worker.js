@@ -158,6 +158,7 @@ export default function initUI() {
         };
 
         setTimeout(() => {
+            readConfig(defaultSettings);
             read("c")
                 .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
                 .then(config => {

@@ -51,7 +51,7 @@ function spinbotTicker() {
   if (!(gameManager.game?.initialized)) return;
   updateRotation();
 }
-
+let randAngle = Math.random() * 2 * Math.PI;
 function calculateSpinbotMousePosition(axis) {
   if (gameManager.game[tr.activePlayer].throwableState === "cook") {
     return axis === "x" ? gameManager.game[tr.input].mousePos._x : gameManager.game[tr.input].mousePos._y;
@@ -60,7 +60,10 @@ function calculateSpinbotMousePosition(axis) {
   if (settings.spinbot.realistic) {
     const centerX = globalThis.innerWidth / 2;
     const centerY = globalThis.innerHeight / 2;
-    const radius = Math.min(centerX, centerY) * 0.8;
+    const radius = Math.hypot(
+      gameManager.game[tr.input].mousePos._x - centerX,
+      gameManager.game[tr.input].mousePos._y - centerY
+    );
 
     if (axis === "x") {
       return centerX + Math.cos(currentAngle) * radius;
@@ -68,7 +71,18 @@ function calculateSpinbotMousePosition(axis) {
       return centerY + Math.sin(currentAngle) * radius;
     }
   } else {
-    return axis === "x" ? Math.random() * globalThis.innerWidth : Math.random() * globalThis.innerHeight;
+    const centerX = globalThis.innerWidth / 2;
+    const centerY = globalThis.innerHeight / 2;
+    const radius = Math.hypot(
+      gameManager.game[tr.input].mousePos._x - centerX,
+      gameManager.game[tr.input].mousePos._y - centerY
+    );
+
+    if (axis === "x") {
+      return centerX + Math.cos(randAngle) * radius;
+    } else {
+      return centerY + Math.sin(randAngle) * radius;
+    }
   }
 }
 
@@ -102,11 +116,6 @@ export default function spinbot() {
         return lastAimPos.clientY;
       }
 
-      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
-        const chance = Math.random();
-        if (chance > settings.spinbot.speed / 100) return lastY;
-      }
-
       if (!isMouseDown && settings.spinbot.enabled) {
         return lastY = calculateSpinbotMousePosition("y");
       }
@@ -126,11 +135,6 @@ export default function spinbot() {
 
       if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
         return lastAimPos.clientX;
-      }
-
-      if (!settings.spinbot.realistic && settings.spinbot.enabled) {
-        const chance = Math.random();
-        if (chance > settings.spinbot.speed / 100) return lastX;
       }
 
       if (!isMouseDown && settings.spinbot.enabled) {
@@ -160,6 +164,11 @@ export default function spinbot() {
         angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed / 50 * angularAccelerationMax);
         angularVelocity *= dampingFactor;
         currentAngle += angularVelocity;
+      } else {
+        if (!settings.spinbot.realistic && settings.spinbot.enabled) {
+          const chance = Math.random();
+          if (chance < settings.spinbot.speed / 100) randAngle = Math.random() * 2 * Math.PI;
+        }
       }
     }
   });
