@@ -248,13 +248,13 @@ function espTicker() {
 
     const grenadeDrawer = createDrawer(me.container, 'grenadeDrawer');
     grenadeDrawer.clear();
-    if (settings.esp.enabled && settings.esp.grenades) {
+    if (settings.esp.enabled && settings.esp.grenades.explosions) {
         drawGrenades(me, grenadeDrawer);
     }
 
     const grenadeTrajectoryDrawer = createDrawer(me.container, 'grenadeTrajectoryDrawer');
     grenadeTrajectoryDrawer.clear();
-    if (settings.esp.enabled && settings.esp.grenades) {
+    if (settings.esp.enabled && settings.esp.grenades.trajectories) {
         drawGrenadeTrajectory(me, grenadeTrajectoryDrawer);
     }
 

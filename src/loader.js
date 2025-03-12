@@ -131,8 +131,8 @@ export const settings = {
     visibleNametags: "visible-nametags",
     enabled: "esp-enable",
     players: "player-esp",
-    grenades: "grenade-esp",
-    flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" })
+    flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" }),
+    grenades: registerSettings({ explosions: "grenade-esp", trajectories: "grenade-trajectories" })
   }),
   autoLoot: { enabled: true },
   infiniteZoom: registerSettings({
@@ -177,7 +177,10 @@ export const defaultSettings = {
     visibleNametags: true,
     enabled: true,
     players: true,
-    grenades: true,
+    grenades: {
+      explosions: true,
+      trajectories: true
+    },
     flashlights: {
       own: true,
       others: true
