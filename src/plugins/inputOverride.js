@@ -9,6 +9,7 @@ import { encryptDecrypt } from "../utils/encryption.js";
 
 export let emoteTypes = [];
 export let inputs = [];
+export let toMouseLen;
 
 let cachedMoveDir = { x: 0, y: 0 };
 
@@ -71,6 +72,8 @@ export default function inputOverride() {
         args[1].touchMoveDir.x = aimTouchMoveDir.x;
         args[1].touchMoveDir.y = aimTouchMoveDir.y;
       }
+
+      toMouseLen = args[1].toMouseLen
 
       return reflect.apply(f, th, args);
     }
