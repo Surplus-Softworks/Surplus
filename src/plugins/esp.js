@@ -115,7 +115,7 @@ function drawGrenadeTrajectory(me, grenadeTrajectoryDrawer) {
         dirY = me[tr.dir].y;
     }
     
-    const offsetAngle = 5 * (Math.PI / 180); 
+    const offsetAngle = 2 * (Math.PI / 180); 
     const offsetDirX = dirX * Math.cos(offsetAngle) - dirY * Math.sin(offsetAngle);
     const offsetDirY = dirX * Math.sin(offsetAngle) + dirY * Math.cos(offsetAngle);
 
