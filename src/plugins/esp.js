@@ -53,7 +53,7 @@ function drawLines(me, players, lineDrawer) {
     players.forEach(player => {
         if (!player.active || player[tr.netData][tr.dead] || me.__id === player.__id) return;
         const playerTeam = findTeam(player);
-        const lineColor = playerTeam === myTeam ? BLUE : me.layer === player.layer && !player.downed ? RED : WHITE;
+        const lineColor = playerTeam === myTeam ? BLUE : player.container.worldVisible && !player.downed ? RED : WHITE;
         lineDrawer.lineStyle(2, lineColor, 0.45);
         lineDrawer.moveTo(0, 0);
         lineDrawer.lineTo((player[tr.pos].x - meX) * 16, (meY - player[tr.pos].y) * 16);
@@ -204,7 +204,7 @@ function drawLasers(me, players, laserDrawer) {
     }
     if (settings.esp.flashlights.own) laserPointer(me, curBullet, curWeapon);
     players.filter(player =>
-        player.active && !player[tr.netData][tr.dead] && me.__id !== player.__id && me.layer === player.layer && findTeam(player) !== findTeam(me)
+        player.active && !player[tr.netData][tr.dead] && me.__id !== player.__id && player.container.worldVisible && findTeam(player) !== findTeam(me)
     ).forEach(enemy => {
         if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeapon(enemy)), findWeapon(enemy), 0, 0.05);
     });
