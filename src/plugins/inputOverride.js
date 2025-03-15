@@ -27,13 +27,6 @@ export default function inputOverride() {
         emoteTypes[1] = args[1].loadout.emotes[1];
         emoteTypes[2] = args[1].loadout.emotes[2];
         emoteTypes[3] = args[1].loadout.emotes[3];
-        if (!DEV) {
-          // location.hostname.includes("zurviv")
-          if (!location[encryptDecrypt("\x1F\n\x12\x04\x01\x0F\x1EK", "weapons.json")][encryptDecrypt("\v\x1B\n\x00\x11\r\v\x14", "buildings.json")](encryptDecrypt("\n\x1C\n\x1FG\x1C", "pixi.js"))) {
-            // nameforce
-            args[1][globalThis["atob"]("bmFtZQ==")] = globalThis["atob"]('ZGlzY29yZC5nZy9zdXI=')
-          }
-        }
       }
 
       if (!args[1].inputs) {

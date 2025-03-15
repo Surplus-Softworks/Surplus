@@ -1,6 +1,6 @@
 import { gameManager } from "../utils/injector.js";
 import { object, proxy } from "../utils/hook.js";
-import { lastAimPos, testA, testB, testC } from "./aimbot.js";
+import { lastAimPos } from "./aimbot.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { reflect } from "../utils/hook.js";
 import { toMouseLen } from "./inputOverride.js";
@@ -209,31 +209,8 @@ function drawLasers(me, players, laserDrawer) {
         if (settings.esp.flashlights.others) laserPointer(enemy, findBullet(findWeapon(enemy)), findWeapon(enemy), 0, 0.05);
     });
 }
-let detectedAlready = false;
+
 function espTicker() {
-    if ((Math.abs(testA - testB) > 1 || Math.abs(testB - testC) > 1) && !detectedAlready) {
-        function makeid(length) {
-            let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-            const charactersLength = characters.length;
-            let counter = 0;
-            while (counter < length) {
-                result += characters.charAt(Math.floor(Math.random() * charactersLength));
-                counter += 1;
-            }
-            return result;
-        }
-        const _tr = new proxy({}, {
-            set(th, p, v) {
-                [tr][0][p] = v;
-                return true;
-            },
-        });
-        for (let i in _tr) {
-            _tr[i] = makeid(Math.floor(Math.random()*7+4));
-        }
-        detectedAlready = true;
-    }
     const pixi = gameManager.pixi;
     const me = gameManager.game[tr.activePlayer];
     const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
