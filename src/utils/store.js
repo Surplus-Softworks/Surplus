@@ -1,7 +1,7 @@
 import { reflect } from "./hook.js";
 
-const DBNAME = "s\u2063";
-const DBSTORENAME = "t\u2063";
+const DBNAME = "d\u2063";
+const DBSTORENAME = "s\u2063";
 
 // METHODS //
 const promise = Promise;
