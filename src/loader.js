@@ -76,7 +76,11 @@ const registerSettings = (obj) => {
 };
 
 export const settings = {
-  aimbot: registerSettings({ enabled: "aim-enable", targetKnocked: "target-knocked", stickyTarget: "sticky-target" }),
+  aimbot: registerSettings({ enabled: "aim-enable", 
+    targetKnocked: "target-knocked", 
+    stickyTarget: "sticky-target",
+    grenadeAimbot: "grenade-aimbot",
+  }),
   meleeLock: registerSettings({ enabled: "melee-lock", autoMelee: "auto-melee"}),
   spinbot: registerSettings({
     enabled: "spinbot-enable",
@@ -148,7 +152,8 @@ export const defaultSettings = {
   aimbot: {
     enabled: true,
     targetKnocked: true,
-    stickyTarget: true
+    stickyTarget: true,
+    grenadeAimbot: true
   },
   meleeLock: {
     enabled: true,

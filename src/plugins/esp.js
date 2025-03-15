@@ -81,7 +81,6 @@ function drawGrenades(me, grenadeDrawer) {
             );
         });
 }
-
 function drawGrenadeTrajectory(me, grenadeTrajectoryDrawer) {
     if (me[tr.localData][tr.curWeapIdx] !== 3) return; 
     
@@ -108,8 +107,8 @@ function drawGrenadeTrajectory(me, grenadeTrajectoryDrawer) {
         const aimY = lastAimPos.clientY - playerPointToScreen.y;
         
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
-        dirX = -aimX / magnitude;
-        dirY = -aimY / magnitude;
+        dirX = aimX / magnitude;  // Removed the negative sign here
+        dirY = aimY / magnitude;  // Removed the negative sign here
     } else {
         dirX = me[tr.dir].x;
         dirY = me[tr.dir].y;
