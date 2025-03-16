@@ -173,7 +173,7 @@ function buildUI() {
             reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION + message;
         });
 }
-export default function initUI(availableVersion) {
+export default function initUI() {
     if (document.readyState == "loading") {
         reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
             buildUI();
