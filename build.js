@@ -5,7 +5,7 @@ const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser");
 
-const VERSION = "1.2.9"
+const VERSION = "1.2.10"
 const DIST_DIR = 'dist/extension';
 const HTML_MINIFY_OPTIONS = {
   collapseWhitespace: true,
@@ -190,6 +190,18 @@ async function buildBundle(dev = true) {
 })();`;
 
   fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
+  fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
+// @name         Surplus
+// @version      ${VERSION}
+// @description  A cheat for survev.io & more
+// @author       mahdi, noam
+// @match        *://*/*
+// @run-at       document-start
+// @icon         https://i.postimg.cc/W4g7cxLP/image.png
+// @grant        none
+// ==/UserScript==
+
+${wrapperCode}`);
 }
 
 async function build(argv) {
