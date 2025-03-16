@@ -9,9 +9,7 @@ import {
     findTeam,
     findWeapon,
     findBullet,
-    objects,
-    explosions,
-    throwable,
+    gameObjects,
     inputCommands,
     PIXI,
 } from "../utils/constants.js";
@@ -63,13 +61,13 @@ function drawLines(me, players, lineDrawer) {
 function drawGrenades(me, grenadeDrawer) {
     const meX = me[tr.pos].x, meY = me[tr.pos].y;
     object.values(gameManager.game[tr.objectCreator][tr.idToObj])
-        .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || (obj.smokeEmitter && objects[obj.type].explosion))
+        .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || (obj.smokeEmitter && obj.explodeParticle))
         .forEach(obj => {
             grenadeDrawer.beginFill(obj.layer !== me.layer ? 0xffffff : 0xff0000, obj.layer !== me.layer ? 0.2 : 0.1);
             grenadeDrawer.drawCircle(
                 (obj.pos.x - meX) * 16,
                 (meY - obj.pos.y) * 16,
-                (explosions[throwable[obj.type]?.explosionType || objects[obj.type].explosion].rad.max + 1) * 16
+                13 * 16
             );
             grenadeDrawer.endFill();
 
@@ -77,7 +75,7 @@ function drawGrenades(me, grenadeDrawer) {
             grenadeDrawer.drawCircle(
                 (obj.pos.x - meX) * 16,
                 (meY - obj.pos.y) * 16,
-                (explosions[throwable[obj.type]?.explosionType || objects[obj.type].explosion].rad.max + 1) * 16
+                13 * 16
             );
         });
 }
@@ -151,10 +149,10 @@ function drawGrenadeTrajectory(me, grenadeTrajectoryDrawer) {
     grenadeTrajectoryDrawer.lineTo((endX - meX) * 16, (meY - endY) * 16);
 
     const grenadeType = activeItem.replace("_cook", "");
-    const explosionType = throwable[grenadeType]?.explosionType || objects[grenadeType]?.explosion;
+    const explosionType = gameObjects[grenadeType]?.explosionType;
     
-    if (explosionType && explosions[explosionType]) {
-        const radius = (explosions[explosionType].rad.max + 1) * 16;
+    if (explosionType && gameObjects[explosionType]) {
+        const radius = (gameObjects[explosionType].rad.max + 1) * 16;
         
         grenadeTrajectoryDrawer.beginFill(lineColor, 0.2);
         grenadeTrajectoryDrawer.drawCircle(

@@ -67,28 +67,18 @@ export const packetTypes = {
     PerkModeRoleSelect: 21
 };
 
-export let bullets, explosions, guns, throwable, objects;
+export let gameObjects;
 
 hook(Object, "keys", {
     apply(f, th, args) {
         try {
-            if (bullets == null && args[0]?.bullet_mp5?.type == "bullet") {
-                bullets = args[0];
-            } else if (explosions == null && args[0]?.explosion_frag?.type == "explosion") {
-                explosions = args[0];
-            } else if (guns == null && args[0]?.mp5?.type == "gun") {
-                guns = args[0];
-            } else if (throwable == null && args[0]?.frag?.type == "throwable") {
-                throwable = args[0];
-            } else if (objects == null && args[0]?.barrel_01?.type == "obstacle") {
-                objects = args[0];
-            }
-            if (bullets != null && explosions != null && guns != null && throwable != null && objects != null) {
+            if (args[0]?.bullet_mp5?.type == "bullet" && args[0]?.explosion_frag?.type == "explosion" && args[0]?.mp5?.type == "gun" && args[0]?.frag?.type == "throwable") {
+                gameObjects = args[0];
                 Object.keys = f;
             }
         } catch {
-            
-         }
+
+        }
         return reflect.apply(f, th, args);
     }
 });
@@ -99,11 +89,11 @@ export function findTeam(player) {
 
 export function findWeapon(player) {
     const weaponType = player[tr.netData][tr.activeWeapon];
-    return weaponType && guns[weaponType] ? guns[weaponType] : null;
+    return weaponType && gameObjects[weaponType] ? gameObjects[weaponType] : null;
 }
 
 export function findBullet(weapon) {
-    return weapon ? bullets[weapon.bulletType] : null;
+    return weapon ? gameObjects[weapon.bulletType] : null;
 }
 
 export let PIXI = {

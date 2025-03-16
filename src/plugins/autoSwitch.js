@@ -1,6 +1,6 @@
 import { gameManager } from '../utils/injector.js';
 import { settings } from '../loader.js';
-import { guns, inputCommands } from '../utils/constants.js';
+import { gameObjects, inputCommands } from '../utils/constants.js';
 import { inputs } from './inputOverride.js';
 import { reflect } from '../utils/hook.js';
 import { tr } from '../utils/obfuscatedNameTranslator.js';
@@ -40,9 +40,9 @@ function autoSwitchTicker() {
             let s = false;
             try {
                 s =
-                    (guns[gun].fireMode === "single"
-                        || guns[gun].fireMode === "burst")
-                    && guns[gun].fireDelay >= 0.45;
+                    (gameObjects[gun].fireMode === "single"
+                        || gameObjects[gun].fireMode === "burst")
+                    && gameObjects[gun].fireDelay >= 0.45;
             }
             catch (e) {
             }

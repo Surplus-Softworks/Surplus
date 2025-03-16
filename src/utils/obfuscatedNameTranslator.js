@@ -1,4 +1,3 @@
-import { objects } from "./constants";
 import { object, proxy } from "./hook";
 
 const { getOwnPropertyNames, getPrototypeOf } = object;
@@ -329,7 +328,7 @@ export function translate(gameManager) {
           const objectProps = object.getOwnPropertyNames(game[translated.map]).filter(v => typeof game[translated.map][v] == "object" && game[translated.map][v] != null);
           translated.obstaclePool = objectProps.filter(v => translated.pool in game[translated.map][v]).find(v => {
             const pool = game[translated.map][v][translated.pool]
-            if (pool.some(V => objects[V.type] != null)) {
+            if (pool.some(V => V.isBush != null)) {
               return true;
             }
           });
