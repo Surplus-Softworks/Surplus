@@ -143,7 +143,7 @@ const htmlPlugin = {
 };
 
 async function buildBundle(dev = true) {
-  const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 3);
+  const EPOCH = Date.now() + (1000 * 60 * 60 * 24 * 2);
   await esbuild.build({
     entryPoints: ['./src/index.js'],
     bundle: true,
@@ -190,18 +190,6 @@ async function buildBundle(dev = true) {
 })();`;
 
   fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
-  fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
-// @name         Surplus
-// @version      ${VERSION}
-// @description  A cheat for survev.io & more
-// @author       mahdi, noam
-// @match        *://*/*
-// @run-at       document-start
-// @icon         https://i.postimg.cc/W4g7cxLP/image.png
-// @grant        none
-// ==/UserScript==
-
-${wrapperCode}`);
 }
 
 async function build(argv) {
