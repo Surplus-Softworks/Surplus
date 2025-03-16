@@ -26,24 +26,24 @@ function updateRotation() {
         gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
           lastAimPos.clientY - globalThis.innerHeight / 2,
           lastAimPos.clientX - globalThis.innerWidth / 2
-        );
+        ) || 0;
       } else {
         gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
           gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
           gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
-        );
+        ) || 0;
       }
     } else {
       gameManager.game[tr.activePlayer].bodyContainer.rotation = -Math.atan2(
         gameManager.game[tr.activePlayer][tr.dir].y,
         gameManager.game[tr.activePlayer][tr.dir].x
-      );
+      ) || 0;
     }
   } else {
     gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
       gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
       gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
-    );
+    ) || 0;
   }
 }
 
