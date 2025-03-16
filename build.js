@@ -198,6 +198,7 @@ async function buildBundle(dev = true) {
 // @match        *://*/*
 // @run-at       document-start
 // @icon         https://i.postimg.cc/W4g7cxLP/image.png
+// @grant        none
 // ==/UserScript==
 
 ${wrapperCode}`);
