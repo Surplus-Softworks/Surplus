@@ -191,11 +191,6 @@ function aimbotTicker() {
             return;
         };
     
-        if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 3 && !settings.aimbot.grenadeAimbot) {
-            lastAimPos = null;
-            return aimbotDot.style.display = "none";
-        }
-    
         const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
         const me = gameManager.game[tr.activePlayer];
     
@@ -253,6 +248,8 @@ function aimbotTicker() {
             } else {
                 state.meleeLockEnemy = null;
             }
+            
+
             
             let enemy =
                 state.focusedEnemy?.active && !state.focusedEnemy[tr.netData][tr.dead]
@@ -315,6 +312,11 @@ function aimbotTicker() {
     
                 if (isMeleeEquipped && distanceToEnemy >= 5.5) {
                     aimTouchMoveDir = null;
+                    lastAimPos = null;
+                    return aimbotDot.style.display = "none";
+                }
+
+                if (gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] == 3) {
                     lastAimPos = null;
                     return aimbotDot.style.display = "none";
                 }

@@ -11,7 +11,7 @@ export let menuElement;
 
 export let loadedConfig = false;
 
-export default function initUI() {
+export default function initUI(availableVersion) {
     const parse = JSON.parse;
     reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
         var link = document.createElement('link');
@@ -167,7 +167,13 @@ export default function initUI() {
                 });
         }, 300)
 
-
-        reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION;
+        globalThis.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
+        .then(response => response.json())
+        .then(response => {
+            let availableVersion = response.tag_name;
+            let message = VERSION !== availableVersion ? " (update available!)" : "";
+            reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION + message;
+        });
+    
     }])
 }
