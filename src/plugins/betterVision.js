@@ -5,39 +5,41 @@ import { tr } from "../utils/obfuscatedNameTranslator.js";
 import { reflect } from "../utils/hook.js";
 
 function betterVisionTicker() {
-  if (!gameManager.game?.initialized) return;
+  try {
+    if (!gameManager.game?.initialized) return;
 
-  if (settings.xray.enabled) {
-    if (settings.xray.removeCeilings) {
-      gameManager.game[tr.renderer].layers[3].children.forEach(v => {
-        if (
-          v._texture?.textureCacheIds &&
-          v._texture.textureCacheIds.some(texture => 
-            (texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05")) || 
-            texture.includes("map-snow-")
-          )
-        ) {
-          v.visible = false;
+    if (settings.xray.enabled) {
+      if (settings.xray.removeCeilings) {
+        gameManager.game[tr.renderer].layers[3].children.forEach(v => {
+          if (
+            v._texture?.textureCacheIds &&
+            v._texture.textureCacheIds.some(texture => 
+              (texture.includes("ceiling") && !texture.includes("map-building-container-ceiling-05")) || 
+              texture.includes("map-snow-")
+            )
+          ) {
+            v.visible = false;
+          }
+        });
+      }
+      
+      gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { 
+        if (settings.xray.darkerSmokes) {
+          v.sprite._tintRGB = 1
+        }
+        v.sprite.alpha = settings.xray.smokeOpacity/1000; 
+      });
+      
+      gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
+        if (["tree", "table", "stairs"].some(substring => obstacle.type.includes(substring))) {
+          obstacle.sprite.alpha = settings.xray.treeOpacity/100;
+        }
+        if (["bush"].some(substring => obstacle.type.includes(substring))) {
+          obstacle.sprite.alpha = 0;
         }
       });
     }
-    
-    gameManager.game[tr.smokeBarn][tr.particles].forEach(v => { 
-      if (settings.xray.darkerSmokes) {
-        v.sprite._tintRGB = 1
-      }
-      v.sprite.alpha = settings.xray.smokeOpacity/1000; 
-    });
-    
-    gameManager.game[tr.map][tr.obstaclePool][tr.pool].forEach(obstacle => {
-      if (["tree", "table", "stairs"].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = settings.xray.treeOpacity/100;
-      }
-      if (["bush"].some(substring => obstacle.type.includes(substring))) {
-        obstacle.sprite.alpha = 0;
-      }
-    });
-  }
+  } catch {}
 }
 
 let first = true;
