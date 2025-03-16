@@ -21,9 +21,9 @@ export default function infiniteZoom() {
         get() { return zoom },
         set() { }
       });
-      event.stopImmediatePropagation();
+      event.preventDefault(); 
+      event.stopImmediatePropagation(); 
     } catch {
-
     }
-  }])
+  }, true]); 
 }
