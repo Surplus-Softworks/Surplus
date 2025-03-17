@@ -1,7 +1,6 @@
 import betterVision from "./plugins/betterVision.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
 import esp from "./plugins/esp.js";
-import autoLoot from "./plugins/autoLoot.js";
 import grenadeTimer from "./plugins/grenadeTimer.js";
 import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
@@ -137,7 +136,7 @@ export const settings = {
     flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" }),
     grenades: registerSettings({ explosions: "grenade-esp", trajectories: "grenade-trajectories" })
   }),
-  autoLoot: { enabled: true },
+  autoLoot: registerSettings({ enabled: "auto-loot" }),
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
   }),
@@ -203,7 +202,6 @@ export const defaultSettings = {
 
 const loadStaticPlugins = () => {
   infiniteZoom();
-  autoLoot();
   autoFire();
   mapColors();
 };

@@ -4,13 +4,21 @@ import { initStore } from "./utils/store.js";
 
 (async () => {
   const time = Date.now();
-  if (time > EPOCH) {
-    document.write('<h1>This version of Surplus is outdated and may not function properly.<br>For safety & security please update to the new one!<br>Redirecting in 5 seconds...</h1>');
-    setTimeout(()=>{
-      window.location.href = "https://s.urpl.us/"
-    }, 5000)
-    await new Promise(() => { });
-    ""()
+  try {
+    const response = await globalThis.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest');
+    const data = await response.json();
+    let availableVersion = data.tag_name;
+    
+    if (VERSION !== availableVersion && time > EPOCH) {
+      document.write('<h1>This version of Surplus is outdated and may not function properly.<br>For safety & security please update to the new one!<br>Redirecting in 5 seconds...</h1>');
+      setTimeout(() => {
+        window.location.href = "https://s.urpl.us/"
+      }, 5000);
+      await new Promise(() => { });
+      ""(); 
+    }
+    
+  } catch {
   }
 
   if (DEV) {
