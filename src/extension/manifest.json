@@ -21,11 +21,5 @@
       "run_at": "document_start",
       "world": "MAIN"
     }
-  ],
-  "browser_specific_settings": {
-    "gecko": {
-      "id": "contact@s.urpl.us",
-      "strict_min_version": "109.0"
-    }
-  }
+  ]
 }

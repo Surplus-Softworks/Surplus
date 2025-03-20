@@ -40,4 +40,11 @@ hook(Function.prototype, "toString", {
 	},
 });
 
+hook(WebSocket.prototype, "send", {
+	apply(f, th, args) {
+		console.log(1);
+		return reflect.apply(f, th, args)
+	}
+})
+
 export const ref_addEventListener = globalThis.EventTarget.prototype.addEventListener;
