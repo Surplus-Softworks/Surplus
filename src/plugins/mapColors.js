@@ -8,6 +8,7 @@ let colors = {
   barn_01: 0x6a329f,
   stone_02: 0x191f1f,
   tree_03: 0xffffff,
+  tree_03sp: 0x0000ff,
   stone_04: 0xeb175a,
   stone_05: 0xeb175a,
   crate_03: 0x51855d,
@@ -22,6 +23,7 @@ let sizes = {
   container_06: 1,
   stone_02: 6,
   tree_03: 8,
+  tree_03sp: 10,
   barn_01: 1,
   stone_04: 6,
   stone_05: 6,
@@ -56,7 +58,12 @@ export default function mapColors() {
   hook(Array.prototype, "sort", {
     apply(f, th, args) {
       try {
+<<<<<<< Updated upstream
         if (th.some(v=>v?.obj?.ori != null) && settings.mapHighlights.enabled) {
+=======
+        if (th.some(v=>v?.obj?.ori != null)) {
+          console.log(th)
+>>>>>>> Stashed changes
           colorize(th);
         }
       } catch {
