@@ -23,7 +23,7 @@ let sizes = {
   container_06: 1,
   stone_02: 6,
   tree_03: 8,
-  tree_03sp: 10,
+  tree_03sp: 8,
   barn_01: 1,
   stone_04: 6,
   stone_05: 6,
