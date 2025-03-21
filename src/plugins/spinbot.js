@@ -10,7 +10,7 @@ const angularAccelerationMax = 0.075;
 const dampingFactor = 0.98;
 let isMouseDown = false;
 
-
+export let x, y;
 
 function updateRotation() {
   if (

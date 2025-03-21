@@ -1,6 +1,7 @@
 import { hook } from "../utils/hook";
 import { reflect } from "../utils/hook";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { settings } from "../loader.js";
 
 let colors = {
   container_06: 0xd6c313,
@@ -34,11 +35,19 @@ let sizes = {
 
 const colorize = (map) => {
   map.forEach(object => {
+    if (settings.mapHighlights.smallerTrees) {
+      object.shapes.forEach(shape => {
+        if (object.obj.type.includes("tree")) {
+          shape.scale = 1.8
+        };
+      });
+    }
     if (!colors[object.obj.type]) return;
     object.shapes.forEach(shape => {
       if (!sizes[object.obj.type]) return;
       shape.color = colors[object.obj.type];
       shape.scale = sizes[object.obj.type];
+      object.zIdx = 999
     });
   });
 }
@@ -47,7 +56,7 @@ export default function mapColors() {
   hook(Array.prototype, "sort", {
     apply(f, th, args) {
       try {
-        if (th.some(v=>v?.obj?.ori != null)) {
+        if (th.some(v=>v?.obj?.ori != null) && settings.mapHighlights.enabled) {
           colorize(th);
         }
       } catch {

@@ -136,6 +136,10 @@ export const settings = {
     flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" }),
     grenades: registerSettings({ explosions: "grenade-esp", trajectories: "grenade-trajectories" })
   }),
+  mapHighlights: registerSettings({
+    enabled: "maphighlights",
+    smallerTrees: "smaller-trees"
+  }),
   autoLoot: registerSettings({ enabled: "auto-loot" }),
   infiniteZoom: registerSettings({
     enabled: "infinite-zoom-enable"
@@ -190,6 +194,10 @@ export const defaultSettings = {
   },
   autoLoot: {
     enabled: true
+  },
+  mapHighlights: {
+    enabled: true,
+    smallerTrees: true,
   },
   infiniteZoom: {
     enabled: true
