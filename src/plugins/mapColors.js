@@ -58,12 +58,7 @@ export default function mapColors() {
   hook(Array.prototype, "sort", {
     apply(f, th, args) {
       try {
-<<<<<<< Updated upstream
         if (th.some(v=>v?.obj?.ori != null) && settings.mapHighlights.enabled) {
-=======
-        if (th.some(v=>v?.obj?.ori != null)) {
-          console.log(th)
->>>>>>> Stashed changes
           colorize(th);
         }
       } catch {
