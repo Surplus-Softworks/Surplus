@@ -1,9 +1,9 @@
-import { hook } from "../utils/hook";
-import { reflect } from "../utils/hook";
+import { hook } from "../utils/hook.js";
+import { reflect } from "../utils/hook.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { settings } from "../loader.js";
 
-let colors = {
+let HIGHLIGHTS = {
   container_06: 0xd6c313,
   barn_01: 0x6a329f,
   stone_02: 0x191f1f,
@@ -19,7 +19,7 @@ let colors = {
   bunker_crossing_stairs_01: 0xcf149a,
 };
 
-let sizes = {
+let SIZES = {
   container_06: 1,
   stone_02: 6,
   tree_03: 8,
@@ -44,17 +44,17 @@ const colorize = (map) => {
         };
       });
     }
-    if (!colors[object.obj.type]) return;
+    if (!HIGHLIGHTS[object.obj.type]) return;
     object.shapes.forEach(shape => {
-      if (!sizes[object.obj.type]) return;
-      shape.color = colors[object.obj.type];
-      shape.scale = sizes[object.obj.type];
+      if (!SIZES[object.obj.type]) return;
+      shape.color = HIGHLIGHTS[object.obj.type];
+      shape.scale = SIZES[object.obj.type];
       object.zIdx = 999
     });
   });
 }
 
-export default function mapColors() {
+export default function() {
   hook(Array.prototype, "sort", {
     apply(f, th, args) {
       try {

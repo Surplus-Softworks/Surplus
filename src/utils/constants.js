@@ -83,6 +83,12 @@ hook(Object, "keys", {
     }
 });
 
+export function isGameReady() {
+    return gameManager.game?.[tr.ws] && 
+           gameManager.game?.[tr.activePlayer]?.[tr.localData]?.[tr.curWeapIdx] != null && 
+           gameManager.game?.initialized;
+}
+
 export function findTeam(player) {
     return object.keys(gameManager.game[tr.playerBarn].teamInfo).find(team => gameManager.game[tr.playerBarn].teamInfo[team].playerIds.includes(player.__id));
 }

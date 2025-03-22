@@ -1,54 +1,79 @@
 import { gameManager } from "../utils/injector.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 
+const GRENADE_TYPES = ["frag", "mirv", "martyr_nade"];
+const MAX_TIMER_DURATION = 4; 
 
-let lastTime = Date.now();
-let showing = false;
-let timer = null;
+let lastTimeStamp = Date.now();
+let timerActive = false;
+let timerUI = null;
 
-function grenadeTimerTicker() {
-  if (
-    !(
-      gameManager.game?.[tr.activePlayer]?.[tr.localData]?.[tr.curWeapIdx] != null &&
-      gameManager.game?.[tr.activePlayer]?.[tr.netData]?.[tr.activeWeapon] != null &&
-      gameManager.game?.initialized
-    )
-  )
-    return;
-
-  try {
-    let elapsed = (Date.now() - lastTime) / 1000;
-    const player = gameManager.game[tr.activePlayer];
-    const activeItem = gameManager.game[tr.activePlayer][tr.netData][tr.activeWeapon];
-
-    if (
-      3 !== gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] ||
-      player.throwableState !== "cook" ||
-      (!activeItem.includes("frag") &&
-        !activeItem.includes("mirv") &&
-        !activeItem.includes("martyr_nade"))
-    )
-      return (showing = false), timer && timer.destroy(), (timer = false);
-
-    const time = 4;
-    if (elapsed > time) {
-      showing = false;
+function updateGrenadeTimer() {
+    if (!isGameInitialized() || !isPlayerHoldingGrenade()) {
+        return;
     }
-    if (!showing) {
-      if (timer) {
-        timer.destroy();
-      }
-      timer = new gameManager.game[tr.uiManager][tr.pieTimer].constructor;
-      gameManager.pixi.stage.addChild(timer.container);
-      timer.start("Grenade", 0, time);
-      showing = true;
-      lastTime = Date.now();
-      return;
-    }
-    timer.update(elapsed - timer.elapsed, gameManager.game[tr.camera]);
-  } catch {}
+
+    try {
+        const secondsElapsed = (Date.now() - lastTimeStamp) / 1000;
+        const player = gameManager.game[tr.activePlayer];
+        const activeWeapon = player[tr.netData][tr.activeWeapon];
+
+        if (!isValidCookingState(player) || !isExplosiveGrenade(activeWeapon)) {
+            resetTimer();
+            return;
+        }
+
+        if (secondsElapsed > MAX_TIMER_DURATION) {
+            timerActive = false;
+        }
+
+        if (!timerActive) {
+            createNewTimer();
+            return;
+        }
+        
+        timerUI.update(secondsElapsed - timerUI.elapsed, gameManager.game[tr.camera]);
+    } catch { }
 }
 
-export default function grenadeTimer() {
-  gameManager.pixi._ticker.add(grenadeTimerTicker);
+function isGameInitialized() {
+    return gameManager.game?.initialized &&
+           gameManager.game?.[tr.activePlayer]?.[tr.localData]?.[tr.curWeapIdx] != null &&
+           gameManager.game?.[tr.activePlayer]?.[tr.netData]?.[tr.activeWeapon] != null;
+}
+
+function isPlayerHoldingGrenade() {
+    return gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx] === 3;
+}
+
+function isValidCookingState(player) {
+    return player.throwableState === "cook";
+}
+
+function isExplosiveGrenade(weapon) {
+    return GRENADE_TYPES.some(type => weapon.includes(type));
+}
+
+function resetTimer() {
+    timerActive = false;
+    
+    if (timerUI) {
+        timerUI.destroy();
+        timerUI = null;
+    }
+}
+
+function createNewTimer() {
+    resetTimer();
+    
+    timerUI = new gameManager.game[tr.uiManager][tr.pieTimer].constructor;
+    gameManager.pixi.stage.addChild(timerUI.container);
+    timerUI.start("Grenade", 0, MAX_TIMER_DURATION);
+    
+    timerActive = true;
+    lastTimeStamp = Date.now();
+}
+
+export default function() {
+    gameManager.pixi._ticker.add(updateGrenadeTimer);
 }

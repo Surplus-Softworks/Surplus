@@ -51,7 +51,9 @@ function spinbotTicker() {
   if (!(gameManager.game?.initialized)) return;
   updateRotation();
 }
+
 let randAngle = Math.random() * 2 * Math.PI;
+
 function calculateSpinbotMousePosition(axis) {
   if (gameManager.game[tr.activePlayer].throwableState === "cook") {
     return axis === "x" ? gameManager.game[tr.input].mousePos._x : gameManager.game[tr.input].mousePos._y;
@@ -86,7 +88,7 @@ function calculateSpinbotMousePosition(axis) {
   }
 }
 
-export default function spinbot() {
+export default function() {
   gameManager.pixi._ticker.add(spinbotTicker);
 
   let lastX = 0, lastY = 0;
@@ -104,7 +106,6 @@ export default function spinbot() {
       }
     }
   });
-
 
   object.defineProperty(gameManager.game[tr.input].mousePos, "y", {
     get() {

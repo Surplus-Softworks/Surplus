@@ -1,4 +1,4 @@
-import betterVision from "./plugins/betterVision.js";
+import xray from "./plugins/xray.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
 import esp from "./plugins/esp.js";
 import grenadeTimer from "./plugins/grenadeTimer.js";
@@ -6,7 +6,7 @@ import inputOverride from "./plugins/inputOverride.js";
 import autoFire from "./plugins/autoFire.js";
 import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
-import mapColors from "./plugins/mapColors.js";
+import mapHighlights from "./plugins/mapHighlights.js";
 import autoSwitch from "./plugins/autoSwitch.js";
 import { translate } from "./utils/obfuscatedNameTranslator.js";
 import { injectGame, gameManager } from "./utils/injector.js";
@@ -211,7 +211,7 @@ export const defaultSettings = {
 const loadStaticPlugins = () => {
   infiniteZoom();
   autoFire();
-  mapColors();
+  mapHighlights();
 };
 
 const loadPIXI = () => {
@@ -230,8 +230,9 @@ const loadPlugins = () => {
     aimbot();
     autoSwitch();
   }
-  betterVision();
+  xray();
 };
+
 const attach = () => {
   hook(gameManager.game, "init", {
     apply(f, th, args) {

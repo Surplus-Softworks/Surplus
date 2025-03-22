@@ -6,35 +6,6 @@ const { isArray } = Array;
 
 export let tr = {};
 
-function getAllProperties(obj) {
-  return [
-    ...getOwnPropertyNames(getPrototypeOf(obj)),
-    ...getOwnPropertyNames(obj),
-  ];
-}
-
-function isAsync(func) {
-  return getPrototypeOf(func) === getPrototypeOf(async () => { });
-}
-
-function getSignature(obj) {
-  if (!obj || typeof obj !== "object" || obj instanceof Array) return null;
-  let counts = { primitives: 0, functions: 0, objects: 0, arrays: 0, total: 0 };
-  let allProps = new Set([
-    ...Object.keys(obj),
-    ...Object.getOwnPropertyNames(Object.getPrototypeOf(obj) || {}),
-  ]);
-  allProps.forEach((prop) => {
-    let v = obj[prop];
-    if (Array.isArray(v)) counts.arrays++;
-    else if (typeof v === "object" && v !== null) counts.objects++;
-    else if (typeof v === "function") counts.functions++;
-    else counts.primitives++;
-    counts.total++;
-  });
-  return `${counts.primitives}-${counts.functions}-${counts.objects}-${counts.arrays}-${counts.total}`;
-}
-
 export function translate(gameManager) {
   return new Promise((resolve) => {
     const signatureMap = {
@@ -96,7 +67,6 @@ export function translate(gameManager) {
 
     };
 
-    // Convert signature strings to character-based format for comparison
     const convertedSignatureMap = {};
     for (const [key, value] of Object.entries(signatureMap)) {
       if (value == "") {
@@ -117,7 +87,6 @@ export function translate(gameManager) {
       }
     }
 
-    // Function to get the signature of an object
     function getSignature(obj) {
       if (!obj || typeof obj !== "object" || obj instanceof Array) return null;
 
@@ -399,7 +368,6 @@ export function translate(gameManager) {
           }));
         }
       } catch { }
-
 
       return translated;
     }

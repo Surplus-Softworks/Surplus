@@ -5,7 +5,7 @@ import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 export let autoFireEnabled;
 
-export default function autoFire() {
+export default function() {
   autoFireEnabled = settings.autoFire.enabled;
 
   reflect.apply(ref_addEventListener, globalThis, ["mousedown", (event) => {

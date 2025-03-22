@@ -349,7 +349,7 @@ function aimbotTicker() {
     } catch {}
 }
 
-export default function aimbot() {
+export default function() {
     if (!aimbotDot) {
         aimbotDot = document.createElement('div');
         aimbotDot.classList.add('aimbot-dot');

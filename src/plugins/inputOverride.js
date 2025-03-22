@@ -5,7 +5,6 @@ import { aimTouchMoveDir } from "./aimbot.js";
 import { inputCommands, packetTypes } from "../utils/constants.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { settings } from "../loader.js";
-import { encryptDecrypt } from "../utils/encryption.js";
 
 export let emoteTypes = [];
 export let inputs = [];
@@ -13,13 +12,11 @@ export let toMouseLen;
 
 let cachedMoveDir = { x: 0, y: 0 };
 
-export default function inputOverride() {
+export default function() {
   hook(gameManager.game, object.getOwnPropertyNames(gameManager.game.__proto__).filter(v => typeof gameManager.game[v] == "function").find(v => gameManager.game[v].length == 3), {
     apply(f, th, args) {
       if (args[0] == packetTypes.Join) {
-        console.log(args)
         args[1].isMobile = settings.autoLoot.enabled;
-        console.log(settings.autoLoot.enabled)
       }
       if (args[0] == packetTypes.Input) {
         for (const command of inputs) {

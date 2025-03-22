@@ -163,7 +163,7 @@ function buildUI() {
                 readConfig(config);
                 loadedConfig = true;
             });
-    }, 300)
+    }, 1000)
 
     globalThis.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
         .then(response => response.json())
@@ -173,7 +173,8 @@ function buildUI() {
             reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION + message;
         });
 }
-export default function initUI() {
+
+export default function() {
     if (document.readyState == "loading") {
         reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
             buildUI();

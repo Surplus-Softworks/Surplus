@@ -1,78 +1,90 @@
 import { gameManager } from '../utils/injector.js';
 import { settings } from '../loader.js';
-import { gameObjects, inputCommands } from '../utils/constants.js';
+import { gameObjects, inputCommands, isGameReady } from '../utils/constants.js';
 import { inputs } from './inputOverride.js';
 import { reflect } from '../utils/hook.js';
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
+const WEAPON_COMMANDS = ['EquipPrimary', 'EquipSecondary'];
 
-const ammo = [
-    {
-        name: "",
-        ammo: null,
-        lastShotDate: Date.now()
-    },
-    {
-        name: "",
-        ammo: null,
-        lastShotDate: Date.now()
-    },
-    {
-        name: "",
-        ammo: null,
-    },
-    {
-        name: "",
-        ammo: null,
-    },
-]
-function autoSwitchTicker() {
-    if (!(gameManager.game?.[tr.ws] && gameManager.game?.[tr.activePlayer]?.[tr.localData]?.[tr.curWeapIdx] != null && gameManager.game?.initialized)) return;
+const weaponState = [
+    { name: "", ammo: null, lastShotDate: Date.now(), type: "" },
+    { name: "", ammo: null, lastShotDate: Date.now(), type: "" },
+    { name: "", ammo: null, type: "" },
+    { name: "", ammo: null, type: "" }
+];
 
-    if (!settings.autoSwitch.enabled) return;
+function updateWeaponSwitch() {
+    if (!isGameReady() || !settings.autoSwitch.enabled) return;
 
     try {
-        const curWeapIdx = gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx];
-        const weaps = gameManager.game[tr.activePlayer][tr.localData][tr.weapons];
-        const curWeap = weaps[curWeapIdx];
-        const shouldSwitch = gun => {
-            let s = false;
-            try {
-                s =
-                    (gameObjects[gun].fireMode === "single"
-                        || gameObjects[gun].fireMode === "burst")
-                    && gameObjects[gun].fireDelay >= 0.45;
+        const currentWeaponIndex = gameManager.game[tr.activePlayer][tr.localData][tr.curWeapIdx];
+        const weapons = gameManager.game[tr.activePlayer][tr.localData][tr.weapons];
+        const currentWeapon = weapons[currentWeaponIndex];
+        const currentWeaponState = weaponState[currentWeaponIndex];
+
+        if (currentWeapon.ammo === currentWeaponState.ammo) return;
+
+        const otherWeaponIndex = currentWeaponIndex === 0 ? 1 : 0;
+        const otherWeapon = weapons[otherWeaponIndex];
+        
+        const shouldSwitchFromCurrentWeapon = 
+            isSlowFiringWeapon(currentWeapon.type) && 
+            currentWeapon.type === currentWeaponState.type &&
+            (currentWeapon.ammo < currentWeaponState.ammo || 
+             (currentWeaponState.ammo === 0 && 
+              currentWeapon.ammo > currentWeaponState.ammo && 
+              isPlayerFiring()));
+
+        if (shouldSwitchFromCurrentWeapon) {
+            currentWeaponState.lastShotDate = Date.now();
+            
+            if (isSlowFiringWeapon(otherWeapon.type) && 
+                otherWeapon.ammo && 
+                !settings.autoSwitch.useOneGun) {
+                queueWeaponSwitch(otherWeaponIndex);
+            } else if (otherWeapon.type !== "") {
+                queueWeaponCycleAndBack(otherWeaponIndex, currentWeaponIndex);
+            } else {
+                queueMeleeCycleAndBack(currentWeaponIndex);
             }
-            catch (e) {
-            }
-            return s;
         }
-        const weapsEquip = ['EquipPrimary', 'EquipSecondary']
-        if (curWeap.ammo !== ammo[curWeapIdx].ammo) {
-            const otherWeapIdx = (curWeapIdx == 0) ? 1 : 0
-            const otherWeap = weaps[otherWeapIdx]
-            if ((curWeap.ammo < ammo[curWeapIdx].ammo || (ammo[curWeapIdx].ammo === 0 && curWeap.ammo > ammo[curWeapIdx].ammo && (gameManager.game[tr.touch].shotDetected || gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire)))) && shouldSwitch(curWeap.type) && curWeap.type == ammo[curWeapIdx].type) {
-                ammo[curWeapIdx].lastShotDate = Date.now();
-                //console.log("Switching weapon due to ammo change");
-                if (shouldSwitch(otherWeap.type) && otherWeap.ammo && !settings.autoSwitch.useOneGun) { // && ammo[curWeapIdx].ammo !== 0
-                    reflect.apply(arrayPush, inputs, [weapsEquip[otherWeapIdx]]);
-                } else if (otherWeap.type !== "") {
-                    reflect.apply(arrayPush, inputs, [weapsEquip[otherWeapIdx]]);
-                    reflect.apply(arrayPush, inputs, [weapsEquip[curWeapIdx]]);
-                } else {
-                    reflect.apply(arrayPush, inputs, ['EquipMelee']);
-                    reflect.apply(arrayPush, inputs, [weapsEquip[curWeapIdx]]);
-                }
-            }
-            ammo[curWeapIdx].ammo = curWeap.ammo
-            ammo[curWeapIdx].type = curWeap.type
-        }
-    } catch (err) {
-        //console.error('autoswitch', err)
+        
+        currentWeaponState.ammo = currentWeapon.ammo;
+        currentWeaponState.type = currentWeapon.type;
+    } catch { }
+}
+
+function isSlowFiringWeapon(weaponType) {
+    try {
+        const weapon = gameObjects[weaponType];
+        return (weapon.fireMode === "single" || weapon.fireMode === "burst") && 
+               weapon.fireDelay >= 0.45;
+    } catch {
+        return false;
     }
 }
 
-export default function autoSwitch() {
-    gameManager.pixi._ticker.add(autoSwitchTicker);
+function isPlayerFiring() {
+    return gameManager.game[tr.touch].shotDetected || 
+           gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
+}
+
+function queueWeaponSwitch(weaponIndex) {
+    reflect.apply(arrayPush, inputs, [WEAPON_COMMANDS[weaponIndex]]);
+}
+
+function queueWeaponCycleAndBack(firstIndex, secondIndex) {
+    queueWeaponSwitch(firstIndex);
+    queueWeaponSwitch(secondIndex);
+}
+
+function queueMeleeCycleAndBack(weaponIndex) {
+    reflect.apply(arrayPush, inputs, ['EquipMelee']);
+    queueWeaponSwitch(weaponIndex);
+}
+
+export default function() {
+    gameManager.pixi._ticker.add(updateWeaponSwitch);
 }
