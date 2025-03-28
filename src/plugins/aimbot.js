@@ -13,7 +13,7 @@ import { inputs } from './inputOverride.js';
 import { encryptDecrypt } from '../utils/encryption.js';
 
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
-
+// test
 const state = {
     focusedEnemy: null,
     previousEnemies: {},
