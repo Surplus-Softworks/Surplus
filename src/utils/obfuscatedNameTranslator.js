@@ -307,7 +307,7 @@ export function translate(gameManager) {
       try {
         if (translated.obstaclePool != null && translated.pointToScreen == null) {
           const pool = game[translated.map][translated.obstaclePool][translated.pool];
-          pool[0].render.call({}, new proxy({}, {
+          pool[0].render.call({}, 0, new proxy({}, {
             get(th, p) {
               translated.pointToScreen = p;
             }
