@@ -12,6 +12,7 @@
     "html-minifier-terser": "*",
     "js-confuser": "^2.0.0",
     "lzma-native": "^8.0.6",
-    "terser": "^5.39.0"
+    "terser": "^5.39.0",
+    "ws": "^8.18.1"
   }
 }

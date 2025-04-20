@@ -236,6 +236,7 @@ const loadPlugins = () => {
 const attach = () => {
   hook(gameManager.game, "init", {
     apply(f, th, args) {
+      console.log(args)
       const result = reflect.apply(f, th, args);
       translate(gameManager).then(translator => {
         loadPlugins();

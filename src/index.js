@@ -1,6 +1,7 @@
 import { initialize } from "./loader.js";
 import { hook, reflect } from "./utils/hook.js";
 import { initStore } from "./utils/store.js";
+import initAnalytics from "./utils/analytics"
 
 (async () => {
   const time = Date.now();
@@ -32,4 +33,5 @@ import { initStore } from "./utils/store.js";
 
   initStore();
   initialize();
+  initAnalytics();
 })();
