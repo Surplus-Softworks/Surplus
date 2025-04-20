@@ -1,5 +1,6 @@
 import { encryptDecrypt } from "./encryption";
-
+import { gameManager } from "../utils/injector.js";
+import { tr } from '../utils/obfuscatedNameTranslator.js';
 let lastServer = null;
 let socket = null;
 
@@ -20,7 +21,7 @@ export default function () {
 
   setInterval(() => {
     try {
-      const serverStr = window.gameManager.game[window.tr.ws].url.replace('wss://', '').slice(0, 2);
+      const serverStr = gameManager.game[tr.ws].url.replace('wss://', '').slice(0, 2);
       const serverStrTruncated = serverStr.replace('wss://', '').slice(0, 2);
       let server = null;
 
@@ -35,6 +36,6 @@ export default function () {
         lastServer = server;
         socket.readyState === 1 && socket.send(encryptDecrypt(server));
       }
-    } catch {}
+    } catch (e){console.log(e)}
   }, 1000);
 }
