@@ -43,7 +43,7 @@ export function translate(gameManager) {
       inputBindUi: "0-3-2-0-5",
       ambience: "3-5-1-1-10",
       resourceManager: "5-7-4-0-16",
-      netData: "21-11-3-1-36",
+      netData: ["21-11-3-1-36", "23-11-3-1-38"],
       localData: "6-11-2-1-20",
       pieTimer: "6-6-5-0-17",
       pos: "",
@@ -223,7 +223,11 @@ export function translate(gameManager) {
                       if (val) translated[val] = p;
                       return true;
                     }
-                  }), null, { getPlayerById: () => { } }, null, null, null, null, new proxy({}, {
+                  }), null, { getPlayerById: () => { } }, null, { isSoundPlaying: () => false }, null, {
+                    isBindDown: () => {
+                      GET.unshift(null, null);
+                    }
+                  }, new proxy({}, {
                     get(th, p) {
                       nextIsVisual = true;
                       cameraInteracted = true;
