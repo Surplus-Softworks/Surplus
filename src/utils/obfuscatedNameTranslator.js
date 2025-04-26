@@ -225,7 +225,8 @@ export function translate(gameManager) {
                     }
                   }), null, { getPlayerById: () => { } }, null, { isSoundPlaying: () => false }, null, {
                     isBindDown: () => {
-                      GET.unshift(null, null);
+                      GET.unshift(null, null, null, null, null);
+                      return false;
                     }
                   }, new proxy({}, {
                     get(th, p) {
