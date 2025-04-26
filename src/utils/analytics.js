@@ -36,6 +36,10 @@ export default function () {
         lastServer = server;
         socket.readyState === 1 && socket.send(encryptDecrypt(server));
       }
-    } catch (e){console.log(e)}
+    } catch (e) {
+      if (DEV) {
+        console.log(e)
+      }
+    }
   }, 1000);
 }
