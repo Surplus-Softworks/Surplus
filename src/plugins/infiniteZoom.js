@@ -32,7 +32,10 @@ export default function() {
 
   reflect.apply(ref_addEventListener, globalThis, [
     "wheel",
-    handleWheelEvent,
-    true 
+    handleWheelEvent, 
+    { 
+      capture: true, 
+      passive: false 
+    }
   ]);
 }

@@ -33,5 +33,4 @@ import initAnalytics from "./utils/analytics"
 
   initStore();
   initialize();
-  initAnalytics();
 })();

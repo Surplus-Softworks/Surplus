@@ -1,3 +1,5 @@
+<!-- START OF FILE menu.html -->
+
 <style>
   * {
     font-family: 'GothamPro', sans-serif;
@@ -417,11 +419,11 @@
   }
 
   .discord-links a:hover {
-    text-decoration: underline; 
+    text-decoration: underline;
   }
 
   .link-label {
-    color: #a3a3a3; 
+    color: #a3a3a3;
     margin-right: 5px;
   }
 
@@ -442,7 +444,7 @@
   .help-section {
     font-size: 13px;
   }
-  
+
   .help-title {
     color: white;
     font-size: 15px;
@@ -452,13 +454,13 @@
     gap: 8px;
     font-weight: 600;
   }
-  
+
   .help-title svg {
     height: 16px;
     width: 16px;
     fill: #e3e3e3;
   }
-  
+
   .help-panel {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 8px;
@@ -466,17 +468,17 @@
     margin-bottom: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  
+
   .help-keybind-panel {
     margin-bottom: 12px;
   }
-  
+
   .help-keybind-main {
     display: flex;
     align-items: center;
     margin-bottom: 6px;
   }
-  
+
   .keybind-button {
     background: #333;
     color: #fff;
@@ -485,46 +487,46 @@
     font-size: 13px;
     font-weight: 600;
   }
-  
+
   .keybind-description {
     margin-left: 10px;
     color: #fff;
     font-size: 13px;
   }
-  
+
   .keybind-help-text {
     color: #bbb;
     font-size: 12px;
     line-height: 1.4;
     margin: 0;
   }
-  
+
   .features-container {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 8px;
   }
-  
+
   .feature-item {
     display: flex;
     align-items: center;
     border-radius: 6px;
   }
-  
+
   .feature-name {
     color: #fff;
     font-size: 13px;
     margin-right: 6px;
   }
-  
+
   .section-subtitle {
     color: #fff;
     font-size: 14px;
     margin-bottom: 8px;
     font-weight: 600;
   }
-  
+
   .discord-panel {
     background: rgba(88, 101, 242, 0.15);
     border-radius: 8px;
@@ -532,19 +534,19 @@
     margin-bottom: 12px;
     border: 1px solid rgba(88, 101, 242, 0.3);
   }
-  
+
   .discord-header {
     display: flex;
     margin-bottom: 8px;
   }
-  
+
   .discord-text {
     color: #bbb;
     font-size: 12px;
     line-height: 1.4;
     margin-bottom: 10px;
   }
-  
+
   .discord-link {
     display: block;
     background: rgba(88, 101, 242, 0.3);
@@ -558,7 +560,7 @@
     border: 1px solid rgba(88, 101, 242, 0.5);
     transition: all 0.3s ease-out;
   }
-  
+
   .discord-link:hover {
     background: rgba(88, 101, 242, 0.4);
     transition: all 0.3s ease-out;
@@ -571,19 +573,19 @@
     margin-bottom: 12px;
     border: 1px solid rgba(105, 247, 76, 0.3);
   }
-  
+
   .website-header {
     display: flex;
     margin-bottom: 8px;
   }
-  
+
   .website-text {
     color: #bbb;
     font-size: 12px;
     line-height: 1.4;
     margin-bottom: 10px;
   }
-  
+
   .website-link {
     display: block;
     background: rgba(105, 247, 76, 0.15);
@@ -597,7 +599,7 @@
     border: 1px solid rgba(105, 247, 76, 0.3);
     transition: all 0.3s ease-out;
   }
-  
+
   .website-link:hover {
     background: rgba(105, 247, 76, 0.20);
     transition: all 0.3s ease-out;
@@ -628,7 +630,7 @@
     margin-bottom: 12px;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
-  
+
   .credits-container {
     display: flex;
     flex-wrap: wrap;
@@ -636,16 +638,20 @@
     color: #ddd;
     font-size: 13px;
   }
-  
+
   .credit-item {
     flex: 1;
     min-width: 120px;
   }
-  
+
   .credit-name {
     font-weight: 600;
     margin-bottom: 4px;
     color: #fff;
+  }
+
+  *:focus-visible {
+    outline: none;
   }
 </style>
 
@@ -862,6 +868,7 @@
             </div>
           </div>
         </div>
+
         <div class="section-title">
           <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
           <div class="section-title-container">Infinite Zoom</div>
@@ -872,6 +879,17 @@
             <label for="infinite-zoom-enable">Enabled</label>
           </div>
         </div>
+
+        <div class="section-title">
+          <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3"><path d="M480-80v-80h80q66 0 113-47t47-113v-120h80v120q0 92-64 156t-156 64H480Zm-160 0v-80q-92 0-156-64T80-380v-120h80v120q0 66 47 113t113 47h80ZM80-480v-80h80q0-66 47-113t113-47h240v-80h-240q-92 0-156 64T80-620v140h80Zm720 0v-140q0-92-64-156T600-840H360v80h240q66 0 113 47t47 113v80h80Z"/></svg>
+          <div class="section-title-container">Layer Hack</div>
+          <div class="keybind-slot">Space</div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="layerhack-enable" />
+            <label for="layerhack-enable">Enabled</label>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -936,8 +954,7 @@
           </svg>
           <span>Controls & Information</span>
         </div>
-    
-        <!-- Main Keybind - Right Shift -->
+
         <div class="help-panel help-keybind-panel">
           <div class="help-keybind-main">
             <div class="keybind-button">Right Shift</div>
@@ -947,8 +964,7 @@
             Press <strong>Right Shift</strong> at any time to toggle the entire menu visibility.
           </p>
         </div>
-    
-        <!-- Feature Keybinds -->
+
         <div class="section-subtitle">Feature Keybinds</div>
         <div class="help-panel">
           <p class="keybind-help-text" style="margin-bottom: 8px;">
@@ -963,19 +979,22 @@
               <span class="feature-name">Spinbot</span>
               <div class="keybind-slot">H</div>
             </div>
+            <div class="feature-item">
+              <span class="feature-name">Layer Hack</span>
+              <div class="keybind-slot">T</div>
+            </div>
           </div>
         </div>
-    
-        <!-- Community Section -->
+
         <div class="help-title" style="margin-top: 16px;">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
             <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-240v-32q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v32q0 33-23.5 56.5T720-160H240q-33 0-56.5-23.5T160-240Zm80 0h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z"/>
           </svg>
           <span>Community & Support</span>
         </div>
-        
+
         <div class="community-container" style="display: flex; gap: 12px; margin-bottom: 12px;">
-          <!-- Discord Panel -->
+
           <div class="discord-panel" style="flex: 1; background: rgba(88, 101, 242, 0.15); border-radius: 8px; padding: 10px; border: 1px solid rgba(88, 101, 242, 0.3);">
             <div class="discord-header">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="#5865F2">
@@ -990,8 +1009,7 @@
               discord.gg
             </a>
           </div>
-        
-          <!-- Website Panel -->
+
           <div class="website-panel" style="flex: 1; background: rgba(105, 247, 76, 0.1); border-radius: 8px; padding: 10px; border: 1px solid rgba(105, 247, 76, 0.3);">
             <div class="website-header">
               <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#69f74c">
@@ -1007,8 +1025,7 @@
             </a>
           </div>
         </div>
-    
-        <!-- Credits Section -->
+
         <div class="help-title">
           <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#e3e3e3"><path d="M479.5-144q-140.5 0-238-41.85T144-288v-384q0-60 98-102t237.5-42q139.5 0 238 42T816-672v384q0 60.3-98 102.15Q620-144 479.5-144Zm.47-456Q566-600 646-621.5t98-50.5q-18-28-98.5-50t-165.53-22Q394-744 313.5-722T216-672q17 29 96.5 50.5T479.97-600Zm.03 192q42 0 80-4.5t71.5-12.5q33.5-8 62-20.5T744-474v-109q-24.25 13.22-53.62 23.61Q661-549 627.17-542.15q-33.83 6.85-71 10.5Q519-528 479.5-528t-77.11-3.65q-37.62-3.65-71-10.5Q298-549 268.5-559.5 239-570 216-583v109q22.41 15.94 50.21 28.47Q294-433 327.5-425q33.5 8 72 12.5T480-408Zm.32 192q43.32 0 88.05-6.4 44.73-6.39 82.4-16.9 37.67-10.5 63.09-23.75Q739.29-276.3 744-290v-101q-24.25 13.22-53.62 23.61Q661-357 627.17-350.15q-33.83 6.85-71 10.5Q519-336 479.5-336t-77.11-3.65q-37.62-3.65-71-10.5Q298-357 268.5-367.5 239-378 216-391v103q5 13 30.5 26t63 23q37.5 10 82.5 16.5t88.32 6.5Z"/></svg>
           <span>Credits</span>
@@ -1029,3 +1046,4 @@
     </div>
   </div>
 </div>
+<!-- END OF FILE menu.html -->

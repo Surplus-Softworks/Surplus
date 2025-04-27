@@ -1,3 +1,5 @@
+// --- START OF FILE loader.js ---
+
 import xray from "./plugins/xray.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
 import esp from "./plugins/esp.js";
@@ -8,6 +10,7 @@ import spinbot from "./plugins/spinbot.js";
 import aimbot from "./plugins/aimbot.js";
 import mapHighlights from "./plugins/mapHighlights.js";
 import autoSwitch from "./plugins/autoSwitch.js";
+import layerHack from "./plugins/layerHack.js";
 import { translate } from "./utils/obfuscatedNameTranslator.js";
 import { injectGame, gameManager } from "./utils/injector.js";
 import { hook, reflect, object } from "./utils/hook.js";
@@ -75,8 +78,8 @@ const registerSettings = (obj) => {
 };
 
 export const settings = {
-  aimbot: registerSettings({ enabled: "aim-enable", 
-    targetKnocked: "target-knocked", 
+  aimbot: registerSettings({ enabled: "aim-enable",
+    targetKnocked: "target-knocked",
     stickyTarget: "sticky-target",
   }),
   meleeLock: registerSettings({ enabled: "melee-lock", autoMelee: "auto-melee"}),
@@ -106,7 +109,7 @@ export const settings = {
     _smooth: "mobile-movement-smooth"
   }),
   autoFire: registerSettings({ enabled: "semiauto-enable" }),
-  xray: registerSettings({ 
+  xray: registerSettings({
     enabled: "xray",
     get $smokeOpacity() {
       return parseInt(getValue("smoke-opacity"));
@@ -148,6 +151,7 @@ export const settings = {
     enabled: "autoswitch-enable",
     useOneGun: "useonegun"
   }),
+  layerHack: registerSettings({ enabled: "layerhack-enable" }),
 };
 
 export const defaultSettings = {
@@ -205,6 +209,9 @@ export const defaultSettings = {
   autoSwitch: {
     enabled: true,
     useOneGun: false
+  },
+  layerHack: {
+    enabled: true
   }
 }
 
@@ -229,6 +236,7 @@ const loadPlugins = () => {
     spinbot();
     aimbot();
     autoSwitch();
+    layerHack();
   }
   xray();
 };
@@ -253,3 +261,4 @@ export const initialize = () => {
   loadStaticPlugins();
   injectGame(attach);
 };
+// --- END OF FILE loader.js ---
