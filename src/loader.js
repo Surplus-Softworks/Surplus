@@ -1,5 +1,3 @@
-// --- START OF FILE loader.js ---
-
 import xray from "./plugins/xray.js";
 import infiniteZoom from "./plugins/infiniteZoom.js";
 import esp from "./plugins/esp.js";
@@ -244,7 +242,6 @@ const loadPlugins = () => {
 const attach = () => {
   hook(gameManager.game, "init", {
     apply(f, th, args) {
-      console.log(args)
       const result = reflect.apply(f, th, args);
       translate(gameManager).then(translator => {
         loadPlugins();
@@ -261,4 +258,3 @@ export const initialize = () => {
   loadStaticPlugins();
   injectGame(attach);
 };
-// --- END OF FILE loader.js ---

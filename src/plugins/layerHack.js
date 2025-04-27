@@ -3,8 +3,8 @@ import { settings } from "../loader.js";
 import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener, object } from "../utils/hook.js";
 
-let isHackActive = false;
-let originalLayerValue = null;
+export let isLayerHackActive = false;
+export let originalLayerValue = null;
 let originalLayerDescriptor = null;
 let activePlayerRef = null;
 let originalPlayerAlpha = 1.0;
@@ -66,7 +66,7 @@ function setPlayerAlpha(player, alpha) {
 }
 
 function handleKeyDown(event) {
-    if (event.code !== 'Space' || !settings.layerHack.enabled || isHackActive) return;
+    if (event.code !== 'Space' || !settings.layerHack.enabled || isLayerHackActive) return;
 
     try {
         const player = gameManager.game?.[tr.activePlayer];
@@ -79,7 +79,7 @@ function handleKeyDown(event) {
         const targetLayer = currentLayer === 0 ? 1 : 0;
 
         if (applyLayerSpoof(player, targetLayer)) {
-            isHackActive = true;
+            isLayerHackActive = true;
             setPlayerAlpha(player, 0.5);
         } else {
             activePlayerRef = null;
@@ -90,7 +90,7 @@ function handleKeyDown(event) {
 }
 
 function handleKeyUp(event) {
-    if (event.code !== 'Space' || !isHackActive) return;
+    if (event.code !== 'Space' || !isLayerHackActive) return;
     cleanupHack();
 }
 
@@ -108,7 +108,7 @@ function cleanupHack() {
             } catch (e) {}
         }
     } finally {
-        isHackActive = false;
+        isLayerHackActive = false;
         activePlayerRef = null;
         originalPlayerAlpha = 1.0;
     }

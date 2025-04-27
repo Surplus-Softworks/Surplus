@@ -11,7 +11,7 @@ import { tr } from '../utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener } from '../utils/hook.js';
 import { inputs } from './inputOverride.js';
 import { encryptDecrypt } from '../utils/encryption.js';
-
+import { isLayerHackActive, originalLayerValue } from './layerHack.js'; // <-- ADD THIS IMPORT
 export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
 // test
 const state = {
@@ -118,6 +118,8 @@ function predictPosition(enemy, currentPlayer) {
 
 function findTarget(players, me) {
     const meTeam = findTeam(me);
+    // Determine the local player's actual layer, considering the hack
+    const localPlayerActualLayer = isLayerHackActive ? originalLayerValue : me.layer;
     let enemy = null;
     let minDistance = Infinity;
 
@@ -127,12 +129,13 @@ function findTarget(players, me) {
             player[tr.netData][tr.dead] ||
             (!settings.aimbot.targetKnocked && player.downed) ||
             me.__id === player.__id ||
-            //me.layer !== player.layer ||
-            !player.container.worldVisible ||
+            // Replace the complex visibility check with a direct actual layer check:
+            player.layer !== localPlayerActualLayer ||
             findTeam(player) === meTeam
         )
             continue;
 
+        // ... rest of the distance calculation and target selection ...
         const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
             x: player[tr.visualPos].x,
             y: player[tr.visualPos].y,
@@ -165,7 +168,7 @@ function findClosestTarget(players, me) {
             (!settings.aimbot.targetKnocked && player.downed) ||
             me.__id === player.__id ||
             //me.layer !== player.layer ||
-            !player.container.worldVisible ||
+            !(player.container.worldVisible ? !isLayerHackActive : false)||
             findTeam(player) === meTeam
         )
             continue;

@@ -27,6 +27,7 @@ const GRENADE_COLORS = {
     MIRV: 0xff0000,
     MARTYR: 0xee3333
 };
+import { originalLayerValue, isLayerHackActive } from "./layerHack.js";
 
 const graphicsCache = {};
 
@@ -61,21 +62,27 @@ function renderPlayerLines(localPlayer, players, graphics) {
     const playerX = localPlayer[tr.pos].x;
     const playerY = localPlayer[tr.pos].y;
     const playerTeam = findTeam(localPlayer);
-    
+    // Determine the local player's actual layer, considering the hack
+    const localPlayerActualLayer = isLayerHackActive ? originalLayerValue : localPlayer.layer;
+
     players.forEach(player => {
         if (!player.active || player[tr.netData][tr.dead] || localPlayer.__id === player.__id) return;
-        
+
         const team = findTeam(player);
-        const isVisible = player.container.worldVisible;
+
+        // Check if the target player is on the same *actual* layer as the local player
+        const isActuallySameLayer = player.layer === localPlayerActualLayer;
         const isDowned = player.downed;
 
-        const lineColor = team === playerTeam ? COLORS.BLUE : 
-                         (isVisible && !isDowned ? COLORS.RED : COLORS.WHITE);
+        // Determine color based on team and actual layer proximity
+        // RED if enemy on the same actual layer (and not downed), BLUE if teammate, WHITE otherwise.
+        const lineColor = team === playerTeam ? COLORS.BLUE :
+                         (isActuallySameLayer && !isDowned ? COLORS.RED : COLORS.WHITE);
 
         graphics.lineStyle(2, lineColor, 0.45);
         graphics.moveTo(0, 0);
         graphics.lineTo(
-            (player[tr.pos].x - playerX) * 16, 
+            (player[tr.pos].x - playerX) * 16,
             (playerY - player[tr.pos].y) * 16
         );
     });
@@ -84,7 +91,12 @@ function renderPlayerLines(localPlayer, players, graphics) {
 function renderGrenadeZones(localPlayer, graphics) {
     const playerX = localPlayer[tr.pos].x;
     const playerY = localPlayer[tr.pos].y;
-    const playerLayer = localPlayer.layer;
+    let playerLayer = undefined;
+    if (originalLayerValue) {
+        playerLayer = originalLayerValue;
+    } else {
+        playerLayer = localPlayer.layer
+    }
 
     const grenades = object.values(gameManager.game[tr.objectCreator][tr.idToObj])
         .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || 
@@ -253,23 +265,31 @@ function renderFlashlights(localPlayer, players, graphics) {
 
     const localWeapon = findWeapon(localPlayer);
     const localBullet = findBullet(localWeapon);
-    
+    // Determine the local player's actual layer, considering the hack
+    const localPlayerActualLayer = isLayerHackActive ? originalLayerValue : localPlayer.layer;
+
     if (settings.esp.flashlights.own) {
+        // Optional: Adjust own flashlight logic if needed based on actual layer,
+        // but drawing it usually depends on current view, so might be okay as is.
         drawFlashlight(localPlayer, localBullet, localWeapon);
     }
 
     if (settings.esp.flashlights.others) {
-        const enemies = players.filter(player => 
-            player.active && 
-            !player[tr.netData][tr.dead] && 
-            localPlayer.__id !== player.__id && 
-            player.container.worldVisible && 
+        const enemies = players.filter(player =>
+            player.active &&
+            !player[tr.netData][tr.dead] &&
+            localPlayer.__id !== player.__id &&
+            // Filter based on actual layer match:
+            player.layer === localPlayerActualLayer &&
+            // Keep worldVisible check: only draw for those PIXI thinks are drawable
+            player.container.worldVisible &&
             findTeam(player) !== findTeam(localPlayer)
         );
-        
+
         enemies.forEach(enemy => {
             const enemyWeapon = findWeapon(enemy);
             const enemyBullet = findBullet(enemyWeapon);
+            // Color adjustment might be desired here, but the filter is the main fix
             drawFlashlight(enemy, enemyBullet, enemyWeapon, 0, 0.05);
         });
     }
