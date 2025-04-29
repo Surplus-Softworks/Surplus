@@ -45,12 +45,12 @@ function getGraphics(container, key) {
 function nameTag(player) {
     const localPlayer = gameManager.game[tr.activePlayer];
     const isSameTeam = findTeam(player) === findTeam(localPlayer);
-    
+
     reflect.defineProperty(player.nameText, "visible", {
         get: () => (settings.esp.visibleNametags && settings.esp.enabled),
         set: () => {}
     });
-    
+
     player.nameText.visible = true;
     player.nameText.tint = isSameTeam ? 0xcbddf5 : 0xff2828;
     player.nameText.style.fill = isSameTeam ? "#3a88f4" : "#ff2828";
@@ -62,22 +62,24 @@ function renderPlayerLines(localPlayer, players, graphics) {
     const playerX = localPlayer[tr.pos].x;
     const playerY = localPlayer[tr.pos].y;
     const playerTeam = findTeam(localPlayer);
-    // Determine the local player's actual layer, considering the hack
-    const localPlayerActualLayer = isLayerHackActive ? originalLayerValue : localPlayer.layer;
+    // Determine the local player's effective layer, considering layer 2/3 bypass or hack
+    const isLocalOnBypassLayer = localPlayer.layer === 2 || localPlayer.layer === 3;
+    const localPlayerActualLayer = isLocalOnBypassLayer ? localPlayer.layer : (isLayerHackActive ? originalLayerValue : localPlayer.layer);
 
     players.forEach(player => {
         if (!player.active || player[tr.netData][tr.dead] || localPlayer.__id === player.__id) return;
 
         const team = findTeam(player);
+        const isTargetOnBypassLayer = player.layer === 2 || player.layer === 3;
 
-        // Check if the target player is on the same *actual* layer as the local player
-        const isActuallySameLayer = player.layer === localPlayerActualLayer;
+        // Check if the target player is on layer 2/3 OR local player is on layer 2/3 OR they are on the same *actual* layer
+        const isOnEffectiveLayer = (isTargetOnBypassLayer || isLocalOnBypassLayer || player.layer === localPlayerActualLayer);
         const isDowned = player.downed;
 
-        // Determine color based on team and actual layer proximity
-        // RED if enemy on the same actual layer (and not downed), BLUE if teammate, WHITE otherwise.
+        // Determine color based on team and effective layer proximity
+        // RED if enemy on the effective layer (and not downed), BLUE if teammate, WHITE otherwise.
         const lineColor = team === playerTeam ? COLORS.BLUE :
-                         (isActuallySameLayer && !isDowned ? COLORS.RED : COLORS.WHITE);
+                         (isOnEffectiveLayer && !isDowned ? COLORS.RED : COLORS.WHITE);
 
         graphics.lineStyle(2, lineColor, 0.45);
         graphics.moveTo(0, 0);
@@ -88,24 +90,33 @@ function renderPlayerLines(localPlayer, players, graphics) {
     });
 }
 
+
 function renderGrenadeZones(localPlayer, graphics) {
     const playerX = localPlayer[tr.pos].x;
     const playerY = localPlayer[tr.pos].y;
     let playerLayer = undefined;
-    if (originalLayerValue) {
+    // Prioritize layer 2/3 for local player's layer context
+    const isLocalOnBypassLayer = localPlayer.layer === 2 || localPlayer.layer === 3;
+    if (isLocalOnBypassLayer) {
+        playerLayer = localPlayer.layer; // Use 2 or 3 directly
+    } else if (originalLayerValue !== undefined && isLayerHackActive) {
         playerLayer = originalLayerValue;
     } else {
-        playerLayer = localPlayer.layer
+        playerLayer = localPlayer.layer;
     }
 
+
     const grenades = object.values(gameManager.game[tr.objectCreator][tr.idToObj])
-        .filter(obj => (obj.__type === 9 && obj.type !== "smoke") || 
+        .filter(obj => (obj.__type === 9 && obj.type !== "smoke") ||
                        (obj.smokeEmitter && obj.explodeParticle));
-    
+
     grenades.forEach(grenade => {
-        const opacity = grenade.layer !== playerLayer ? 0.2 : 0.1;
-        const fillColor = grenade.layer !== playerLayer ? COLORS.WHITE : COLORS.RED;
-        const radius = 13 * 16; 
+        const isGrenadeOnBypassLayer = grenade.layer === 2 || grenade.layer === 3;
+        // Grenade layer check now also considers if local player or grenade is on layer 2/3
+        const isEffectiveLayerMatch = (isGrenadeOnBypassLayer || isLocalOnBypassLayer || grenade.layer === playerLayer);
+        const opacity = !isEffectiveLayerMatch ? 0.2 : 0.1;
+        const fillColor = !isEffectiveLayerMatch ? COLORS.WHITE : COLORS.RED;
+        const radius = 13 * 16;
 
         graphics.beginFill(fillColor, opacity);
         graphics.drawCircle(
@@ -124,9 +135,11 @@ function renderGrenadeZones(localPlayer, graphics) {
     });
 }
 
+
 function renderGrenadeTrajectory(localPlayer, graphics) {
-    if (localPlayer[tr.localData][tr.curWeapIdx] !== 3) return; 
-    
+    // No layer logic here, keeping original function
+    if (localPlayer[tr.localData][tr.curWeapIdx] !== 3) return;
+
     const activeItem = localPlayer[tr.netData][tr.activeWeapon];
     if (!activeItem) return;
 
@@ -134,15 +147,15 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     const playerY = localPlayer[tr.pos].y;
     const throwableMaxRange = 18;
     let dirX, dirY;
-    
+
     const isSpectating = gameManager.game[tr.uiManager].spectating;
-    const isAiming = gameManager.game[tr.touch].shotDetected || 
+    const isAiming = gameManager.game[tr.touch].shotDetected ||
                     gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
-    
+
     if (!isSpectating && (!lastAimPos || (lastAimPos && !isAiming))) {
         const mouseX = gameManager.game[tr.input].mousePos._x - innerWidth / 2;
         const mouseY = gameManager.game[tr.input].mousePos._y - innerHeight / 2;
-        
+
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
@@ -150,16 +163,16 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
         const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({ x: playerX, y: playerY });
         const aimX = lastAimPos.clientX - screenPos.x;
         const aimY = lastAimPos.clientY - screenPos.y;
-        
+
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
-        dirX = aimX / magnitude; 
-        dirY = aimY / magnitude; 
+        dirX = aimX / magnitude;
+        dirY = aimY / magnitude;
     } else {
         dirX = localPlayer[tr.dir].x;
         dirY = localPlayer[tr.dir].y;
     }
 
-    const offsetAngle = 2 * (Math.PI / 180); 
+    const offsetAngle = 2 * (Math.PI / 180);
     const offsetDirX = dirX * Math.cos(offsetAngle) - dirY * Math.sin(offsetAngle);
     const offsetDirY = dirX * Math.sin(offsetAngle) + dirY * Math.cos(offsetAngle);
     dirX = offsetDirX;
@@ -169,16 +182,16 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
         Math.max(toMouseLen, 0),
         throwableMaxRange * 1.8
     ) / 15;
-    
+
     const isSmoke = activeItem.includes("smoke");
     const throwSpeed = isSmoke ? 11 : 15;
     const lineLength = throwPower * throwSpeed;
 
     const endX = playerX + dirX * lineLength;
-    const endY = playerY - dirY * lineLength; 
+    const endY = playerY - dirY * lineLength;
 
     let lineColor = GRENADE_COLORS.DEFAULT;
-    
+
     if (activeItem.includes("smoke")) {
         lineColor = GRENADE_COLORS.SMOKE;
     } else if (activeItem.includes("frag")) {
@@ -195,10 +208,10 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
 
     const grenadeType = activeItem.replace("_cook", "");
     const explosionType = gameObjects[grenadeType]?.explosionType;
-    
+
     if (explosionType && gameObjects[explosionType]) {
         const radius = (gameObjects[explosionType].rad.max + 1) * 16;
-        
+
         graphics.beginFill(lineColor, 0.2);
         graphics.drawCircle(
             (endX - playerX) * 16,
@@ -216,30 +229,31 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     }
 }
 
+
 function renderFlashlights(localPlayer, players, graphics) {
     function drawFlashlight(player, bullet, weapon, color = 0x0000ff, opacity = 0.1) {
         if (!bullet) return;
 
-        const center = { 
-            x: (player[tr.pos].x - localPlayer[tr.pos].x) * 16, 
-            y: (localPlayer[tr.pos].y - player[tr.pos].y) * 16 
+        const center = {
+            x: (player[tr.pos].x - localPlayer[tr.pos].x) * 16,
+            y: (localPlayer[tr.pos].y - player[tr.pos].y) * 16
         };
 
         let aimAngle;
         const isLocalPlayer = player === localPlayer;
         const isSpectating = gameManager.game[tr.uiManager].spectating;
-        const isAiming = gameManager.game[tr.touch].shotDetected || 
+        const isAiming = gameManager.game[tr.touch].shotDetected ||
                          gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
-        
+
         if (isLocalPlayer && !isSpectating && (!lastAimPos || (lastAimPos && !isAiming))) {
             aimAngle = Math.atan2(
                 gameManager.game[tr.input].mousePos._y - innerHeight / 2,
                 gameManager.game[tr.input].mousePos._x - innerWidth / 2
             );
         } else if (isLocalPlayer && !isSpectating && lastAimPos) {
-            const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({ 
-                x: player[tr.pos].x, 
-                y: player[tr.pos].y 
+            const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
+                x: player[tr.pos].x,
+                y: player[tr.pos].y
             });
             aimAngle = Math.atan2(
                 screenPos.y - lastAimPos.clientY,
@@ -249,14 +263,14 @@ function renderFlashlights(localPlayer, players, graphics) {
             aimAngle = Math.atan2(player[tr.dir].x, player[tr.dir].y) - Math.PI / 2;
         }
 
-        const spreadAngle = weapon.shotSpread * 0.01745329252; 
+        const spreadAngle = weapon.shotSpread * 0.01745329252;
         graphics.beginFill(color, opacity);
         graphics.moveTo(center.x, center.y);
         graphics.arc(
-            center.x, 
-            center.y, 
-            bullet.distance * 16.25, 
-            aimAngle - spreadAngle / 2, 
+            center.x,
+            center.y,
+            bullet.distance * 16.25,
+            aimAngle - spreadAngle / 2,
             aimAngle + spreadAngle / 2
         );
         graphics.lineTo(center.x, center.y);
@@ -265,8 +279,9 @@ function renderFlashlights(localPlayer, players, graphics) {
 
     const localWeapon = findWeapon(localPlayer);
     const localBullet = findBullet(localWeapon);
-    // Determine the local player's actual layer, considering the hack
-    const localPlayerActualLayer = isLayerHackActive ? originalLayerValue : localPlayer.layer;
+    // Determine the local player's effective layer, considering layer 2/3 bypass or hack
+    const isLocalOnBypassLayer = localPlayer.layer === 2 || localPlayer.layer === 3;
+    const localPlayerActualLayer = isLocalOnBypassLayer ? localPlayer.layer : (isLayerHackActive ? originalLayerValue : localPlayer.layer);
 
     if (settings.esp.flashlights.own) {
         // Optional: Adjust own flashlight logic if needed based on actual layer,
@@ -275,16 +290,19 @@ function renderFlashlights(localPlayer, players, graphics) {
     }
 
     if (settings.esp.flashlights.others) {
-        const enemies = players.filter(player =>
-            player.active &&
-            !player[tr.netData][tr.dead] &&
-            localPlayer.__id !== player.__id &&
-            // Filter based on actual layer match:
-            player.layer === localPlayerActualLayer &&
-            // Keep worldVisible check: only draw for those PIXI thinks are drawable
-            player.container.worldVisible &&
-            findTeam(player) !== findTeam(localPlayer)
+        const enemies = players.filter(player => {
+            const isTargetOnBypassLayer = player.layer === 2 || player.layer === 3;
+            const meetsLayerCriteria = (isTargetOnBypassLayer || isLocalOnBypassLayer || player.layer === localPlayerActualLayer);
+
+            return player.active &&
+                   !player[tr.netData][tr.dead] &&
+                   localPlayer.__id !== player.__id &&
+                   meetsLayerCriteria && // Filter based on combined layer check
+                   player.container.worldVisible && // Keep worldVisible check
+                   findTeam(player) !== findTeam(localPlayer);
+            }
         );
+
 
         enemies.forEach(enemy => {
             const enemyWeapon = findWeapon(enemy);
