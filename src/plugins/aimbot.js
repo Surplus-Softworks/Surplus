@@ -353,7 +353,7 @@ function aimbotTicker() {
                 }
 
                 // Set aim position only if aimbot is active and conditions met
-                 if (settings.aimbot.enabled && isAiming) { // Check if firing for aimbot activation
+                if (settings.aimbot.enabled || (settings.meleeLock.enabled && distanceToEnemy <= 8)) { // Check if firing for aimbot activation
                     lastAimPos = {
                         clientX: predictedPos.x,
                         clientY: predictedPos.y,
@@ -365,20 +365,16 @@ function aimbotTicker() {
                     ) {
                         aimbotDot.style.left = predictedPos.x + 'px';
                         aimbotDot.style.top = predictedPos.y + 'px';
-                        aimbotDot.style.display = settings.aimbot.drawDot ? 'block' : 'none'; // Use setting for dot visibility
+                        aimbotDot.style.display = 'block'; // Use setting for dot visibility
                     }
                  } else {
-                    // Not firing or aimbot disabled, hide dot and clear aim pos
-                    lastAimPos = null;
                     aimbotDot.style.display = 'none';
                  }
 
             } else {
-                // No valid enemy found
+                aimTouchMoveDir = null;
                 lastAimPos = null;
                 aimbotDot.style.display = 'none';
-                state.currentEnemy = null; // Clear current enemy if none found
-                 state.focusedEnemy = null; // Ensure focused enemy is also cleared
             }
         } catch (error) {
             aimbotDot.style.display = "none";
