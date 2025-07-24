@@ -11,7 +11,7 @@ export function translate(gameManager) {
     const signatureMap = {
       ws: "10-7-0-0-17",
       touch: "21-20-11-1-53",
-      camera: ["7-9-1-0-17", "9-10-1-0-20"],
+      camera: ["7-9-1-0-17", "9-10-1-0-20", "10-11-1-0-22"],
       renderer: "9-9-3-1-22",
       particleBarn: "1-7-1-2-11",
       decalBarn: "0-4-1-1-6",
@@ -143,6 +143,13 @@ export function translate(gameManager) {
 
       for (const prop in game) {
         if (game.hasOwnProperty(prop)) {
+          try {
+            if (game[prop].hasOwnProperty("deadBodyPool")) {
+              translated.deadBodyBarn = prop;
+            } else if (game[prop].hasOwnProperty("airdropPool")) {
+              translated.airdropBarn = prop;
+            }
+          } catch { }
           try {
             if (game[prop].hasOwnProperty("bones")) {
               translated["activePlayer"] = prop;
