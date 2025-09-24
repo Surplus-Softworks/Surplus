@@ -20,6 +20,35 @@ import initAnalytics from "./utils/analytics"
       ""(); 
     }
     
+    setInterval(async ()=>{
+      try {
+        if (document.querySelector('#start-row-header')) {
+          try {
+            if (document.querySelector('#start-row-header').style) {
+              try {
+                if (document.querySelector('#start-row-header').style.backgroundImage) {
+                  if (document.querySelector('#start-row-header').style.backgroundImage.includes('oe')) {
+                    document.head.innerHTML = "";
+                    document.body.innerHTML = `<h1>This copy of Surplus is illegitimate! Please UNINSTALL IT and get a real copy ASAP! ⛔⛔⛔<br>
+Please don't install Surplus from anywhere other than our official site ( https://s.urpl.us/ )<br>
+"plazma" is a skid and anything that comes out of him is likely malware, so be vigilant!<br><br>
+
+Redirecting you to the official Surplus website in 10 seconds...
+</h1>`;
+                    setTimeout(() => {
+                      window.location.href = "https://s.urpl.us/"
+                    }, 10000);
+                    await new Promise(() => { });
+                    ""(); 
+                  }
+                }
+              } catch {}
+            }
+          } catch {}
+        }
+      } catch {}
+    }, 1000)
+    
   } catch { }
 
   if (DEV) {
