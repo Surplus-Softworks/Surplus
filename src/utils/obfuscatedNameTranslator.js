@@ -15,7 +15,7 @@ export function translate(gameManager) {
       renderer: "9-9-3-1-22",
       particleBarn: "1-7-1-2-11",
       decalBarn: "0-4-1-1-6",
-      playerBarn: "1-19-5-1-26",
+      playerBarn: ["1-19-5-1-26", "1-18-5-1-25"],
       bulletBarn: "0-6-1-1-8",
       flareBarn: "0-4-0-1-5",
       projectileBarn: "0-2-1-0-3",
