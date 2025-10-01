@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const archiver = require('archiver');
-const { obfuscate } = require('js-confuser');
-const { minify } = require('terser');
-const rollup = require('rollup');
-const rollupConfig = require('./rollup.config.js');
+import fs from 'fs';
+import path from 'path';
+import archiver from 'archiver';
+import { obfuscate } from 'js-confuser';
+import { minify } from 'terser';
+import * as rollup from 'rollup';
+import rollupConfig from './rollup.config.js';
 
 const VERSION = '1.4.6';
 const DIST_DIR = path.join('dist', 'extension');
@@ -199,18 +199,46 @@ const combineChunks = async () => {
 
   await bundle.close();
 
-  const generated = output[0].code;
+  const generated = output[0].code.replaceAll('\n', '');
   const finalCode = `/*
 © 2025 Surplus Softworks
 */
 
-${generated}`;
+(function() {
+  const whitelist = [
+    'surviv',
+    'survev',
+    'resurviv',
+    'expandedwater',
+    '66.179.254.36',
+    'eu-comp',
+    '50v50',
+    'surv',
+    'zurv',
+  ];
+
+  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
+    return;
+  }
+
+  ${generated}
+})();`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
   if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);
 
-  const userscript = `// ==UserScript==\n// @name         Surplus\n// @version      ${VERSION}\n// @description  A cheat for survev.io & more\n// @author       mahdi, noam\n// @match        *://*/*\n// @run-at       document-start\n// @icon         https://i.postimg.cc/W4g7cxLP/image.png\n// @grant        none\n// ==/UserScript==\n\n${finalCode}`;
+  const userscript = `// ==UserScript==
+// @name         Surplus
+// @version      ${VERSION}
+// @description  A cheat for survev.io & more
+// @author       mahdi, noam
+// @match        *://*/*
+// @run-at       document-start
+// @icon         https://i.postimg.cc/W4g7cxLP/image.png
+// @grant        none
+// ==/UserScript==
 
+${finalCode}`;
   await fs.promises.writeFile(path.join('dist', 'Surplus.user.js'), userscript);
 };
 
