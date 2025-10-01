@@ -1,9 +1,9 @@
-import { gameManager } from '../utils/injector.js';
-import { settings } from '../loader.js';
-import { gameObjects, inputCommands, isGameReady } from '../utils/constants.js';
-import { inputs } from './inputOverride.js';
-import { reflect } from '../utils/hook.js';
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { gameManager } from '@/utils/injector.js';
+import { settings } from '@/state/settings.js';
+import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
+import { inputState } from '@/state/inputState.js';
+import { reflect } from '@/utils/hook.js';
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
 const WEAPON_COMMANDS = ['EquipPrimary', 'EquipSecondary'];
@@ -72,7 +72,7 @@ function isPlayerFiring() {
 }
 
 function queueWeaponSwitch(weaponIndex) {
-    reflect.apply(arrayPush, inputs, [WEAPON_COMMANDS[weaponIndex]]);
+    reflect.apply(arrayPush, inputState.queuedInputs, [WEAPON_COMMANDS[weaponIndex]]);
 }
 
 function queueWeaponCycleAndBack(firstIndex, secondIndex) {
@@ -81,7 +81,7 @@ function queueWeaponCycleAndBack(firstIndex, secondIndex) {
 }
 
 function queueMeleeCycleAndBack(weaponIndex) {
-    reflect.apply(arrayPush, inputs, ['EquipMelee']);
+    reflect.apply(arrayPush, inputState.queuedInputs, ['EquipMelee']);
     queueWeaponSwitch(weaponIndex);
 }
 

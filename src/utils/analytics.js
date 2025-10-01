@@ -1,6 +1,6 @@
-import { encryptDecrypt } from "./encryption";
-import { gameManager } from "../utils/injector.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { encryptDecrypt } from "@/utils/encryption.js";
+import { gameManager } from "@/utils/injector.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 let lastServer = null;
 let socket = null;
 

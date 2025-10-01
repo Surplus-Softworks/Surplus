@@ -1,14 +1,13 @@
-import { gameManager } from "../utils/injector.js";
-import { reflect, hook, object } from "../utils/hook.js";
-import { autoFireEnabled } from "./autoFire.js";
-import { aimTouchMoveDir } from "./aimbot.js";
-import { inputCommands, packetTypes } from "../utils/constants.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
-import { settings } from "../loader.js";
+import { gameManager } from "@/utils/injector.js";
+import { reflect, hook, object } from "@/utils/hook.js";
+import { autoFireEnabled } from "@/plugins/autoFire.js";
+import { aimState } from "@/state/aimbotState.js";
+import { inputCommands, packetTypes } from "@/utils/constants.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { inputState } from "@/state/inputState.js";
+import { settings } from "@/state/settings.js";
 
 export let emoteTypes = [];
-export let inputs = [];
-export let toMouseLen;
 
 let cachedMoveDir = { x: 0, y: 0 };
 
@@ -19,10 +18,10 @@ export default function() {
         args[1].isMobile = settings.autoLoot.enabled;
       }
       if (args[0] == packetTypes.Input) {
-        for (const command of inputs) {
+        for (const command of inputState.queuedInputs) {
           args[1].addInput(inputCommands[command]);
         }
-        inputs.length = 0;
+        inputState.queuedInputs.length = 0;
       }
       if (args[1].loadout) {
         emoteTypes[0] = args[1].loadout.emotes[0];
@@ -61,14 +60,14 @@ export default function() {
         cachedMoveDir.y = 0;
       }
 
-      if (aimTouchMoveDir) {
+      if (aimState.aimTouchMoveDir) {
         args[1].touchMoveActive = true;
         args[1].touchMoveLen = true;
-        args[1].touchMoveDir.x = aimTouchMoveDir.x;
-        args[1].touchMoveDir.y = aimTouchMoveDir.y;
+        args[1].touchMoveDir.x = aimState.aimTouchMoveDir.x;
+        args[1].touchMoveDir.y = aimState.aimTouchMoveDir.y;
       }
 
-      toMouseLen = args[1].toMouseLen
+      inputState.toMouseLen = args[1].toMouseLen
 
       return reflect.apply(f, th, args);
     }

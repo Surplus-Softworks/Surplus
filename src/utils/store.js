@@ -1,4 +1,4 @@
-import { reflect } from "./hook.js";
+import { reflect } from "@/utils/hook.js";
 
 const DBNAME = "d\u2063";
 const DBSTORENAME = "s\u2063";

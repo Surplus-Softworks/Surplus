@@ -1,7 +1,7 @@
-import { gameManager } from "../utils/injector.js";
-import { settings } from "../loader.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
-import { reflect, ref_addEventListener, object } from "../utils/hook.js";
+import { gameManager } from "@/utils/injector.js";
+import { settings } from "@/state/settings.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { reflect, ref_addEventListener, object } from "@/utils/hook.js";
 
 export let isLayerHackActive = false;
 export let originalLayerValue = null;

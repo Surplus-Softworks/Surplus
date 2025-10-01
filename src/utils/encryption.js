@@ -1,4 +1,4 @@
-import { reflect } from "./hook.js";
+import { reflect } from "@/utils/hook.js";
 
 const charCodeAt = String.prototype.charCodeAt;
 const fromCharCode = String.fromCharCode;

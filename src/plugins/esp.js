@@ -1,8 +1,8 @@
-import { gameManager } from "../utils/injector.js";
-import { object, proxy, reflect } from "../utils/hook.js";
-import { lastAimPos } from "./aimbot.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
-import { toMouseLen } from "./inputOverride.js";
+import { gameManager } from "@/utils/injector.js";
+import { object, proxy, reflect } from "@/utils/hook.js";
+import { aimState } from "@/state/aimbotState.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { inputState } from "@/state/inputState.js";
 import {
     findTeam,
     findWeapon,
@@ -10,8 +10,8 @@ import {
     gameObjects,
     inputCommands,
     PIXI,
-} from "../utils/constants.js";
-import { settings } from "../loader.js";
+} from "@/utils/constants.js";
+import { settings } from "@/state/settings.js";
 
 const COLORS = {
     GREEN: 0x399d37,
@@ -27,7 +27,7 @@ const GRENADE_COLORS = {
     MIRV: 0xff0000,
     MARTYR: 0xee3333
 };
-import { originalLayerValue, isLayerHackActive } from "./layerHack.js";
+import { originalLayerValue, isLayerHackActive } from "@/plugins/layerHack.js";
 
 const graphicsCache = {};
 
@@ -106,7 +106,10 @@ function renderGrenadeZones(localPlayer, graphics) {
     }
 
 
-    const grenades = object.values(gameManager.game[tr.objectCreator][tr.idToObj])
+    const idToObj = gameManager.game?.[tr.objectCreator]?.[tr.idToObj];
+    if (!idToObj) return;
+
+    const grenades = object.values(idToObj)
         .filter(obj => (obj.__type === 9 && obj.type !== "smoke") ||
                        (obj.smokeEmitter && obj.explodeParticle));
 
@@ -152,17 +155,17 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     const isAiming = gameManager.game[tr.touch].shotDetected ||
                     gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
 
-    if (!isSpectating && (!lastAimPos || (lastAimPos && !isAiming))) {
+    if (!isSpectating && (!aimState.lastAimPos || (aimState.lastAimPos && !isAiming))) {
         const mouseX = gameManager.game[tr.input].mousePos._x - innerWidth / 2;
         const mouseY = gameManager.game[tr.input].mousePos._y - innerHeight / 2;
 
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
-    } else if (!isSpectating && lastAimPos) {
+    } else if (!isSpectating && aimState.lastAimPos) {
         const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({ x: playerX, y: playerY });
-        const aimX = lastAimPos.clientX - screenPos.x;
-        const aimY = lastAimPos.clientY - screenPos.y;
+        const aimX = aimState.lastAimPos.clientX - screenPos.x;
+        const aimY = aimState.lastAimPos.clientY - screenPos.y;
 
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
         dirX = aimX / magnitude;
@@ -179,7 +182,7 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     dirY = offsetDirY;
 
     const throwPower = Math.min(
-        Math.max(toMouseLen, 0),
+        Math.max(inputState.toMouseLen, 0),
         throwableMaxRange * 1.8
     ) / 15;
 
@@ -245,19 +248,19 @@ function renderFlashlights(localPlayer, players, graphics) {
         const isAiming = gameManager.game[tr.touch].shotDetected ||
                          gameManager.game[tr.inputBinds].isBindDown(inputCommands.Fire);
 
-        if (isLocalPlayer && !isSpectating && (!lastAimPos || (lastAimPos && !isAiming))) {
+        if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos || (aimState.lastAimPos && !isAiming))) {
             aimAngle = Math.atan2(
                 gameManager.game[tr.input].mousePos._y - innerHeight / 2,
                 gameManager.game[tr.input].mousePos._x - innerWidth / 2
             );
-        } else if (isLocalPlayer && !isSpectating && lastAimPos) {
+        } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos) {
             const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
                 x: player[tr.pos].x,
                 y: player[tr.pos].y
             });
             aimAngle = Math.atan2(
-                screenPos.y - lastAimPos.clientY,
-                screenPos.x - lastAimPos.clientX
+                screenPos.y - aimState.lastAimPos.clientY,
+                screenPos.x - aimState.lastAimPos.clientX
             ) - Math.PI;
         } else {
             aimAngle = Math.atan2(player[tr.dir].x, player[tr.dir].y) - Math.PI / 2;

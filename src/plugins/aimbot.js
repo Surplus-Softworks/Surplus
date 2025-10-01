@@ -1,19 +1,17 @@
-import { settings } from '../loader.js';
+import { settings, getUIRoot } from '@/state/settings.js';
 import {
     findTeam,
     findBullet,
     findWeapon,
     inputCommands,
-} from '../utils/constants.js';
-import { gameManager } from '../utils/injector.js';
-import { ui } from '../ui/worker.js';
-import { tr } from '../utils/obfuscatedNameTranslator.js';
-import { reflect, ref_addEventListener } from '../utils/hook.js';
-import { inputs } from './inputOverride.js';
-import { encryptDecrypt } from '../utils/encryption.js';
-import { isLayerHackActive, originalLayerValue } from './layerHack.js'; // <-- IMPORT ALREADY HERE
-export let lastAimPos, aimTouchMoveDir, aimTouchDistanceToEnemy;
-// test
+} from '@/utils/constants.js';
+import { gameManager } from '@/utils/injector.js';
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { reflect, ref_addEventListener } from '@/utils/hook.js';
+import { inputState } from '@/state/inputState.js';
+import { aimState, resetAimState } from '@/state/aimbotState.js';
+import { isLayerHackActive, originalLayerValue } from '@/plugins/layerHack.js';
+
 const state = {
     focusedEnemy: null,
     previousEnemies: {},
@@ -39,7 +37,7 @@ reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => {
 }]);
 
 let aimbotDot;
-let stickyDot;
+let tickerAttached = false;
 
 function getDistance(x1, y1, x2, y2) {
     return (x1 - x2) ** 2 + (y1 - y2) ** 2;
@@ -219,8 +217,8 @@ function findClosestTarget(players, me) {
 
 function aimbotTicker() {
     try {
-        lastAimPos = null;
-        aimTouchMoveDir = null; // Reset aimTouchMoveDir at the start
+        aimState.lastAimPos = null;
+        aimState.aimTouchMoveDir = null; // Reset aimTouchMoveDir at the start
         if (!gameManager.game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || gameManager.game[tr.uiManager].spectating) {
             aimbotDot.style.display = "none";
             return;
@@ -262,7 +260,7 @@ function aimbotTicker() {
                     // Engage melee lock logic only if within range
                     if (distanceToEnemy <= 5.5) { // Use melee range constant if available
                         const moveAngle = calcAngle(state.meleeLockEnemy[tr.visualPos], me[tr.visualPos]) + Math.PI;
-                        aimTouchMoveDir = {
+                        aimState.aimTouchMoveDir = {
                             touchMoveActive: true,
                             touchMoveLen: 255,
                             x: Math.cos(moveAngle),
@@ -275,13 +273,13 @@ function aimbotTicker() {
                             y: state.meleeLockEnemy[tr.visualPos].y,
                         });
 
-                        lastAimPos = {
+                        aimState.lastAimPos = {
                             clientX: screenPos.x,
                             clientY: screenPos.y,
                         };
 
                         if (settings.meleeLock.autoMelee && !isMeleeEquipped) {
-                            reflect.apply(arrayPush, inputs, ['EquipMelee']);
+                            reflect.apply(arrayPush, inputState.queuedInputs, ['EquipMelee']);
                         }
 
                         aimbotDot.style.display = "none"; // Hide aimbot dot during melee lock
@@ -354,7 +352,7 @@ function aimbotTicker() {
 
                 // Set aim position only if aimbot is active and conditions met
                 if (settings.aimbot.enabled || (settings.meleeLock.enabled && distanceToEnemy <= 8)) { // Check if firing for aimbot activation
-                    lastAimPos = {
+                    aimState.lastAimPos = {
                         clientX: predictedPos.x,
                         clientY: predictedPos.y,
                     };
@@ -372,28 +370,49 @@ function aimbotTicker() {
                  }
 
             } else {
-                aimTouchMoveDir = null;
-                lastAimPos = null;
+                aimState.aimTouchMoveDir = null;
+                aimState.lastAimPos = null;
                 aimbotDot.style.display = 'none';
             }
         } catch (error) {
-            aimbotDot.style.display = "none";
-            lastAimPos = null;
-             aimTouchMoveDir = null;
+            if (aimbotDot) {
+                aimbotDot.style.display = 'none';
+            }
+            resetAimState();
             state.meleeLockEnemy = null;
-             state.focusedEnemy = null;
-             state.currentEnemy = null;
+            state.focusedEnemy = null;
+            state.currentEnemy = null;
         }
     } catch (e) {
+        resetAimState();
     }
 }
 
 
-export default function() {
+const ensureOverlay = () => {
+    const uiRoot = getUIRoot();
+    if (!uiRoot) {
+        return false;
+    }
     if (!aimbotDot) {
         aimbotDot = document.createElement('div');
         aimbotDot.classList.add('aimbot-dot');
-        ui.appendChild(aimbotDot);
+        uiRoot.appendChild(aimbotDot);
     }
-    gameManager.pixi._ticker.add(aimbotTicker);
+    return true;
+};
+
+export default function() {
+    const startTicker = () => {
+        if (ensureOverlay()) {
+            if (!tickerAttached) {
+                gameManager.pixi._ticker.add(aimbotTicker);
+                tickerAttached = true;
+            }
+        } else {
+            requestAnimationFrame(startTicker);
+        }
+    };
+
+    startTicker();
 }

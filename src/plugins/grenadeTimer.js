@@ -1,5 +1,5 @@
-import { gameManager } from "../utils/injector.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { gameManager } from "@/utils/injector.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
 const GRENADE_TYPES = ["frag", "mirv", "martyr_nade"];
 const MAX_TIMER_DURATION = 4; 

@@ -1,8 +1,8 @@
-import { settings } from "../loader.js";
-import { gameManager } from "../utils/injector.js";
-import { hook, object, ref_addEventListener, reflect } from "../utils/hook.js";
-import { lastAimPos } from "./aimbot.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { settings } from "@/state/settings.js";
+import { gameManager } from "@/utils/injector.js";
+import { hook, object, ref_addEventListener, reflect } from "@/utils/hook.js";
+import { aimState } from "@/state/aimbotState.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
 let currentAngle = 0;
 let angularVelocity = 0;
@@ -22,10 +22,10 @@ function updateRotation() {
 
   if (isMouseDown) {
     if (!gameManager.game[tr.uiManager].spectating) {
-      if (lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
+      if (aimState.lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
         gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
-          lastAimPos.clientY - globalThis.innerHeight / 2,
-          lastAimPos.clientX - globalThis.innerWidth / 2
+          aimState.lastAimPos.clientY - globalThis.innerHeight / 2,
+          aimState.lastAimPos.clientX - globalThis.innerWidth / 2
         ) || 0;
       } else {
         gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
@@ -109,12 +109,12 @@ export default function() {
 
   object.defineProperty(gameManager.game[tr.input].mousePos, "y", {
     get() {
-      if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
+      if ((isMouseDown && !aimState.lastAimPos) || isEmoteUpdate) {
         return this._y;
       }
 
-      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
-        return lastAimPos.clientY;
+      if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) {
+        return aimState.lastAimPos.clientY;
       }
 
       if (!isMouseDown && settings.spinbot.enabled) {
@@ -130,12 +130,12 @@ export default function() {
 
   object.defineProperty(gameManager.game[tr.input].mousePos, "x", {
     get() {
-      if ((isMouseDown && !lastAimPos) || isEmoteUpdate) {
+      if ((isMouseDown && !aimState.lastAimPos) || isEmoteUpdate) {
         return this._x;
       }
 
-      if (isMouseDown && lastAimPos && settings.aimbot.enabled) {
-        return lastAimPos.clientX;
+      if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) {
+        return aimState.lastAimPos.clientX;
       }
 
       if (!isMouseDown && settings.spinbot.enabled) {
@@ -174,3 +174,7 @@ export default function() {
     }
   });
 }
+
+
+
+

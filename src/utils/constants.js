@@ -1,6 +1,6 @@
-import { hook, reflect, object } from "./hook.js";
-import { gameManager } from "./injector.js";
-import { tr } from "./obfuscatedNameTranslator.js";
+import { hook, reflect, object } from "@/utils/hook.js";
+import { gameManager } from "@/utils/injector.js";
+import { tr } from "@/utils/obfuscatedNameTranslator.js";
 
 export const inputCommands = {
     MoveLeft: 0,

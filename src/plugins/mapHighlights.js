@@ -1,7 +1,7 @@
-import { hook } from "../utils/hook.js";
-import { reflect } from "../utils/hook.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
-import { settings } from "../loader.js";
+import { hook } from "@/utils/hook.js";
+import { reflect } from "@/utils/hook.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { settings } from "@/state/settings.js";
 
 let HIGHLIGHTS = {
   container_06: 0xd6c313,

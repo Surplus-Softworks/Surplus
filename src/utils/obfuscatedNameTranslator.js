@@ -1,4 +1,4 @@
-import { object, proxy } from "./hook";
+import { object, proxy } from "@/utils/hook.js";
 
 const { getOwnPropertyNames, getPrototypeOf } = object;
 const { __lookupGetter__: lookupGetter } = object.prototype;

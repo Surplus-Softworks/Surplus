@@ -1,7 +1,7 @@
-import { settings } from "../loader.js";
-import { reflect } from "../utils/hook.js";
-import { ref_addEventListener } from "../utils/hook.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { settings } from "@/state/settings.js";
+import { reflect } from "@/utils/hook.js";
+import { ref_addEventListener } from "@/utils/hook.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
 export let autoFireEnabled;
 

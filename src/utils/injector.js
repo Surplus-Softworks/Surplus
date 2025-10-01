@@ -1,4 +1,4 @@
-import { hook, reflect } from "./hook.js";
+import { hook, reflect } from "@/utils/hook.js";
 
 export let gameManager;
 

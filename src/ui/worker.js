@@ -1,185 +1,185 @@
-import html from "./menu.html"
-import { defaultSettings, setChecked, settings, setValue } from "../loader.js";
-import { object } from "../utils/hook.js";
-import { reflect } from "../utils/hook.js";
-import { read, initStore } from "../utils/store.js";
-import { encryptDecrypt } from "../utils/encryption.js";
-import { ref_addEventListener } from "../utils/hook.js";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import Menu from '@/ui/components/Menu.jsx';
+import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state/settings.js';
+import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
+import { read } from '@/utils/store.js';
+import { encryptDecrypt } from '@/utils/encryption.js';
+import { globalStylesheet } from '@/ui/components/globalStyles.js';
 
-export let ui;
+let uiShadow;
 export let menuElement;
 
-export let loadedConfig = false;
+// React state management
+let reactRoot = null;
+let currentSettings = {};
+let setMenuVisible = null;
+let menuVersion = '';
+
+const updateReactUI = () => {
+  if (reactRoot && currentSettings) {
+    reactRoot.render(
+      <Menu
+        settings={currentSettings}
+        onSettingChange={handleSettingChange}
+        onClose={() => setMenuVisible(false)}
+        version={menuVersion}
+      />
+    );
+  }
+};
+
+const handleSettingChange = (path, value) => {
+  const keys = path.split('.');
+  let current = settings;
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    current = current[keys[i]];
+  }
+
+  current[keys[keys.length - 1]] = value;
+
+  // Update local state for React
+  let currentLocal = currentSettings;
+  for (let i = 0; i < keys.length - 1; i++) {
+    currentLocal = currentLocal[keys[i]];
+  }
+  currentLocal[keys[keys.length - 1]] = value;
+
+  updateReactUI();
+};
+
 function buildUI() {
-    const parse = JSON.parse;
-    var link = document.createElement('link');
-    link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
+  const parse = JSON.parse;
 
-    const div = document.createElement('div');
-    const shadow = div.attachShadow({ mode: 'closed' });
-    shadow.innerHTML = html;
-    ui = shadow;
-    document.body.appendChild(div);
-    const popup = menuElement = ui.querySelector("#ui");
+  // Add Gotham font to main document head
+  const link = document.createElement('link');
+  link.href = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
+  link.rel = 'stylesheet';
+  document.head.appendChild(link);
 
-    object.assign(popup.style, {
-        position: 'fixed',
-        zIndex: '99999',
-        left: `175px`,
-        top: `125px`
-    });
+  // Create container with Shadow DOM
+  const div = document.createElement('div');
+  const shadow = div.attachShadow({ mode: 'closed' });
+  uiShadow = shadow;
+  setUIRoot(shadow);
+  document.body.appendChild(div);
 
-    const header = shadow.querySelector('.header');
-    const closeBtn = shadow.querySelector('.close-btn');
-    const popupContent = shadow.querySelector('.popup');
+  // Inject global styles into shadow DOM
+  const styleElement = document.createElement('style');
+  styleElement.textContent = globalStylesheet;
+  shadow.appendChild(styleElement);
 
-    ['click', 'mousedown', 'pointerdown', 'pointerup', 'touchstart', 'touchend'].forEach(eventType => {
-        reflect.apply(ref_addEventListener, popupContent, [eventType, (event) => {
-            event.stopPropagation();
-            event.stopImmediatePropagation();
-        }])
-    });
+  // Create root container for React
+  const rootContainer = document.createElement('div');
+  shadow.appendChild(rootContainer);
 
-    reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => {
-        switch (event.code) {
-            case "ShiftRight":
-                popup.style.display = popup.style.display === "none" ? "" : "none";
-                break;
-            case "KeyB":
-                settings.aimbot.enabled = !settings.aimbot.enabled;
-                break;
-            case "KeyH":
-                settings.spinbot.enabled = !settings.spinbot.enabled;
-                break;
-            case "KeyX":
-                settings.emoteSpam.enabled = !settings.emoteSpam.enabled;
-                break;
-        }
-    }]);
+  // Initialize React root
+  reactRoot = ReactDOM.createRoot(rootContainer);
+  menuElement = rootContainer;
 
-    reflect.apply(ref_addEventListener, closeBtn, ["click", () => {
-        popup.style.display = 'none';
-    }]);
+  // Setup keyboard shortcuts
+  reflect.apply(ref_addEventListener, globalThis, ["keydown", (event) => {
+    const menuDiv = rootContainer.querySelector('#ui');
 
-    const checkboxItems = shadow.querySelectorAll('.checkbox-item');
-
-    checkboxItems.forEach(item => {
-        reflect.apply(ref_addEventListener, item, ["click", () => {
-            const checkbox = item.querySelector('input[type="checkbox"]');
-            if (checkbox) {
-                checkbox.click();
+    switch (event.code) {
+      case "ShiftRight":
+        if (menuDiv) {
+          const isVisible = menuDiv.style.display !== 'none';
+          menuDiv.style.display = isVisible ? 'none' : '';
+          setMenuVisible = (visible) => {
+            if (menuDiv) {
+              menuDiv.style.display = visible ? '' : 'none';
             }
-        }]);
-    });
-
-    const checkboxes = shadow.querySelectorAll('input[type="checkbox"]');
-
-    checkboxes.forEach(checkbox => {
-        reflect.apply(ref_addEventListener, checkbox, ["click", (event) => {
-            event.stopPropagation();
-        }]);
-    });
-
-    const labels = shadow.querySelectorAll('.checkbox-item label');
-
-    labels.forEach(label => {
-        reflect.apply(ref_addEventListener, label, ["click", (event) => {
-            event.stopPropagation();
-        }]);
-    });
-
-    const tabs = shadow.querySelectorAll('.nav-tab');
-    const contents = shadow.querySelectorAll('.content-container');
-
-    tabs.forEach(tab => {
-        reflect.apply(ref_addEventListener, tab, ["click", () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
-
-            tab.classList.add('active');
-            const target = tab.dataset.tab;
-            shadow.querySelector(`.content-container[data-content="${target}"]`).classList.add('active');
-        }]);
-    });
-
-    let isDragging = false;
-    let startX, startY, initialX, initialY;
-
-    reflect.apply(ref_addEventListener, header, ["mousedown", startDrag]);
-
-    function startDrag(e) {
-        isDragging = true;
-        startX = e.clientX;
-        startY = e.clientY;
-
-        initialX = parseFloat(popup.style.left);
-        initialY = parseFloat(popup.style.top);
-
-        reflect.apply(ref_addEventListener, globalThis, ["mousemove", drag]);
-        reflect.apply(ref_addEventListener, globalThis, ["mouseup", stopDrag]);
-    }
-
-    function drag(e) {
-        if (!isDragging) return;
-
-        const dx = e.clientX - startX;
-        const dy = e.clientY - startY;
-
-        popup.style.transform = 'none';
-        popup.style.left = `${initialX + dx}px`;
-        popup.style.top = `${initialY + dy}px`;
-    }
-
-    function stopDrag() {
-        isDragging = false;
-        reflect.apply(ref_addEventListener, globalThis, ["mousemove", drag]);
-        reflect.apply(ref_addEventListener, globalThis, ["mouseup", stopDrag]);
-    }
-
-    reflect.apply(ref_addEventListener, globalThis, ["mousedown", (e) => {
-        if (e.composedPath().includes(popupContent)) {
-            popup.style.zIndex = '9999';
+          };
         }
-    }]);
+        break;
+      case "KeyB":
+        settings.aimbot.enabled = !settings.aimbot.enabled;
+        currentSettings.aimbot.enabled = settings.aimbot.enabled;
+        updateReactUI();
+        break;
+      case "KeyH":
+        settings.spinbot.enabled = !settings.spinbot.enabled;
+        currentSettings.spinbot.enabled = settings.spinbot.enabled;
+        updateReactUI();
+        break;
+    }
+  }]);
 
-    const readConfig = (config, mapping = settings) => {
-        if (!config || typeof config !== "object") return;
-        object.entries(config).forEach(([key, value]) => {
-            if (value && typeof value === "object" && mapping && mapping[key]) {
-                readConfig(value, mapping[key]);
-            } else if (typeof value == typeof mapping[key]) {
-                mapping[key] = value;
-            }
-        });
-    };
+  // Initialize visibility toggle
+  setMenuVisible = (visible) => {
+    const menuDiv = rootContainer.querySelector('#ui');
+    if (menuDiv) {
+      menuDiv.style.display = visible ? '' : 'none';
+    }
+  };
 
-    setTimeout(() => {
-        readConfig(defaultSettings);
-        read("c")
-            .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
-            .then(config => {
-                readConfig(config);
-                loadedConfig = true;
-            });
-    }, 1000)
+  const readConfig = (config, mapping = currentSettings, settingsMapping = settings) => {
+    if (!config || typeof config !== "object") return;
+    object.entries(config).forEach(([key, value]) => {
+      if (value && typeof value === "object" && mapping && mapping[key]) {
+        readConfig(value, mapping[key], settingsMapping[key]);
+      } else if (typeof value === typeof mapping[key]) {
+        mapping[key] = value;
+        if (settingsMapping && settingsMapping[key] !== undefined) {
+          settingsMapping[key] = value;
+        }
+      }
+    });
+  };
 
-    globalThis.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
-        .then(response => response.json())
-        .then(response => {
-            let availableVersion = response.tag_name;
-            let message = VERSION !== availableVersion ? " (update available!)" : "";
-            reflect.apply(ui.querySelector, ui, [".title"]).innerHTML += " " + VERSION + message;
-        });
+  // Deep clone default settings for React state
+  const cloneSettings = (obj) => {
+    if (obj === null || typeof obj !== 'object') return obj;
+    const clone = {};
+    object.entries(obj).forEach(([key, value]) => {
+      if (typeof value === 'object' && value !== null) {
+        clone[key] = cloneSettings(value);
+      } else {
+        clone[key] = value;
+      }
+    });
+    return clone;
+  };
+
+  currentSettings = cloneSettings(defaultSettings);
+
+  setTimeout(() => {
+    readConfig(defaultSettings);
+    read("c")
+      .then(v => !v ? defaultSettings : parse(encryptDecrypt(v)))
+      .then(config => {
+        readConfig(config);
+        markConfigLoaded();
+        updateReactUI();
+      });
+  }, 1000);
+
+  // Fetch version from GitHub
+  globalThis.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
+    .then(response => response.json())
+    .then(response => {
+      let availableVersion = response.tag_name;
+      let message = VERSION !== availableVersion ? " (update available!)" : "";
+      menuVersion = VERSION + message;
+      updateReactUI();
+    })
+    .catch(() => {
+      menuVersion = VERSION;
+      updateReactUI();
+    });
+
+  // Initial render
+  updateReactUI();
 }
 
 export default function() {
-    if (document.readyState == "loading") {
-        reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
-            buildUI();
-        }])
-    } else {
-        buildUI();
-    }
+  if (document.readyState === "loading") {
+    reflect.apply(ref_addEventListener, document, ["DOMContentLoaded", () => {
+      buildUI();
+    }]);
+  } else {
+    buildUI();
+  }
 }

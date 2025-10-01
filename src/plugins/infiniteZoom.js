@@ -1,7 +1,7 @@
-import { gameManager } from "../utils/injector.js";
-import { object, reflect, ref_addEventListener } from "../utils/hook.js";
-import { settings } from "../loader.js";
-import { tr } from '../utils/obfuscatedNameTranslator.js';
+import { gameManager } from "@/utils/injector.js";
+import { object, reflect, ref_addEventListener } from "@/utils/hook.js";
+import { settings } from "@/state/settings.js";
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
 export default function() {
   const handleWheelEvent = (event) => {

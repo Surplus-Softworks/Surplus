@@ -1,8 +1,8 @@
-import { gameManager } from "../utils/injector.js";
-import { findTeam } from "../utils/constants.js";
-import { settings } from "../loader.js";
-import { tr } from "../utils/obfuscatedNameTranslator.js";
-import { reflect } from "../utils/hook.js";
+import { gameManager } from "@/utils/injector.js";
+import { findTeam } from "@/utils/constants.js";
+import { settings } from "@/state/settings.js";
+import { tr } from "@/utils/obfuscatedNameTranslator.js";
+import { reflect } from "@/utils/hook.js";
 
 function processEnviroment() {
   if (!gameManager.game?.initialized) return;

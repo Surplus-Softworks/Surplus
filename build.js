@@ -1,20 +1,12 @@
 const fs = require("fs");
-const esbuild = require("esbuild");
-const { minify } = require('html-minifier-terser');
 const path = require("path");
 const archiver = require("archiver");
 const { obfuscate } = require("js-confuser");
+const rollup = require("rollup");
+const rollupConfig = require("./rollup.config.js");
 
 const VERSION = "1.4.6"
 const DIST_DIR = 'dist/extension';
-const HTML_MINIFY_OPTIONS = {
-  collapseWhitespace: true,
-  removeComments: true,
-  removeRedundantAttributes: true,
-  removeEmptyAttributes: true,
-  minifyCSS: true,
-  minifyJS: true,
-};
 
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
@@ -40,7 +32,7 @@ const OBFUSCATE_OPTIONS = {
   objectExtraction: true,
   deadCode: false,
   compact: true,
-  pack: true, 
+  pack: true,
 
   preset: false,
 }
@@ -128,47 +120,44 @@ async function zip(filename = 'Surplus (DO NOT EXTRACT).zip') {
   });
 }
 
-const htmlPlugin = {
-  name: 'html-plugin',
-  setup(build) {
-    build.onLoad({ filter: /\.html$/ }, async (args) => {
-      const content = await fs.promises.readFile(args.path, 'utf8');
-      const minified = await minify(content, HTML_MINIFY_OPTIONS);
-      return {
-        contents: `export default ${JSON.stringify(minified)};`,
-        loader: 'js',
-      };
-    });
-  },
-};
-
 async function buildBundle(dev = true) {
-  const EPOCH = Date.now() + (1000 * 60 * 60);
-  await esbuild.build({
-    entryPoints: ['./src/index.js'],
-    bundle: true,
-    outfile: `${DIST_DIR}/main.js`,
-    minify: true,
-    sourcemap: false,
-    treeShaking: true,
-    plugins: [htmlPlugin],
-    define: {
-      EPOCH: EPOCH.toString(),
-      VERSION: JSON.stringify(VERSION),
-      DEV: dev.toString()
+  console.log('Building with Rollup...');
+
+  // Get rollup configuration with command line args
+  const configFn = rollupConfig.default || rollupConfig;
+  const config = configFn({ dev });
+
+  try {
+    // Build with Rollup
+    const bundle = await rollup.rollup({
+      input: config.input,
+      plugins: config.plugins,
+    });
+
+    // Generate output
+    await bundle.write({
+      file: config.output.file,
+      format: config.output.format,
+      name: config.output.name,
+    });
+
+    await bundle.close();
+
+    console.log('Rollup build completed');
+
+    let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+
+    if (!dev) {
+      console.log('Obfuscating code...');
+      mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS);
+      const stub = `try { (() => { setTimeout(${JSON.stringify(mainContent.code)}); })(); } catch {}`;
+      const obfuscatedStub = await obfuscate(stub, STUB_OBFUSCATE_OPTIONS);
+      mainContent = obfuscatedStub.code;
+      console.log('Obfuscation completed');
     }
-  });
 
-  let mainContent = fs.readFileSync(`${DIST_DIR}/main.js`, 'utf-8');
+    const wrapperCode = `// Copyright © Surplus Softworks
 
-  if (!dev) {
-    mainContent = await obfuscate(mainContent, OBFUSCATE_OPTIONS);
-    const stub = `try { (() => { setTimeout(${JSON.stringify(mainContent.code)}); })(); } catch {}`;
-    const obfuscatedStub = await obfuscate(stub, STUB_OBFUSCATE_OPTIONS);
-    mainContent = obfuscatedStub.code;
-  }
-
-  const wrapperCode = `// Copyright © Surplus Softworks\n
 (function() {
   const whitelist = [
     'surviv',
@@ -189,8 +178,8 @@ async function buildBundle(dev = true) {
   ${mainContent}
 })();`;
 
-  fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
-  fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
+    fs.writeFileSync(`dist/extension/main.js`, wrapperCode);
+    fs.writeFileSync(`dist/Surplus.user.js`, `// ==UserScript==
 // @name         Surplus
 // @version      ${VERSION}
 // @description  A cheat for survev.io & more
@@ -202,6 +191,10 @@ async function buildBundle(dev = true) {
 // ==/UserScript==
 
 ${wrapperCode}`);
+  } catch (error) {
+    console.error('Build error:', error);
+    throw error;
+  }
 }
 
 async function build(argv) {
