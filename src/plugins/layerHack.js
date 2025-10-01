@@ -1,17 +1,20 @@
-import { gameManager } from "@/utils/injector.js";
-import { settings } from "@/state/settings.js";
+import { gameManager } from '@/utils/injector.js';
+import { settings } from '@/state.js';
 import { tr } from '@/utils/obfuscatedNameTranslator.js';
-import { reflect, ref_addEventListener, object } from "@/utils/hook.js";
+import { reflect, ref_addEventListener, object } from '@/utils/hook.js';
 
 export let isLayerHackActive = false;
 export let originalLayerValue = null;
+
+const TOGGLE_KEY = 'Space';
+
 let originalLayerDescriptor = null;
 let activePlayerRef = null;
-let originalPlayerAlpha = 1.0;
+let originalPlayerAlpha = 1;
 
-function applyLayerSpoof(player, targetLayer) {
+const applyLayerSpoof = (player, targetLayer) => {
     if (!player || player.layer === undefined) return false;
-    
+
     try {
         originalLayerDescriptor = object.getOwnPropertyDescriptor(player, 'layer');
         originalLayerValue = player.layer;
@@ -25,96 +28,89 @@ function applyLayerSpoof(player, targetLayer) {
 
         object.defineProperty(player, 'layer', {
             configurable: true,
-            get() { return targetLayer; },
-            set() {} 
+            get: () => targetLayer,
+            set: () => {},
         });
         return true;
-    } catch (e) {
+    } catch {
         originalLayerDescriptor = null;
         originalLayerValue = null;
         return false;
     }
-}
+};
 
-function restoreOriginalLayer(player) {
+const restoreOriginalLayer = (player) => {
     if (!player) return;
 
     try {
         if (originalLayerDescriptor) {
             object.defineProperty(player, 'layer', originalLayerDescriptor);
-
             if ('value' in originalLayerDescriptor && !originalLayerDescriptor.get && !originalLayerDescriptor.set) {
                 player.layer = originalLayerValue;
             }
         } else if (originalLayerValue !== null) {
             player.layer = originalLayerValue;
         }
-    } catch (e) {
+    } catch {
         if (originalLayerValue !== null) {
-            try { player.layer = originalLayerValue; } catch (e) {}
+            try {
+                player.layer = originalLayerValue;
+            } catch {}
         }
     } finally {
         originalLayerDescriptor = null;
         originalLayerValue = null;
     }
-}
+};
 
-function setPlayerAlpha(player, alpha) {
-    if (player?.container) {
-        try { player.container.alpha = alpha; } catch (e) {}
-    }
-}
+const setPlayerAlpha = (player, alpha) => {
+    if (!player?.container) return;
+    try {
+        player.container.alpha = alpha;
+    } catch {}
+};
 
-function handleKeyDown(event) {
-    if (event.code !== 'Space' || !settings.layerHack.enabled || isLayerHackActive) return;
+const cleanupHack = () => {
+    try {
+        if (activePlayerRef) {
+            restoreOriginalLayer(activePlayerRef);
+            setPlayerAlpha(activePlayerRef, originalPlayerAlpha);
+        }
+    } catch {}
+
+    isLayerHackActive = false;
+    activePlayerRef = null;
+    originalPlayerAlpha = 1;
+};
+
+const handleKeyDown = (event) => {
+    if (event.code !== TOGGLE_KEY || !settings.layerHack.enabled || isLayerHackActive) return;
 
     try {
         const player = gameManager.game?.[tr.activePlayer];
-        if (!player || typeof player.layer === 'undefined' || !player.container) return;
+        if (!player || player.layer === undefined || !player.container) return;
 
         activePlayerRef = player;
         originalPlayerAlpha = player.container.alpha;
-        
-        const currentLayer = player.layer;
-        const targetLayer = currentLayer === 0 ? 1 : 0;
 
+        const targetLayer = player.layer === 0 ? 1 : 0;
         if (applyLayerSpoof(player, targetLayer)) {
             isLayerHackActive = true;
             setPlayerAlpha(player, 0.5);
         } else {
             activePlayerRef = null;
         }
-    } catch (e) {
+    } catch {
         cleanupHack();
     }
-}
+};
 
-function handleKeyUp(event) {
-    if (event.code !== 'Space' || !isLayerHackActive) return;
+const handleKeyUp = (event) => {
+    if (event.code !== TOGGLE_KEY || !isLayerHackActive) return;
     cleanupHack();
-}
+};
 
-function cleanupHack() {
-    try {
-        if (activePlayerRef) {
-            restoreOriginalLayer(activePlayerRef);
-            setPlayerAlpha(activePlayerRef, originalPlayerAlpha);
-        }
-    } catch (e) {
-        if (activePlayerRef) {
-            try { 
-                restoreOriginalLayer(activePlayerRef);
-                setPlayerAlpha(activePlayerRef, originalPlayerAlpha);
-            } catch (e) {}
-        }
-    } finally {
-        isLayerHackActive = false;
-        activePlayerRef = null;
-        originalPlayerAlpha = 1.0;
-    }
-}
-
-export default function() {
-    reflect.apply(ref_addEventListener, globalThis, ["keydown", handleKeyDown]);
-    reflect.apply(ref_addEventListener, globalThis, ["keyup", handleKeyUp]);
+export default function initLayerHack() {
+    reflect.apply(ref_addEventListener, globalThis, ['keydown', handleKeyDown]);
+    reflect.apply(ref_addEventListener, globalThis, ['keyup', handleKeyUp]);
 }

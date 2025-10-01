@@ -1,10 +1,8 @@
-import { gameManager } from "@/utils/injector.js";
-import { findTeam } from "@/utils/constants.js";
-import { settings } from "@/state/settings.js";
-import { tr } from "@/utils/obfuscatedNameTranslator.js";
-import { reflect } from "@/utils/hook.js";
+import { gameManager } from '@/utils/injector.js';
+import { settings } from '@/state.js';
+import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
-function processEnviroment() {
+function processEnvironment() {
   if (!gameManager.game?.initialized) return;
 
   const isXrayEnabled = settings.xray.enabled;
@@ -62,7 +60,7 @@ let initialized = false;
 
 export default function() {
   if (!initialized) {
-    gameManager.pixi._ticker.add(processEnviroment);
+    gameManager.pixi._ticker.add(processEnvironment);
     initialized = true;
   }
 }

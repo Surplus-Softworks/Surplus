@@ -1,6 +1,23 @@
-import { object, reflect } from "@/utils/hook.js";
-import { encryptDecrypt } from "@/utils/encryption.js";
-import { initStore, write } from "@/utils/store.js";
+import { object, reflect } from '@/utils/hook.js';
+import { encryptDecrypt } from '@/utils/encryption.js';
+import { initStore, write } from '@/utils/store.js';
+
+export const aimState = {
+  lastAimPos: null,
+  aimTouchMoveDir: null,
+  aimTouchDistanceToEnemy: null,
+};
+
+export const resetAimState = () => {
+  aimState.lastAimPos = null;
+  aimState.aimTouchMoveDir = null;
+  aimState.aimTouchDistanceToEnemy = null;
+};
+
+export const inputState = {
+  queuedInputs: [],
+  toMouseLen: 0,
+};
 
 const getElementById = ShadowRoot.prototype.getElementById;
 
@@ -47,7 +64,7 @@ const ensureStoreReady = () => {
   return storeReadyPromise;
 };
 
-const lookupElement = (id) => uiRoot ? reflect.apply(getElementById, uiRoot, [id]) : undefined;
+const lookupElement = (id) => (uiRoot ? reflect.apply(getElementById, uiRoot, [id]) : undefined);
 
 export const setUIRoot = (root) => {
   uiRoot = root;
@@ -78,31 +95,32 @@ export const setValue = (id, value) => {
   if (el) el.value = value;
 };
 
-export const registerSettings = (obj) => {
+export const registerSettings = (definition) => {
   const substr = String.prototype.substr;
-  const settingsObject = object.entries(obj).reduce((settings, [key, value]) => {
+
+  const settingsObject = object.entries(definition).reduce((acc, [key, value]) => {
     if (value && typeof value === 'object' && value[REGISTER_MARK]) {
-      settings[key] = value;
-      return settings;
+      acc[key] = value;
+      return acc;
     }
 
-    if (typeof value === "object" && value !== null && !Array.isArray(value) && key[0] !== '_' && key[0] !== '$') {
-      settings[key] = registerSettings(value);
-      return settings;
+    if (typeof value === 'object' && value !== null && !Array.isArray(value) && key[0] !== '_' && key[0] !== '$') {
+      acc[key] = registerSettings(value);
+      return acc;
     }
 
-    if (key[0] === "_") {
-      reflect.defineProperty(settings, key, { value, enumerable: false, writable: true, configurable: true });
-      return settings;
+    if (key[0] === '_') {
+      reflect.defineProperty(acc, key, { value, enumerable: false, writable: true, configurable: true });
+      return acc;
     }
 
-    if (key[0] === "$") {
+    if (key[0] === '$') {
       const publicKey = reflect.apply(substr, key, [1]);
-      const descriptor = reflect.getOwnPropertyDescriptor(obj, key) || {};
+      const descriptor = reflect.getOwnPropertyDescriptor(definition, key) || {};
       const originalGet = descriptor.get;
       const originalSet = descriptor.set;
 
-      reflect.defineProperty(settings, publicKey, {
+      reflect.defineProperty(acc, publicKey, {
         get() {
           const storeKey = this[`_${publicKey}`];
           const stored = getStoredValue(storeKey);
@@ -127,12 +145,18 @@ export const registerSettings = (obj) => {
         configurable: true,
       });
 
-      reflect.defineProperty(settings, `_${publicKey}`, { value: obj[`_${publicKey}`], enumerable: false, writable: true, configurable: true });
-      return settings;
+      reflect.defineProperty(acc, `_${publicKey}`, {
+        value: definition[`_${publicKey}`],
+        enumerable: false,
+        writable: true,
+        configurable: true,
+      });
+      return acc;
     }
 
     const elementId = value;
-    reflect.defineProperty(settings, key, {
+
+    reflect.defineProperty(acc, key, {
       get() {
         const stored = getStoredValue(elementId);
         if (stored !== undefined) return stored;
@@ -150,8 +174,15 @@ export const registerSettings = (obj) => {
       enumerable: true,
       configurable: true,
     });
-    reflect.defineProperty(settings, `_${key}`, { value: elementId, enumerable: false, writable: true, configurable: true });
-    return settings;
+
+    reflect.defineProperty(acc, `_${key}`, {
+      value: elementId,
+      enumerable: false,
+      writable: true,
+      configurable: true,
+    });
+
+    return acc;
   }, {});
 
   reflect.defineProperty(settingsObject, REGISTER_MARK, { value: true, enumerable: false });
@@ -160,16 +191,16 @@ export const registerSettings = (obj) => {
 
 export const settings = {
   aimbot: registerSettings({
-    enabled: "aim-enable",
-    targetKnocked: "target-knocked",
-    stickyTarget: "sticky-target",
+    enabled: 'aim-enable',
+    targetKnocked: 'target-knocked',
+    stickyTarget: 'sticky-target',
   }),
-  meleeLock: registerSettings({ enabled: "melee-lock", autoMelee: "auto-melee"}),
+  meleeLock: registerSettings({ enabled: 'melee-lock', autoMelee: 'auto-melee' }),
   spinbot: registerSettings({
-    enabled: "spinbot-enable",
-    realistic: "realistic",
+    enabled: 'spinbot-enable',
+    realistic: 'realistic',
     get $speed() {
-      return parseInt(getValue("spinbot-speed"));
+      return parseInt(getValue('spinbot-speed'));
     },
     set $speed(v) {
       const el = lookupElement(this._speed);
@@ -177,12 +208,12 @@ export const settings = {
       el.value = v;
       el.oninput?.();
     },
-    _speed: "spinbot-speed"
+    _speed: 'spinbot-speed',
   }),
   mobileMovement: registerSettings({
-    enabled: "mobile-movement-enable",
+    enabled: 'mobile-movement-enable',
     get $smooth() {
-      return parseInt(getValue("mobile-movement-smooth"));
+      return parseInt(getValue('mobile-movement-smooth'));
     },
     set $smooth(v) {
       const el = lookupElement(this._smooth);
@@ -190,13 +221,13 @@ export const settings = {
       el.value = v;
       el.oninput?.();
     },
-    _smooth: "mobile-movement-smooth"
+    _smooth: 'mobile-movement-smooth',
   }),
-  autoFire: registerSettings({ enabled: "semiauto-enable" }),
+  autoFire: registerSettings({ enabled: 'semiauto-enable' }),
   xray: registerSettings({
-    enabled: "xray",
+    enabled: 'xray',
     get $smokeOpacity() {
-      return parseInt(getValue("smoke-opacity"));
+      return parseInt(getValue('smoke-opacity'));
     },
     set $smokeOpacity(v) {
       const el = lookupElement(this._smokeOpacity);
@@ -204,9 +235,9 @@ export const settings = {
       el.value = v;
       el.oninput?.();
     },
-    _smokeOpacity: "smoke-opacity",
+    _smokeOpacity: 'smoke-opacity',
     get $treeOpacity() {
-      return parseInt(getValue("tree-opacity"));
+      return parseInt(getValue('tree-opacity'));
     },
     set $treeOpacity(v) {
       const el = lookupElement(this._treeOpacity);
@@ -214,53 +245,51 @@ export const settings = {
       el.value = v;
       el.oninput?.();
     },
-    _treeOpacity: "tree-opacity",
-    removeCeilings: "remove-ceilings",
-    darkerSmokes: "darker-smokes"
+    _treeOpacity: 'tree-opacity',
+    removeCeilings: 'remove-ceilings',
+    darkerSmokes: 'darker-smokes',
   }),
   esp: registerSettings({
-    visibleNametags: "visible-nametags",
-    enabled: "esp-enable",
-    players: "player-esp",
-    flashlights: registerSettings({ own: "own-flashlight", others: "others-flashlight" }),
-    grenades: registerSettings({ explosions: "grenade-esp", trajectories: "grenade-trajectories" })
+    visibleNametags: 'visible-nametags',
+    enabled: 'esp-enable',
+    players: 'player-esp',
+    flashlights: registerSettings({ own: 'own-flashlight', others: 'others-flashlight' }),
+    grenades: registerSettings({ explosions: 'grenade-esp', trajectories: 'grenade-trajectories' }),
   }),
   mapHighlights: registerSettings({
-    enabled: "maphighlights",
-    smallerTrees: "smaller-trees"
+    enabled: 'maphighlights',
+    smallerTrees: 'smaller-trees',
   }),
-  autoLoot: registerSettings({ enabled: "auto-loot" }),
-  infiniteZoom: registerSettings({
-    enabled: "infinite-zoom-enable"
-  }),
+  autoLoot: registerSettings({ enabled: 'auto-loot' }),
+  infiniteZoom: registerSettings({ enabled: 'infinite-zoom-enable' }),
   autoSwitch: registerSettings({
-    enabled: "autoswitch-enable",
-    useOneGun: "useonegun"
+    enabled: 'autoswitch-enable',
+    useOneGun: 'useonegun',
   }),
-  layerHack: registerSettings({ enabled: "layerhack-enable" }),
+  layerHack: registerSettings({ enabled: 'layerhack-enable' }),
 };
 
 export const defaultSettings = {
   aimbot: {
     enabled: true,
     targetKnocked: true,
-    stickyTarget: true
+    stickyTarget: true,
   },
   meleeLock: {
     enabled: true,
-    autoMelee: false
+    autoMelee: false,
   },
   spinbot: {
     enabled: true,
     realistic: false,
-    speed: 50
+    speed: 50,
   },
   mobileMovement: {
     enabled: false,
-    smooth: 50
+    smooth: 50,
   },
   autoFire: {
-    enabled: true
+    enabled: true,
   },
   xray: {
     enabled: true,
@@ -275,30 +304,30 @@ export const defaultSettings = {
     players: true,
     grenades: {
       explosions: true,
-      trajectories: true
+      trajectories: true,
     },
     flashlights: {
       own: true,
-      others: true
-    }
+      others: true,
+    },
   },
   autoLoot: {
-    enabled: true
+    enabled: true,
   },
   mapHighlights: {
     enabled: true,
     smallerTrees: true,
   },
   infiniteZoom: {
-    enabled: true
+    enabled: true,
   },
   autoSwitch: {
     enabled: true,
-    useOneGun: false
+    useOneGun: false,
   },
   layerHack: {
-    enabled: true
-  }
+    enabled: true,
+  },
 };
 
 mergeConfigIntoSettings(defaultSettings, settings);
@@ -312,13 +341,12 @@ const updateConfig = async () => {
 
     const config = stringify(settings);
     if (config !== lastConfig) {
-      const success = await write("c", encryptDecrypt(config));
+      const success = await write('c', encryptDecrypt(config));
       if (success) {
         lastConfig = config;
       }
     }
   } catch (error) {
-    // Allow retries on next interval by clearing the ready promise when writes fail
     storeReadyPromise = null;
   } finally {
     isUpdatingConfig = false;
@@ -327,7 +355,6 @@ const updateConfig = async () => {
 
 export const startConfigPersistence = () => {
   if (updateTimer === null) {
-    // Ensure IndexedDB is initialised as soon as we begin persistence
     void ensureStoreReady();
     updateTimer = setInterval(() => {
       void updateConfig();

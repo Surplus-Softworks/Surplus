@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Menu from '@/ui/components/Menu.jsx';
-import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state/settings.js';
+import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.js';
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
 import { read } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';

@@ -1,178 +1,143 @@
-import { settings } from "@/state/settings.js";
-import { gameManager } from "@/utils/injector.js";
-import { hook, object, ref_addEventListener, reflect } from "@/utils/hook.js";
-import { aimState } from "@/state/aimbotState.js";
+import { settings, aimState } from '@/state.js';
+import { gameManager } from '@/utils/injector.js';
+import { hook, object, ref_addEventListener, reflect } from '@/utils/hook.js';
 import { tr } from '@/utils/obfuscatedNameTranslator.js';
+
+const ANGULAR_ACCELERATION_MAX = 0.075;
+const DAMPING_FACTOR = 0.98;
+const PRIMARY_BUTTON = 0;
+const TWO_PI = Math.PI * 2;
 
 let currentAngle = 0;
 let angularVelocity = 0;
-const angularAccelerationMax = 0.075;
-const dampingFactor = 0.98;
+let randomAngle = Math.random() * TWO_PI;
 let isMouseDown = false;
 
-export let x, y;
-
 function updateRotation() {
-  if (
-    !gameManager.game[tr.activePlayer] ||
-    !gameManager.game[tr.activePlayer].bodyContainer ||
-    gameManager.game[tr.uiManager].spectating
-  )
-    return;
+  const game = gameManager.game;
+  const activePlayer = game[tr.activePlayer];
+  if (!activePlayer?.bodyContainer || game[tr.uiManager].spectating) return;
 
-  if (isMouseDown) {
-    if (!gameManager.game[tr.uiManager].spectating) {
-      if (aimState.lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
-        gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
-          aimState.lastAimPos.clientY - globalThis.innerHeight / 2,
-          aimState.lastAimPos.clientX - globalThis.innerWidth / 2
-        ) || 0;
-      } else {
-        gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
-          gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
-          gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
-        ) || 0;
-      }
-    } else {
-      gameManager.game[tr.activePlayer].bodyContainer.rotation = -Math.atan2(
-        gameManager.game[tr.activePlayer][tr.dir].y,
-        gameManager.game[tr.activePlayer][tr.dir].x
-      ) || 0;
-    }
-  } else {
-    gameManager.game[tr.activePlayer].bodyContainer.rotation = Math.atan2(
-      gameManager.game[tr.input].mousePos.y - globalThis.innerHeight / 2,
-      gameManager.game[tr.input].mousePos.x - globalThis.innerWidth / 2
+  const body = activePlayer.bodyContainer;
+  const mouseX = game[tr.input].mousePos.x - globalThis.innerWidth / 2;
+  const mouseY = game[tr.input].mousePos.y - globalThis.innerHeight / 2;
+
+  if (isMouseDown && aimState.lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
+    body.rotation = Math.atan2(
+      aimState.lastAimPos.clientY - globalThis.innerHeight / 2,
+      aimState.lastAimPos.clientX - globalThis.innerWidth / 2,
     ) || 0;
+    return;
   }
+
+  body.rotation = Math.atan2(mouseY, mouseX) || 0;
 }
 
 function spinbotTicker() {
-  if (!(gameManager.game?.initialized)) return;
+  if (!gameManager.game?.initialized) return;
   updateRotation();
 }
 
-let randAngle = Math.random() * 2 * Math.PI;
+const getCursorRadius = () => {
+  const centerX = globalThis.innerWidth / 2;
+  const centerY = globalThis.innerHeight / 2;
+  const deltaX = gameManager.game[tr.input].mousePos._x - centerX;
+  const deltaY = gameManager.game[tr.input].mousePos._y - centerY;
+  return { centerX, centerY, radius: Math.hypot(deltaX, deltaY) };
+};
 
 function calculateSpinbotMousePosition(axis) {
-  if (gameManager.game[tr.activePlayer].throwableState === "cook") {
-    return axis === "x" ? gameManager.game[tr.input].mousePos._x : gameManager.game[tr.input].mousePos._y;
+  if (gameManager.game[tr.activePlayer].throwableState === 'cook') {
+    return axis === 'x' ? gameManager.game[tr.input].mousePos._x : gameManager.game[tr.input].mousePos._y;
   }
 
-  if (settings.spinbot.realistic) {
-    const centerX = globalThis.innerWidth / 2;
-    const centerY = globalThis.innerHeight / 2;
-    const radius = Math.hypot(
-      gameManager.game[tr.input].mousePos._x - centerX,
-      gameManager.game[tr.input].mousePos._y - centerY
-    );
-
-    if (axis === "x") {
-      return centerX + Math.cos(currentAngle) * radius;
-    } else {
-      return centerY + Math.sin(currentAngle) * radius;
-    }
-  } else {
-    const centerX = globalThis.innerWidth / 2;
-    const centerY = globalThis.innerHeight / 2;
-    const radius = Math.hypot(
-      gameManager.game[tr.input].mousePos._x - centerX,
-      gameManager.game[tr.input].mousePos._y - centerY
-    );
-
-    if (axis === "x") {
-      return centerX + Math.cos(randAngle) * radius;
-    } else {
-      return centerY + Math.sin(randAngle) * radius;
-    }
-  }
+  const { centerX, centerY, radius } = getCursorRadius();
+  const angle = settings.spinbot.realistic ? currentAngle : randomAngle;
+  return axis === 'x' ? centerX + Math.cos(angle) * radius : centerY + Math.sin(angle) * radius;
 }
 
-export default function() {
-  gameManager.pixi._ticker.add(spinbotTicker);
+const updateSpinPhysics = () => {
+  if (isMouseDown || !settings.spinbot.enabled) return;
 
-  let lastX = 0, lastY = 0;
+  if (settings.spinbot.realistic) {
+    angularVelocity += (Math.random() * 2 - 1) * ((settings.spinbot.speed / 50) * ANGULAR_ACCELERATION_MAX);
+    angularVelocity *= DAMPING_FACTOR;
+    currentAngle += angularVelocity;
+    return;
+  }
+
+  if (Math.random() < settings.spinbot.speed / 100) {
+    randomAngle = Math.random() * TWO_PI;
+  }
+};
+
+const createMouseAccessor = (axis, compute) => ({
+  get: function () {
+    return compute.call(this);
+  },
+  set(value) {
+    this[`_${axis}`] = value;
+  },
+});
+
+const shouldBypassSpinbot = (isEmoteUpdate) => (isMouseDown && !aimState.lastAimPos) || isEmoteUpdate;
+
+export default function initSpinbot() {
+  gameManager.pixi._ticker.add(spinbotTicker);
+  gameManager.pixi._ticker.add(updateSpinPhysics);
+
+  let lastX = 0;
+  let lastY = 0;
   let isEmoteUpdate = false;
+
   hook(gameManager.game[tr.emoteBarn].__proto__, tr.update, {
-    apply(f, th, args) {
+    apply(original, context, args) {
       isEmoteUpdate = true;
       try {
-        const r = Reflect.apply(f, th, args);
+        const result = reflect.apply(original, context, args);
         isEmoteUpdate = false;
-        return r;
-      } catch (e) {
+        return result;
+      } catch (error) {
         isEmoteUpdate = false;
-        throw e;
+        throw error;
       }
-    }
-  });
-
-  object.defineProperty(gameManager.game[tr.input].mousePos, "y", {
-    get() {
-      if ((isMouseDown && !aimState.lastAimPos) || isEmoteUpdate) {
-        return this._y;
-      }
-
-      if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) {
-        return aimState.lastAimPos.clientY;
-      }
-
-      if (!isMouseDown && settings.spinbot.enabled) {
-        return lastY = calculateSpinbotMousePosition("y");
-      }
-
-      return this._y;
-    },
-    set(value) {
-      this._y = value;
     },
   });
 
-  object.defineProperty(gameManager.game[tr.input].mousePos, "x", {
-    get() {
-      if ((isMouseDown && !aimState.lastAimPos) || isEmoteUpdate) {
-        return this._x;
-      }
+  const mousePos = gameManager.game[tr.input].mousePos;
 
-      if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) {
-        return aimState.lastAimPos.clientX;
-      }
-
-      if (!isMouseDown && settings.spinbot.enabled) {
-        return lastX = calculateSpinbotMousePosition("x");
-      }
-
-      return this._x;
-    },
-    set(value) {
-      this._x = value;
-    },
-  });
-
-  reflect.apply(ref_addEventListener, globalThis, ["mousedown", e => {
-    if (e.button != 0) return;
-    isMouseDown = true;
-  }])
-
-  reflect.apply(ref_addEventListener, globalThis, ["mouseup", e => {
-    if (e.button != 0) return;
-    isMouseDown = false;
-  }])
-
-  gameManager.pixi._ticker.add(() => {
+  object.defineProperty(mousePos, 'y', createMouseAccessor('y', function () {
+    if (shouldBypassSpinbot(isEmoteUpdate)) return this._y;
+    if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) return aimState.lastAimPos.clientY;
     if (!isMouseDown && settings.spinbot.enabled) {
-      if (settings.spinbot.realistic) {
-        angularVelocity += (Math.random() * 2 - 1) * (settings.spinbot.speed / 50 * angularAccelerationMax);
-        angularVelocity *= dampingFactor;
-        currentAngle += angularVelocity;
-      } else {
-        if (!settings.spinbot.realistic && settings.spinbot.enabled) {
-          const chance = Math.random();
-          if (chance < settings.spinbot.speed / 100) randAngle = Math.random() * 2 * Math.PI;
-        }
-      }
+      lastY = calculateSpinbotMousePosition('y');
+      return lastY;
     }
-  });
+    return this._y;
+  }));
+
+  object.defineProperty(mousePos, 'x', createMouseAccessor('x', function () {
+    if (shouldBypassSpinbot(isEmoteUpdate)) return this._x;
+    if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) return aimState.lastAimPos.clientX;
+    if (!isMouseDown && settings.spinbot.enabled) {
+      lastX = calculateSpinbotMousePosition('x');
+      return lastX;
+    }
+    return this._x;
+  }));
+
+  const handleMouseDown = (event) => {
+    if (event.button !== PRIMARY_BUTTON) return;
+    isMouseDown = true;
+  };
+
+  const handleMouseUp = (event) => {
+    if (event.button !== PRIMARY_BUTTON) return;
+    isMouseDown = false;
+  };
+
+  reflect.apply(ref_addEventListener, globalThis, ['mousedown', handleMouseDown]);
+  reflect.apply(ref_addEventListener, globalThis, ['mouseup', handleMouseUp]);
 }
 
 

@@ -1,9 +1,7 @@
-import { hook } from "@/utils/hook.js";
-import { reflect } from "@/utils/hook.js";
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
-import { settings } from "@/state/settings.js";
+import { hook, reflect } from '@/utils/hook.js';
+import { settings } from '@/state.js';
 
-let HIGHLIGHTS = {
+const HIGHLIGHTS = {
   container_06: 0xd6c313,
   barn_01: 0x6a329f,
   stone_02: 0x191f1f,
@@ -14,12 +12,11 @@ let HIGHLIGHTS = {
   crate_03: 0x51855d,
   bunker_storm_01: 0x6a329f,
   bunker_hydra_01: 0x990dd2,
-
   bunker_crossing_stairs_01b: 0xcf149a,
   bunker_crossing_stairs_01: 0xcf149a,
 };
 
-let SIZES = {
+const SIZES = {
   container_06: 1,
   stone_02: 6,
   tree_03: 8,
@@ -30,41 +27,42 @@ let SIZES = {
   crate_03: 1.8,
   bunker_storm_01: 1.75,
   bunker_hydra_01: 1.75,
-
   bunker_crossing_stairs_01b: 2,
   bunker_crossing_stairs_01: 2,
 };
 
+const setTreeScale = (object) => {
+  if (!settings.mapHighlights.smallerTrees) return;
+  if (!object.obj.type.includes('tree')) return;
+  object.shapes.forEach((shape) => {
+    shape.scale = 1.8;
+  });
+};
+
 const colorize = (map) => {
-  map.forEach(object => {
-    if (settings.mapHighlights.smallerTrees) {
-      object.shapes.forEach(shape => {
-        if (object.obj.type.includes("tree")) {
-          shape.scale = 1.8
-        };
-      });
-    }
-    if (!HIGHLIGHTS[object.obj.type]) return;
-    object.shapes.forEach(shape => {
-      if (!SIZES[object.obj.type]) return;
-      shape.color = HIGHLIGHTS[object.obj.type];
-      shape.scale = SIZES[object.obj.type];
-      object.zIdx = 999
+  map.forEach((object) => {
+    setTreeScale(object);
+    const color = HIGHLIGHTS[object.obj.type];
+    const scale = SIZES[object.obj.type];
+    if (!color || !scale) return;
+    object.shapes.forEach((shape) => {
+      shape.color = color;
+      shape.scale = scale;
+      object.zIdx = 999;
     });
   });
-}
+};
 
-export default function() {
-  hook(Array.prototype, "sort", {
-    apply(f, th, args) {
+export default function initMapHighlights() {
+  hook(Array.prototype, 'sort', {
+    apply(original, context, args) {
       try {
-        if (th.some(v=>v?.obj?.ori != null) && settings.mapHighlights.enabled) {
-          colorize(th);
+        if (settings.mapHighlights.enabled && context.some((entry) => entry?.obj?.ori != null)) {
+          colorize(context);
         }
-      } catch {
+      } catch {}
 
-      }
-      return reflect.apply(f, th, args);
-    }
+      return reflect.apply(original, context, args);
+    },
   });
 }

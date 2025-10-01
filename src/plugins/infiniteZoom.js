@@ -1,41 +1,36 @@
-import { gameManager } from "@/utils/injector.js";
-import { object, reflect, ref_addEventListener } from "@/utils/hook.js";
-import { settings } from "@/state/settings.js";
+import { gameManager } from '@/utils/injector.js';
+import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
+import { settings } from '@/state.js';
 import { tr } from '@/utils/obfuscatedNameTranslator.js';
 
-export default function() {
-  const handleWheelEvent = (event) => {
-    if (!event.shiftKey || !settings.infiniteZoom.enabled) return;
-    
-    try {
-      const activePlayer = gameManager.game[tr.activePlayer];
-      const localData = activePlayer[tr.localData];
-      let zoom = localData[tr.zoom];
+const ZOOM_IN_STEP = 20;
+const ZOOM_OUT_STEP = 30;
+const MIN_ZOOM = 36;
+const WHEEL_OPTIONS = { capture: true, passive: false };
 
-      if (event.deltaY > 0) {
-        zoom += 20;
-      } else {
-        zoom -= 30; 
-        zoom = Math.max(36, zoom); 
-      }
+const handleWheelEvent = (event) => {
+  if (!event.shiftKey || !settings.infiniteZoom.enabled) return;
 
-      object.defineProperty(localData, tr.zoom, {
-        configurable: true,
-        get: () => zoom,
-        set: () => {} 
-      });
+  try {
+    const game = gameManager.game;
+    const activePlayer = game[tr.activePlayer];
+    const localData = activePlayer[tr.localData];
+    let zoom = localData[tr.zoom];
 
-      event.preventDefault();
-      event.stopImmediatePropagation();
-    } catch { }
-  };
+    zoom += event.deltaY > 0 ? ZOOM_IN_STEP : -ZOOM_OUT_STEP;
+    zoom = Math.max(MIN_ZOOM, zoom);
 
-  reflect.apply(ref_addEventListener, globalThis, [
-    "wheel",
-    handleWheelEvent, 
-    { 
-      capture: true, 
-      passive: false 
-    }
-  ]);
+    object.defineProperty(localData, tr.zoom, {
+      configurable: true,
+      get: () => zoom,
+      set: () => {},
+    });
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  } catch {}
+};
+
+export default function initInfiniteZoom() {
+  reflect.apply(ref_addEventListener, globalThis, ['wheel', handleWheelEvent, WHEEL_OPTIONS]);
 }

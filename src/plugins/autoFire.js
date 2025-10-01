@@ -1,18 +1,26 @@
-import { settings } from "@/state/settings.js";
-import { reflect } from "@/utils/hook.js";
-import { ref_addEventListener } from "@/utils/hook.js";
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { settings } from '@/state.js';
+import { reflect, ref_addEventListener } from '@/utils/hook.js';
 
 export let autoFireEnabled;
 
-export default function() {
+const PRIMARY_BUTTON = 0;
+
+const updateAutoFireFromSettings = () => {
   autoFireEnabled = settings.autoFire.enabled;
+};
 
-  reflect.apply(ref_addEventListener, globalThis, ["mousedown", (event) => {
-    if (event.button === 0) autoFireEnabled = settings.autoFire.enabled;
-  }]);
+const handleMouseDown = (event) => {
+  if (event.button !== PRIMARY_BUTTON) return;
+  updateAutoFireFromSettings();
+};
 
-  reflect.apply(ref_addEventListener, globalThis, ["mouseup", (event) => {
-    if (event.button === 0) autoFireEnabled = false;
-  }]);
+const handleMouseUp = (event) => {
+  if (event.button !== PRIMARY_BUTTON) return;
+  autoFireEnabled = false;
+};
+
+export default function initAutoFire() {
+  updateAutoFireFromSettings();
+  reflect.apply(ref_addEventListener, globalThis, ['mousedown', handleMouseDown]);
+  reflect.apply(ref_addEventListener, globalThis, ['mouseup', handleMouseUp]);
 }

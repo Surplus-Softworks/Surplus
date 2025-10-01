@@ -1,7 +1,6 @@
 import { initialize } from "@/loader.js";
 import { hook, reflect } from "@/utils/hook.js";
 import { initStore } from "@/utils/store.js";
-import initAnalytics from "@/utils/analytics"
 
 setTimeout(() => {
   if (new Error().stack.split("\n").length > 6) {
