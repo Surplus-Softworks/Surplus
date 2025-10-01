@@ -4,7 +4,6 @@ import babel from '@rollup/plugin-babel';
 import replace from '@rollup/plugin-replace';
 import alias from '@rollup/plugin-alias';
 import { string } from 'rollup-plugin-string';
-import { minify } from 'terser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -13,47 +12,21 @@ const __dirname = path.dirname(__filename);
 
 export default (commandLineArgs) => {
   const isDev = commandLineArgs.dev === true;
-  const isProd = !isDev;
-  const EPOCH = Date.now() + (1000 * 60 * 60);
-  const VERSION = "1.4.6";
-
-  const terserPlugin = () => ({
-    name: 'surplus-terser',
-    async renderChunk(code) {
-      const result = await minify(code, {
-        compress: {
-          ecma: 2020,
-          passes: 3,
-          drop_console: true,
-          drop_debugger: true,
-          keep_fargs: false,
-          module: true,
-          pure_getters: true,
-          toplevel: true,
-        },
-        mangle: {
-          toplevel: true,
-        },
-        format: {
-          comments: false,
-        },
-        toplevel: true,
-      });
-
-      return { code: result.code ?? code, map: null };
-    },
-  });
+  const EPOCH = Date.now() + 1000 * 60 * 60;
+  const VERSION = '1.4.6';
 
   return {
     input: './src/index.js',
     output: {
-      file: './dist/extension/main.js',
-      format: 'iife',
-      name: 'SurplusBundle',
-      compact: true,
-      inlineDynamicImports: true,
-      preferConst: true,
-      freeze: false,
+      dir: './dist/extension',
+      format: 'es',
+      entryFileNames: 'main.js',
+      chunkFileNames: 'vendor.js',
+      assetFileNames: '[name][extname]',
+      manualChunks(id) {
+        if (id.includes('node_modules')) return 'vendor';
+        return null;
+      },
     },
     treeshake: {
       moduleSideEffects: false,
@@ -66,8 +39,8 @@ export default (commandLineArgs) => {
     plugins: [
       alias({
         entries: [
-          { find: '@', replacement: path.resolve(__dirname, 'src') }
-        ]
+          { find: '@', replacement: path.resolve(__dirname, 'src') },
+        ],
       }),
       string({
         include: '**/*.html',
@@ -89,7 +62,6 @@ export default (commandLineArgs) => {
         extensions: ['.js', '.jsx'],
       }),
       commonjs(),
-      terserPlugin(),
     ],
     onwarn(warning, warn) {
       if (warning.code === 'THIS_IS_UNDEFINED') return;
