@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { settings, inputState } from '@/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
 import { reflect } from '@/utils/hook.js';
@@ -84,6 +84,6 @@ const handleWeaponSwitch = () => {
     } catch {}
 };
 
-export default function initAutoSwitch() {
+export default function() {
     gameManager.pixi._ticker.add(handleWeaponSwitch);
 }

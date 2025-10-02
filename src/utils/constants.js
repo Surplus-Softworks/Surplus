@@ -1,5 +1,5 @@
 import { hook, reflect, object } from "@/utils/hook.js";
-import { gameManager } from "@/utils/injector.js";
+import { gameManager } from "@/state.js";
 import { translatedTable } from "@/utils/obfuscatedNameTranslator.js";
 
 export const inputCommands = {

@@ -37,7 +37,7 @@ const Help = () => {
             <KeybindSlot keybind="H" />
           </div>
           <div style={styles.featureItem}>
-            <span style={styles.featureName}>Layer Hack</span>
+            <span style={styles.featureName}>Layer Spoofer</span>
             <KeybindSlot keybind="T" />
           </div>
         </div>

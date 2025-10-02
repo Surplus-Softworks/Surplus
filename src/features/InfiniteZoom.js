@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
 import { settings } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
@@ -31,6 +31,6 @@ const handleWheelEvent = (event) => {
   } catch {}
 };
 
-export default function initInfiniteZoom() {
+export default function() {
   reflect.apply(ref_addEventListener, globalThis, ['wheel', handleWheelEvent, WHEEL_OPTIONS]);
 }

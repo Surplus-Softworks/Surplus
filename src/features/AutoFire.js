@@ -19,7 +19,7 @@ const handleMouseUp = (event) => {
   autoFireEnabled = false;
 };
 
-export default function initAutoFire() {
+export default function() {
   updateAutoFireFromSettings();
   reflect.apply(ref_addEventListener, globalThis, ['mousedown', handleMouseDown]);
   reflect.apply(ref_addEventListener, globalThis, ['mouseup', handleMouseUp]);

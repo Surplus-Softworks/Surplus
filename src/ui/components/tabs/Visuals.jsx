@@ -48,18 +48,18 @@ const Visuals = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Layer Hack Section */}
+      {/* Layer Spoofer Section */}
       <div style={styles.sectionTitle}>
         <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3">
           <path d="M480-80v-80h80q66 0 113-47t47-113v-120h80v120q0 92-64 156t-156 64H480Zm-160 0v-80q-92 0-156-64T80-380v-120h80v120q0 66 47 113t113 47h80ZM80-480v-80h80q0-66 47-113t113-47h240v-80h-240q-92 0-156 64T80-620v140h80Zm720 0v-140q0-92-64-156T600-840H360v80h240q66 0 113 47t47 113v80h80Z"/>
         </svg>
-        <div style={styles.sectionTitleContainer}>Layer Hack</div>
+        <div style={styles.sectionTitleContainer}>Layer Spoofer</div>
         <KeybindSlot keybind="Space" style={{ width: '38px' }} />
         <Checkbox
-          id="layerhack-enable"
+          id="layerspoof-enable"
           label="Enabled"
-          checked={settings.layerHack.enabled}
-          onChange={(v) => onSettingChange('layerHack.enabled', v)}
+          checked={settings.layerSpoof.enabled}
+          onChange={(v) => onSettingChange('layerSpoof.enabled', v)}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>

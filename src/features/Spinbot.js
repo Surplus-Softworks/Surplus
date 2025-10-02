@@ -1,5 +1,5 @@
 import { settings, aimState } from '@/state.js';
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { hook, object, ref_addEventListener, reflect } from '@/utils/hook.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 
@@ -82,7 +82,7 @@ const createMouseAccessor = (axis, compute) => ({
 
 const shouldBypassSpinbot = (isEmoteUpdate) => (isMouseDown && !aimState.lastAimPos) || isEmoteUpdate;
 
-export default function initSpinbot() {
+export default function() {
   gameManager.pixi._ticker.add(spinbotTicker);
   gameManager.pixi._ticker.add(updateSpinPhysics);
 
@@ -139,7 +139,5 @@ export default function initSpinbot() {
   reflect.apply(ref_addEventListener, globalThis, ['mousedown', handleMouseDown]);
   reflect.apply(ref_addEventListener, globalThis, ['mouseup', handleMouseUp]);
 }
-
-
 
 

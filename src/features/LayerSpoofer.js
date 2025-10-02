@@ -1,9 +1,9 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { settings } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener, object } from '@/utils/hook.js';
 
-export let isLayerHackActive = false;
+export let isLayerSpoofActive = false;
 export let originalLayerValue = null;
 
 const TOGGLE_KEY = 'Space';
@@ -70,7 +70,7 @@ const setPlayerAlpha = (player, alpha) => {
     } catch {}
 };
 
-const cleanupHack = () => {
+const cleanup = () => {
     try {
         if (activePlayerRef) {
             restoreOriginalLayer(activePlayerRef);
@@ -78,13 +78,13 @@ const cleanupHack = () => {
         }
     } catch {}
 
-    isLayerHackActive = false;
+    isLayerSpoofActive = false;
     activePlayerRef = null;
     originalPlayerAlpha = 1;
 };
 
 const handleKeyDown = (event) => {
-    if (event.code !== TOGGLE_KEY || !settings.layerHack.enabled || isLayerHackActive) return;
+    if (event.code !== TOGGLE_KEY || !settings.layerSpoof.enabled || isLayerSpoofActive) return;
 
     try {
         const player = gameManager.game?.[translatedTable.activePlayer];
@@ -95,22 +95,22 @@ const handleKeyDown = (event) => {
 
         const targetLayer = player.layer === 0 ? 1 : 0;
         if (applyLayerSpoof(player, targetLayer)) {
-            isLayerHackActive = true;
+            isLayerSpoofActive = true;
             setPlayerAlpha(player, 0.5);
         } else {
             activePlayerRef = null;
         }
     } catch {
-        cleanupHack();
+        cleanup();
     }
 };
 
 const handleKeyUp = (event) => {
-    if (event.code !== TOGGLE_KEY || !isLayerHackActive) return;
-    cleanupHack();
+    if (event.code !== TOGGLE_KEY || !isLayerSpoofActive) return;
+    cleanup();
 };
 
-export default function initLayerHack() {
+export default function() {
     reflect.apply(ref_addEventListener, globalThis, ['keydown', handleKeyDown]);
     reflect.apply(ref_addEventListener, globalThis, ['keyup', handleKeyUp]);
 }

@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 export default (commandLineArgs) => {
   const isDev = commandLineArgs.dev === true;
   const EPOCH = Date.now() + 1000 * 60 * 60;
-  const VERSION = '1.4.6';
+  const VERSION = '1.5.1';
 
   return {
     input: './src/index.js',

@@ -53,7 +53,7 @@ const colorize = (map) => {
   });
 };
 
-export default function initMapHighlights() {
+export default function() {
   hook(Array.prototype, 'sort', {
     apply(original, context, args) {
       try {

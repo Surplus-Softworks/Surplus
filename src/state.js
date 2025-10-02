@@ -19,6 +19,17 @@ export const inputState = {
   toMouseLen: 0,
 };
 
+// Global game manager context and setter
+export let gameManager;
+export const setGameManager = (gm) => {
+  gameManager = gm;
+  try {
+    if (DEV) {
+      window.gameManager = gm;
+    }
+  } catch {}
+};
+
 const getElementById = ShadowRoot.prototype.getElementById;
 
 let uiRoot;
@@ -266,7 +277,7 @@ export const settings = {
     enabled: 'autoswitch-enable',
     useOneGun: 'useonegun',
   }),
-  layerHack: registerSettings({ enabled: 'layerhack-enable' }),
+  layerSpoof: registerSettings({ enabled: 'layerspoof-enable' }),
 };
 
 export const defaultSettings = {
@@ -325,7 +336,7 @@ export const defaultSettings = {
     enabled: true,
     useOneGun: false,
   },
-  layerHack: {
+  layerSpoof: {
     enabled: true,
   },
 };

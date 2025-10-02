@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { object, reflect } from '@/utils/hook.js';
 import { aimState, inputState, settings } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
@@ -10,7 +10,7 @@ import {
     inputCommands,
     PIXI,
 } from '@/utils/constants.js';
-import { originalLayerValue, isLayerHackActive } from '@/features/LayerSpoofer.js';
+import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.js';
 
 const COLORS = {
     GREEN: 0x399d37,
@@ -32,7 +32,7 @@ const isBypassLayer = (layer) => layer === 2 || layer === 3;
 
 const getLocalLayer = (player) => {
     if (isBypassLayer(player.layer)) return player.layer;
-    if (isLayerHackActive && originalLayerValue !== undefined) return originalLayerValue;
+    if (isLayerSpoofActive && originalLayerValue !== undefined) return originalLayerValue;
     return player.layer;
 };
 

@@ -6,7 +6,7 @@ import { minify } from 'terser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
 
-const VERSION = '1.5.1';
+const VERSION = '2.0.0';
 const DIST_DIR = path.join('dist', 'extension');
 const SOURCE_EXTENSION_DIR = path.join('src', 'extension');
 const DEFAULT_ARCHIVE_NAME = 'Surplus (DO NOT EXTRACT).zip';
@@ -167,6 +167,15 @@ const buildWithRollup = async (dev) => {
   console.log('Rollup build completed');
 };
 
+const minifyFile = async (filePath, label) => {
+  if (!fs.existsSync(filePath)) return;
+  console.log(`Minifying ${label}...`);
+  const src = await fs.promises.readFile(filePath, 'utf-8');
+  const result = await minify(src, TERSER_OPTIONS);
+  if (result.error) throw result.error;
+  await fs.promises.writeFile(filePath, result.code || src);
+};
+
 const obfuscateMain = async (dev) => {
   if (dev) return;
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk not found for obfuscation');
@@ -247,13 +256,9 @@ const runBuild = async (argv) => {
   await clearDist();
   await copyStaticFiles();
   await buildWithRollup(devMode);
-  if (!devMode && fs.existsSync(VENDOR_FILE)) {
-    console.log('Minifying vendor.js...');
-    const vendorCode = await fs.promises.readFile(VENDOR_FILE, 'utf-8');
-    const minified = await minify(vendorCode, TERSER_OPTIONS);
-    if (minified.error) throw minified.error;
-    await fs.promises.writeFile(VENDOR_FILE, minified.code || vendorCode);
-  }
+  // Always minify vendor and main before obfuscation, regardless of mode
+  await minifyFile(VENDOR_FILE, 'vendor.js');
+  await minifyFile(MAIN_FILE, 'main.js');
   await obfuscateMain(devMode);
   await combineChunks();
   await createArchive();

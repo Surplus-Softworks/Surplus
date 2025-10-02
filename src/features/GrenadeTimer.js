@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 
 const GRENADE_TYPES = ['frag', 'mirv', 'martyr_nade'];
@@ -70,6 +70,6 @@ const updateGrenadeTimer = () => {
     } catch {}
 };
 
-export default function initGrenadeTimer() {
+export default function() {
     gameManager.pixi._ticker.add(updateGrenadeTimer);
 }

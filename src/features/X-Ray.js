@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { settings } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 

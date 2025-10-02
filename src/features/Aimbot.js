@@ -1,9 +1,9 @@
 import { settings, getUIRoot, inputState, aimState, resetAimState } from '@/state.js';
 import { findTeam, findBullet, findWeapon, inputCommands } from '@/utils/constants.js';
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener } from '@/utils/hook.js';
-import { isLayerHackActive, originalLayerValue } from '@/features/LayerSpoofer.js';
+import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -19,7 +19,7 @@ const state = {
 
 const getLocalLayer = (player) => {
     if (isBypassLayer(player.layer)) return player.layer;
-    if (isLayerHackActive && originalLayerValue !== undefined) return originalLayerValue;
+    if (isLayerSpoofActive && originalLayerValue !== undefined) return originalLayerValue;
     return player.layer;
 };
 
