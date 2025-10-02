@@ -1,7 +1,7 @@
 import { gameManager } from '@/utils/injector.js';
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
 import { settings } from '@/state.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 
 const ZOOM_IN_STEP = 20;
 const ZOOM_OUT_STEP = 30;
@@ -13,14 +13,14 @@ const handleWheelEvent = (event) => {
 
   try {
     const game = gameManager.game;
-    const activePlayer = game[tr.activePlayer];
-    const localData = activePlayer[tr.localData];
-    let zoom = localData[tr.zoom];
+    const activePlayer = game[translatedTable.activePlayer];
+    const localData = activePlayer[translatedTable.localData];
+    let zoom = localData[translatedTable.zoom];
 
     zoom += event.deltaY > 0 ? ZOOM_IN_STEP : -ZOOM_OUT_STEP;
     zoom = Math.max(MIN_ZOOM, zoom);
 
-    object.defineProperty(localData, tr.zoom, {
+    object.defineProperty(localData, translatedTable.zoom, {
       configurable: true,
       get: () => zoom,
       set: () => {},

@@ -1,6 +1,6 @@
 import { gameManager } from '@/utils/injector.js';
 import { settings } from '@/state.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener, object } from '@/utils/hook.js';
 
 export let isLayerHackActive = false;
@@ -87,7 +87,7 @@ const handleKeyDown = (event) => {
     if (event.code !== TOGGLE_KEY || !settings.layerHack.enabled || isLayerHackActive) return;
 
     try {
-        const player = gameManager.game?.[tr.activePlayer];
+        const player = gameManager.game?.[translatedTable.activePlayer];
         if (!player || player.layer === undefined || !player.container) return;
 
         activePlayerRef = player;

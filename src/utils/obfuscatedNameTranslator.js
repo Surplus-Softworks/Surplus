@@ -4,7 +4,7 @@ const { getOwnPropertyNames, getPrototypeOf } = object;
 const { __lookupGetter__: lookupGetter } = object.prototype;
 const { isArray } = Array;
 
-export let tr = {};
+export let translatedTable = {};
 
 export function translate(gameManager) {
   return new Promise((resolve) => {
@@ -122,7 +122,7 @@ export function translate(gameManager) {
       }
 
       const game = gameManager.game;
-      const translated = { ...tr };
+      const translated = { ...translatedTable };
 
       function matchSignature(obj, prop) {
         const objSignature = getSignature(obj[prop]);
@@ -387,26 +387,26 @@ export function translate(gameManager) {
 
     function allKeysFound() {
       const signatureKeys = Object.keys(signatureMap);
-      const translatorKeys = Object.keys(tr);
+      const translatorKeys = Object.keys(translatedTable);
       return signatureKeys.every(key => translatorKeys.includes(key));
     }
 
     const intervalId = setInterval(() => {
-      tr = matchGameProperties();
+      translatedTable = matchGameProperties();
       if (DEV) {
-        window.tr = tr;
+        window.tr = translatedTable;
       }
 
       if (allKeysFound()) {
         clearInterval(intervalId);
-        resolve(tr);
+        resolve(translatedTable);
       }
     });
 
     setTimeout(() => {
       if (!allKeysFound()) {
         clearInterval(intervalId);
-        resolve(tr);
+        resolve(translatedTable);
       }
     }, 1000);
   });

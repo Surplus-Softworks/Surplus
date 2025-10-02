@@ -1,9 +1,9 @@
 import { settings, getUIRoot, inputState, aimState, resetAimState } from '@/state.js';
 import { findTeam, findBullet, findWeapon, inputCommands } from '@/utils/constants.js';
 import { gameManager } from '@/utils/injector.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener } from '@/utils/hook.js';
-import { isLayerHackActive, originalLayerValue } from '@/plugins/layerHack.js';
+import { isLayerHackActive, originalLayerValue } from '@/features/LayerSpoofer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -60,8 +60,8 @@ function calcAngle(playerPos, mePos) {
 function predictPosition(enemy, currentPlayer) {
     if (!enemy || !currentPlayer) return null;
 
-    const enemyPos = enemy[tr.visualPos];
-    const currentPlayerPos = currentPlayer[tr.visualPos];
+    const enemyPos = enemy[translatedTable.visualPos];
+    const currentPlayerPos = currentPlayer[translatedTable.visualPos];
     const now = performance.now();
     const enemyId = enemy.__id;
 
@@ -70,7 +70,7 @@ function predictPosition(enemy, currentPlayer) {
     if (history.length > 20) history.shift();
 
     if (history.length < 20) {
-        return gameManager.game[tr.camera][tr.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
+        return gameManager.game[translatedTable.camera][translatedTable.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
     }
 
     const deltaTime = (now - history[0][0]) / 1000;
@@ -99,7 +99,7 @@ function predictPosition(enemy, currentPlayer) {
     } else {
         const discriminant = b ** 2 - 4 * a * c;
         if (discriminant < 0) {
-            return gameManager.game[tr.camera][tr.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
+            return gameManager.game[translatedTable.camera][translatedTable.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
         }
 
         const sqrtD = Math.sqrt(discriminant);
@@ -108,7 +108,7 @@ function predictPosition(enemy, currentPlayer) {
         t = Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2);
 
         if (t < 0 || t > 5) {
-            return gameManager.game[tr.camera][tr.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
+            return gameManager.game[translatedTable.camera][translatedTable.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
         }
     }
 
@@ -117,7 +117,7 @@ function predictPosition(enemy, currentPlayer) {
         y: enemyPos.y + vey * t,
     };
 
-    return gameManager.game[tr.camera][tr.pointToScreen](predictedPos);
+    return gameManager.game[translatedTable.camera][translatedTable.pointToScreen](predictedPos);
 }
 
 
@@ -130,22 +130,22 @@ function findTarget(players, me) {
 
     for (const player of players) {
         if (!player.active) continue;
-        if (player[tr.netData][tr.dead]) continue;
+        if (player[translatedTable.netData][translatedTable.dead]) continue;
         if (!settings.aimbot.targetKnocked && player.downed) continue;
         if (me.__id === player.__id) continue;
         if (!meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer)) continue;
         if (findTeam(player) === meTeam) continue;
 
-        const screenPos = gameManager.game[tr.camera][tr.pointToScreen]({
-            x: player[tr.visualPos].x,
-            y: player[tr.visualPos].y,
+        const screenPos = gameManager.game[translatedTable.camera][translatedTable.pointToScreen]({
+            x: player[translatedTable.visualPos].x,
+            y: player[translatedTable.visualPos].y,
         });
 
         const distance = getDistance(
             screenPos.x,
             screenPos.y,
-            gameManager.game[tr.input].mousePos._x,
-            gameManager.game[tr.input].mousePos._y,
+            gameManager.game[translatedTable.input].mousePos._x,
+            gameManager.game[translatedTable.input].mousePos._y,
         );
 
         if (distance < minDistance) {
@@ -166,14 +166,14 @@ function findClosestTarget(players, me) {
 
     for (const player of players) {
         if (!player.active) continue;
-        if (player[tr.netData][tr.dead]) continue;
+        if (player[translatedTable.netData][translatedTable.dead]) continue;
         if (!settings.aimbot.targetKnocked && player.downed) continue;
         if (me.__id === player.__id) continue;
         if (!meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer)) continue;
         if (findTeam(player) === meTeam) continue;
 
-        const mePos = me[tr.visualPos];
-        const playerPos = player[tr.visualPos];
+        const mePos = me[translatedTable.visualPos];
+        const playerPos = player[translatedTable.visualPos];
         const distance = getDistance(mePos.x, mePos.y, playerPos.x, playerPos.y);
 
         if (distance < minDistance) {
@@ -192,20 +192,20 @@ function aimbotTicker() {
         aimState.aimTouchMoveDir = null;
 
         const game = gameManager.game;
-        if (!game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || game[tr.uiManager].spectating) {
+        if (!game.initialized || !(settings.aimbot.enabled || settings.meleeLock.enabled) || game[translatedTable.uiManager].spectating) {
             if (aimbotDot) aimbotDot.style.display = 'none';
             return;
         }
 
-        const players = game[tr.playerBarn].playerPool[tr.pool];
-        const me = game[tr.activePlayer];
+        const players = game[translatedTable.playerBarn].playerPool[translatedTable.pool];
+        const me = game[translatedTable.activePlayer];
         const isLocalOnBypassLayer = isBypassLayer(me.layer);
 
         try {
-            const currentWeaponIndex = game[tr.activePlayer][tr.localData][tr.curWeapIdx];
+            const currentWeaponIndex = game[translatedTable.activePlayer][translatedTable.localData][translatedTable.curWeapIdx];
             const isMeleeEquipped = currentWeaponIndex === 2;
             const isGrenadeEquipped = currentWeaponIndex === 3;
-            const isAiming = game[tr.inputBinds].isBindDown(inputCommands.Fire);
+            const isAiming = game[translatedTable.inputBinds].isBindDown(inputCommands.Fire);
             const meleeLockActive = settings.meleeLock.enabled && (isMeleeEquipped || settings.meleeLock.autoMelee) && isAiming;
 
             if (meleeLockActive) {
@@ -213,13 +213,13 @@ function aimbotTicker() {
                     state.meleeLockEnemy = null;
                 }
 
-                if (!state.meleeLockEnemy || !state.meleeLockEnemy.active || state.meleeLockEnemy[tr.netData][tr.dead]) {
+                if (!state.meleeLockEnemy || !state.meleeLockEnemy.active || state.meleeLockEnemy[translatedTable.netData][translatedTable.dead]) {
                     state.meleeLockEnemy = findClosestTarget(players, me);
                 }
 
                 if (state.meleeLockEnemy) {
-                    const mePos = me[tr.visualPos];
-                    const enemyPos = state.meleeLockEnemy[tr.visualPos];
+                    const mePos = me[translatedTable.visualPos];
+                    const enemyPos = state.meleeLockEnemy[translatedTable.visualPos];
                     const distanceToEnemy = Math.hypot(mePos.x - enemyPos.x, mePos.y - enemyPos.y);
 
                     if (distanceToEnemy <= 5.5) {
@@ -231,7 +231,7 @@ function aimbotTicker() {
                             y: Math.sin(moveAngle),
                         };
 
-                        const screenPos = game[tr.camera][tr.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
+                        const screenPos = game[translatedTable.camera][translatedTable.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
                         aimState.lastAimPos = { clientX: screenPos.x, clientY: screenPos.y };
 
                         if (settings.meleeLock.autoMelee && !isMeleeEquipped) {
@@ -253,7 +253,7 @@ function aimbotTicker() {
                 return;
             }
 
-            let enemy = state.focusedEnemy?.active && !state.focusedEnemy[tr.netData][tr.dead] ? state.focusedEnemy : null;
+            let enemy = state.focusedEnemy?.active && !state.focusedEnemy[translatedTable.netData][translatedTable.dead] ? state.focusedEnemy : null;
 
             if (enemy) {
                 const localLayer = getLocalLayer(me);
@@ -273,8 +273,8 @@ function aimbotTicker() {
             }
 
             if (enemy) {
-                const mePos = me[tr.visualPos];
-                const enemyPos = enemy[tr.visualPos];
+                const mePos = me[translatedTable.visualPos];
+                const enemyPos = enemy[translatedTable.visualPos];
                 const distanceToEnemy = Math.hypot(mePos.x - enemyPos.x, mePos.y - enemyPos.y);
 
                 if (enemy !== state.currentEnemy && !state.focusedEnemy) {

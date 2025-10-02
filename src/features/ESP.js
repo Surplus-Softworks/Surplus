@@ -1,7 +1,7 @@
 import { gameManager } from '@/utils/injector.js';
 import { object, reflect } from '@/utils/hook.js';
 import { aimState, inputState, settings } from '@/state.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 import {
     findTeam,
     findWeapon,
@@ -10,7 +10,7 @@ import {
     inputCommands,
     PIXI,
 } from '@/utils/constants.js';
-import { originalLayerValue, isLayerHackActive } from '@/plugins/layerHack.js';
+import { originalLayerValue, isLayerHackActive } from '@/features/LayerSpoofer.js';
 
 const COLORS = {
     GREEN: 0x399d37,
@@ -53,7 +53,7 @@ const getGraphics = (container, key) => {
 };
 
 function nameTag(player) {
-    const localPlayer = gameManager.game[tr.activePlayer];
+    const localPlayer = gameManager.game[translatedTable.activePlayer];
     const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
     reflect.defineProperty(player.nameText, "visible", {
@@ -72,23 +72,23 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
     if (!bullet || !weapon) return;
 
     const center = {
-        x: (player[tr.pos].x - localPlayer[tr.pos].x) * 16,
-        y: (localPlayer[tr.pos].y - player[tr.pos].y) * 16,
+        x: (player[translatedTable.pos].x - localPlayer[translatedTable.pos].x) * 16,
+        y: (localPlayer[translatedTable.pos].y - player[translatedTable.pos].y) * 16,
     };
 
     const game = gameManager.game;
     const isLocalPlayer = player === localPlayer;
-    const isSpectating = game[tr.uiManager].spectating;
-    const isAiming = game[tr.touch].shotDetected || game[tr.inputBinds].isBindDown(inputCommands.Fire);
+    const isSpectating = game[translatedTable.uiManager].spectating;
+    const isAiming = game[translatedTable.touch].shotDetected || game[translatedTable.inputBinds].isBindDown(inputCommands.Fire);
 
     let aimAngle;
     if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos || !isAiming)) {
-        aimAngle = Math.atan2(game[tr.input].mousePos._y - innerHeight / 2, game[tr.input].mousePos._x - innerWidth / 2);
+        aimAngle = Math.atan2(game[translatedTable.input].mousePos._y - innerHeight / 2, game[translatedTable.input].mousePos._x - innerWidth / 2);
     } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos) {
-        const screenPos = game[tr.camera][tr.pointToScreen]({ x: player[tr.pos].x, y: player[tr.pos].y });
+        const screenPos = game[translatedTable.camera][translatedTable.pointToScreen]({ x: player[translatedTable.pos].x, y: player[translatedTable.pos].y });
         aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos.clientY, screenPos.x - aimState.lastAimPos.clientX) - Math.PI;
     } else {
-        aimAngle = Math.atan2(player[tr.dir].x, player[tr.dir].y) - Math.PI / 2;
+        aimAngle = Math.atan2(player[translatedTable.dir].x, player[translatedTable.dir].y) - Math.PI / 2;
     }
 
     const spreadAngle = weapon.shotSpread * (Math.PI / 180);
@@ -106,14 +106,14 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
 };
 
 function renderPlayerLines(localPlayer, players, graphics) {
-    const playerX = localPlayer[tr.pos].x;
-    const playerY = localPlayer[tr.pos].y;
+    const playerX = localPlayer[translatedTable.pos].x;
+    const playerY = localPlayer[translatedTable.pos].y;
     const playerTeam = findTeam(localPlayer);
     const isLocalOnBypassLayer = isBypassLayer(localPlayer.layer);
     const localLayer = getLocalLayer(localPlayer);
 
     players.forEach((player) => {
-        if (!player.active || player[tr.netData][tr.dead] || localPlayer.__id === player.__id) return;
+        if (!player.active || player[translatedTable.netData][translatedTable.dead] || localPlayer.__id === player.__id) return;
 
         const team = findTeam(player);
         const isOnEffectiveLayer = meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer);
@@ -122,18 +122,18 @@ function renderPlayerLines(localPlayer, players, graphics) {
 
         graphics.lineStyle(2, lineColor, 0.45);
         graphics.moveTo(0, 0);
-        graphics.lineTo((player[tr.pos].x - playerX) * 16, (playerY - player[tr.pos].y) * 16);
+        graphics.lineTo((player[translatedTable.pos].x - playerX) * 16, (playerY - player[translatedTable.pos].y) * 16);
     });
 }
 
 
 function renderGrenadeZones(localPlayer, graphics) {
-    const playerX = localPlayer[tr.pos].x;
-    const playerY = localPlayer[tr.pos].y;
+    const playerX = localPlayer[translatedTable.pos].x;
+    const playerY = localPlayer[translatedTable.pos].y;
     const isLocalOnBypassLayer = isBypassLayer(localPlayer.layer);
     const playerLayer = getLocalLayer(localPlayer);
 
-    const idToObj = gameManager.game?.[tr.objectCreator]?.[tr.idToObj];
+    const idToObj = gameManager.game?.[translatedTable.objectCreator]?.[translatedTable.idToObj];
     if (!idToObj) return;
 
     const grenades = object.values(idToObj).filter(
@@ -157,37 +157,37 @@ function renderGrenadeZones(localPlayer, graphics) {
 
 
 function renderGrenadeTrajectory(localPlayer, graphics) {
-    if (localPlayer[tr.localData][tr.curWeapIdx] !== 3) return;
+    if (localPlayer[translatedTable.localData][translatedTable.curWeapIdx] !== 3) return;
 
-    const activeItem = localPlayer[tr.netData][tr.activeWeapon];
+    const activeItem = localPlayer[translatedTable.netData][translatedTable.activeWeapon];
     if (!activeItem) return;
 
     const game = gameManager.game;
-    const playerX = localPlayer[tr.pos].x;
-    const playerY = localPlayer[tr.pos].y;
+    const playerX = localPlayer[translatedTable.pos].x;
+    const playerY = localPlayer[translatedTable.pos].y;
     const throwableMaxRange = 18;
     let dirX;
     let dirY;
 
-    const isSpectating = game[tr.uiManager].spectating;
-    const isAiming = game[tr.touch].shotDetected || game[tr.inputBinds].isBindDown(inputCommands.Fire);
+    const isSpectating = game[translatedTable.uiManager].spectating;
+    const isAiming = game[translatedTable.touch].shotDetected || game[translatedTable.inputBinds].isBindDown(inputCommands.Fire);
 
     if (!isSpectating && (!aimState.lastAimPos || !isAiming)) {
-        const mouseX = game[tr.input].mousePos._x - innerWidth / 2;
-        const mouseY = game[tr.input].mousePos._y - innerHeight / 2;
+        const mouseX = game[translatedTable.input].mousePos._x - innerWidth / 2;
+        const mouseY = game[translatedTable.input].mousePos._y - innerHeight / 2;
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
     } else if (!isSpectating && aimState.lastAimPos) {
-        const screenPos = game[tr.camera][tr.pointToScreen]({ x: playerX, y: playerY });
+        const screenPos = game[translatedTable.camera][translatedTable.pointToScreen]({ x: playerX, y: playerY });
         const aimX = aimState.lastAimPos.clientX - screenPos.x;
         const aimY = aimState.lastAimPos.clientY - screenPos.y;
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
         dirX = aimX / magnitude;
         dirY = aimY / magnitude;
     } else {
-        dirX = localPlayer[tr.dir].x;
-        dirY = localPlayer[tr.dir].y;
+        dirX = localPlayer[translatedTable.dir].x;
+        dirY = localPlayer[translatedTable.dir].y;
     }
 
     const offsetAngle = 2 * (Math.PI / 180);
@@ -248,7 +248,7 @@ function renderFlashlights(localPlayer, players, graphics) {
 
     const enemies = players.filter((player) => {
         if (!player.active) return false;
-        if (player[tr.netData][tr.dead]) return false;
+        if (player[translatedTable.netData][translatedTable.dead]) return false;
         if (localPlayer.__id === player.__id) return false;
         if (!meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer)) return false;
         if (!player.container.worldVisible) return false;
@@ -264,8 +264,8 @@ function renderFlashlights(localPlayer, players, graphics) {
 
 function renderESP() {
     const pixi = gameManager.pixi;
-    const localPlayer = gameManager.game[tr.activePlayer];
-    const players = gameManager.game[tr.playerBarn].playerPool[tr.pool];
+    const localPlayer = gameManager.game[translatedTable.activePlayer];
+    const players = gameManager.game[translatedTable.playerBarn].playerPool[translatedTable.pool];
 
     if (!pixi || !localPlayer || !localPlayer.container || !gameManager.game?.initialized) return;
 

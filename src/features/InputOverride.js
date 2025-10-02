@@ -1,8 +1,7 @@
 import { gameManager } from '@/utils/injector.js';
 import { reflect, hook, object } from '@/utils/hook.js';
-import { autoFireEnabled } from '@/plugins/autoFire.js';
+import { autoFireEnabled } from '@/features/AutoFire.js';
 import { inputCommands, packetTypes } from '@/utils/constants.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
 import { aimState, inputState, settings } from '@/state.js';
 
 export let emoteTypes = [];

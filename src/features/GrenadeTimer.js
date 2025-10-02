@@ -1,5 +1,5 @@
 import { gameManager } from '@/utils/injector.js';
-import { tr } from '@/utils/obfuscatedNameTranslator.js';
+import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
 
 const GRENADE_TYPES = ['frag', 'mirv', 'martyr_nade'];
 const MAX_TIMER_DURATION = 4;
@@ -11,16 +11,16 @@ let timerUI = null;
 const isGameInitialized = () => {
     const game = gameManager.game;
     if (!game?.initialized) return false;
-    const player = game[tr.activePlayer];
+    const player = game[translatedTable.activePlayer];
     return (
-        player?.[tr.localData]?.[tr.curWeapIdx] != null &&
-        player?.[tr.netData]?.[tr.activeWeapon] != null
+        player?.[translatedTable.localData]?.[translatedTable.curWeapIdx] != null &&
+        player?.[translatedTable.netData]?.[translatedTable.activeWeapon] != null
     );
 };
 
 const isPlayerHoldingGrenade = () => {
     const game = gameManager.game;
-    return game[tr.activePlayer][tr.localData][tr.curWeapIdx] === 3;
+    return game[translatedTable.activePlayer][translatedTable.localData][translatedTable.curWeapIdx] === 3;
 };
 
 const isValidCookingState = (player) => player.throwableState === 'cook';
@@ -37,7 +37,7 @@ const resetTimer = () => {
 
 const createNewTimer = () => {
     resetTimer();
-    const PieTimer = gameManager.game[tr.uiManager][tr.pieTimer].constructor;
+    const PieTimer = gameManager.game[translatedTable.uiManager][translatedTable.pieTimer].constructor;
     timerUI = new PieTimer();
     gameManager.pixi.stage.addChild(timerUI.container);
     timerUI.start('Grenade', 0, MAX_TIMER_DURATION);
@@ -50,8 +50,8 @@ const updateGrenadeTimer = () => {
 
     try {
         const game = gameManager.game;
-        const player = game[tr.activePlayer];
-        const activeWeapon = player[tr.netData][tr.activeWeapon];
+        const player = game[translatedTable.activePlayer];
+        const activeWeapon = player[translatedTable.netData][translatedTable.activeWeapon];
         const secondsElapsed = (Date.now() - lastTimestamp) / 1000;
 
         if (!isValidCookingState(player) || !isExplosiveGrenade(activeWeapon)) {
@@ -66,7 +66,7 @@ const updateGrenadeTimer = () => {
             return;
         }
 
-        timerUI.update(secondsElapsed - timerUI.elapsed, game[tr.camera]);
+        timerUI.update(secondsElapsed - timerUI.elapsed, game[translatedTable.camera]);
     } catch {}
 };
 
