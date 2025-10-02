@@ -1,6 +1,6 @@
 import { gameManager } from '@/state.js';
 import { settings } from '@/state.js';
-import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
+import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener, object } from '@/utils/hook.js';
 
 export let isLayerSpoofActive = false;
@@ -87,7 +87,7 @@ const handleKeyDown = (event) => {
     if (event.code !== TOGGLE_KEY || !settings.layerSpoof.enabled || isLayerSpoofActive) return;
 
     try {
-        const player = gameManager.game?.[translatedTable.activePlayer];
+        const player = gameManager.game?.[translations.activePlayer];
         if (!player || player.layer === undefined || !player.container) return;
 
         activePlayerRef = player;

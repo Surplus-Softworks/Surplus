@@ -1,6 +1,6 @@
 import { gameManager } from '@/state.js';
 import { settings } from '@/state.js';
-import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
+import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 function processEnvironment() {
   if (!gameManager.game?.initialized) return;
@@ -14,7 +14,7 @@ function processEnvironment() {
 
 function processCeilings(isXrayEnabled) {
   if (isXrayEnabled && settings.xray.removeCeilings) {
-    gameManager.game[translatedTable.renderer].layers[3].children.forEach(element => {
+    gameManager.game[translations.renderer].layers[3].children.forEach(element => {
       if (element._texture?.textureCacheIds) {
         const textures = element._texture.textureCacheIds;
         const shouldHide = textures.some(texture => 
@@ -32,7 +32,7 @@ function processCeilings(isXrayEnabled) {
 
 function processSmokes(isEnabled) {
   if (isEnabled) {
-    gameManager.game[translatedTable.smokeBarn][translatedTable.particles].forEach(particle => {
+    gameManager.game[translations.smokeBarn][translations.particles].forEach(particle => {
       if (settings.xray.darkerSmokes) {
         particle.sprite._tintRGB = 1;
       }
@@ -44,7 +44,7 @@ function processSmokes(isEnabled) {
 
 function processObstacles(isXrayEnabled) {
   if (isXrayEnabled) {
-    gameManager.game[translatedTable.map][translatedTable.obstaclePool][translatedTable.pool].forEach(obstacle => {
+    gameManager.game[translations.map][translations.obstaclePool][translations.pool].forEach(obstacle => {
       if (["tree", "table", "stairs"].some(type => obstacle.type.includes(type))) {
         obstacle.sprite.alpha = settings.xray.treeOpacity / 100;
       }

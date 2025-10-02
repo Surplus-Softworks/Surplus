@@ -2,7 +2,7 @@ import { gameManager } from '@/state.js';
 import { settings, inputState } from '@/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
 import { reflect } from '@/utils/hook.js';
-import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
+import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
 const WEAPON_COMMANDS = ['EquipPrimary', 'EquipSecondary'];
@@ -26,7 +26,7 @@ const isSlowFiringWeapon = (weaponType) => {
 };
 
 const isPlayerFiring = () =>
-    gameManager.game[translatedTable.touch].shotDetected || gameManager.game[translatedTable.inputBinds].isBindDown(inputCommands.Fire);
+    gameManager.game[translations.touch].shotDetected || gameManager.game[translations.inputBinds].isBindDown(inputCommands.Fire);
 
 const queueWeaponSwitch = (weaponIndex) => {
     queueInput(WEAPON_COMMANDS[weaponIndex]);
@@ -49,10 +49,10 @@ const handleWeaponSwitch = () => {
 
     try {
         const game = gameManager.game;
-        const player = game[translatedTable.activePlayer];
-        const localData = player[translatedTable.localData];
-        const currentWeaponIndex = localData[translatedTable.curWeapIdx];
-        const weapons = localData[translatedTable.weapons];
+        const player = game[translations.activePlayer];
+        const localData = player[translations.localData];
+        const currentWeaponIndex = localData[translations.curWeapIdx];
+        const weapons = localData[translations.weapons];
         const currentWeapon = weapons[currentWeaponIndex];
         const currentWeaponState = weaponState[currentWeaponIndex];
 

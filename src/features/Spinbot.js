@@ -1,7 +1,7 @@
 import { settings, aimState } from '@/state.js';
 import { gameManager } from '@/state.js';
 import { hook, object, ref_addEventListener, reflect } from '@/utils/hook.js';
-import { translatedTable } from '@/utils/obfuscatedNameTranslator.js';
+import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 const ANGULAR_ACCELERATION_MAX = 0.075;
 const DAMPING_FACTOR = 0.98;
@@ -15,12 +15,12 @@ let isMouseDown = false;
 
 function updateRotation() {
   const game = gameManager.game;
-  const activePlayer = game[translatedTable.activePlayer];
-  if (!activePlayer?.bodyContainer || game[translatedTable.uiManager].spectating) return;
+  const activePlayer = game[translations.activePlayer];
+  if (!activePlayer?.bodyContainer || game[translations.uiManager].spectating) return;
 
   const body = activePlayer.bodyContainer;
-  const mouseX = game[translatedTable.input].mousePos.x - globalThis.innerWidth / 2;
-  const mouseY = game[translatedTable.input].mousePos.y - globalThis.innerHeight / 2;
+  const mouseX = game[translations.input].mousePos.x - globalThis.innerWidth / 2;
+  const mouseY = game[translations.input].mousePos.y - globalThis.innerHeight / 2;
 
   if (isMouseDown && aimState.lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
     body.rotation = Math.atan2(
@@ -41,14 +41,14 @@ function spinbotTicker() {
 const getCursorRadius = () => {
   const centerX = globalThis.innerWidth / 2;
   const centerY = globalThis.innerHeight / 2;
-  const deltaX = gameManager.game[translatedTable.input].mousePos._x - centerX;
-  const deltaY = gameManager.game[translatedTable.input].mousePos._y - centerY;
+  const deltaX = gameManager.game[translations.input].mousePos._x - centerX;
+  const deltaY = gameManager.game[translations.input].mousePos._y - centerY;
   return { centerX, centerY, radius: Math.hypot(deltaX, deltaY) };
 };
 
 function calculateSpinbotMousePosition(axis) {
-  if (gameManager.game[translatedTable.activePlayer].throwableState === 'cook') {
-    return axis === 'x' ? gameManager.game[translatedTable.input].mousePos._x : gameManager.game[translatedTable.input].mousePos._y;
+  if (gameManager.game[translations.activePlayer].throwableState === 'cook') {
+    return axis === 'x' ? gameManager.game[translations.input].mousePos._x : gameManager.game[translations.input].mousePos._y;
   }
 
   const { centerX, centerY, radius } = getCursorRadius();
@@ -90,7 +90,7 @@ export default function() {
   let lastY = 0;
   let isEmoteUpdate = false;
 
-  hook(gameManager.game[translatedTable.emoteBarn].__proto__, translatedTable.update, {
+  hook(gameManager.game[translations.emoteBarn].__proto__, translations.update, {
     apply(original, context, args) {
       isEmoteUpdate = true;
       try {
@@ -104,7 +104,7 @@ export default function() {
     },
   });
 
-  const mousePos = gameManager.game[translatedTable.input].mousePos;
+  const mousePos = gameManager.game[translations.input].mousePos;
 
   object.defineProperty(mousePos, 'y', createMouseAccessor('y', function () {
     if (shouldBypassSpinbot(isEmoteUpdate)) return this._y;
