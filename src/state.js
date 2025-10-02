@@ -207,20 +207,6 @@ export const settings = {
     stickyTarget_: 'sticky-target',
   }),
   meleeLock_: registerSettings({ enabled_: 'melee-lock', autoMelee_: 'auto-melee' }),
-  spinbot_: registerSettings({
-    enabled_: 'spinbot-enable',
-    realistic_: 'realistic',
-    get $speed_() {
-      return parseInt(getValue('spinbot-speed'));
-    },
-    set $speed_(v) {
-      const el = lookupElement(this._speed_);
-      if (!el) return;
-      el.value = v;
-      el.oninput?.();
-    },
-    _speed_: 'spinbot-speed',
-  }),
   mobileMovement_: registerSettings({
     enabled_: 'mobile-movement-enable',
     get $smooth_() {
@@ -289,11 +275,6 @@ export const defaultSettings = {
   meleeLock_: {
     enabled_: true,
     autoMelee_: false,
-  },
-  spinbot_: {
-    enabled_: true,
-    realistic_: false,
-    speed_: 50,
   },
   mobileMovement_: {
     enabled_: false,

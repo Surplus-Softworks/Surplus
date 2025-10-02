@@ -4,6 +4,7 @@ import { gameManager } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
+import { manageAimState } from '@/utils/aimController.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -188,11 +189,9 @@ function findClosestTarget(players, me) {
 
 function aimbotTicker() {
     try {
-        aimState.lastAimPos_ = null;
-        aimState.aimTouchMoveDir_ = null;
-
         const game = gameManager.game;
         if (!game.initialized || !(settings.aimbot_.enabled_ || settings.meleeLock_.enabled_) || game[translations.uiManager].spectating) {
+            manageAimState({ mode: 'idle' });
             if (aimbotDot) aimbotDot.style.display = 'none';
             return;
         }
@@ -200,6 +199,7 @@ function aimbotTicker() {
         const players = game[translations.playerBarn].playerPool[translations.pool];
         const me = game[translations.activePlayer];
         const isLocalOnBypassLayer = isBypassLayer(me.layer);
+        let aimUpdated = false;
 
         try {
             const currentWeaponIndex = game[translations.activePlayer][translations.localData][translations.curWeapIdx];
@@ -224,7 +224,7 @@ function aimbotTicker() {
 
                     if (distanceToEnemy <= 5.5) {
                         const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
-                        aimState.aimTouchMoveDir_ = {
+                        const moveDir = {
                             touchMoveActive: true,
                             touchMoveLen: 255,
                             x: Math.cos(moveAngle),
@@ -232,7 +232,12 @@ function aimbotTicker() {
                         };
 
                         const screenPos = game[translations.camera][translations.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
-                        aimState.lastAimPos_ = { clientX: screenPos.x, clientY: screenPos.y };
+                        manageAimState({
+                            mode: 'meleeLock',
+                            targetScreenPos: { x: screenPos.x, y: screenPos.y },
+                            moveDir,
+                        });
+                        aimUpdated = true;
 
                         if (settings.meleeLock_.autoMelee_ && !isMeleeEquipped) {
                             queueInput('EquipMelee');
@@ -249,9 +254,12 @@ function aimbotTicker() {
             }
 
             if (!settings.aimbot_.enabled_ || isMeleeEquipped || isGrenadeEquipped) {
+                manageAimState({ mode: 'idle' });
                 if (aimbotDot) aimbotDot.style.display = 'none';
                 return;
             }
+
+            const canEngageAimbot = isAiming;
 
             let enemy = state.focusedEnemy_?.active && !state.focusedEnemy_[translations.netData][translations.dead] ? state.focusedEnemy_ : null;
 
@@ -285,36 +293,43 @@ function aimbotTicker() {
 
                 const predictedPos = predictPosition(enemy, me);
                 if (!predictedPos) {
+                    manageAimState({ mode: 'idle' });
                     if (aimbotDot) aimbotDot.style.display = 'none';
                     return;
                 }
 
-                if (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8)) {
-                    aimState.lastAimPos_ = { clientX: predictedPos.x, clientY: predictedPos.y };
-                    if (
-                        aimbotDot &&
-                        (aimbotDot.style.left !== `${predictedPos.x}px` || aimbotDot.style.top !== `${predictedPos.y}px`)
-                    ) {
-                        aimbotDot.style.left = `${predictedPos.x}px`;
-                        aimbotDot.style.top = `${predictedPos.y}px`;
+                if (canEngageAimbot && (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8))) {
+                    manageAimState({ mode: 'aimbot', targetScreenPos: { x: predictedPos.x, y: predictedPos.y } });
+                    aimUpdated = true;
+                    if (aimbotDot && aimState.lastAimPos_) {
+                        const { clientX, clientY } = aimState.lastAimPos_;
+                        if (aimbotDot.style.left !== `${clientX}px` || aimbotDot.style.top !== `${clientY}px`) {
+                            aimbotDot.style.left = `${clientX}px`;
+                            aimbotDot.style.top = `${clientY}px`;
+                        }
                         aimbotDot.style.display = 'block';
+                    } else if (aimbotDot) {
+                        aimbotDot.style.display = 'none';
                     }
-                } else if (aimbotDot) {
-                    aimbotDot.style.display = 'none';
+                } else {
+                    if (aimbotDot) aimbotDot.style.display = 'none';
                 }
             } else {
-                aimState.lastAimPos_ = null;
                 if (aimbotDot) aimbotDot.style.display = 'none';
+            }
+
+            if (!aimUpdated) {
+                manageAimState({ mode: 'idle' });
             }
         } catch (error) {
             if (aimbotDot) aimbotDot.style.display = 'none';
-            aimState.reset();
+            manageAimState({ mode: 'idle', immediate: true });
             state.meleeLockEnemy_ = null;
             state.focusedEnemy_ = null;
             state.currentEnemy_ = null;
         }
     } catch (error) {
-        aimState.reset();
+        manageAimState({ mode: 'idle', immediate: true });
     }
 }
 

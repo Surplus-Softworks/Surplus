@@ -12,7 +12,6 @@ const SETTINGS_KEY = 'c';
 const VERSION_ENDPOINT = 'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest';
 const KEY_TOGGLE_MENU = 'ShiftRight';
 const KEY_TOGGLE_AIMBOT = 'KeyB';
-const KEY_TOGGLE_SPINBOT = 'KeyH';
 
 let uiShadow;
 export let menuElement;
@@ -115,12 +114,6 @@ const registerKeyboardShortcuts = (root) => {
         (s, v) => (s.aimbot_.enabled_ = v)
       );
       return;
-    }
-    if (event.code === KEY_TOGGLE_SPINBOT) {
-      toggleSetting(
-        (s) => s.spinbot_.enabled_,
-        (s, v) => (s.spinbot_.enabled_ = v)
-      );
     }
   }]);
 };

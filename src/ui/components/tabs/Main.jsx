@@ -63,36 +63,6 @@ const Main = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Spinbot Section */}
-      <div style={styles.sectionTitle}>
-        <svg xmlns="http://www.w3.org/2000/svg" height="16px" width="16px" viewBox="0 0 1024 1024" fill="white">
-          <path d="M554.666667 128a298.666667 298.666667 0 0 0 0 597.333333 213.333333 213.333333 0 0 0 0-426.666666 128 128 0 0 0 0 256 42.666667 42.666667 0 0 0 0-85.333334 42.666667 42.666667 0 0 1 0-85.333333 128 128 0 0 1 0 256 213.333333 213.333333 0 0 1 0-426.666667 298.666667 298.666667 0 0 1 0 597.333334 384 384 0 0 1-384-384 42.666667 42.666667 0 0 0-85.333334 0 469.333333 469.333333 0 0 0 469.333334 469.333333 384 384 0 0 0 0-768z"/>
-        </svg>
-        <div style={styles.sectionTitleContainer}>Spinbot</div>
-        <KeybindSlot keybind="H" />
-        <Checkbox
-          id="spinbot-enable"
-          label="Enabled"
-          checked={settings.spinbot_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.spinbot_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
-        />
-      </div>
-      <div style={styles.group}>
-        <Checkbox
-          id="realistic"
-          label="Realistic"
-          checked={settings.spinbot_.realistic_}
-          onChange={(v) => onSettingChange((s) => (s.spinbot_.realistic_ = v))}
-        />
-        <Slider
-          id="spinbot-speed"
-          label="Speed:"
-          value={settings.spinbot_.speed_}
-          onChange={(v) => onSettingChange((s) => (s.spinbot_.speed_ = v))}
-        />
-      </div>
-
       {/* Auto Switch Section */}
       <div style={styles.sectionTitle}>
         <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="16px" fill="#e3e3e3">
