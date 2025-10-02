@@ -1,5 +1,4 @@
 import React from 'react';
-import { styles } from '@/ui/components/styles.js';
 
 const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
   const handleClick = (e) => {
@@ -11,7 +10,7 @@ const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
   return (
     <div
       className="checkbox-item"
-      style={{ ...styles.checkboxItem, ...style }}
+      style={style}
       onClick={handleClick}
     >
       <input
@@ -22,14 +21,11 @@ const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
           e.stopPropagation();
           onChange(e.target.checked);
         }}
-        style={{
-          ...styles.checkbox,
-          ...(checked ? styles.checkboxChecked : {}),
-        }}
+        className={`checkbox ${checked ? 'checkbox-checked' : ''}`}
       />
       <label
         htmlFor={id}
-        style={styles.checkboxItemLabel}
+        className="checkbox-item-label"
         onClick={(e) => e.stopPropagation()}
       >
         {label}

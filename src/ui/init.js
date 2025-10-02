@@ -5,7 +5,7 @@ import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
 import { read } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
-import { globalStylesheet } from '@/ui/components/stylesGlobal.js';
+import { globalStylesheet } from '@/ui/components/styles.js';
 
 const FONT_URL = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
 const SETTINGS_KEY = 'c';

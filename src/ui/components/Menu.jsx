@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { styles } from '@/ui/components/styles.js';
 import Header from '@/ui/components/layout/Header.jsx';
 import Navbar from '@/ui/components/layout/Navbar.jsx';
 import MainTab from '@/ui/components/tabs/Main.jsx';
@@ -83,16 +82,10 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       onTouchStart={handleClick}
       onTouchEnd={handleClick}
     >
-      <div className="popup" style={styles.popup}>
+      <div className="popup">
         <Header onMouseDown={handleMouseDown} version={version} />
         <Navbar activeTab={activeTab} onTabChange={setActiveTab} onClose={onClose} />
-        <div
-          className={`content-container ${activeTab ? 'active' : ''}`}
-          style={{
-            ...styles.contentContainer,
-            ...styles.contentContainerActive,
-          }}
-        >
+        <div className={`content-container ${activeTab ? 'active' : ''}`}>
           {renderActiveTab()}
         </div>
       </div>

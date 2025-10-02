@@ -1,16 +1,9 @@
 import React from 'react';
-import { styles } from '@/ui/components/styles.js';
 
 const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
   const sliderValue = ((value - min) / (max - min)) * 100;
 
   const sliderStyle = {
-    appearance: 'none',
-    width: '90px',
-    height: '5px',
-    borderRadius: '5px',
-    outline: 'none',
-    cursor: 'pointer',
     background: `linear-gradient(to right, #66db6a 0%, #66db6a ${sliderValue}%, #333 ${sliderValue}%, #3b3b3b 100%)`,
   };
 
@@ -24,12 +17,13 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
   };
 
   return (
-    <div className="checkbox-item slider-container" style={{ ...styles.checkboxItem, ...styles.sliderContainer }} onClick={handleClick}>
-      <label htmlFor={id} style={{ color: '#ddd', fontSize: '13px', cursor: 'default', pointerEvents: 'none' }}>
+    <div className="checkbox-item slider-container" onClick={handleClick}>
+      <label htmlFor={id} style={{ color: '#ddd', fontSize: '0.8125rem', cursor: 'default', pointerEvents: 'none' }}>
         {label}
       </label>
       <input
         type="range"
+        className="slider"
         id={id}
         min={min}
         max={max}
