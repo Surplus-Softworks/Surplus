@@ -103,6 +103,6 @@ export function findBullet(weapon) {
 }
 
 export let PIXI = {
-    Graphics: undefined,
-    Container: undefined,
+    Graphics_: undefined,
+    Container_: undefined,
 }

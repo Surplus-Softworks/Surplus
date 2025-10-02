@@ -16,8 +16,8 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="xray"
           label="Enabled"
-          checked={settings.xray.enabled}
-          onChange={(v) => onSettingChange('xray.enabled', v)}
+          checked={settings.xray_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.xray_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -25,26 +25,26 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="remove-ceilings"
           label="Remove Ceilings"
-          checked={settings.xray.removeCeilings}
-          onChange={(v) => onSettingChange('xray.removeCeilings', v)}
+          checked={settings.xray_.removeCeilings_}
+          onChange={(v) => onSettingChange((s) => (s.xray_.removeCeilings_ = v))}
         />
         <Checkbox
           id="darker-smokes"
           label="Darker Smokes"
-          checked={settings.xray.darkerSmokes}
-          onChange={(v) => onSettingChange('xray.darkerSmokes', v)}
+          checked={settings.xray_.darkerSmokes_}
+          onChange={(v) => onSettingChange((s) => (s.xray_.darkerSmokes_ = v))}
         />
         <Slider
           id="smoke-opacity"
           label="Smoke Opacity"
-          value={settings.xray.smokeOpacity}
-          onChange={(v) => onSettingChange('xray.smokeOpacity', v)}
+          value={settings.xray_.smokeOpacity_}
+          onChange={(v) => onSettingChange((s) => (s.xray_.smokeOpacity_ = v))}
         />
         <Slider
           id="tree-opacity"
           label="Tree Opacity"
-          value={settings.xray.treeOpacity}
-          onChange={(v) => onSettingChange('xray.treeOpacity', v)}
+          value={settings.xray_.treeOpacity_}
+          onChange={(v) => onSettingChange((s) => (s.xray_.treeOpacity_ = v))}
         />
       </div>
 
@@ -58,8 +58,8 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="layerspoof-enable"
           label="Enabled"
-          checked={settings.layerSpoof.enabled}
-          onChange={(v) => onSettingChange('layerSpoof.enabled', v)}
+          checked={settings.layerSpoof_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.layerSpoof_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -73,8 +73,8 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="esp-enable"
           label="Enabled"
-          checked={settings.esp.enabled}
-          onChange={(v) => onSettingChange('esp.enabled', v)}
+          checked={settings.esp_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.esp_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -82,14 +82,14 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="visible-nametags"
           label="Visible Nametags"
-          checked={settings.esp.visibleNametags}
-          onChange={(v) => onSettingChange('esp.visibleNametags', v)}
+          checked={settings.esp_.visibleNametags_}
+          onChange={(v) => onSettingChange((s) => (s.esp_.visibleNametags_ = v))}
         />
         <Checkbox
           id="player-esp"
           label="Players"
-          checked={settings.esp.players}
-          onChange={(v) => onSettingChange('esp.players', v)}
+          checked={settings.esp_.players_}
+          onChange={(v) => onSettingChange((s) => (s.esp_.players_ = v))}
         />
 
         <div style={styles.sectionTitle}>Grenades</div>
@@ -97,15 +97,15 @@ const Visuals = ({ settings, onSettingChange }) => {
           <Checkbox
             id="grenade-esp"
             label="Explosions"
-            checked={settings.esp.grenades.explosions}
-            onChange={(v) => onSettingChange('esp.grenades.explosions', v)}
+            checked={settings.esp_.grenades_.explosions_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.grenades_.explosions_ = v))}
             style={{ marginRight: '6px' }}
           />
           <Checkbox
             id="grenade-trajectories"
             label="Trajectories"
-            checked={settings.esp.grenades.trajectories}
-            onChange={(v) => onSettingChange('esp.grenades.trajectories', v)}
+            checked={settings.esp_.grenades_.trajectories_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.grenades_.trajectories_ = v))}
             style={{ marginRight: '6px' }}
           />
         </div>
@@ -115,15 +115,15 @@ const Visuals = ({ settings, onSettingChange }) => {
           <Checkbox
             id="own-flashlight"
             label="Own"
-            checked={settings.esp.flashlights.own}
-            onChange={(v) => onSettingChange('esp.flashlights.own', v)}
+            checked={settings.esp_.flashlights_.own_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.flashlights_.own_ = v))}
             style={{ marginRight: '6px' }}
           />
           <Checkbox
             id="others-flashlight"
             label="Others"
-            checked={settings.esp.flashlights.others}
-            onChange={(v) => onSettingChange('esp.flashlights.others', v)}
+            checked={settings.esp_.flashlights_.others_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.flashlights_.others_ = v))}
             style={{ marginRight: '6px' }}
           />
         </div>
@@ -140,8 +140,8 @@ const Visuals = ({ settings, onSettingChange }) => {
         <Checkbox
           id="infinite-zoom-enable"
           label="Enabled"
-          checked={settings.infiniteZoom.enabled}
-          onChange={(v) => onSettingChange('infiniteZoom.enabled', v)}
+          checked={settings.infiniteZoom_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.infiniteZoom_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>

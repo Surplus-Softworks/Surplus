@@ -6,7 +6,7 @@ export let autoFireEnabled;
 const PRIMARY_BUTTON = 0;
 
 const updateAutoFireFromSettings = () => {
-  autoFireEnabled = settings.autoFire.enabled;
+  autoFireEnabled = settings.autoFire_.enabled_;
 };
 
 const handleMouseDown = (event) => {

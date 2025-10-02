@@ -17,8 +17,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="aim-enable"
           label="Enabled"
-          checked={settings.aimbot.enabled}
-          onChange={(v) => onSettingChange('aimbot.enabled', v)}
+          checked={settings.aimbot_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -26,15 +26,15 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="target-knocked"
           label="Target Knocked"
-          checked={settings.aimbot.targetKnocked}
-          onChange={(v) => onSettingChange('aimbot.targetKnocked', v)}
+          checked={settings.aimbot_.targetKnocked_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.targetKnocked_ = v))}
         />
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <Checkbox
             id="sticky-target"
             label="Sticky Target"
-            checked={settings.aimbot.stickyTarget}
-            onChange={(v) => onSettingChange('aimbot.stickyTarget', v)}
+            checked={settings.aimbot_.stickyTarget_}
+            onChange={(v) => onSettingChange((s) => (s.aimbot_.stickyTarget_ = v))}
           />
           <KeybindSlot keybind="N" style={{ marginLeft: '10px' }} />
         </div>
@@ -49,8 +49,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="melee-lock"
           label="Enabled"
-          checked={settings.meleeLock.enabled}
-          onChange={(v) => onSettingChange('meleeLock.enabled', v)}
+          checked={settings.meleeLock_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.meleeLock_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -58,8 +58,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="auto-melee"
           label="Auto Equip"
-          checked={settings.meleeLock.autoMelee}
-          onChange={(v) => onSettingChange('meleeLock.autoMelee', v)}
+          checked={settings.meleeLock_.autoMelee_}
+          onChange={(v) => onSettingChange((s) => (s.meleeLock_.autoMelee_ = v))}
         />
       </div>
 
@@ -73,8 +73,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="spinbot-enable"
           label="Enabled"
-          checked={settings.spinbot.enabled}
-          onChange={(v) => onSettingChange('spinbot.enabled', v)}
+          checked={settings.spinbot_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.spinbot_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -82,14 +82,14 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="realistic"
           label="Realistic"
-          checked={settings.spinbot.realistic}
-          onChange={(v) => onSettingChange('spinbot.realistic', v)}
+          checked={settings.spinbot_.realistic_}
+          onChange={(v) => onSettingChange((s) => (s.spinbot_.realistic_ = v))}
         />
         <Slider
           id="spinbot-speed"
           label="Speed:"
-          value={settings.spinbot.speed}
-          onChange={(v) => onSettingChange('spinbot.speed', v)}
+          value={settings.spinbot_.speed_}
+          onChange={(v) => onSettingChange((s) => (s.spinbot_.speed_ = v))}
         />
       </div>
 
@@ -102,8 +102,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="autoswitch-enable"
           label="Enabled"
-          checked={settings.autoSwitch.enabled}
-          onChange={(v) => onSettingChange('autoSwitch.enabled', v)}
+          checked={settings.autoSwitch_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.autoSwitch_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -111,8 +111,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="useonegun"
           label="Use One Gun"
-          checked={settings.autoSwitch.useOneGun}
-          onChange={(v) => onSettingChange('autoSwitch.useOneGun', v)}
+          checked={settings.autoSwitch_.useOneGun_}
+          onChange={(v) => onSettingChange((s) => (s.autoSwitch_.useOneGun_ = v))}
         />
       </div>
 
@@ -125,8 +125,8 @@ const Main = ({ settings, onSettingChange }) => {
         <Checkbox
           id="semiauto-enable"
           label="Enabled"
-          checked={settings.autoFire.enabled}
-          onChange={(v) => onSettingChange('autoFire.enabled', v)}
+          checked={settings.autoFire_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.autoFire_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>

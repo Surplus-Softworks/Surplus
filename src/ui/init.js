@@ -34,18 +34,9 @@ const renderMenu = () => {
   );
 };
 
-const assignPath = (target, keys, value) => {
-  let node = target;
-  for (let index = 0; index < keys.length - 1; index += 1) {
-    node = node[keys[index]];
-  }
-  node[keys[keys.length - 1]] = value;
-};
-
-function handleSettingChange(path, value) {
-  const keys = path.split('.');
-  assignPath(settings, keys, value);
-  assignPath(currentSettings, keys, value);
+function handleSettingChange(updater) {
+  updater(settings);
+  updater(currentSettings);
   renderMenu();
 }
 
@@ -99,17 +90,10 @@ const createMenuContainer = (shadow) => {
   return root;
 };
 
-const toggleSetting = (settingPath) => {
-  const keys = settingPath.split('.');
-  const lastKey = keys[keys.length - 1];
-  let nodeSettings = settings;
-  let nodeCurrent = currentSettings;
-  for (let i = 0; i < keys.length - 1; i += 1) {
-    nodeSettings = nodeSettings[keys[i]];
-    nodeCurrent = nodeCurrent[keys[i]];
-  }
-  nodeSettings[lastKey] = !nodeSettings[lastKey];
-  nodeCurrent[lastKey] = nodeSettings[lastKey];
+const toggleSetting = (getter, setter) => {
+  const newValue = !getter(settings);
+  setter(settings, newValue);
+  setter(currentSettings, newValue);
   renderMenu();
 };
 
@@ -126,11 +110,17 @@ const registerKeyboardShortcuts = (root) => {
       return;
     }
     if (event.code === KEY_TOGGLE_AIMBOT) {
-      toggleSetting('aimbot.enabled');
+      toggleSetting(
+        (s) => s.aimbot_.enabled_,
+        (s, v) => (s.aimbot_.enabled_ = v)
+      );
       return;
     }
     if (event.code === KEY_TOGGLE_SPINBOT) {
-      toggleSetting('spinbot.enabled');
+      toggleSetting(
+        (s) => s.spinbot_.enabled_,
+        (s, v) => (s.spinbot_.enabled_ = v)
+      );
     }
   }]);
 };

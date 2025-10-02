@@ -9,7 +9,7 @@ const MIN_ZOOM = 36;
 const WHEEL_OPTIONS = { capture: true, passive: false };
 
 const handleWheelEvent = (event) => {
-  if (!event.shiftKey || !settings.infiniteZoom.enabled) return;
+  if (!event.shiftKey || !settings.infiniteZoom_.enabled_) return;
 
   try {
     const game = gameManager.game;

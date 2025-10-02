@@ -15,8 +15,8 @@ const Misc = ({ settings, onSettingChange }) => {
         <Checkbox
           id="maphighlights"
           label="Enabled"
-          checked={settings.mapHighlights.enabled}
-          onChange={(v) => onSettingChange('mapHighlights.enabled', v)}
+          checked={settings.mapHighlights_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.mapHighlights_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -24,8 +24,8 @@ const Misc = ({ settings, onSettingChange }) => {
         <Checkbox
           id="smaller-trees"
           label="Smaller Trees"
-          checked={settings.mapHighlights.smallerTrees}
-          onChange={(v) => onSettingChange('mapHighlights.smallerTrees', v)}
+          checked={settings.mapHighlights_.smallerTrees_}
+          onChange={(v) => onSettingChange((s) => (s.mapHighlights_.smallerTrees_ = v))}
         />
       </div>
 
@@ -38,8 +38,8 @@ const Misc = ({ settings, onSettingChange }) => {
         <Checkbox
           id="auto-loot"
           label="Enabled"
-          checked={settings.autoLoot.enabled}
-          onChange={(v) => onSettingChange('autoLoot.enabled', v)}
+          checked={settings.autoLoot_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.autoLoot_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -53,8 +53,8 @@ const Misc = ({ settings, onSettingChange }) => {
         <Checkbox
           id="mobile-movement-enable"
           label="Enabled"
-          checked={settings.mobileMovement.enabled}
-          onChange={(v) => onSettingChange('mobileMovement.enabled', v)}
+          checked={settings.mobileMovement_.enabled_}
+          onChange={(v) => onSettingChange((s) => (s.mobileMovement_.enabled_ = v))}
           style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
         />
       </div>
@@ -62,8 +62,8 @@ const Misc = ({ settings, onSettingChange }) => {
         <Slider
           id="mobile-movement-smooth"
           label="Smooth"
-          value={settings.mobileMovement.smooth}
-          onChange={(v) => onSettingChange('mobileMovement.smooth', v)}
+          value={settings.mobileMovement_.smooth_}
+          onChange={(v) => onSettingChange((s) => (s.mobileMovement_.smooth_ = v))}
         />
       </div>
     </div>

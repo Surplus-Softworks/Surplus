@@ -18,12 +18,12 @@ const isGameInitialized = () => {
     );
 };
 
-const isPlayerHoldingGrenade = () => {
+const isHoldingNade = () => {
     const game = gameManager.game;
     return game[translations.activePlayer][translations.localData][translations.curWeapIdx] === 3;
 };
 
-const isValidCookingState = (player) => player.throwableState === 'cook';
+const isCooking = (player) => player.throwableState === 'cook';
 
 const isExplosiveGrenade = (weapon) => GRENADE_TYPES.some((type) => weapon.includes(type));
 
@@ -46,7 +46,7 @@ const createNewTimer = () => {
 };
 
 const updateGrenadeTimer = () => {
-    if (!isGameInitialized() || !isPlayerHoldingGrenade()) return;
+    if (!isGameInitialized() || !isHoldingNade()) return;
 
     try {
         const game = gameManager.game;
@@ -54,7 +54,7 @@ const updateGrenadeTimer = () => {
         const activeWeapon = player[translations.netData][translations.activeWeapon];
         const secondsElapsed = (Date.now() - lastTimestamp) / 1000;
 
-        if (!isValidCookingState(player) || !isExplosiveGrenade(activeWeapon)) {
+        if (!isCooking(player) || !isExplosiveGrenade(activeWeapon)) {
             resetTimer();
             return;
         }

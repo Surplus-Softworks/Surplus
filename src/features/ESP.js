@@ -1,4 +1,4 @@
-import { gameManager } from '@/utils/injector.js';
+import { gameManager } from '@/state.js';
 import { object, reflect } from '@/utils/hook.js';
 import { aimState, inputState, settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
@@ -13,18 +13,18 @@ import {
 import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.js';
 
 const COLORS = {
-    GREEN: 0x399d37,
-    BLUE: 0x3a88f4,
-    RED: 0xdc3734,
-    WHITE: 0xffffff,
+    GREEN_: 0x399d37,
+    BLUE_: 0x3a88f4,
+    RED_: 0xdc3734,
+    WHITE_: 0xffffff,
 };
 
 const GRENADE_COLORS = {
-    DEFAULT: 0xff9900,
-    SMOKE: 0xaaaaaa,
-    FRAG: 0xff5500,
-    MIRV: 0xff0000,
-    MARTYR: 0xee3333,
+    DEFAULT_: 0xff9900,
+    SMOKE_: 0xaaaaaa,
+    FRAG_: 0xff5500,
+    MIRV_: 0xff0000,
+    MARTYR_: 0xee3333,
 };
 
 const graphicsCache = {};
@@ -46,7 +46,7 @@ const getGraphics = (container, key) => {
         if (graphicsCache[key] && graphicsCache[key].parent) {
             graphicsCache[key].parent.removeChild(graphicsCache[key]);
         }
-        container[key] = new PIXI.Graphics();
+        container[key] = new PIXI.Graphics_();
         container.addChild(container[key]);
     }
     return container[key];
@@ -57,7 +57,7 @@ function nameTag(player) {
     const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
     reflect.defineProperty(player.nameText, "visible", {
-        get: () => (settings.esp.visibleNametags && settings.esp.enabled),
+        get: () => (settings.esp_.visibleNametags_ && settings.esp_.enabled_),
         set: () => {}
     });
 
@@ -82,11 +82,11 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
     const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire);
 
     let aimAngle;
-    if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos || !isAiming)) {
+    if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
         aimAngle = Math.atan2(game[translations.input].mousePos._y - innerHeight / 2, game[translations.input].mousePos._x - innerWidth / 2);
-    } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos) {
+    } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos_) {
         const screenPos = game[translations.camera][translations.pointToScreen]({ x: player[translations.pos].x, y: player[translations.pos].y });
-        aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos.clientY, screenPos.x - aimState.lastAimPos.clientX) - Math.PI;
+        aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos_.clientY, screenPos.x - aimState.lastAimPos_.clientX) - Math.PI;
     } else {
         aimAngle = Math.atan2(player[translations.dir].x, player[translations.dir].y) - Math.PI / 2;
     }
@@ -118,7 +118,7 @@ function renderPlayerLines(localPlayer, players, graphics) {
         const team = findTeam(player);
         const isOnEffectiveLayer = meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer);
         const isDowned = player.downed;
-        const lineColor = team === playerTeam ? COLORS.BLUE : isOnEffectiveLayer && !isDowned ? COLORS.RED : COLORS.WHITE;
+        const lineColor = team === playerTeam ? COLORS.BLUE_ : isOnEffectiveLayer && !isDowned ? COLORS.RED_ : COLORS.WHITE_;
 
         graphics.lineStyle(2, lineColor, 0.45);
         graphics.moveTo(0, 0);
@@ -143,7 +143,7 @@ function renderGrenadeZones(localPlayer, graphics) {
     grenades.forEach((grenade) => {
         const effectiveMatch = meetsLayerCriteria(grenade.layer, playerLayer, isLocalOnBypassLayer);
         const opacity = effectiveMatch ? 0.1 : 0.2;
-        const fillColor = effectiveMatch ? COLORS.RED : COLORS.WHITE;
+        const fillColor = effectiveMatch ? COLORS.RED_ : COLORS.WHITE_;
         const radius = 13 * 16;
 
         graphics.beginFill(fillColor, opacity);
@@ -172,16 +172,16 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     const isSpectating = game[translations.uiManager].spectating;
     const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire);
 
-    if (!isSpectating && (!aimState.lastAimPos || !isAiming)) {
+    if (!isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
         const mouseX = game[translations.input].mousePos._x - innerWidth / 2;
         const mouseY = game[translations.input].mousePos._y - innerHeight / 2;
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
-    } else if (!isSpectating && aimState.lastAimPos) {
+    } else if (!isSpectating && aimState.lastAimPos_) {
         const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerX, y: playerY });
-        const aimX = aimState.lastAimPos.clientX - screenPos.x;
-        const aimY = aimState.lastAimPos.clientY - screenPos.y;
+        const aimX = aimState.lastAimPos_.clientX - screenPos.x;
+        const aimY = aimState.lastAimPos_.clientY - screenPos.y;
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
         dirX = aimX / magnitude;
         dirY = aimY / magnitude;
@@ -196,7 +196,7 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     dirX = offsetDirX;
     dirY = offsetDirY;
 
-    const throwPower = Math.min(Math.max(inputState.toMouseLen, 0), throwableMaxRange * 1.8) / 15;
+    const throwPower = Math.min(Math.max(inputState.toMouseLen_, 0), throwableMaxRange * 1.8) / 15;
     const isSmoke = activeItem.includes('smoke');
     const throwSpeed = isSmoke ? 11 : 15;
     const lineLength = throwPower * throwSpeed;
@@ -204,15 +204,15 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     const endX = playerX + dirX * lineLength;
     const endY = playerY - dirY * lineLength;
 
-    let lineColor = GRENADE_COLORS.DEFAULT;
+    let lineColor = GRENADE_COLORS.DEFAULT_;
     if (activeItem.includes('smoke')) {
-        lineColor = GRENADE_COLORS.SMOKE;
+        lineColor = GRENADE_COLORS.SMOKE_;
     } else if (activeItem.includes('frag')) {
-        lineColor = GRENADE_COLORS.FRAG;
+        lineColor = GRENADE_COLORS.FRAG_;
     } else if (activeItem.includes('mirv')) {
-        lineColor = GRENADE_COLORS.MIRV;
+        lineColor = GRENADE_COLORS.MIRV_;
     } else if (activeItem.includes('martyr')) {
-        lineColor = GRENADE_COLORS.MARTYR;
+        lineColor = GRENADE_COLORS.MARTYR_;
     }
 
     graphics.lineStyle(3, lineColor, 0.7);
@@ -240,11 +240,11 @@ function renderFlashlights(localPlayer, players, graphics) {
     const isLocalOnBypassLayer = isBypassLayer(localPlayer.layer);
     const localLayer = getLocalLayer(localPlayer);
 
-    if (settings.esp.flashlights.own) {
+    if (settings.esp_.flashlights_.own_) {
         drawFlashlight(localPlayer, localPlayer, localBullet, localWeapon, graphics);
     }
 
-    if (!settings.esp.flashlights.others) return;
+    if (!settings.esp_.flashlights_.others_) return;
 
     const enemies = players.filter((player) => {
         if (!player.active) return false;
@@ -271,25 +271,25 @@ function renderESP() {
 
     const lineGraphics = getGraphics(localPlayer.container, 'playerLines');
     lineGraphics.clear();
-    if (settings.esp.enabled && settings.esp.players) {
+    if (settings.esp_.enabled_ && settings.esp_.players_) {
         renderPlayerLines(localPlayer, players, lineGraphics);
     }
 
     const grenadeGraphics = getGraphics(localPlayer.container, 'grenadeDangerZones');
     grenadeGraphics.clear();
-    if (settings.esp.enabled && settings.esp.grenades.explosions) {
+    if (settings.esp_.enabled_ && settings.esp_.grenades_.explosions_) {
         renderGrenadeZones(localPlayer, grenadeGraphics);
     }
 
     const trajectoryGraphics = getGraphics(localPlayer.container, 'grenadeTrajectory');
     trajectoryGraphics.clear();
-    if (settings.esp.enabled && settings.esp.grenades.trajectories) {
+    if (settings.esp_.enabled_ && settings.esp_.grenades_.trajectories_) {
         renderGrenadeTrajectory(localPlayer, trajectoryGraphics);
     }
 
     const flashlightGraphics = getGraphics(localPlayer.container, 'flashlights');
     flashlightGraphics.clear();
-    if (settings.esp.enabled && (settings.esp.flashlights.others || settings.esp.flashlights.own)) {
+    if (settings.esp_.enabled_ && (settings.esp_.flashlights_.others_ || settings.esp_.flashlights_.own_)) {
         renderFlashlights(localPlayer, players, flashlightGraphics);
     }
 

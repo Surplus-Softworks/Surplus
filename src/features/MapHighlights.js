@@ -32,7 +32,7 @@ const SIZES = {
 };
 
 const setTreeScale = (object) => {
-  if (!settings.mapHighlights.smallerTrees) return;
+  if (!settings.mapHighlights_.smallerTrees_) return;
   if (!object.obj.type.includes('tree')) return;
   object.shapes.forEach((shape) => {
     shape.scale = 1.8;
@@ -57,7 +57,7 @@ export default function() {
   hook(Array.prototype, 'sort', {
     apply(original, context, args) {
       try {
-        if (settings.mapHighlights.enabled && context.some((entry) => entry?.obj?.ori != null)) {
+        if (settings.mapHighlights_.enabled_ && context.some((entry) => entry?.obj?.ori != null)) {
           colorize(context);
         }
       } catch {}

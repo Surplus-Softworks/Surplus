@@ -3,23 +3,21 @@ import { encryptDecrypt } from '@/utils/encryption.js';
 import { initStore, write } from '@/utils/store.js';
 
 export const aimState = {
-  lastAimPos: null,
-  aimTouchMoveDir: null,
-  aimTouchDistanceToEnemy: null,
-};
-
-export const resetAimState = () => {
-  aimState.lastAimPos = null;
-  aimState.aimTouchMoveDir = null;
-  aimState.aimTouchDistanceToEnemy = null;
+  lastAimPos_: null,
+  aimTouchMoveDir_: null,
+  aimTouchDistanceToEnemy_: null,
+  reset() {
+    this.lastAimPos_ = null;
+    this.aimTouchMoveDir_ = null;
+    this.aimTouchDistanceToEnemy_ = null;
+  },
 };
 
 export const inputState = {
-  queuedInputs: [],
-  toMouseLen: 0,
+  queuedInputs_: [],
+  toMouseLen_: 0,
 };
 
-// Global game manager context and setter
 export let gameManager;
 export const setGameManager = (gm) => {
   gameManager = gm;
@@ -59,7 +57,7 @@ const mergeConfigIntoSettings = (config, target) => {
       mergeConfigIntoSettings(value, targetValue);
     } else if (value && typeof value === 'object' && targetValue && typeof targetValue === 'object') {
       mergeConfigIntoSettings(value, targetValue);
-    } else if (targetValue !== undefined) {
+    } else if (value !== undefined && value !== null) {
       target[key] = value;
     }
   });
@@ -130,26 +128,28 @@ export const registerSettings = (definition) => {
       const descriptor = reflect.getOwnPropertyDescriptor(definition, key) || {};
       const originalGet = descriptor.get;
       const originalSet = descriptor.set;
+      const elementId = definition[`_${publicKey}`];
 
       reflect.defineProperty(acc, publicKey, {
         get() {
-          const storeKey = this[`_${publicKey}`];
-          const stored = getStoredValue(storeKey);
-          if (stored !== undefined) return stored;
+          const stored = getStoredValue(elementId);
+          if (stored !== undefined && !isNaN(stored)) return stored;
 
           if (typeof originalGet === 'function') {
             const computed = reflect.apply(originalGet, this, []);
-            setStoredValue(storeKey, computed);
-            return computed;
+            if (!isNaN(computed) && computed !== undefined) {
+              setStoredValue(elementId, computed);
+              return computed;
+            }
           }
 
-          return undefined;
+          return stored !== undefined ? stored : 0;
         },
         set(v) {
-          const storeKey = this[`_${publicKey}`];
-          setStoredValue(storeKey, v);
+          const normalized = typeof v === 'number' ? v : parseInt(v, 10) || 0;
+          setStoredValue(elementId, normalized);
           if (typeof originalSet === 'function') {
-            reflect.apply(originalSet, this, [v]);
+            reflect.apply(originalSet, this, [normalized]);
           }
         },
         enumerable: true,
@@ -157,7 +157,7 @@ export const registerSettings = (definition) => {
       });
 
       reflect.defineProperty(acc, `_${publicKey}`, {
-        value: definition[`_${publicKey}`],
+        value: elementId,
         enumerable: false,
         writable: true,
         configurable: true,
@@ -201,143 +201,143 @@ export const registerSettings = (definition) => {
 };
 
 export const settings = {
-  aimbot: registerSettings({
-    enabled: 'aim-enable',
-    targetKnocked: 'target-knocked',
-    stickyTarget: 'sticky-target',
+  aimbot_: registerSettings({
+    enabled_: 'aim-enable',
+    targetKnocked_: 'target-knocked',
+    stickyTarget_: 'sticky-target',
   }),
-  meleeLock: registerSettings({ enabled: 'melee-lock', autoMelee: 'auto-melee' }),
-  spinbot: registerSettings({
-    enabled: 'spinbot-enable',
-    realistic: 'realistic',
-    get $speed() {
+  meleeLock_: registerSettings({ enabled_: 'melee-lock', autoMelee_: 'auto-melee' }),
+  spinbot_: registerSettings({
+    enabled_: 'spinbot-enable',
+    realistic_: 'realistic',
+    get $speed_() {
       return parseInt(getValue('spinbot-speed'));
     },
-    set $speed(v) {
-      const el = lookupElement(this._speed);
+    set $speed_(v) {
+      const el = lookupElement(this._speed_);
       if (!el) return;
       el.value = v;
       el.oninput?.();
     },
-    _speed: 'spinbot-speed',
+    _speed_: 'spinbot-speed',
   }),
-  mobileMovement: registerSettings({
-    enabled: 'mobile-movement-enable',
-    get $smooth() {
+  mobileMovement_: registerSettings({
+    enabled_: 'mobile-movement-enable',
+    get $smooth_() {
       return parseInt(getValue('mobile-movement-smooth'));
     },
-    set $smooth(v) {
-      const el = lookupElement(this._smooth);
+    set $smooth_(v) {
+      const el = lookupElement(this._smooth_);
       if (!el) return;
       el.value = v;
       el.oninput?.();
     },
-    _smooth: 'mobile-movement-smooth',
+    _smooth_: 'mobile-movement-smooth',
   }),
-  autoFire: registerSettings({ enabled: 'semiauto-enable' }),
-  xray: registerSettings({
-    enabled: 'xray',
-    get $smokeOpacity() {
+  autoFire_: registerSettings({ enabled_: 'semiauto-enable' }),
+  xray_: registerSettings({
+    enabled_: 'xray',
+    get $smokeOpacity_() {
       return parseInt(getValue('smoke-opacity'));
     },
-    set $smokeOpacity(v) {
-      const el = lookupElement(this._smokeOpacity);
+    set $smokeOpacity_(v) {
+      const el = lookupElement(this._smokeOpacity_);
       if (!el) return;
       el.value = v;
       el.oninput?.();
     },
-    _smokeOpacity: 'smoke-opacity',
-    get $treeOpacity() {
+    _smokeOpacity_: 'smoke-opacity',
+    get $treeOpacity_() {
       return parseInt(getValue('tree-opacity'));
     },
-    set $treeOpacity(v) {
-      const el = lookupElement(this._treeOpacity);
+    set $treeOpacity_(v) {
+      const el = lookupElement(this._treeOpacity_);
       if (!el) return;
       el.value = v;
       el.oninput?.();
     },
-    _treeOpacity: 'tree-opacity',
-    removeCeilings: 'remove-ceilings',
-    darkerSmokes: 'darker-smokes',
+    _treeOpacity_: 'tree-opacity',
+    removeCeilings_: 'remove-ceilings',
+    darkerSmokes_: 'darker-smokes',
   }),
-  esp: registerSettings({
-    visibleNametags: 'visible-nametags',
-    enabled: 'esp-enable',
-    players: 'player-esp',
-    flashlights: registerSettings({ own: 'own-flashlight', others: 'others-flashlight' }),
-    grenades: registerSettings({ explosions: 'grenade-esp', trajectories: 'grenade-trajectories' }),
+  esp_: registerSettings({
+    visibleNametags_: 'visible-nametags',
+    enabled_: 'esp-enable',
+    players_: 'player-esp',
+    flashlights_: registerSettings({ own_: 'own-flashlight', others_: 'others-flashlight' }),
+    grenades_: registerSettings({ explosions_: 'grenade-esp', trajectories_: 'grenade-trajectories' }),
   }),
-  mapHighlights: registerSettings({
-    enabled: 'maphighlights',
-    smallerTrees: 'smaller-trees',
+  mapHighlights_: registerSettings({
+    enabled_: 'maphighlights',
+    smallerTrees_: 'smaller-trees',
   }),
-  autoLoot: registerSettings({ enabled: 'auto-loot' }),
-  infiniteZoom: registerSettings({ enabled: 'infinite-zoom-enable' }),
-  autoSwitch: registerSettings({
-    enabled: 'autoswitch-enable',
-    useOneGun: 'useonegun',
+  autoLoot_: registerSettings({ enabled_: 'auto-loot' }),
+  infiniteZoom_: registerSettings({ enabled_: 'infinite-zoom-enable' }),
+  autoSwitch_: registerSettings({
+    enabled_: 'autoswitch-enable',
+    useOneGun_: 'useonegun',
   }),
-  layerSpoof: registerSettings({ enabled: 'layerspoof-enable' }),
+  layerSpoof_: registerSettings({ enabled_: 'layerspoof-enable' }),
 };
 
 export const defaultSettings = {
-  aimbot: {
-    enabled: true,
-    targetKnocked: true,
-    stickyTarget: true,
+  aimbot_: {
+    enabled_: true,
+    targetKnocked_: true,
+    stickyTarget_: true,
   },
-  meleeLock: {
-    enabled: true,
-    autoMelee: false,
+  meleeLock_: {
+    enabled_: true,
+    autoMelee_: false,
   },
-  spinbot: {
-    enabled: true,
-    realistic: false,
-    speed: 50,
+  spinbot_: {
+    enabled_: true,
+    realistic_: false,
+    speed_: 50,
   },
-  mobileMovement: {
-    enabled: false,
-    smooth: 50,
+  mobileMovement_: {
+    enabled_: false,
+    smooth_: 50,
   },
-  autoFire: {
-    enabled: true,
+  autoFire_: {
+    enabled_: true,
   },
-  xray: {
-    enabled: true,
-    smokeOpacity: 50,
-    darkerSmokes: true,
-    treeOpacity: 50,
-    removeCeilings: true,
+  xray_: {
+    enabled_: true,
+    smokeOpacity_: 50,
+    darkerSmokes_: true,
+    treeOpacity_: 50,
+    removeCeilings_: true,
   },
-  esp: {
-    visibleNametags: true,
-    enabled: true,
-    players: true,
-    grenades: {
-      explosions: true,
-      trajectories: true,
+  esp_: {
+    visibleNametags_: true,
+    enabled_: true,
+    players_: true,
+    grenades_: {
+      explosions_: true,
+      trajectories_: true,
     },
-    flashlights: {
-      own: true,
-      others: true,
+    flashlights_: {
+      own_: true,
+      others_: true,
     },
   },
-  autoLoot: {
-    enabled: true,
+  autoLoot_: {
+    enabled_: true,
   },
-  mapHighlights: {
-    enabled: true,
-    smallerTrees: true,
+  mapHighlights_: {
+    enabled_: true,
+    smallerTrees_: true,
   },
-  infiniteZoom: {
-    enabled: true,
+  infiniteZoom_: {
+    enabled_: true,
   },
-  autoSwitch: {
-    enabled: true,
-    useOneGun: false,
+  autoSwitch_: {
+    enabled_: true,
+    useOneGun_: false,
   },
-  layerSpoof: {
-    enabled: true,
+  layerSpoof_: {
+    enabled_: true,
   },
 };
 

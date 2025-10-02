@@ -54,7 +54,9 @@ export default (commandLineArgs) => {
       }),
       babel({
         babelHelpers: 'bundled',
-        presets: ['@babel/preset-react'],
+        presets: [
+          ["@babel/preset-react", { "runtime": "automatic" }]
+        ],
         extensions: ['.js', '.jsx'],
         exclude: 'node_modules/**',
       }),

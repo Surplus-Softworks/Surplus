@@ -14,7 +14,6 @@ import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
 import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
 import initUI from "@/ui/init.js";
 
-// game injection (moved from utils/injector.js, now sets state.gameManager)
 function injectGame(oninject) {
   hook(Function.prototype, "call", {
     apply(f, th, args) {
@@ -37,8 +36,8 @@ const loadStaticPlugins = () => {
 };
 
 const loadPIXI = () => {
-  PIXI.Container = gameManager.pixi.stage.constructor;
-  PIXI.Graphics = gameManager.pixi.stage.children.find(child => child.lineStyle)?.constructor;
+  PIXI.Container_ = gameManager.pixi.stage.constructor;
+  PIXI.Graphics_ = gameManager.pixi.stage.children.find(child => child.lineStyle)?.constructor;
 };
 
 let ranPlugins = false;
@@ -56,7 +55,6 @@ const loadPlugins = () => {
   xray();
 };
 
-// Input override (moved from features/InputOverride.js)
 let emoteTypes = [];
 let cachedMoveDir = { x: 0, y: 0 };
 
@@ -66,14 +64,14 @@ const findNetworkHandler = () =>
     .find((name) => typeof gameManager.game[name] === "function" && gameManager.game[name].length === 3);
 
 const applyAutoLootFlag = (packet) => {
-  packet.isMobile = settings.autoLoot.enabled;
+  packet.isMobile = settings.autoLoot_.enabled_;
 };
 
 const flushQueuedInputs = (packet) => {
-  for (const command of inputState.queuedInputs) {
+  for (const command of inputState.queuedInputs_) {
     packet.addInput(inputCommands[command]);
   }
-  inputState.queuedInputs.length = 0;
+  inputState.queuedInputs_.length = 0;
 };
 
 const updateEmoteTypes = (loadout) => {
@@ -90,7 +88,7 @@ const applyAutoFire = (packet) => {
 };
 
 const applyMobileMovement = (packet) => {
-  if (!settings.mobileMovement.enabled) return;
+  if (!settings.mobileMovement_.enabled_) return;
 
   const moveX = (packet.moveRight ? 1 : 0) + (packet.moveLeft ? -1 : 0);
   const moveY = (packet.moveDown ? -1 : 0) + (packet.moveUp ? 1 : 0);
@@ -99,8 +97,8 @@ const applyMobileMovement = (packet) => {
     packet.touchMoveActive = true;
     packet.touchMoveLen = true;
 
-    cachedMoveDir.x += ((moveX - cachedMoveDir.x) * settings.mobileMovement.smooth) / 1000;
-    cachedMoveDir.y += ((moveY - cachedMoveDir.y) * settings.mobileMovement.smooth) / 1000;
+    cachedMoveDir.x += ((moveX - cachedMoveDir.x) * settings.mobileMovement_.smooth_) / 1000;
+    cachedMoveDir.y += ((moveY - cachedMoveDir.y) * settings.mobileMovement_.smooth_) / 1000;
 
     packet.touchMoveDir.x = cachedMoveDir.x;
     packet.touchMoveDir.y = cachedMoveDir.y;
@@ -112,12 +110,12 @@ const applyMobileMovement = (packet) => {
 };
 
 const applyAimMovement = (packet) => {
-  if (!aimState.aimTouchMoveDir) return;
+  if (!aimState.aimTouchMoveDir_) return;
 
   packet.touchMoveActive = true;
   packet.touchMoveLen = true;
-  packet.touchMoveDir.x = aimState.aimTouchMoveDir.x;
-  packet.touchMoveDir.y = aimState.aimTouchMoveDir.y;
+  packet.touchMoveDir.x = aimState.aimTouchMoveDir_.x;
+  packet.touchMoveDir.y = aimState.aimTouchMoveDir_.y;
 };
 
 const setupInputOverride = () => {
@@ -147,7 +145,7 @@ const setupInputOverride = () => {
       applyMobileMovement(payload);
       applyAimMovement(payload);
 
-      inputState.toMouseLen = payload.toMouseLen;
+      inputState.toMouseLen_ = payload.toMouseLen;
 
       return reflect.apply(original, context, args);
     },

@@ -84,7 +84,7 @@ const cleanup = () => {
 };
 
 const handleKeyDown = (event) => {
-    if (event.code !== TOGGLE_KEY || !settings.layerSpoof.enabled || isLayerSpoofActive) return;
+    if (event.code !== TOGGLE_KEY || !settings.layerSpoof_.enabled_ || isLayerSpoofActive) return;
 
     try {
         const player = gameManager.game?.[translations.activePlayer];

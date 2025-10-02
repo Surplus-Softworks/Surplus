@@ -22,10 +22,10 @@ function updateRotation() {
   const mouseX = game[translations.input].mousePos.x - globalThis.innerWidth / 2;
   const mouseY = game[translations.input].mousePos.y - globalThis.innerHeight / 2;
 
-  if (isMouseDown && aimState.lastAimPos && (settings.aimbot.enabled || settings.meleeLock.enabled)) {
+  if (isMouseDown && aimState.lastAimPos_ && (settings.aimbot_.enabled_ || settings.meleeLock_.enabled_)) {
     body.rotation = Math.atan2(
-      aimState.lastAimPos.clientY - globalThis.innerHeight / 2,
-      aimState.lastAimPos.clientX - globalThis.innerWidth / 2,
+      aimState.lastAimPos_.clientY - globalThis.innerHeight / 2,
+      aimState.lastAimPos_.clientX - globalThis.innerWidth / 2,
     ) || 0;
     return;
   }
@@ -52,21 +52,21 @@ function calculateSpinbotMousePosition(axis) {
   }
 
   const { centerX, centerY, radius } = getCursorRadius();
-  const angle = settings.spinbot.realistic ? currentAngle : randomAngle;
+  const angle = settings.spinbot_.realistic_ ? currentAngle : randomAngle;
   return axis === 'x' ? centerX + Math.cos(angle) * radius : centerY + Math.sin(angle) * radius;
 }
 
 const updateSpinPhysics = () => {
-  if (isMouseDown || !settings.spinbot.enabled) return;
+  if (isMouseDown || !settings.spinbot_.enabled_) return;
 
-  if (settings.spinbot.realistic) {
-    angularVelocity += (Math.random() * 2 - 1) * ((settings.spinbot.speed / 50) * ANGULAR_ACCELERATION_MAX);
+  if (settings.spinbot_.realistic_) {
+    angularVelocity += (Math.random() * 2 - 1) * ((settings.spinbot_.speed_ / 50) * ANGULAR_ACCELERATION_MAX);
     angularVelocity *= DAMPING_FACTOR;
     currentAngle += angularVelocity;
     return;
   }
 
-  if (Math.random() < settings.spinbot.speed / 100) {
+  if (Math.random() < settings.spinbot_.speed_ / 100) {
     randomAngle = Math.random() * TWO_PI;
   }
 };
@@ -80,7 +80,7 @@ const createMouseAccessor = (axis, compute) => ({
   },
 });
 
-const shouldBypassSpinbot = (isEmoteUpdate) => (isMouseDown && !aimState.lastAimPos) || isEmoteUpdate;
+const shouldBypassSpinbot = (isEmoteUpdate) => (isMouseDown && !aimState.lastAimPos_) || isEmoteUpdate;
 
 export default function() {
   gameManager.pixi._ticker.add(spinbotTicker);
@@ -108,8 +108,8 @@ export default function() {
 
   object.defineProperty(mousePos, 'y', createMouseAccessor('y', function () {
     if (shouldBypassSpinbot(isEmoteUpdate)) return this._y;
-    if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) return aimState.lastAimPos.clientY;
-    if (!isMouseDown && settings.spinbot.enabled) {
+    if (isMouseDown && aimState.lastAimPos_ && settings.aimbot_.enabled_) return aimState.lastAimPos_.clientY;
+    if (!isMouseDown && settings.spinbot_.enabled_) {
       lastY = calculateSpinbotMousePosition('y');
       return lastY;
     }
@@ -118,8 +118,8 @@ export default function() {
 
   object.defineProperty(mousePos, 'x', createMouseAccessor('x', function () {
     if (shouldBypassSpinbot(isEmoteUpdate)) return this._x;
-    if (isMouseDown && aimState.lastAimPos && settings.aimbot.enabled) return aimState.lastAimPos.clientX;
-    if (!isMouseDown && settings.spinbot.enabled) {
+    if (isMouseDown && aimState.lastAimPos_ && settings.aimbot_.enabled_) return aimState.lastAimPos_.clientX;
+    if (!isMouseDown && settings.spinbot_.enabled_) {
       lastX = calculateSpinbotMousePosition('x');
       return lastX;
     }

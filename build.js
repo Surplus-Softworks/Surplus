@@ -78,7 +78,7 @@ const TERSER_OPTIONS = {
     safari10: false,
     toplevel: true,
     properties: {
-      regex: /\$$/,
+      regex: /_$/,
     },
   },
   format: {
@@ -256,7 +256,6 @@ const runBuild = async (argv) => {
   await clearDist();
   await copyStaticFiles();
   await buildWithRollup(devMode);
-  // Always minify vendor and main before obfuscation, regardless of mode
   await minifyFile(VENDOR_FILE, 'vendor.js');
   await minifyFile(MAIN_FILE, 'main.js');
   await obfuscateMain(devMode);
