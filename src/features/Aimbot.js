@@ -4,7 +4,7 @@ import { gameManager } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import { reflect, ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
-import { manageAimState } from '@/utils/aimController.js';
+import { manageAimState, getCurrentAimPosition } from '@/utils/aimController.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -16,6 +16,30 @@ const state = {
     currentEnemy_: null,
     meleeLockEnemy_: null,
     velocityBuffer_: {},
+    lastTargetScreenPos_: null,
+};
+
+const AIM_SMOOTH_DISTANCE_PX = 6;
+const AIM_SMOOTH_ANGLE = Math.PI / 90;
+
+const computeAimAngle = (point) => {
+    if (!point) return 0;
+    const centerX = globalThis.innerWidth / 2;
+    const centerY = globalThis.innerHeight / 2;
+    return Math.atan2(point.y - centerY, point.x - centerX);
+};
+
+const normalizeAngle = (angle) => Math.atan2(Math.sin(angle), Math.cos(angle));
+
+const shouldSmoothAim = (currentPos, nextPos) => {
+    if (!nextPos) return false;
+    if (!currentPos) return true;
+
+    const distance = Math.hypot(nextPos.x - currentPos.x, nextPos.y - currentPos.y);
+    if (distance > AIM_SMOOTH_DISTANCE_PX) return true;
+
+    const angleDiff = Math.abs(normalizeAngle(computeAimAngle(nextPos) - computeAimAngle(currentPos)));
+    return angleDiff > AIM_SMOOTH_ANGLE;
 };
 
 const getLocalLayer = (player) => {
@@ -193,6 +217,7 @@ function aimbotTicker() {
         if (!game.initialized || !(settings.aimbot_.enabled_ || settings.meleeLock_.enabled_) || game[translations.uiManager].spectating) {
             manageAimState({ mode: 'idle' });
             if (aimbotDot) aimbotDot.style.display = 'none';
+            state.lastTargetScreenPos_ = null;
             return;
         }
 
@@ -200,6 +225,8 @@ function aimbotTicker() {
         const me = game[translations.activePlayer];
         const isLocalOnBypassLayer = isBypassLayer(me.layer);
         let aimUpdated = false;
+        let dotTargetPos = null;
+        let previewTargetPos = null;
 
         try {
             const currentWeaponIndex = game[translations.activePlayer][translations.localData][translations.curWeapIdx];
@@ -244,6 +271,7 @@ function aimbotTicker() {
                         }
 
                         if (aimbotDot) aimbotDot.style.display = 'none';
+                        state.lastTargetScreenPos_ = null;
                         return;
                     }
 
@@ -256,6 +284,7 @@ function aimbotTicker() {
             if (!settings.aimbot_.enabled_ || isMeleeEquipped || isGrenadeEquipped) {
                 manageAimState({ mode: 'idle' });
                 if (aimbotDot) aimbotDot.style.display = 'none';
+                state.lastTargetScreenPos_ = null;
                 return;
             }
 
@@ -295,41 +324,71 @@ function aimbotTicker() {
                 if (!predictedPos) {
                     manageAimState({ mode: 'idle' });
                     if (aimbotDot) aimbotDot.style.display = 'none';
+                    state.lastTargetScreenPos_ = null;
                     return;
                 }
 
+                previewTargetPos = { x: predictedPos.x, y: predictedPos.y };
+
                 if (canEngageAimbot && (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8))) {
-                    manageAimState({ mode: 'aimbot', targetScreenPos: { x: predictedPos.x, y: predictedPos.y } });
+                    const currentAimPos = getCurrentAimPosition() || state.lastTargetScreenPos_;
+                    const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
+                    manageAimState({
+                        mode: 'aimbot',
+                        targetScreenPos: { x: predictedPos.x, y: predictedPos.y },
+                        immediate: !shouldSmooth,
+                    });
+                    state.lastTargetScreenPos_ = { x: predictedPos.x, y: predictedPos.y };
                     aimUpdated = true;
-                    if (aimbotDot && aimState.lastAimPos_) {
-                        const { clientX, clientY } = aimState.lastAimPos_;
-                        if (aimbotDot.style.left !== `${clientX}px` || aimbotDot.style.top !== `${clientY}px`) {
-                            aimbotDot.style.left = `${clientX}px`;
-                            aimbotDot.style.top = `${clientY}px`;
-                        }
-                        aimbotDot.style.display = 'block';
-                    } else if (aimbotDot) {
-                        aimbotDot.style.display = 'none';
-                    }
+                    const aimSnapshot = aimState.lastAimPos_;
+                    dotTargetPos = aimSnapshot
+                        ? { x: aimSnapshot.clientX, y: aimSnapshot.clientY }
+                        : { x: predictedPos.x, y: predictedPos.y };
                 } else {
-                    if (aimbotDot) aimbotDot.style.display = 'none';
+                    dotTargetPos = { x: predictedPos.x, y: predictedPos.y };
                 }
             } else {
+                previewTargetPos = null;
+                dotTargetPos = null;
                 if (aimbotDot) aimbotDot.style.display = 'none';
+                state.lastTargetScreenPos_ = null;
             }
 
             if (!aimUpdated) {
                 manageAimState({ mode: 'idle' });
+                state.lastTargetScreenPos_ = previewTargetPos
+                    ? { x: previewTargetPos.x, y: previewTargetPos.y }
+                    : null;
             }
+            if (aimbotDot) {
+                let displayPos = dotTargetPos;
+                if (!displayPos && previewTargetPos) {
+                    displayPos = { x: previewTargetPos.x, y: previewTargetPos.y };
+                }
+
+                if (displayPos) {
+                    const { x, y } = displayPos;
+                    if (aimbotDot.style.left !== `${x}px` || aimbotDot.style.top !== `${y}px`) {
+                        aimbotDot.style.left = `${x}px`;
+                        aimbotDot.style.top = `${y}px`;
+                    }
+                    aimbotDot.style.display = 'block';
+                } else {
+                    aimbotDot.style.display = 'none';
+                }
+            }
+
         } catch (error) {
             if (aimbotDot) aimbotDot.style.display = 'none';
             manageAimState({ mode: 'idle', immediate: true });
             state.meleeLockEnemy_ = null;
             state.focusedEnemy_ = null;
             state.currentEnemy_ = null;
+            state.lastTargetScreenPos_ = null;
         }
     } catch (error) {
         manageAimState({ mode: 'idle', immediate: true });
+        state.lastTargetScreenPos_ = null;
     }
 }
 

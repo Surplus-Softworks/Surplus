@@ -11,7 +11,7 @@ import { translate } from "@/utils/obfuscatedNameTranslator.js";
 import { hook, reflect, object } from "@/utils/hook.js";
 import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
 import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
-import { initializeAimController } from "@/utils/aimController.js";
+import { initializeAimController, isAimInterpolating } from "@/utils/aimController.js";
 import initUI from "@/ui/init.js";
 
 function injectGame(oninject) {
@@ -118,6 +118,60 @@ const applyAimMovement = (packet) => {
   packet.touchMoveDir.y = aimState.aimTouchMoveDir_.y;
 };
 
+const suppressedShootState = {
+  pendingStart: false,
+  pendingHold: false,
+  suppressedFireInput: false,
+};
+
+const clearSuppressedShootState = () => {
+  suppressedShootState.pendingStart = false;
+  suppressedShootState.pendingHold = false;
+  suppressedShootState.suppressedFireInput = false;
+};
+
+const applyAimTransitionSafety = (packet) => {
+  if (!packet) return;
+
+  if (!isAimInterpolating()) {
+    if (suppressedShootState.pendingStart) {
+      packet.shootStart = true;
+      if (suppressedShootState.pendingHold) {
+        packet.shootHold = true;
+        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput && !packet.inputs.includes(inputCommands.Fire)) {
+          packet.inputs.push(inputCommands.Fire);
+        }
+      }
+    }
+    clearSuppressedShootState();
+    return;
+  }
+
+  let fireCommandSuppressed = false;
+  if (Array.isArray(packet.inputs)) {
+    for (let i = packet.inputs.length - 1; i >= 0; i -= 1) {
+      if (packet.inputs[i] === inputCommands.Fire) {
+        packet.inputs.splice(i, 1);
+        fireCommandSuppressed = true;
+      }
+    }
+  }
+
+  const intendedStart = !!packet.shootStart;
+  const intendedHold = !!packet.shootHold || fireCommandSuppressed;
+
+  if (!intendedStart && !intendedHold) {
+    return;
+  }
+
+  packet.shootStart = false;
+  packet.shootHold = false;
+
+  suppressedShootState.pendingStart = suppressedShootState.pendingStart || intendedStart || intendedHold;
+  suppressedShootState.pendingHold = suppressedShootState.pendingHold || intendedHold;
+  suppressedShootState.suppressedFireInput = suppressedShootState.suppressedFireInput || fireCommandSuppressed;
+};
+
 const setupInputOverride = () => {
   const networkHandler = findNetworkHandler();
 
@@ -144,6 +198,7 @@ const setupInputOverride = () => {
       applyAutoFire(payload);
       applyMobileMovement(payload);
       applyAimMovement(payload);
+      applyAimTransitionSafety(payload);
 
       inputState.toMouseLen_ = payload.toMouseLen;
 

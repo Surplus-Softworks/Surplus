@@ -5,6 +5,8 @@ import { object } from '@/utils/hook.js';
 const MIN_DURATION_MS = 45;
 const MAX_EXTRA_DURATION_MS = 360;
 const EPSILON = 1e-3;
+const MIN_INTERPOLATION_DISTANCE = 6;
+const MIN_INTERPOLATION_ANGLE = Math.PI / 90;
 
 const easeOutCubic = (t) => 1 - (1 - t) ** 3;
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
@@ -20,6 +22,7 @@ const controllerState = {
   currentMoveDir: null,
   targetMoveDir: null,
   moveAnimation: null,
+  isInterpolating: false,
 };
 
 const clonePoint = (point) => (point ? { x: point.x, y: point.y } : null);
@@ -150,10 +153,25 @@ const step = (now = performance.now()) => {
 
   let snapshot = null;
   const animation = controllerState.animation;
+  let interpolationActive = false;
   if (animation) {
     const { startPos, targetPos, startTime, duration } = animation;
     const progress = duration <= 0 ? 1 : clamp01((now - startTime) / duration);
     const eased = easeOutCubic(progress);
+    let hasMovement = false;
+    if (duration > 0 && startPos && targetPos) {
+      const distance = Math.hypot(targetPos.x - startPos.x, targetPos.y - startPos.y);
+      if (distance > MIN_INTERPOLATION_DISTANCE) {
+        hasMovement = true;
+      } else {
+        const center = getScreenCenter();
+        const angleDiff = angleDifference(computeAngle(startPos, center), computeAngle(targetPos, center));
+        hasMovement = angleDiff > MIN_INTERPOLATION_ANGLE;
+      }
+    }
+    if (hasMovement && progress < 1 - EPSILON) {
+      interpolationActive = true;
+    }
     snapshot = {
       x: startPos.x + (targetPos.x - startPos.x) * eased,
       y: startPos.y + (targetPos.y - startPos.y) * eased,
@@ -172,6 +190,7 @@ const step = (now = performance.now()) => {
     snapshot = clonePoint(controllerState.targetPos);
   }
 
+  controllerState.isInterpolating = interpolationActive;
   applyAimStateSnapshot(snapshot);
   updateMoveDir(now);
   updateBodyRotation();
@@ -244,7 +263,7 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
         startPos: clonePoint(start),
         targetPos: baseline,
         startTime: now,
-        duration: immediate ? MIN_DURATION_MS : computeDuration(start, baseline),
+        duration: immediate ? 0 : computeDuration(start, baseline),
       };
     }
     controllerState.mode = 'idle';
@@ -260,7 +279,7 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
         startPos: clonePoint(start),
         targetPos: clonePoint(resolvedTarget),
         startTime: now,
-        duration: immediate ? MIN_DURATION_MS : computeDuration(start, resolvedTarget),
+        duration: immediate ? 0 : computeDuration(start, resolvedTarget),
       };
       controllerState.targetPos = clonePoint(resolvedTarget);
     } else if (controllerState.animation) {
@@ -285,3 +304,4 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
 };
 
 export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos);
+export const isAimInterpolating = () => controllerState.isInterpolating;
