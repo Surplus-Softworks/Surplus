@@ -119,18 +119,18 @@ const applyAimMovement = (packet) => {
 };
 
 const suppressedShootState = {
-  pendingStart: false,
-  pendingHold: false,
-  suppressedFireInput: false,
+  pendingStart_: false,
+  pendingHold_: false,
+  suppressedFireInput_: false,
   wasShootingLastFrame: false,
-  firstShotFrameCount: 0,
+  firstShotFrameCount_: 0,
 };
 
 const clearSuppressedShootState = () => {
-  suppressedShootState.pendingStart = false;
-  suppressedShootState.pendingHold = false;
-  suppressedShootState.suppressedFireInput = false;
-  suppressedShootState.firstShotFrameCount = 0;
+  suppressedShootState.pendingStart_ = false;
+  suppressedShootState.pendingHold_ = false;
+  suppressedShootState.suppressedFireInput_ = false;
+  suppressedShootState.firstShotFrameCount_ = 0;
 };
 
 const applyAimTransitionSafety = (packet) => {
@@ -140,28 +140,28 @@ const applyAimTransitionSafety = (packet) => {
   const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire));
 
   if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame && settings.aimbot_.enabled_) {
-    suppressedShootState.firstShotFrameCount = 3; 
+    suppressedShootState.firstShotFrameCount_ = 3; 
   }
 
   suppressedShootState.wasShootingLastFrame = isCurrentlyShooting;
 
   if (!isCurrentlyShooting) {
-    suppressedShootState.firstShotFrameCount = 0;
+    suppressedShootState.firstShotFrameCount_ = 0;
   }
 
-  const suppressFirstShot = suppressedShootState.firstShotFrameCount > 0;
+  const suppressFirstShot = suppressedShootState.firstShotFrameCount_ > 0;
   if (suppressFirstShot) {
-    suppressedShootState.firstShotFrameCount--;
+    suppressedShootState.firstShotFrameCount_--;
   }
 
   const shouldSuppressShooting = (isAimInterpolating() && aimMode !== 'idle') || suppressFirstShot;
 
   if (!shouldSuppressShooting) {
-    if (suppressedShootState.pendingStart) {
+    if (suppressedShootState.pendingStart_) {
       packet.shootStart = true;
-      if (suppressedShootState.pendingHold) {
+      if (suppressedShootState.pendingHold_) {
         packet.shootHold = true;
-        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput && !packet.inputs.includes(inputCommands.Fire)) {
+        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput_ && !packet.inputs.includes(inputCommands.Fire)) {
           packet.inputs.push(inputCommands.Fire);
         }
       }
@@ -190,9 +190,9 @@ const applyAimTransitionSafety = (packet) => {
   packet.shootStart = false;
   packet.shootHold = false;
 
-  suppressedShootState.pendingStart = suppressedShootState.pendingStart || intendedStart || intendedHold;
-  suppressedShootState.pendingHold = suppressedShootState.pendingHold || intendedHold;
-  suppressedShootState.suppressedFireInput = suppressedShootState.suppressedFireInput || fireCommandSuppressed;
+  suppressedShootState.pendingStart_ = suppressedShootState.pendingStart_ || intendedStart || intendedHold;
+  suppressedShootState.pendingHold_ = suppressedShootState.pendingHold_ || intendedHold;
+  suppressedShootState.suppressedFireInput_ = suppressedShootState.suppressedFireInput_ || fireCommandSuppressed;
 };
 
 const setupInputOverride = () => {

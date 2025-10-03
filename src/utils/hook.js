@@ -41,3 +41,8 @@ hook(Function.prototype, "toString", {
 });
 
 export const ref_addEventListener = globalThis.EventTarget.prototype.addEventListener;
+
+export let mahdiFunctionConstructor = (...args) => {
+    const gen = (function*(){}).prototype.constructor.constructor(...args)();
+    return gen.next.bind(gen);
+}
