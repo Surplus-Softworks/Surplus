@@ -139,19 +139,16 @@ const applyAimTransitionSafety = (packet) => {
   const aimMode = getAimMode();
   const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire));
 
-  // Detect first shot: transition from not-shooting to shooting
   if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame && settings.aimbot_.enabled_) {
-    suppressedShootState.firstShotFrameCount = 3; // Suppress for 3 frames to let aimbot start
+    suppressedShootState.firstShotFrameCount = 3; 
   }
 
   suppressedShootState.wasShootingLastFrame = isCurrentlyShooting;
 
-  // If not shooting anymore, reset first shot suppression
   if (!isCurrentlyShooting) {
     suppressedShootState.firstShotFrameCount = 0;
   }
 
-  // Decrement frame counter if active
   const suppressFirstShot = suppressedShootState.firstShotFrameCount > 0;
   if (suppressFirstShot) {
     suppressedShootState.firstShotFrameCount--;

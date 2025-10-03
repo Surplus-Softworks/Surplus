@@ -12,17 +12,17 @@ const easeOutCubic = (t) => 1 - (1 - t) ** 3;
 const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
 const controllerState = {
-  initialized: false,
-  mode: 'idle',
-  baselinePos: { x: 0, y: 0 },
-  currentPos: null,
-  targetPos: null,
-  animation: null,
-  overrideActive: false,
-  currentMoveDir: null,
-  targetMoveDir: null,
-  moveAnimation: null,
-  isInterpolating: false,
+  initialized_: false,
+  mode_: 'idle',
+  baselinePos_: { x: 0, y: 0 },
+  currentPos_: null,
+  targetPos_: null,
+  animation_: null,
+  overrideActive_: false,
+  currentMoveDir_: null,
+  targetMoveDir_: null,
+  moveAnimation_: null,
+  isInterpolating_: false,
 };
 
 const clonePoint = (point) => (point ? { x: point.x, y: point.y } : null);
@@ -76,12 +76,12 @@ const computeDuration = (start, end) => {
 };
 
 const updateBodyRotation = () => {
-  if (!controllerState.overrideActive || controllerState.mode === 'idle') return;
+  if (!controllerState.overrideActive_ || controllerState.mode_ === 'idle') return;
   const gm = gameManager?.game;
   if (!gm?.initialized) return;
   const player = gm[translations.activePlayer];
   const body = player?.bodyContainer;
-  const target = controllerState.currentPos;
+  const target = controllerState.currentPos_;
   if (!body || !target) return;
   const center = getScreenCenter();
   const angle = Math.atan2(target.y - center.y, target.x - center.x);
@@ -90,18 +90,18 @@ const updateBodyRotation = () => {
 
 const applyAimStateSnapshot = (pos) => {
   if (pos) {
-    controllerState.overrideActive = true;
-    controllerState.currentPos = clonePoint(pos);
+    controllerState.overrideActive_ = true;
+    controllerState.currentPos_ = clonePoint(pos);
     aimState.lastAimPos_ = { clientX: pos.x, clientY: pos.y };
   } else {
-    controllerState.overrideActive = false;
-    controllerState.currentPos = null;
+    controllerState.overrideActive_ = false;
+    controllerState.currentPos_ = null;
     aimState.lastAimPos_ = null;
   }
 };
 
 const updateMoveDir = (now) => {
-  const animation = controllerState.moveAnimation;
+  const animation = controllerState.moveAnimation_;
   if (animation) {
     const { startDir, targetDir, startTime, duration } = animation;
     const progress = duration <= 0 ? 1 : clamp01((now - startTime) / duration);
@@ -134,25 +134,25 @@ const updateMoveDir = (now) => {
       working = null;
     }
 
-    controllerState.currentMoveDir = working;
+    controllerState.currentMoveDir_ = working;
     if (progress >= 1 - EPSILON) {
-      controllerState.moveAnimation = null;
-      controllerState.currentMoveDir = targetDir ? cloneMoveDir(targetDir) : null;
+      controllerState.moveAnimation_ = null;
+      controllerState.currentMoveDir_ = targetDir ? cloneMoveDir(targetDir) : null;
     }
   }
 
-  if (controllerState.currentMoveDir?.touchMoveActive && controllerState.currentMoveDir.touchMoveLen > EPSILON) {
-    aimState.aimTouchMoveDir_ = cloneMoveDir(controllerState.currentMoveDir);
+  if (controllerState.currentMoveDir_?.touchMoveActive && controllerState.currentMoveDir_.touchMoveLen > EPSILON) {
+    aimState.aimTouchMoveDir_ = cloneMoveDir(controllerState.currentMoveDir_);
   } else {
     aimState.aimTouchMoveDir_ = null;
   }
 };
 
 const step = (now = performance.now()) => {
-  if (!controllerState.initialized) return;
+  if (!controllerState.initialized_) return;
 
   let snapshot = null;
-  const animation = controllerState.animation;
+  const animation = controllerState.animation_;
   let interpolationActive = false;
   if (animation) {
     const { startPos, targetPos, startTime, duration } = animation;
@@ -169,7 +169,7 @@ const step = (now = performance.now()) => {
         hasMovement = angleDiff > MIN_INTERPOLATION_ANGLE;
       }
     }
-    if (hasMovement && progress < 1 - EPSILON && controllerState.mode !== 'idle') {
+    if (hasMovement && progress < 1 - EPSILON && controllerState.mode_ !== 'idle') {
       interpolationActive = true;
     }
     snapshot = {
@@ -178,43 +178,43 @@ const step = (now = performance.now()) => {
     };
 
     if (progress >= 1 - EPSILON) {
-      controllerState.animation = null;
-      if (controllerState.mode === 'idle') {
+      controllerState.animation_ = null;
+      if (controllerState.mode_ === 'idle') {
         snapshot = null;
       } else {
-        controllerState.targetPos = clonePoint(targetPos);
+        controllerState.targetPos_ = clonePoint(targetPos);
         snapshot = clonePoint(targetPos);
       }
     }
-  } else if (controllerState.mode !== 'idle' && controllerState.targetPos) {
-    snapshot = clonePoint(controllerState.targetPos);
+  } else if (controllerState.mode_ !== 'idle' && controllerState.targetPos_) {
+    snapshot = clonePoint(controllerState.targetPos_);
   }
 
-  controllerState.isInterpolating = interpolationActive;
+  controllerState.isInterpolating_ = interpolationActive;
   applyAimStateSnapshot(snapshot);
   updateMoveDir(now);
   updateBodyRotation();
 };
 
 const getAxisValue = (axis, fallback) => {
-  if (!controllerState.overrideActive) return fallback;
-  const current = controllerState.currentPos;
+  if (!controllerState.overrideActive_) return fallback;
+  const current = controllerState.currentPos_;
   if (!current) return fallback;
   return axis === 'x' ? current.x : current.y;
 };
 
 const updateBaselineAxis = (axis, value) => {
-  controllerState.baselinePos = {
-    ...controllerState.baselinePos,
+  controllerState.baselinePos_ = {
+    ...controllerState.baselinePos_,
     [axis]: value,
   };
-  if (controllerState.mode === 'idle' && !controllerState.animation) {
-    controllerState.currentPos = null;
+  if (controllerState.mode_ === 'idle' && !controllerState.animation_) {
+    controllerState.currentPos_ = null;
   }
 };
 
 export const initializeAimController = () => {
-  if (controllerState.initialized) return;
+  if (controllerState.initialized_) return;
   const gm = gameManager?.game;
   const ticker = gameManager?.pixi?._ticker;
   if (!gm || !ticker) return;
@@ -228,7 +228,7 @@ export const initializeAimController = () => {
 
   const initialX = mousePos._x ?? mousePos.x ?? globalThis.innerWidth / 2;
   const initialY = mousePos._y ?? mousePos.y ?? globalThis.innerHeight / 2;
-  controllerState.baselinePos = { x: initialX, y: initialY };
+  controllerState.baselinePos_ = { x: initialX, y: initialY };
 
   const define = (axis) => ({
     configurable: true,
@@ -245,71 +245,71 @@ export const initializeAimController = () => {
   object.defineProperty(mousePos, 'y', define('y'));
 
   ticker.add(() => step());
-  controllerState.initialized = true;
+  controllerState.initialized_ = true;
 };
 
 export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immediate = false } = {}) => {
-  if (!controllerState.initialized) return;
+  if (!controllerState.initialized_) return;
 
   const normalizedMode = mode ?? 'idle';
   const now = performance.now();
   step(now);
 
   if (normalizedMode === 'idle') {
-    if (controllerState.mode !== 'idle') {
-      const baseline = clonePoint(controllerState.baselinePos);
-      const start = controllerState.currentPos ?? baseline;
+    if (controllerState.mode_ !== 'idle') {
+      const baseline = clonePoint(controllerState.baselinePos_);
+      const start = controllerState.currentPos_ ?? baseline;
       const duration = immediate ? 0 : computeDuration(start, baseline);
-      controllerState.animation = {
+      controllerState.animation_ = {
         startPos: clonePoint(start),
         targetPos: baseline,
         startTime: now,
         duration: duration,
       };
       setTimeout(() => {
-        if (controllerState.mode === 'idle') {
-          controllerState.animation = null;
+        if (controllerState.mode_ === 'idle') {
+          controllerState.animation_ = null;
           applyAimStateSnapshot(null);
         }
       }, duration);
     }
-    controllerState.mode = 'idle';
-    controllerState.targetPos = null;
+    controllerState.mode_ = 'idle';
+    controllerState.targetPos_ = null;
   } else {
-    const resolvedTarget = targetScreenPos ? { x: targetScreenPos.x, y: targetScreenPos.y } : clonePoint(controllerState.baselinePos);
-    const start = controllerState.currentPos ?? clonePoint(controllerState.baselinePos);
-    const targetChanged = positionsDiffer(resolvedTarget, controllerState.targetPos);
-    const modeChanged = normalizedMode !== controllerState.mode;
+    const resolvedTarget = targetScreenPos ? { x: targetScreenPos.x, y: targetScreenPos.y } : clonePoint(controllerState.baselinePos_);
+    const start = controllerState.currentPos_ ?? clonePoint(controllerState.baselinePos_);
+    const targetChanged = positionsDiffer(resolvedTarget, controllerState.targetPos_);
+    const modeChanged = normalizedMode !== controllerState.mode_;
 
     if (modeChanged || targetChanged) {
-      controllerState.animation = {
+      controllerState.animation_ = {
         startPos: clonePoint(start),
         targetPos: clonePoint(resolvedTarget),
         startTime: now,
         duration: immediate ? 0 : computeDuration(start, resolvedTarget),
       };
-      controllerState.targetPos = clonePoint(resolvedTarget);
-    } else if (controllerState.animation) {
-      controllerState.animation.targetPos = clonePoint(resolvedTarget);
+      controllerState.targetPos_ = clonePoint(resolvedTarget);
+    } else if (controllerState.animation_) {
+      controllerState.animation_.targetPos = clonePoint(resolvedTarget);
     }
 
-    controllerState.mode = normalizedMode;
+    controllerState.mode_ = normalizedMode;
   }
 
   const desiredMoveDir = cloneMoveDir(moveDir);
-  if (!moveDirsEqual(desiredMoveDir, controllerState.targetMoveDir)) {
-    controllerState.moveAnimation = {
-      startDir: cloneMoveDir(controllerState.currentMoveDir),
+  if (!moveDirsEqual(desiredMoveDir, controllerState.targetMoveDir_)) {
+    controllerState.moveAnimation_ = {
+      startDir: cloneMoveDir(controllerState.currentMoveDir_),
       targetDir: desiredMoveDir,
       startTime: now,
-      duration: controllerState.animation?.duration ?? MIN_DURATION_MS + 150,
+      duration: controllerState.animation_?.duration ?? MIN_DURATION_MS + 150,
     };
-    controllerState.targetMoveDir = desiredMoveDir;
+    controllerState.targetMoveDir_ = desiredMoveDir;
   }
 
   step(now);
 };
 
-export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos);
-export const isAimInterpolating = () => controllerState.isInterpolating;
-export const getAimMode = () => controllerState.mode;
+export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos_);
+export const isAimInterpolating = () => controllerState.isInterpolating_;
+export const getAimMode = () => controllerState.mode_;

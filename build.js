@@ -14,6 +14,13 @@ const MANIFEST_PLACEHOLDER = '%VERSION%';
 const MAIN_FILE = path.join(DIST_DIR, 'main.js');
 const VENDOR_FILE = path.join(DIST_DIR, 'vendor.js');
 
+function* customIdentifierGenerator() {
+  let i = 0;
+  while (true) {
+    yield "id" + i++;
+  }
+}
+
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
   preset: false,
@@ -48,64 +55,6 @@ const OBFUSCATE_OPTIONS = {
     integrity: true,
   },
 };
-
-const TERSER_OPTIONS = {
-  parse: {
-    bare_returns: false,
-    shebang: false,
-    html5_comments: false,
-  },
-  compress: {
-    drop_console: true,
-    drop_debugger: true,
-    pure_funcs: ['console.log', 'console.info', 'console.debug'],
-    passes: 200,
-    keep_classnames: false,
-    ie8: false,
-    typeofs: true,
-    keep_fargs: false,
-    keep_fnames: false,
-    keep_infinity: false,
-    ecma: 2020,
-    unsafe: true,
-    dead_code: true,
-  },
-  mangle: {
-    eval: true,
-    keep_classnames: false,
-    keep_fnames: false,
-    module: true,
-    safari10: false,
-    toplevel: true,
-    properties: {
-      regex: /_$/,
-    },
-  },
-  format: {
-    ascii_only: true,
-    braces: false,
-    comments: false,
-    ecma: 2020,
-    ie8: false,
-    keep_numbers: false,
-    indent_level: 0,
-    indent_start: 0,
-    inline_script: true,
-    keep_quoted_props: false,
-    max_line_len: false,
-    preamble: undefined,
-    preserve_annotations: false,
-    quote_keys: false,
-    safari10: false,
-    semicolons: true,
-    shorthand: false,
-    shebang: false,
-    webkit: false,
-    wrap_iife: true,
-    wrap_func_args: true,
-  },
-};
-
 
 const clearDist = async () => {
   await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
@@ -167,15 +116,6 @@ const buildWithRollup = async (dev) => {
   console.log('Rollup build completed');
 };
 
-const minifyFile = async (filePath, label) => {
-  if (!fs.existsSync(filePath)) return;
-  console.log(`Minifying ${label}...`);
-  const src = await fs.promises.readFile(filePath, 'utf-8');
-  const result = await minify(src, TERSER_OPTIONS);
-  if (result.error) throw result.error;
-  await fs.promises.writeFile(filePath, result.code || src);
-};
-
 const obfuscateMain = async (dev) => {
   if (dev) return;
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk not found for obfuscation');
@@ -198,11 +138,11 @@ const combineChunks = async () => {
     format: 'es',
     exports: 'auto',
     compact: false,
-    minifyInternalExports: false,
+    minifyInternalExports: true,
+    inlineDynamicImports: true,
     freeze: false,
     sourcemap: false,
     interop: 'auto',
-    inlineDynamicImports: true,
     hoistTransitiveImports: false,
   });
 
@@ -256,8 +196,6 @@ const runBuild = async (argv) => {
   await clearDist();
   await copyStaticFiles();
   await buildWithRollup(devMode);
-  await minifyFile(VENDOR_FILE, 'vendor.js');
-  await minifyFile(MAIN_FILE, 'main.js');
   await obfuscateMain(devMode);
   await combineChunks();
   await createArchive();
