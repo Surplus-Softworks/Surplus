@@ -331,7 +331,7 @@ function aimbotTicker() {
                 previewTargetPos = { x: predictedPos.x, y: predictedPos.y };
 
                 if (canEngageAimbot && (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8))) {
-                    const currentAimPos = getCurrentAimPosition() || state.lastTargetScreenPos_;
+                    const currentAimPos = getCurrentAimPosition();
                     const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
                     manageAimState({
                         mode: 'aimbot',

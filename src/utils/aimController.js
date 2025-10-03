@@ -305,3 +305,4 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
 
 export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos);
 export const isAimInterpolating = () => controllerState.isInterpolating;
+export const getAimMode = () => controllerState.mode;

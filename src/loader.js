@@ -11,7 +11,7 @@ import { translate } from "@/utils/obfuscatedNameTranslator.js";
 import { hook, reflect, object } from "@/utils/hook.js";
 import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
 import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
-import { initializeAimController, isAimInterpolating } from "@/utils/aimController.js";
+import { initializeAimController, isAimInterpolating, getAimMode } from "@/utils/aimController.js";
 import initUI from "@/ui/init.js";
 
 function injectGame(oninject) {
@@ -133,7 +133,10 @@ const clearSuppressedShootState = () => {
 const applyAimTransitionSafety = (packet) => {
   if (!packet) return;
 
-  if (!isAimInterpolating()) {
+  const aimMode = getAimMode();
+  const shouldSuppressShooting = isAimInterpolating() && aimMode !== 'idle';
+
+  if (!shouldSuppressShooting) {
     if (suppressedShootState.pendingStart) {
       packet.shootStart = true;
       if (suppressedShootState.pendingHold) {
