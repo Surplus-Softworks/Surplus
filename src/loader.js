@@ -122,19 +122,42 @@ const suppressedShootState = {
   pendingStart: false,
   pendingHold: false,
   suppressedFireInput: false,
+  wasShootingLastFrame: false,
+  firstShotFrameCount: 0,
 };
 
 const clearSuppressedShootState = () => {
   suppressedShootState.pendingStart = false;
   suppressedShootState.pendingHold = false;
   suppressedShootState.suppressedFireInput = false;
+  suppressedShootState.firstShotFrameCount = 0;
 };
 
 const applyAimTransitionSafety = (packet) => {
   if (!packet) return;
 
   const aimMode = getAimMode();
-  const shouldSuppressShooting = isAimInterpolating() && aimMode !== 'idle';
+  const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire));
+
+  // Detect first shot: transition from not-shooting to shooting
+  if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame && settings.aimbot_.enabled_) {
+    suppressedShootState.firstShotFrameCount = 3; // Suppress for 3 frames to let aimbot start
+  }
+
+  suppressedShootState.wasShootingLastFrame = isCurrentlyShooting;
+
+  // If not shooting anymore, reset first shot suppression
+  if (!isCurrentlyShooting) {
+    suppressedShootState.firstShotFrameCount = 0;
+  }
+
+  // Decrement frame counter if active
+  const suppressFirstShot = suppressedShootState.firstShotFrameCount > 0;
+  if (suppressFirstShot) {
+    suppressedShootState.firstShotFrameCount--;
+  }
+
+  const shouldSuppressShooting = (isAimInterpolating() && aimMode !== 'idle') || suppressFirstShot;
 
   if (!shouldSuppressShooting) {
     if (suppressedShootState.pendingStart) {
