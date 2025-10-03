@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'preact/hooks';
+import React, { useState, useEffect } from 'react';
 import Header from '@/ui/components/layout/Header.jsx';
 import Navbar from '@/ui/components/layout/Navbar.jsx';
 import MainTab from '@/ui/components/tabs/Main.jsx';

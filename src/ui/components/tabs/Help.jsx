@@ -1,3 +1,4 @@
+import React from 'react';
 import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
 
 const Help = () => {

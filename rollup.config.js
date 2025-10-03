@@ -160,11 +160,7 @@ export default (commandLineArgs) => {
       babel({
         babelHelpers: 'bundled',
         presets: [
-          ["@babel/preset-react", {
-            "runtime": "classic",
-            "pragma": "h",
-            "pragmaFrag": "Fragment"
-          }]
+          ["@babel/preset-react", { "runtime": "automatic", "importSource": "preact" }]
         ],
         extensions: ['.js', '.jsx'],
         exclude: 'node_modules/**',

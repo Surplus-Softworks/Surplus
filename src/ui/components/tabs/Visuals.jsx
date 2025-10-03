@@ -1,3 +1,4 @@
+import React from 'react';
 import Checkbox from '@/ui/components/interaction/Checkbox.jsx';
 import Slider from '@/ui/components/interaction/Slider.jsx';
 import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';

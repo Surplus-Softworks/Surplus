@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Navbar = ({ activeTab, onTabChange, onClose }) => {
   const tabs = [
     { id: 'main', label: 'Main' },

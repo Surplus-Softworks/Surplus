@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
   const sliderValue = ((value - min) / (max - min)) * 100;
 

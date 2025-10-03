@@ -1,3 +1,5 @@
+import React from 'react';
+
 const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
   const handleClick = (e) => {
     if (e.target.type !== 'checkbox') {
