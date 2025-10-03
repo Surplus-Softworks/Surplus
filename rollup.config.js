@@ -25,9 +25,9 @@ const TERSER_OPTIONS = {
   compress: {
     defaults: true,
     arrows: true,
-    arguments: true,
+    arguments: false,
     booleans: true,
-    booleans_as_integers: true,
+    booleans_as_integers: false,
     collapse_vars: true,
     comparisons: true,
     computed_props: true,
@@ -54,7 +54,7 @@ const TERSER_OPTIONS = {
     loops: true,
     module: true,
     negate_iife: true,
-    passes: 999,
+    passes: 50,
     pure_funcs: ["console.log", "console.info", "console.debug"],
     pure_getters: true,
     pure_new: true,
@@ -65,16 +65,16 @@ const TERSER_OPTIONS = {
     switches: true,
     toplevel: true,
     typeofs: true,
-    unsafe: true,
-    unsafe_arrows: true,
-    unsafe_comps: true,
-    unsafe_Function: true,
-    unsafe_math: true,
-    unsafe_symbols: true,
-    unsafe_methods: true,
-    unsafe_proto: true,
-    unsafe_regexp: true,
-    unsafe_undefined: true,
+    unsafe: false,
+    unsafe_arrows: false,
+    unsafe_comps: false,
+    unsafe_Function: false,
+    unsafe_math: false,
+    unsafe_symbols: false,
+    unsafe_methods: false,
+    unsafe_proto: false,
+    unsafe_regexp: false,
+    unsafe_undefined: false,
     unused: true,
   },
   mangle: {
@@ -142,6 +142,9 @@ export default (commandLineArgs) => {
       alias({
         entries: [
           { find: '@', replacement: path.resolve(__dirname, 'src') },
+          { find: 'react', replacement: 'preact/compat' },
+          { find: 'react-dom', replacement: 'preact/compat' },
+          { find: 'react-dom/client', replacement: 'preact/compat' }
         ],
       }),
       string({
@@ -157,7 +160,11 @@ export default (commandLineArgs) => {
       babel({
         babelHelpers: 'bundled',
         presets: [
-          ["@babel/preset-react", { "runtime": "automatic" }]
+          ["@babel/preset-react", {
+            "runtime": "classic",
+            "pragma": "h",
+            "pragmaFrag": "Fragment"
+          }]
         ],
         extensions: ['.js', '.jsx'],
         exclude: 'node_modules/**',

@@ -1,5 +1,3 @@
-import React from 'react';
-
 const Header = ({ onMouseDown, version }) => {
   const handleMouseDown = (e) => {
     onMouseDown(e);

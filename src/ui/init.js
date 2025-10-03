@@ -1,5 +1,4 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { h, render } from 'preact';
 import Menu from '@/ui/components/Menu.jsx';
 import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.js';
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
@@ -16,20 +15,21 @@ const KEY_TOGGLE_AIMBOT = 'KeyB';
 let uiShadow;
 export let menuElement;
 
-let reactRoot = null;
+let menuRoot = null;
 let currentSettings = {};
 let setMenuVisible = () => {};
 let menuVersion = '';
 
 const renderMenu = () => {
-  if (!reactRoot) return;
-  reactRoot.render(
+  if (!menuRoot) return;
+  render(
     <Menu
       settings={currentSettings}
       onSettingChange={handleSettingChange}
       onClose={() => setMenuVisible(false)}
       version={menuVersion}
-    />
+    />,
+    menuRoot
   );
 };
 
@@ -84,7 +84,7 @@ const createShadowRoot = () => {
 const createMenuContainer = (shadow) => {
   const root = document.createElement('div');
   shadow.appendChild(root);
-  reactRoot = ReactDOM.createRoot(root);
+  menuRoot = root;
   menuElement = root;
   return root;
 };

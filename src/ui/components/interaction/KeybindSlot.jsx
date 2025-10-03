@@ -1,5 +1,3 @@
-import React from 'react';
-
 const KeybindSlot = ({ keybind, style = {} }) => {
   return (
     <div className="keybind-slot" style={style}>
