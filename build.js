@@ -6,7 +6,8 @@ import { minify } from 'terser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
 
-const VERSION = '2.0.0';
+const packageJson = JSON.parse(await fs.promises.readFile('./package.json', 'utf-8'));
+const VERSION = packageJson.version;
 const DIST_DIR = path.join('dist', 'extension');
 const SOURCE_EXTENSION_DIR = path.join('src', 'extension');
 const DEFAULT_ARCHIVE_NAME = 'Surplus (DO NOT EXTRACT).zip';

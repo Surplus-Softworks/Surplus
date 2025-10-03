@@ -7,9 +7,13 @@ import { string } from 'rollup-plugin-string';
 import terser from '@rollup/plugin-terser';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+const VERSION = packageJson.version;
 
 const TERSER_OPTIONS = {
   parse: {
@@ -112,7 +116,6 @@ const TERSER_OPTIONS = {
 export default (commandLineArgs) => {
   const isDev = commandLineArgs.dev === true;
   const EPOCH = Date.now() + 1000 * 60 * 60;
-  const VERSION = '1.5.1';
 
   return {
     input: './src/index.js',

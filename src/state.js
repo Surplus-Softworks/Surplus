@@ -266,14 +266,6 @@ export const settings = {
   layerSpoof_: registerSettings({ enabled_: 'layerspoof-enable' }),
 };
 
-const fuck = 3
-function a(){}
-function b(){}
-function c(){}
-function d(){}
-setTimeout(()=>{a(); b(); c(); d()}, fuck)
-setTimeout(()=>{a(); b(); c(); d()}, fuck)
-
 export const defaultSettings = {
   aimbot_: {
     enabled_: true,
