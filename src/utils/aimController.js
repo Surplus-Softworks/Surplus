@@ -76,7 +76,7 @@ const computeDuration = (start, end) => {
 };
 
 const updateBodyRotation = () => {
-  if (!controllerState.overrideActive) return;
+  if (!controllerState.overrideActive || controllerState.mode === 'idle') return;
   const gm = gameManager?.game;
   if (!gm?.initialized) return;
   const player = gm[translations.activePlayer];
@@ -169,7 +169,7 @@ const step = (now = performance.now()) => {
         hasMovement = angleDiff > MIN_INTERPOLATION_ANGLE;
       }
     }
-    if (hasMovement && progress < 1 - EPSILON) {
+    if (hasMovement && progress < 1 - EPSILON && controllerState.mode !== 'idle') {
       interpolationActive = true;
     }
     snapshot = {
@@ -256,15 +256,22 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
   step(now);
 
   if (normalizedMode === 'idle') {
-    if (controllerState.mode !== 'idle' || controllerState.overrideActive || controllerState.animation) {
+    if (controllerState.mode !== 'idle') {
       const baseline = clonePoint(controllerState.baselinePos);
       const start = controllerState.currentPos ?? baseline;
+      const duration = immediate ? 0 : computeDuration(start, baseline);
       controllerState.animation = {
         startPos: clonePoint(start),
         targetPos: baseline,
         startTime: now,
-        duration: immediate ? 0 : computeDuration(start, baseline),
+        duration: duration,
       };
+      setTimeout(() => {
+        if (controllerState.mode === 'idle') {
+          controllerState.animation = null;
+          applyAimStateSnapshot(null);
+        }
+      }, duration);
     }
     controllerState.mode = 'idle';
     controllerState.targetPos = null;
