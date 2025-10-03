@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import Menu from '@/ui/components/Menu.jsx';
 import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.js';
 import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
-import { read } from '@/utils/store.js';
+import { read, initStore } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.js';
 
@@ -129,10 +129,15 @@ const scheduleSettingsLoad = () => {
   const parse = JSON.parse;
   setTimeout(() => {
     mergeSettings(defaultSettings, currentSettings, settings);
-    read(SETTINGS_KEY)
-      .then((stored) => (!stored ? defaultSettings : parse(encryptDecrypt(stored))))
+    initStore()
+      .then(() => read(SETTINGS_KEY))
+      .then((stored) => (stored === null || stored === undefined ? defaultSettings : parse(encryptDecrypt(stored))))
       .then((config) => {
         mergeSettings(config, currentSettings, settings);
+        markConfigLoaded();
+        renderMenu();
+      })
+      .catch(() => {
         markConfigLoaded();
         renderMenu();
       });

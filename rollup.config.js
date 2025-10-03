@@ -86,6 +86,7 @@ const TERSER_OPTIONS = {
     properties: {
       regex: /_$/,
     },
+    //nth_identifier: undefined
   },
   format: {
     ascii_only: true,
