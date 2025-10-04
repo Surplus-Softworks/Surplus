@@ -4,7 +4,7 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
   const sliderValue = ((value - min) / (max - min)) * 100;
 
   const sliderStyle = {
-    background: `linear-gradient(to right, #66db6a 0%, #66db6a ${sliderValue}%, #333 ${sliderValue}%, #3b3b3b 100%)`,
+    background: `linear-gradient(to right, #6edb72 0%, #58c05c ${sliderValue}%, #333 ${sliderValue}%, #333 100%)`,
   };
 
   const handleChange = (e) => {

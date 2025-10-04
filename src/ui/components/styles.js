@@ -1,4 +1,15 @@
 export const globalStylesheet = `
+  #ui {
+    --border-radius: 0.375rem;
+    --border-width: 0.0625rem;
+    --transition-duration: 100ms;
+    --green-gradient: linear-gradient(180deg, #6edb72 0%, #58c05c 100%);
+    --shadow-size: 0.125rem;
+    --shadow-opacity: 0.2;
+    --glow-size: 0.25rem;
+    --glow-opacity: 0.2;
+  }
+
   * {
     font-family: 'GothamPro', sans-serif;
     box-sizing: border-box;
@@ -15,10 +26,10 @@ export const globalStylesheet = `
     position: relative;
     background: #131313;
     border-radius: 0.9375rem;
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
+    box-shadow: 0 calc(var(--shadow-size) * 4) calc(var(--shadow-size) * 16) rgba(0, 0, 0, calc(var(--shadow-opacity) * 1.5));
     width: 21.25rem;
     overflow: hidden;
-    border: 0.0625rem solid #333;
+    border: var(--border-width) solid #333;
     transition: all 0.3s ease-out;
   }
 
@@ -33,6 +44,7 @@ export const globalStylesheet = `
     align-items: center;
     justify-content: center;
     position: relative;
+    cursor: grab;
   }
 
   .header::after {
@@ -53,6 +65,7 @@ export const globalStylesheet = `
   .header:active {
     background: #1d1d1d !important;
     transition: all 0.2s ease;
+    cursor: grabbing;
   }
 
   .menu-icon {
@@ -99,23 +112,26 @@ export const globalStylesheet = `
   .nav-tab {
     padding: 0.375rem 0.75rem;
     background: #202020;
-    border: none;
-    border-radius: 0.28125rem;
+    border: var(--border-width) solid transparent;
+    border-radius: var(--border-radius);
     color: #bababa;
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: transform 0.1s ease;
+    transition: background var(--transition-duration) ease, color var(--transition-duration) ease, border var(--transition-duration) ease;
+  }
+
+  .nav-tab:hover {
+    background: #2c2c2c;
   }
 
   .nav-tab:active {
-    transform: scale(0.95);
+    background: #282828;
   }
 
   .nav-tab.active {
     color: #fff;
-    border: 0.0625rem solid #6f6f6f;
-    transform: translateY(-0.0625rem);
+    border-color: #555;
   }
 
   .close-btn {
@@ -127,14 +143,15 @@ export const globalStylesheet = `
     background: none;
     font-size: 1.25rem;
     color: #666;
-    transition: all 0.2s ease;
+    transition: color var(--transition-duration) ease;
   }
 
   .close-btn:hover {
     color: #fff;
-    rotate: 45deg;
-    scale: 0.95;
-    transition: all 0.2s ease;
+  }
+
+  .close-btn:active {
+    color: #ccc;
   }
 
   .content-container {
@@ -164,12 +181,6 @@ export const globalStylesheet = `
     gap: 0.375rem;
   }
 
-  .section-title svg {
-    height: 1rem;
-    width: 1rem;
-    fill: #e3e3e3;
-  }
-
   .section-title .checkbox-item {
     border: none;
     background: none;
@@ -179,7 +190,7 @@ export const globalStylesheet = `
 
   .section-title .checkbox-item:hover {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.375rem;
+    border-radius: var(--border-radius);
   }
 
   .section-title label {
@@ -213,17 +224,11 @@ export const globalStylesheet = `
     display: flex;
     flex-direction: column;
     background: rgba(255, 255, 255, 0.02);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 0.625rem;
     margin-bottom: 0.625rem;
     gap: 0.375rem;
-    border: 0.0625rem solid rgba(255,255,255,0.1);
-    transition: all 0.1s ease, transform 0.1s ease;
-  }
-
-  .group:hover {
-    background: rgba(255,255,255,.02);
-    transform: translateY(-0.0625rem);
+    border: var(--border-width) solid rgba(255,255,255,0.1);
   }
 
   .group .section-title {
@@ -241,12 +246,12 @@ export const globalStylesheet = `
   }
 
   .checkbox-item {
-    border: 0.0625rem solid #2c2c2c;
+    border: var(--border-width) solid #2c2c2c;
     display: inline-flex;
     align-items: center;
     padding: 0.375rem 0.5rem 0.375rem 0.5rem;
-    border-radius: 0.375rem;
-    transition: background 0.2s ease;
+    border-radius: var(--border-radius);
+    transition: background var(--transition-duration) ease;
     cursor: pointer;
     width: fit-content;
     background-color: rgba(0, 0, 0, 0.04);
@@ -254,11 +259,10 @@ export const globalStylesheet = `
 
   .checkbox-item:hover {
     background: rgba(255, 255, 255, 0.05);
-    transition: background 0.2s ease;
   }
 
   .checkbox-item:active {
-    transform: scale(0.95);
+    background: rgba(255, 255, 255, 0.03);
   }
 
   .checkbox-item-label {
@@ -272,21 +276,22 @@ export const globalStylesheet = `
   .checkbox {
     appearance: none;
     width: 1rem;
-    height: 0.875rem;
-    border-width: 0.125rem;
-    border-style: solid;
-    border-color: #888;
-    border-radius: 0.25rem;
-    background: #222;
-    position: relative;
-    transition: all 0.1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    height: 1rem;
+    border: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #6a6a6a, #4d4d4d, #3d3d3d, #2a2a2a);
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
     cursor: pointer;
+    transition: background 200ms ease-out, box-shadow 200ms ease-out;
+  }
+
+  .checkbox:hover {
+    background: radial-gradient(circle at 35% 35%, #7a7a7a, #5d5d5d, #4d4d4d, #3a3a3a);
   }
 
   .checkbox-checked {
-    background: #66db6a;
-    border-color: #66db6a;
-    box-shadow: 0 0 0.625rem rgba(102, 219, 106, 0.12);
+    background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3), 0 0 var(--glow-size) rgba(110, 219, 114, var(--glow-opacity));
   }
 
   .slider-container {
@@ -299,22 +304,25 @@ export const globalStylesheet = `
     appearance: none;
     width: 5.625rem;
     height: 0.3125rem;
-    background: #333;
-    border-radius: 0.3125rem;
+    border-radius: var(--border-radius);
     outline: none;
     cursor: pointer;
   }
 
   .keybind-slot {
-    width: 1.75rem;
-    height: 0.75rem;
-    background-color: #2a2a2a;
-    color: #888;
-    font-size: 0.5625rem;
+    min-width: 1.75rem;
+    height: 1.125rem;
+    padding: 0 0.375rem;
+    background: linear-gradient(135deg, #2a2a2a 0%, #353535 100%);
+    color: #ddd;
+    font-size: 0.625rem;
+    font-weight: 600;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.25rem;
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid #444;
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset 0 var(--shadow-size) 0 rgba(255, 255, 255, 0.1);
   }
 
   .help-section {
@@ -331,27 +339,25 @@ export const globalStylesheet = `
     font-weight: 600;
   }
 
-  .help-title svg {
-    height: 1rem;
-    width: 1rem;
-    fill: #e3e3e3;
-  }
-
   .help-panel {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 0.625rem;
     margin-bottom: 0.75rem;
-    border: 0.0625rem solid rgba(255, 255, 255, 0.08);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.08);
   }
 
   .keybind-button {
-    background: #333;
-    color: #fff;
-    padding: 0.1875rem 0.5rem;
-    border-radius: 0.375rem;
-    font-size: 0.8125rem;
+    min-width: 4.5rem;
+    padding: 0.25rem 0.625rem;
+    background: linear-gradient(135deg, #2a2a2a 0%, #353535 100%);
+    color: #ddd;
+    font-size: 0.75rem;
     font-weight: 600;
+    border-radius: var(--border-radius);
+    border: var(--border-width) solid #444;
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset 0 var(--shadow-size) 0 rgba(255, 255, 255, 0.1);
+    display: inline-block;
   }
 
   .keybind-description {
@@ -369,10 +375,10 @@ export const globalStylesheet = `
 
   .discord-panel {
     background: rgba(88, 101, 242, 0.15);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 0.625rem;
     margin-bottom: 0.75rem;
-    border: 0.0625rem solid rgba(88, 101, 242, 0.3);
+    border: var(--border-width) solid rgba(88, 101, 242, 0.3);
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -381,10 +387,10 @@ export const globalStylesheet = `
 
   .website-panel {
     background: rgba(105, 247, 76, 0.1);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 0.625rem;
     margin-bottom: 0.75rem;
-    border: 0.0625rem solid rgba(105, 247, 76, 0.3);
+    border: var(--border-width) solid rgba(105, 247, 76, 0.3);
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -397,18 +403,21 @@ export const globalStylesheet = `
     color: #fff;
     text-decoration: none;
     padding: 0.5rem;
-    border-radius: 0.375rem;
+    border-radius: var(--border-radius);
     font-size: 0.8125rem;
     text-align: center;
     font-weight: 600;
-    border: 0.0625rem solid rgba(88, 101, 242, 0.5);
-    transition: all 0.3s ease-out;
+    border: var(--border-width) solid rgba(88, 101, 242, 0.5);
+    transition: background var(--transition-duration) ease;
     margin-top: auto;
   }
 
   .discord-link:hover {
     background: rgba(88, 101, 242, 0.4);
-    transition: all 0.3s ease-out;
+  }
+
+  .discord-link:active {
+    background: rgba(88, 101, 242, 0.35);
   }
 
   .website-link {
@@ -417,26 +426,29 @@ export const globalStylesheet = `
     color: #fff;
     text-decoration: none;
     padding: 0.5rem;
-    border-radius: 0.375rem;
+    border-radius: var(--border-radius);
     font-size: 0.8125rem;
     text-align: center;
     font-weight: 600;
-    border: 0.0625rem solid rgba(105, 247, 76, 0.3);
-    transition: all 0.3s ease-out;
+    border: var(--border-width) solid rgba(105, 247, 76, 0.3);
+    transition: background var(--transition-duration) ease;
     margin-top: auto;
   }
 
   .website-link:hover {
-    background: rgba(105, 247, 76, 0.20);
-    transition: all 0.3s ease-out;
+    background: rgba(105, 247, 76, 0.2);
+  }
+
+  .website-link:active {
+    background: rgba(105, 247, 76, 0.175);
   }
 
   .credits-panel {
     background: rgba(255, 255, 255, 0.05);
-    border-radius: 0.5rem;
+    border-radius: var(--border-radius);
     padding: 0.625rem;
     margin-bottom: 0.75rem;
-    border: 0.0625rem solid rgba(255, 255, 255, 0.08);
+    border: var(--border-width) solid rgba(255, 255, 255, 0.08);
   }
 
   .credits-container {
@@ -475,7 +487,7 @@ export const globalStylesheet = `
   .feature-item {
     display: flex;
     align-items: center;
-    border-radius: 0.375rem;
+    border-radius: var(--border-radius);
   }
 
   .feature-name {
@@ -507,27 +519,29 @@ export const globalStylesheet = `
   input[type='checkbox'] {
     appearance: none;
     width: 1rem;
-    height: 0.875rem;
-    border: 0.125rem solid #888;
-    border-radius: 0.25rem;
-    background: #222;
-    position: relative;
-    transition: all 0.1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    height: 1rem;
+    border: none;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #6a6a6a, #4d4d4d, #3d3d3d, #2a2a2a);
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
     cursor: pointer;
+    transition: background 200ms ease-out, box-shadow 200ms ease-out;
+  }
+
+  input[type='checkbox']:hover {
+    background: radial-gradient(circle at 35% 35%, #7a7a7a, #5d5d5d, #4d4d4d, #3a3a3a);
   }
 
   input[type='checkbox']:checked {
-    background: #66db6a;
-    border-color: #66db6a;
-    box-shadow: 0 0 0.625rem rgba(102, 219, 106, 0.12);
+    background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3), 0 0 var(--glow-size) rgba(110, 219, 114, var(--glow-opacity));
   }
 
   input[type='range'] {
     appearance: none;
     width: 5.625rem;
     height: 0.3125rem;
-    background: #333;
-    border-radius: 0.3125rem;
+    border-radius: var(--border-radius);
     outline: none;
     cursor: pointer;
   }
@@ -536,29 +550,36 @@ export const globalStylesheet = `
     appearance: none;
     width: 1rem;
     height: 1rem;
-    background: #888;
-    border: 0.125rem solid #2c2c2c;
+    background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
+    border: none;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3);
+    transition: transform 100ms ease, background 100ms ease;
   }
 
   input[type='range']::-moz-range-thumb {
     width: 1rem;
     height: 1rem;
-    background: #888;
-    border: 0.125rem solid #2c2c2c;
+    background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
+    border: none;
     border-radius: 50%;
     cursor: pointer;
+    box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3);
+    transition: transform 100ms ease, background 100ms ease;
   }
 
   input[type='range']::-webkit-slider-thumb:hover,
   input[type='range']::-moz-range-thumb:hover {
-    background: #bbb;
+    background: radial-gradient(circle at 35% 35%, #a0f7a4, #7eeb82, #5fc563, #4a9a4d);
   }
 
-  input[type='range']::-webkit-slider-thumb:active,
+  input[type='range']::-webkit-slider-thumb:active {
+    transform: scale(0.85);
+  }
+
   input[type='range']::-moz-range-thumb:active {
-    background: #ddd;
+    transform: scale(0.85);
   }
 
   li::marker {
