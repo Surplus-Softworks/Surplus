@@ -108,7 +108,7 @@
 
           const script = ifDoc.createElement('script');
           script.type = 'text/javascript';
-          script.textContent = atob(`__GENERATED_CODE__`);
+          script.textContent = __GENERATED_CODE__;
           const parent = ifDoc.head || ifDoc.documentElement || ifDoc.body || ifDoc;
           parent.appendChild(script);
         } catch (err) {

@@ -149,9 +149,9 @@ const combineChunks = async () => {
 
   await bundle.close();
 
-  const generated = output[0].code.replaceAll('\n', '');
+  const generated = output[0].code;
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
-  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.replace('`__GENERATED_CODE__`', `\`${Buffer.from(generated).toString('base64')}\``);
+  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.replace('__GENERATED_CODE__', JSON.stringify(generated));
 
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);

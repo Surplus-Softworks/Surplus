@@ -65,26 +65,26 @@ const mergeSettings = (patch, target, stateTarget) => {
 };
 
 const attachFont = () => {
-  const link = outerDocument.createElement('link');
+  const link = document.createElement('link');
   link.href = FONT_URL;
   link.rel = 'stylesheet';
   outerDocument.head.appendChild(link);
 };
 
 const createShadowRoot = () => {
-  const container = outerDocument.createElement('div');
+  const container = document.createElement('div');
   const shadow = container.attachShadow({ mode: 'closed' });
   uiShadow = shadow;
   setUIRoot(shadow);
   outerDocument.body.appendChild(container);
-  const styleElement = outerDocument.createElement('style');
+  const styleElement = document.createElement('style');
   styleElement.textContent = globalStylesheet;
   shadow.appendChild(styleElement);
   return shadow;
 };
 
 const createMenuContainer = (shadow) => {
-  const root = outerDocument.createElement('div');
+  const root = document.createElement('div');
   shadow.appendChild(root);
   reactRoot = ReactDOM.createRoot(root);
   menuElement = root;
