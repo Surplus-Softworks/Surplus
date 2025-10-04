@@ -256,7 +256,7 @@ export const globalStylesheet = `
     margin-bottom: 0.625rem;
     gap: 0.375rem;
     border: var(--border-width) solid rgba(255,255,255,0.1);
-    max-height: 100rem;
+    max-height: 20rem;
     opacity: 1;
     overflow: hidden;
     transition: max-height 0.25s ease-out, opacity 0.25s ease-out, padding 0.25s ease-out, margin 0.25s ease-out;
@@ -316,7 +316,7 @@ export const globalStylesheet = `
     width: 1rem;
     height: 1rem;
     border: none;
-    border-radius: 50%;
+    border-radius: 25%;
     background: radial-gradient(circle at 35% 35%, #6a6a6a, #4d4d4d, #3d3d3d, #2a2a2a);
     box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
     cursor: pointer;
@@ -572,7 +572,7 @@ export const globalStylesheet = `
     width: 1rem;
     height: 1rem;
     border: none;
-    border-radius: 50%;
+    border-radius: 25%;
     background: radial-gradient(circle at 35% 35%, #6a6a6a, #4d4d4d, #3d3d3d, #2a2a2a);
     box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 3) rgba(0, 0, 0, var(--shadow-opacity)), inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
     cursor: pointer;

@@ -20,9 +20,10 @@ let reactRoot = null;
 let currentSettings = {};
 let setMenuVisible = () => {};
 let menuVersion = '';
+let settingsLoaded = false;
 
 const renderMenu = () => {
-  if (!reactRoot) return;
+  if (!reactRoot || !settingsLoaded) return;
   reactRoot.render(
     <Menu
       settings={currentSettings}
@@ -135,10 +136,12 @@ const scheduleSettingsLoad = () => {
       .then((config) => {
         mergeSettings(config, currentSettings, settings);
         markConfigLoaded();
+        settingsLoaded = true;
         renderMenu();
       })
       .catch(() => {
         markConfigLoaded();
+        settingsLoaded = true;
         renderMenu();
       });
   }, 1000);
@@ -152,11 +155,11 @@ const fetchVersion = () => {
       const availableVersion = response.tag_name;
       const suffix = VERSION !== availableVersion ? ' (update available!)' : '';
       menuVersion = VERSION + suffix;
-      renderMenu();
+      if (settingsLoaded) renderMenu();
     })
     .catch(() => {
       menuVersion = VERSION;
-      renderMenu();
+      if (settingsLoaded) renderMenu();
     });
 };
 
@@ -167,7 +170,6 @@ function buildUI() {
   registerKeyboardShortcuts(root);
   createVisibilityController(root);
   currentSettings = cloneSettings(defaultSettings);
-  renderMenu();
   scheduleSettingsLoad();
   fetchVersion();
 }
