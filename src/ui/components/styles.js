@@ -158,15 +158,24 @@ export const globalStylesheet = `
     padding-top: 0.625rem;
     padding-left: 1rem;
     padding-right: 1rem;
-    display: none;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out, opacity 0.2s ease-out, padding 0.3s ease-out;
   }
 
   .content-container.active {
-    display: block;
+    max-height: 62.5rem;
+    opacity: 1;
+    padding-bottom: 1rem;
   }
 
   .section {
     margin-bottom: 1.25rem;
+  }
+
+  .section:last-child {
+    margin-bottom: 0;
   }
 
   .section-title {
@@ -179,6 +188,24 @@ export const globalStylesheet = `
     justify-content: space-between;
     align-items: center;
     gap: 0.375rem;
+    position: relative;
+  }
+
+  .risky-label {
+    color: #ff3232;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.03125rem;
+    animation: risky-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes risky-glow {
+    0%, 100% {
+      text-shadow: 0 0 0.125rem rgba(255, 50, 50, 0.4);
+    }
+    50% {
+      text-shadow: 0 0 0.3rem rgba(255, 50, 50, 0.7);
+    }
   }
 
   .section-title .checkbox-item {
@@ -229,6 +256,17 @@ export const globalStylesheet = `
     margin-bottom: 0.625rem;
     gap: 0.375rem;
     border: var(--border-width) solid rgba(255,255,255,0.1);
+    max-height: 100rem;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.25s ease-out, opacity 0.25s ease-out, padding 0.25s ease-out, margin 0.25s ease-out;
+  }
+
+  .group.hidden {
+    max-height: 0;
+    opacity: 0;
+    padding: 0 0.625rem;
+    margin-bottom: 0;
   }
 
   .group .section-title {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Header from '@/ui/components/layout/Header.jsx';
 import Navbar from '@/ui/components/layout/Navbar.jsx';
 import MainTab from '@/ui/components/tabs/Main.jsx';
@@ -11,6 +11,7 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [position, setPosition] = useState({ x: 175, y: 125 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const menuRef = useRef(null);
 
   const handleMouseDown = (e) => {
     setIsDragging(true);
@@ -23,9 +24,37 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (isDragging) {
+        const menuElement = menuRef.current;
+        if (!menuElement) return;
+
+        const headerElement = menuElement.querySelector('.header');
+        if (!headerElement) return;
+
+        const headerRect = headerElement.getBoundingClientRect();
+        const menuWidth = menuElement.offsetWidth;
+        const minVisibleWidth = 100; // Minimum visible width to ensure user can always grab the header
+
+        let newX = e.clientX - dragStart.x;
+        let newY = e.clientY - dragStart.y;
+
+        // Constrain horizontal position
+        // Left boundary: allow menu to go partially off-screen but keep some visible
+        const minX = -(menuWidth - minVisibleWidth);
+        // Right boundary: keep at least minVisibleWidth on screen
+        const maxX = window.innerWidth - minVisibleWidth;
+
+        // Constrain vertical position
+        // Top boundary: header top can't go above 0
+        const minY = 0;
+        // Bottom boundary: header bottom can't go below window height
+        const maxY = window.innerHeight - headerRect.height;
+
+        newX = Math.max(minX, Math.min(maxX, newX));
+        newY = Math.max(minY, Math.min(maxY, newY));
+
         setPosition({
-          x: e.clientX - dragStart.x,
-          y: e.clientY - dragStart.y,
+          x: newX,
+          y: newY,
         });
       }
     };
@@ -74,6 +103,7 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
   return (
     <div
       id="ui"
+      ref={menuRef}
       style={containerStyle}
       onClick={handleClick}
       onMouseDown={handleClick}

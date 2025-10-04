@@ -1,26 +1,22 @@
 import React from 'react';
 import Checkbox from '@/ui/components/interaction/Checkbox.jsx';
 import Slider from '@/ui/components/interaction/Slider.jsx';
-import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
+import SectionTitle from '@/ui/components/layout/SectionTitle.jsx';
 import { Icons } from '@/ui/components/icons.jsx';
+import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
 
 const Main = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
       {/* Aimbot Section */}
-      <div className="section-title">
-        <Icons.Aimbot size={16} />
-        <div className="section-title-container">Aimbot</div>
-        <KeybindSlot keybind="B" />
-        <Checkbox
-          id="aim-enable"
-          label="Enabled"
-          checked={settings.aimbot_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.aimbot_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
-        />
-      </div>
-      <div className="group">
+      <SectionTitle
+        icon={Icons.Aimbot}
+        label="Aimbot"
+        keybind="B"
+        enabled={settings.aimbot_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.aimbot_.enabled_ = v))}
+      />
+      <div className={`group ${!settings.aimbot_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="target-knocked"
           label="Target Knocked"
@@ -39,18 +35,14 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       {/* Melee Lock Section */}
-      <div className="section-title">
-        <Icons.MeleeLock size={16} />
-        <div className="section-title-container">Melee Lock</div>
-        <Checkbox
-          id="melee-lock"
-          label="Enabled"
-          checked={settings.meleeLock_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.meleeLock_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
-        />
-      </div>
-      <div className="group">
+      <SectionTitle
+        icon={Icons.MeleeLock}
+        label="Melee Lock"
+        enabled={settings.meleeLock_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.meleeLock_.enabled_ = v))}
+        warning={true}
+      />
+      <div className={`group ${!settings.meleeLock_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="auto-melee"
           label="Auto Equip"
@@ -60,18 +52,13 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       {/* Auto Switch Section */}
-      <div className="section-title">
-        <Icons.AutoSwitch size={16} />
-        <div className="section-title-container">Auto Switch</div>
-        <Checkbox
-          id="autoswitch-enable"
-          label="Enabled"
-          checked={settings.autoSwitch_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.autoSwitch_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
-        />
-      </div>
-      <div className="group">
+      <SectionTitle
+        icon={Icons.AutoSwitch}
+        label="Auto Switch"
+        enabled={settings.autoSwitch_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.autoSwitch_.enabled_ = v))}
+      />
+      <div className={`group ${!settings.autoSwitch_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="useonegun"
           label="Use One Gun"
@@ -81,17 +68,12 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       {/* Semi Auto Section */}
-      <div className="section-title">
-        <Icons.SemiAuto size={16} />
-        <div className="section-title-container">Semi Auto</div>
-        <Checkbox
-          id="semiauto-enable"
-          label="Enabled"
-          checked={settings.autoFire_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.autoFire_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '4px 6px', margin: 0 }}
-        />
-      </div>
+      <SectionTitle
+        icon={Icons.SemiAuto}
+        label="Semi Auto"
+        enabled={settings.autoFire_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.autoFire_.enabled_ = v))}
+      />
     </div>
   );
 };

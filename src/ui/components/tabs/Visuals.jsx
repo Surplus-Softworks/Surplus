@@ -1,25 +1,20 @@
 import React from 'react';
 import Checkbox from '@/ui/components/interaction/Checkbox.jsx';
 import Slider from '@/ui/components/interaction/Slider.jsx';
-import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
+import SectionTitle from '@/ui/components/layout/SectionTitle.jsx';
 import { Icons } from '@/ui/components/icons.jsx';
 
 const Visuals = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
       {/* X-Ray Section */}
-      <div className="section-title">
-        <Icons.XRay size={16} />
-        <div className="section-title-container">X-Ray</div>
-        <Checkbox
-          id="xray"
-          label="Enabled"
-          checked={settings.xray_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.xray_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '0.25rem 0.375rem', margin: 0 }}
-        />
-      </div>
-      <div className="group">
+      <SectionTitle
+        icon={Icons.XRay}
+        label="X-Ray"
+        enabled={settings.xray_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.xray_.enabled_ = v))}
+      />
+      <div className={`group ${!settings.xray_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="remove-ceilings"
           label="Remove Ceilings"
@@ -47,32 +42,22 @@ const Visuals = ({ settings, onSettingChange }) => {
       </div>
 
       {/* Layer Spoofer Section */}
-      <div className="section-title">
-        <Icons.LayerSpoof size={16} />
-        <div className="section-title-container">Layer Spoofer</div>
-        <KeybindSlot keybind="Space" />
-        <Checkbox
-          id="layerspoof-enable"
-          label="Enabled"
-          checked={settings.layerSpoof_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.layerSpoof_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '0.25rem 0.375rem', margin: 0 }}
-        />
-      </div>
+      <SectionTitle
+        icon={Icons.LayerSpoof}
+        label="Layer Spoofer"
+        keybind="Space"
+        enabled={settings.layerSpoof_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.layerSpoof_.enabled_ = v))}
+      />
 
       {/* ESP Section */}
-      <div className="section-title">
-        <Icons.ESP size={16} />
-        <div className="section-title-container">ESP</div>
-        <Checkbox
-          id="esp-enable"
-          label="Enabled"
-          checked={settings.esp_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.esp_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '0.25rem 0.375rem', margin: 0 }}
-        />
-      </div>
-      <div className="group">
+      <SectionTitle
+        icon={Icons.ESP}
+        label="ESP"
+        enabled={settings.esp_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.esp_.enabled_ = v))}
+      />
+      <div className={`group ${!settings.esp_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="visible-nametags"
           label="Visible Nametags"
@@ -124,18 +109,14 @@ const Visuals = ({ settings, onSettingChange }) => {
       </div>
 
       {/* Infinite Zoom Section */}
-      <div className="section-title">
-        <Icons.InfiniteZoom size={16} />
-        <div className="section-title-container">Infinite Zoom</div>
-        <KeybindSlot keybind={['Shift', 'Scroll']} mode="multiple" />
-        <Checkbox
-          id="infinite-zoom-enable"
-          label="Enabled"
-          checked={settings.infiniteZoom_.enabled_}
-          onChange={(v) => onSettingChange((s) => (s.infiniteZoom_.enabled_ = v))}
-          style={{ border: 'none', background: 'none', padding: '0.25rem 0.375rem', margin: 0 }}
-        />
-      </div>
+      <SectionTitle
+        icon={Icons.InfiniteZoom}
+        label="Infinite Zoom"
+        keybind={['Shift', 'Scroll']}
+        keybindMode="multiple"
+        enabled={settings.infiniteZoom_.enabled_}
+        onEnabledChange={(v) => onSettingChange((s) => (s.infiniteZoom_.enabled_ = v))}
+      />
     </div>
   );
 };
