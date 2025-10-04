@@ -54,7 +54,7 @@ const meetsLayerCriteria = (targetLayer, localLayer, isLocalOnBypass) => {
     return targetLayer === localLayer;
 };
 
-const queueInput = (command) => Reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
+const queueInput = (command) => inputState.queuedInputs_.push(command)
 
 const handleKeydown = (event) => {
     if (event.code !== KEY_STICKY_TARGET) return;
@@ -234,7 +234,7 @@ function aimbotTicker() {
             const isMeleeEquipped = currentWeaponIndex === 2;
             const isGrenadeEquipped = currentWeaponIndex === 3;
             const isAiming = game[translations.inputBinds].isBindDown(inputCommands.Fire);
-            const meleeLockActive = settings.meleeLock_.enabled_ && (isMeleeEquipped || settings.meleeLock_.autoMelee_) && isAiming;
+            const meleeLockActive = settings.meleeLock_.enabled_ && (isMeleeEquipped) && isAiming;
 
             if (meleeLockActive) {
                 if (!isAiming) {
