@@ -11,6 +11,7 @@ import {
 } from '@/utils/constants.js';
 import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.js';
 import { getCurrentAimPosition, isAimInterpolating } from '@/utils/aimController.js';
+import { outer } from '@/utils/outer.js';
 
 const COLORS = {
     GREEN_: 0x399d37,
@@ -87,7 +88,7 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
         const screenPos = game[translations.camera][translations.pointToScreen]({ x: player[translations.pos].x, y: player[translations.pos].y });
         aimAngle = Math.atan2(screenPos.y - currentAimPos.y, screenPos.x - currentAimPos.x) - Math.PI;
     } else if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
-        aimAngle = Math.atan2(game[translations.input].mousePos._y - innerHeight / 2, game[translations.input].mousePos._x - innerWidth / 2);
+        aimAngle = Math.atan2(game[translations.input].mousePos._y - outer.innerHeight / 2, game[translations.input].mousePos._x - outer.innerWidth / 2);
     } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos_) {
         const screenPos = game[translations.camera][translations.pointToScreen]({ x: player[translations.pos].x, y: player[translations.pos].y });
         aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos_.clientY, screenPos.x - aimState.lastAimPos_.clientX) - Math.PI;
@@ -185,8 +186,8 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
         dirX = aimX / magnitude;
         dirY = aimY / magnitude;
     } else if (!isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
-        const mouseX = game[translations.input].mousePos._x - innerWidth / 2;
-        const mouseY = game[translations.input].mousePos._y - innerHeight / 2;
+        const mouseX = game[translations.input].mousePos._x - outer.innerWidth / 2;
+        const mouseY = game[translations.input].mousePos._y - outer.innerHeight / 2;
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
