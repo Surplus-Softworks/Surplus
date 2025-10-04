@@ -1,8 +1,16 @@
+import { outer } from "@/utils/outer.js";
+
 export const spoof = new WeakMap();
 spoof.set = spoof.set;
 spoof.get = spoof.get;
 spoof.delete = spoof.delete;
 spoof.has = spoof.has;
+
+const spoofedNodes = new WeakMap();
+spoofedNodes.set = spoofedNodes.set;
+spoofedNodes.get = spoofedNodes.get;
+spoofedNodes.delete = spoofedNodes.delete;
+spoofedNodes.has = spoofedNodes.has;
 
 export function hook(object, name, handler) {
 	const original = object[name];
@@ -30,7 +38,30 @@ hook(outer.Object.getPrototypeOf(outer.Object.getPrototypeOf(() => {})), "toStri
 	},
 });
 
-export const ref_addEventListener = outer.EventTarget.prototype.addEventListener;
+hook(outer.Function.prototype, "bind", {
+    apply(f, th, args) {
+        const ret = Reflect.apply(f, th, args);
+        spoof.set(ret, getnative(th));
+        return ret;
+    }
+});
+
+hook(outer.Element.prototype, "attachShadow", {
+	apply(f, th, args) {
+		return Reflect.apply(f, spoofedNodes.get(th) || th, args);
+	},
+});
+const shadowRootProxy = new Proxy(Object.getOwnPropertyDescriptor(outer.Element.prototype, "shadowRoot").get, {
+	apply(f, th, args) {
+		return Reflect.apply(f, spoofedNodes.get(th) || th, args);
+	},
+});
+spoof.set(shadowRootProxy, Object.getOwnPropertyDescriptor(outer.Element.prototype, "shadowRoot").get);
+Object.defineProperty(outer.Element.prototype, "shadowRoot", {
+	get: shadowRootProxy,
+});
+
+export const ref_addEventListener = EventTarget.prototype.addEventListener;
 
 export let mahdiFunctionConstructor = (...args) => {
     const gen = (function*(){}).prototype.constructor.constructor(...args)();
