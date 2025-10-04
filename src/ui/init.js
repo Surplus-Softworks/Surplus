@@ -2,10 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Menu from '@/ui/components/Menu.jsx';
 import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.js';
-import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
+import { ref_addEventListener } from '@/utils/hook.js';
 import { read, initStore } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.js';
+import { outer, outerDocument } from '@/utils/outer.js';
 
 const FONT_URL = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
 const SETTINGS_KEY = 'c';
@@ -43,7 +44,7 @@ function handleSettingChange(updater) {
 const cloneSettings = (source) => {
   if (source === null || typeof source !== 'object') return source;
   const clone = {};
-  object.entries(source).forEach(([key, value]) => {
+  Object.entries(source).forEach(([key, value]) => {
     clone[key] = cloneSettings(value);
   });
   return clone;
@@ -51,7 +52,7 @@ const cloneSettings = (source) => {
 
 const mergeSettings = (patch, target, stateTarget) => {
   if (!patch || typeof patch !== 'object') return;
-  object.entries(patch).forEach(([key, value]) => {
+  Object.entries(patch).forEach(([key, value]) => {
     if (value && typeof value === 'object' && target[key] && stateTarget[key]) {
       mergeSettings(value, target[key], stateTarget[key]);
       return;
@@ -64,26 +65,26 @@ const mergeSettings = (patch, target, stateTarget) => {
 };
 
 const attachFont = () => {
-  const link = document.createElement('link');
+  const link = outerDocument.createElement('link');
   link.href = FONT_URL;
   link.rel = 'stylesheet';
-  document.head.appendChild(link);
+  outerDocument.head.appendChild(link);
 };
 
 const createShadowRoot = () => {
-  const container = document.createElement('div');
+  const container = outerDocument.createElement('div');
   const shadow = container.attachShadow({ mode: 'closed' });
   uiShadow = shadow;
   setUIRoot(shadow);
-  document.body.appendChild(container);
-  const styleElement = document.createElement('style');
+  outerDocument.body.appendChild(container);
+  const styleElement = outerDocument.createElement('style');
   styleElement.textContent = globalStylesheet;
   shadow.appendChild(styleElement);
   return shadow;
 };
 
 const createMenuContainer = (shadow) => {
-  const root = document.createElement('div');
+  const root = outerDocument.createElement('div');
   shadow.appendChild(root);
   reactRoot = ReactDOM.createRoot(root);
   menuElement = root;
@@ -98,7 +99,7 @@ const toggleSetting = (getter, setter) => {
 };
 
 const registerKeyboardShortcuts = (root) => {
-  reflect.apply(ref_addEventListener, globalThis, ['keydown', (event) => {
+  Reflect.apply(ref_addEventListener, outer, ['keydown', (event) => {
     if (event.code === KEY_TOGGLE_MENU) {
       const menu = root.querySelector('#ui');
       if (!menu) return;
@@ -148,7 +149,7 @@ const scheduleSettingsLoad = () => {
 };
 
 const fetchVersion = () => {
-  globalThis
+  outer
     .fetch(VERSION_ENDPOINT)
     .then((response) => response.json())
     .then((response) => {
@@ -174,10 +175,16 @@ function buildUI() {
   fetchVersion();
 }
 
+let uiInitialized = false;
 export default function initUI() {
+  if (uiInitialized) {
+    return;
+  }
+  uiInitialized = true;
+
   const onReady = () => buildUI();
-  if (document.readyState === 'loading') {
-    reflect.apply(ref_addEventListener, document, ['DOMContentLoaded', onReady]);
+  if (outerDocument.readyState === 'loading') {
+    Reflect.apply(ref_addEventListener, outerDocument, ['DOMContentLoaded', onReady]);
   } else {
     onReady();
   }

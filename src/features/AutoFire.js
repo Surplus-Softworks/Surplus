@@ -1,5 +1,5 @@
 import { settings } from '@/state.js';
-import { reflect, ref_addEventListener } from '@/utils/hook.js';
+import { ref_addEventListener } from '@/utils/hook.js';
 
 export let autoFireEnabled;
 
@@ -21,6 +21,6 @@ const handleMouseUp = (event) => {
 
 export default function() {
   updateAutoFireFromSettings();
-  reflect.apply(ref_addEventListener, globalThis, ['mousedown', handleMouseDown]);
-  reflect.apply(ref_addEventListener, globalThis, ['mouseup', handleMouseUp]);
+  Reflect.apply(ref_addEventListener, outer, ['mousedown', handleMouseDown]);
+  Reflect.apply(ref_addEventListener, outer, ['mouseup', handleMouseUp]);
 }

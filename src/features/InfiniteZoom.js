@@ -1,5 +1,5 @@
 import { gameManager } from '@/state.js';
-import { object, reflect, ref_addEventListener } from '@/utils/hook.js';
+import { ref_addEventListener } from '@/utils/hook.js';
 import { settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
@@ -20,7 +20,7 @@ const handleWheelEvent = (event) => {
     zoom += event.deltaY > 0 ? ZOOM_IN_STEP : -ZOOM_OUT_STEP;
     zoom = Math.max(MIN_ZOOM, zoom);
 
-    object.defineProperty(localData, translations.zoom, {
+    Object.defineProperty(localData, translations.zoom, {
       configurable: true,
       get: () => zoom,
       set: () => {},
@@ -32,5 +32,5 @@ const handleWheelEvent = (event) => {
 };
 
 export default function() {
-  reflect.apply(ref_addEventListener, globalThis, ['wheel', handleWheelEvent, WHEEL_OPTIONS]);
+  Reflect.apply(ref_addEventListener, outer, ['wheel', handleWheelEvent, WHEEL_OPTIONS]);
 }

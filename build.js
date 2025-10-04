@@ -150,29 +150,9 @@ const combineChunks = async () => {
   await bundle.close();
 
   const generated = output[0].code.replaceAll('\n', '');
-  const finalCode = `/*
-© 2025 Surplus Softworks
-*/
+  const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
+  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.replace('`__GENERATED_CODE__`', `\`${Buffer.from(generated).toString('base64')}\``);
 
-(function() {
-  const whitelist = [
-    'surviv',
-    'survev',
-    'resurviv',
-    'expandedwater',
-    '66.179.254.36',
-    'eu-comp',
-    '50v50',
-    'surv',
-    'zurv',
-  ];
-
-  if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
-    return;
-  }
-
-  ${generated}
-})();`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
   if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);

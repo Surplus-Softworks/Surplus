@@ -5,6 +5,7 @@ import MainTab from '@/ui/components/tabs/Main.jsx';
 import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
 import MiscTab from '@/ui/components/tabs/Misc.jsx';
 import HelpTab from '@/ui/components/tabs/Help.jsx';
+import { outer, outerDocument, outerInnerWidth, outerInnerHeight } from '@/utils/outer.js';
 
 const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [activeTab, setActiveTab] = useState('help');
@@ -32,22 +33,16 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
 
         const headerRect = headerElement.getBoundingClientRect();
         const menuWidth = menuElement.offsetWidth;
-        const minVisibleWidth = 100; // Minimum visible width to ensure user can always grab the header
+        const minVisibleWidth = 100;
 
         let newX = e.clientX - dragStart.x;
         let newY = e.clientY - dragStart.y;
 
-        // Constrain horizontal position
-        // Left boundary: allow menu to go partially off-screen but keep some visible
         const minX = -(menuWidth - minVisibleWidth);
-        // Right boundary: keep at least minVisibleWidth on screen
-        const maxX = window.innerWidth - minVisibleWidth;
+        const maxX = outerInnerWidth() - minVisibleWidth;
 
-        // Constrain vertical position
-        // Top boundary: header top can't go above 0
         const minY = 0;
-        // Bottom boundary: header bottom can't go below window height
-        const maxY = window.innerHeight - headerRect.height;
+        const maxY = outerInnerHeight() - headerRect.height;
 
         newX = Math.max(minX, Math.min(maxX, newX));
         newY = Math.max(minY, Math.min(maxY, newY));
@@ -64,13 +59,13 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      outerDocument.addEventListener('mousemove', handleMouseMove);
+      outerDocument.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      outerDocument.removeEventListener('mousemove', handleMouseMove);
+      outerDocument.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, dragStart]);
 

@@ -7,7 +7,6 @@ import { Icons } from '@/ui/components/icons.jsx';
 const Misc = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
-      {/* Map Highlights Section */}
       <SectionTitle
         icon={Icons.Map}
         label="Map Highlights"
@@ -23,7 +22,6 @@ const Misc = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Auto Loot Section */}
       <SectionTitle
         icon={Icons.AutoLoot}
         label="Auto Loot"
@@ -31,7 +29,6 @@ const Misc = ({ settings, onSettingChange }) => {
         onEnabledChange={(v) => onSettingChange((s) => (s.autoLoot_.enabled_ = v))}
       />
 
-      {/* Mobile Movement Section */}
       <SectionTitle
         icon={Icons.MobileMovement}
         label="Mobile Movement"

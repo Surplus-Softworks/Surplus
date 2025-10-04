@@ -1,4 +1,5 @@
-import { hook, reflect, object } from "@/utils/hook.js";
+import { hook } from "@/utils/hook.js";
+import { outer } from "@/utils/outer.js";
 import { gameManager } from "@/state.js";
 import { translations } from "@/utils/obfuscatedNameTranslator.js";
 
@@ -69,17 +70,13 @@ export const packetTypes = {
 
 export let gameObjects;
 
-hook(Object, "keys", {
+hook(outer.Object, "keys", {
     apply(f, th, args) {
-        try {
-            if (args[0]?.bullet_mp5?.type == "bullet" && args[0]?.explosion_frag?.type == "explosion" && args[0]?.mp5?.type == "gun" && args[0]?.frag?.type == "throwable") {
-                gameObjects = args[0];
-                Object.keys = f;
-            }
-        } catch {
-
+        if (args[0]?.bullet_mp5?.type == "bullet" && args[0]?.explosion_frag?.type == "explosion" && args[0]?.mp5?.type == "gun" && args[0]?.frag?.type == "throwable") {
+            gameObjects = args[0];
+            outer.Object.keys = f;
         }
-        return reflect.apply(f, th, args);
+        return Reflect.apply(f, th, args);
     }
 });
 
@@ -90,7 +87,7 @@ export function isGameReady() {
 }
 
 export function findTeam(player) {
-    return object.keys(gameManager.game[translations.playerBarn].teamInfo).find(team => gameManager.game[translations.playerBarn].teamInfo[team].playerIds.includes(player.__id));
+    return Object.keys(gameManager.game[translations.playerBarn].teamInfo).find(team => gameManager.game[translations.playerBarn].teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeapon(player) {

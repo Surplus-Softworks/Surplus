@@ -2,9 +2,10 @@ import { settings, getUIRoot, inputState, aimState } from '@/state.js';
 import { findTeam, findBullet, findWeapon, inputCommands } from '@/utils/constants.js';
 import { gameManager } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { reflect, ref_addEventListener } from '@/utils/hook.js';
+import { ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
 import { manageAimState, getCurrentAimPosition } from '@/utils/aimController.js';
+import { outerInnerWidth, outerInnerHeight, outerDocument, outer } from '@/utils/outer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -24,8 +25,8 @@ const AIM_SMOOTH_ANGLE = Math.PI / 90;
 
 const computeAimAngle = (point) => {
     if (!point) return 0;
-    const centerX = globalThis.innerWidth / 2;
-    const centerY = globalThis.innerHeight / 2;
+    const centerX = outerInnerWidth() / 2;
+    const centerY = outerInnerHeight() / 2;
     return Math.atan2(point.y - centerY, point.x - centerX);
 };
 
@@ -53,7 +54,7 @@ const meetsLayerCriteria = (targetLayer, localLayer, isLocalOnBypass) => {
     return targetLayer === localLayer;
 };
 
-const queueInput = (command) => reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
+const queueInput = (command) => Reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
 
 const handleKeydown = (event) => {
     if (event.code !== KEY_STICKY_TARGET) return;
@@ -66,7 +67,7 @@ const handleKeydown = (event) => {
     }
 };
 
-reflect.apply(ref_addEventListener, globalThis, ['keydown', handleKeydown]);
+Reflect.apply(ref_addEventListener, outer, ['keydown', handleKeydown]);
 
 let aimbotDot;
 let tickerAttached = false;
@@ -399,7 +400,7 @@ const ensureOverlay = () => {
         return false;
     }
     if (!aimbotDot) {
-        aimbotDot = document.createElement('div');
+        aimbotDot = outerDocument.createElement('div');
         aimbotDot.classList.add('aimbot-dot');
         uiRoot.appendChild(aimbotDot);
     }

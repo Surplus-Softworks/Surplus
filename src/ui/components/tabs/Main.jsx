@@ -8,7 +8,6 @@ import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
 const Main = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
-      {/* Aimbot Section */}
       <SectionTitle
         icon={Icons.Aimbot}
         label="Aimbot"
@@ -34,7 +33,6 @@ const Main = ({ settings, onSettingChange }) => {
         </div>
       </div>
 
-      {/* Melee Lock Section */}
       <SectionTitle
         icon={Icons.MeleeLock}
         label="Melee Lock"
@@ -51,7 +49,6 @@ const Main = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Auto Switch Section */}
       <SectionTitle
         icon={Icons.AutoSwitch}
         label="Auto Switch"
@@ -67,7 +64,6 @@ const Main = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Semi Auto Section */}
       <SectionTitle
         icon={Icons.SemiAuto}
         label="Semi Auto"

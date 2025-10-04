@@ -7,7 +7,6 @@ import { Icons } from '@/ui/components/icons.jsx';
 const Visuals = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
-      {/* X-Ray Section */}
       <SectionTitle
         icon={Icons.XRay}
         label="X-Ray"
@@ -41,7 +40,6 @@ const Visuals = ({ settings, onSettingChange }) => {
         />
       </div>
 
-      {/* Layer Spoofer Section */}
       <SectionTitle
         icon={Icons.LayerSpoof}
         label="Layer Spoofer"
@@ -50,7 +48,6 @@ const Visuals = ({ settings, onSettingChange }) => {
         onEnabledChange={(v) => onSettingChange((s) => (s.layerSpoof_.enabled_ = v))}
       />
 
-      {/* ESP Section */}
       <SectionTitle
         icon={Icons.ESP}
         label="ESP"
@@ -108,7 +105,6 @@ const Visuals = ({ settings, onSettingChange }) => {
         </div>
       </div>
 
-      {/* Infinite Zoom Section */}
       <SectionTitle
         icon={Icons.InfiniteZoom}
         label="Infinite Zoom"

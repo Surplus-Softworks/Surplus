@@ -1,7 +1,7 @@
-import { object, proxy } from "@/utils/hook.js";
+import { outer } from "@/utils/outer.js";
 
-const { getOwnPropertyNames, getPrototypeOf } = object;
-const { __lookupGetter__: lookupGetter } = object.prototype;
+const { getOwnPropertyNames, getPrototypeOf } = Object;
+const { __lookupGetter__: lookupGetter } = Object.prototype;
 const { isArray } = Array;
 
 export let translations = {};
@@ -127,7 +127,7 @@ export function translate(gameManager) {
       function matchSignature(obj, prop) {
         const objSignature = getSignature(obj[prop]);
         if (objSignature) {
-          for (const [signatureName, signatureValue] of object.entries(convertedSignatureMap)) {
+          for (const [signatureName, signatureValue] of Object.entries(convertedSignatureMap)) {
             if (translated[signatureName]) continue;
             if (signatureValue instanceof Array) {
               if (signatureValue.some(v => v == objSignature)) {
@@ -156,38 +156,22 @@ export function translate(gameManager) {
               const newplr = new game[prop].constructor();
               for (const pProp in newplr) {
                 try {
-                  /*
-                  const objSignature = getSignature(game[prop][pProp]);
-                  if (objSignature) {
-                    for (const [signatureName, signatureValue] of Object.entries(
-                      convertedSignatureMap
-                    )) {
-                      if (translated[signatureName]) continue;
-
-                      if (signatureValue === objSignature) {
-                        translated[signatureName] = pProp;
-                        break;
-                      }
-                    }
-                  }
-                    */
                   matchSignature(game[prop], pProp);
                 } catch { }
               }
               if (translated.localData != null) {
-                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v => game[prop][translated.localData][v] instanceof Array);
+                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v => game[prop][translated.localData][v] instanceof outer.Array);
               }
-              if (translated.localData != null && translated.camera != null) { // get zoom
+              if (translated.localData != null && translated.camera != null) {
                 const localDataKeys = getOwnPropertyNames(game[prop][translated.localData]);
                 const cameraKeys = getOwnPropertyNames(game[translated.camera]);
                 translated.zoom = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData][v] == "number");
               }
-              //console.log(translated);
               if (translated.netData == null) continue;
               if (translated.activePlayer != null) {
                 try {
                   game[translated.activePlayer].selectIdlePose.call({
-                    [translated.netData]: new proxy({}, {
+                    [translated.netData]: new Proxy({}, {
                       get(th, p) {
                         translated.activeWeapon = p;
                       }
@@ -196,7 +180,7 @@ export function translate(gameManager) {
                 } catch { }
                 try {
                   game[translated.activePlayer].canInteract.call({
-                    [translated.netData]: new proxy({}, {
+                    [translated.netData]: new Proxy({}, {
                       get(th, p) {
                         translated.dead = p;
                       }
@@ -211,11 +195,11 @@ export function translate(gameManager) {
                 const SET = ["posOld", "dirOld", null];
                 const UPDATE = getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
                 try {
-                  newplr[UPDATE].call(new proxy({}, {
+                  newplr[UPDATE].call(new Proxy({}, {
                     get(th, p) {
                       const val = GET.shift();
                       if (val) translated[val] = p;
-                      return new proxy({ x: 0, y: 0 }, {
+                      return new Proxy({ x: 0, y: 0 }, {
                         get(th, p) {
                           return th[p] || { x: 0, y: 0 }
                         }
@@ -235,7 +219,7 @@ export function translate(gameManager) {
                       GET.unshift(null, null, null, null, null);
                       return false;
                     }
-                  }, new proxy({}, {
+                  }, new Proxy({}, {
                     get(th, p) {
                       nextIsVisual = true;
                       cameraInteracted = true;
@@ -257,7 +241,7 @@ export function translate(gameManager) {
             }
             if (game[prop].hasOwnProperty("topLeft")) {
               translated["uiManager"] = prop;
-              object.getOwnPropertyNames(game[prop]).forEach(v => {
+              Object.getOwnPropertyNames(game[prop]).forEach(v => {
                 if (typeof game[prop][v] == "object" && game[prop][v] != null)
                   if (getSignature(game[prop][v]) == convertedSignatureMap.pieTimer) {
                     translated.pieTimer = v;
@@ -268,21 +252,6 @@ export function translate(gameManager) {
 
           } catch { }
           try {
-            /*
-            const objSignature = getSignature(game[prop]);
-            if (objSignature) {
-              for (const [signatureName, signatureValue] of Object.entries(
-                convertedSignatureMap
-              )) {
-                if (translated[signatureName]) continue;
-
-                if (signatureValue === objSignature) {
-                  translated[signatureName] = prop;
-                  break;
-                }
-              }
-            }
-              */
             matchSignature(game, prop);
           } catch (e) {
           }
@@ -290,7 +259,7 @@ export function translate(gameManager) {
       }
       try {
         if (translated.playerBarn != null) {
-          object.getOwnPropertyNames(game[translated.playerBarn].playerPool).forEach(v => {
+          Object.getOwnPropertyNames(game[translated.playerBarn].playerPool).forEach(v => {
             if (Array.isArray(game[translated.playerBarn].playerPool[v])) {
               translated.pool = v
             }
@@ -306,7 +275,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.map != null && translated.obstaclePool == null) {
-          const objectProps = object.getOwnPropertyNames(game[translated.map]).filter(v => typeof game[translated.map][v] == "object" && game[translated.map][v] != null);
+          const objectProps = Object.getOwnPropertyNames(game[translated.map]).filter(v => typeof game[translated.map][v] == "object" && game[translated.map][v] != null);
           translated.obstaclePool = objectProps.filter(v => translated.pool in game[translated.map][v]).find(v => {
             const pool = game[translated.map][v][translated.pool]
             if (pool.some(V => V.isBush != null)) {
@@ -319,7 +288,7 @@ export function translate(gameManager) {
       try {
         if (translated.obstaclePool != null && translated.pointToScreen == null) {
           const pool = game[translated.map][translated.obstaclePool][translated.pool];
-          const proxyarg = new proxy({}, {
+          const proxyarg = new Proxy({}, {
             get(th, p) {
               translated.pointToScreen = p;
             }
@@ -334,7 +303,7 @@ export function translate(gameManager) {
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = "ping_danger";
           emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
-          emotebarn.camera = new proxy({}, {
+          emotebarn.camera = new Proxy({}, {
             get(th, p) {
               translated.screenToPoint = p;
             }
@@ -352,7 +321,7 @@ export function translate(gameManager) {
       try {
         if (translated.touch != null && translated.curWeapIdx == null) {
           game[translated.touch].getAimMovement.call({}, {
-            [translated.localData]: new proxy({}, {
+            [translated.localData]: new Proxy({}, {
               get(th, p) {
                 translated.curWeapIdx = p;
               }
@@ -363,16 +332,16 @@ export function translate(gameManager) {
 
       try {
         if (translated.smokeBarn != null && translated.particles == null) {
-          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v => gameManager.game[translated.smokeBarn][v] instanceof Array);
+          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v => gameManager.game[translated.smokeBarn][v] instanceof outer.Array);
         }
       } catch { }
 
       try {
         if (translated.objectCreator != null && translated.idToObj == null) {
-          f = object.getOwnPropertyNames(gameManager.game[translated.objectCreator].__proto__).find(v => gameManager.game[translated.objectCreator][v].length == 4)
-          gameManager.game[translated.objectCreator][f].call(new proxy(gameManager.game[translated.objectCreator], {
+          f = Object.getOwnPropertyNames(gameManager.game[translated.objectCreator].__proto__).find(v => gameManager.game[translated.objectCreator][v].length == 4)
+          gameManager.game[translated.objectCreator][f].call(new Proxy(gameManager.game[translated.objectCreator], {
             get(th, p) {
-              return th[p].bind(new proxy({}, {
+              return th[p].bind(new Proxy({}, {
                 get(th, p) {
                   translated.idToObj = p;
                 }
@@ -394,7 +363,7 @@ export function translate(gameManager) {
     const intervalId = setInterval(() => {
       translations = matchGameProperties();
       if (DEV) {
-        window.tr = translations;
+        outer.tr = translations;
       }
 
       if (allKeysFound()) {

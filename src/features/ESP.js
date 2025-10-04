@@ -1,5 +1,4 @@
 import { gameManager } from '@/state.js';
-import { object, reflect } from '@/utils/hook.js';
 import { aimState, inputState, settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import {
@@ -57,7 +56,7 @@ function nameTag(player) {
     const localPlayer = gameManager.game[translations.activePlayer];
     const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
-    reflect.defineProperty(player.nameText, "visible", {
+    Reflect.defineProperty(player.nameText, "visible", {
         get: () => (settings.esp_.visibleNametags_ && settings.esp_.enabled_),
         set: () => {}
     });
@@ -141,7 +140,7 @@ function renderGrenadeZones(localPlayer, graphics) {
     const idToObj = gameManager.game?.[translations.objectCreator]?.[translations.idToObj];
     if (!idToObj) return;
 
-    const grenades = object.values(idToObj).filter(
+    const grenades = Object.values(idToObj).filter(
         (obj) => (obj.__type === 9 && obj.type !== 'smoke') || (obj.smokeEmitter && obj.explodeParticle),
     );
 

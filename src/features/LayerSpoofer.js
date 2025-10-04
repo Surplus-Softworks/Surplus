@@ -1,7 +1,8 @@
 import { gameManager } from '@/state.js';
 import { settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { reflect, ref_addEventListener, object } from '@/utils/hook.js';
+import { ref_addEventListener } from '@/utils/hook.js';
+import { outer } from '@/utils/outer.js';
 
 export let isLayerSpoofActive = false;
 export let originalLayerValue = null;
@@ -16,7 +17,7 @@ const applyLayerSpoof = (player, targetLayer) => {
     if (!player || player.layer === undefined) return false;
 
     try {
-        originalLayerDescriptor = object.getOwnPropertyDescriptor(player, 'layer');
+        originalLayerDescriptor = Object.getOwnPropertyDescriptor(player, 'layer');
         originalLayerValue = player.layer;
 
         if (!originalLayerDescriptor) {
@@ -26,7 +27,7 @@ const applyLayerSpoof = (player, targetLayer) => {
             return false;
         }
 
-        object.defineProperty(player, 'layer', {
+        Object.defineProperty(player, 'layer', {
             configurable: true,
             get: () => targetLayer,
             set: () => {},
@@ -44,7 +45,7 @@ const restoreOriginalLayer = (player) => {
 
     try {
         if (originalLayerDescriptor) {
-            object.defineProperty(player, 'layer', originalLayerDescriptor);
+            Object.defineProperty(player, 'layer', originalLayerDescriptor);
             if ('value' in originalLayerDescriptor && !originalLayerDescriptor.get && !originalLayerDescriptor.set) {
                 player.layer = originalLayerValue;
             }
@@ -111,6 +112,6 @@ const handleKeyUp = (event) => {
 };
 
 export default function() {
-    reflect.apply(ref_addEventListener, globalThis, ['keydown', handleKeyDown]);
-    reflect.apply(ref_addEventListener, globalThis, ['keyup', handleKeyUp]);
+    Reflect.apply(ref_addEventListener, outer, ['keydown', handleKeyDown]);
+    Reflect.apply(ref_addEventListener, outer, ['keyup', handleKeyUp]);
 }

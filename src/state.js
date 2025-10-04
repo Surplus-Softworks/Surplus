@@ -1,6 +1,6 @@
-import { object, reflect } from '@/utils/hook.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
 import { initStore, write } from '@/utils/store.js';
+import { outer } from '@/utils/outer.js';
 
 export const aimState = {
   lastAimPos_: null,
@@ -23,7 +23,7 @@ export const setGameManager = (gm) => {
   gameManager = gm;
   try {
     if (DEV) {
-      window.gameManager = gm;
+      outer.gameManager = gm;
     }
   } catch {}
 };
@@ -38,7 +38,7 @@ const stringify = JSON.stringify;
 let updateTimer = null;
 let storeReadyPromise = null;
 const REGISTER_MARK = Symbol('registerSettings');
-const valueStore = object.create(null);
+const valueStore = Object.create(null);
 
 const getStoredValue = (id) => (id !== undefined ? valueStore[id] : undefined);
 
@@ -50,7 +50,7 @@ const setStoredValue = (id, value) => {
 const mergeConfigIntoSettings = (config, target) => {
   if (!config || typeof config !== 'object' || !target) return;
 
-  object.entries(config).forEach(([key, value]) => {
+  Object.entries(config).forEach(([key, value]) => {
     const targetValue = target[key];
 
     if (value && typeof value === 'object' && targetValue && typeof targetValue === 'object' && targetValue[REGISTER_MARK]) {
@@ -73,7 +73,7 @@ const ensureStoreReady = () => {
   return storeReadyPromise;
 };
 
-const lookupElement = (id) => (uiRoot ? reflect.apply(getElementById, uiRoot, [id]) : undefined);
+const lookupElement = (id) => (uiRoot ? Reflect.apply(getElementById, uiRoot, [id]) : undefined);
 
 export const setUIRoot = (root) => {
   uiRoot = root;
@@ -107,7 +107,7 @@ export const setValue = (id, value) => {
 export const registerSettings = (definition) => {
   const substr = String.prototype.substr;
 
-  const settingsObject = object.entries(definition).reduce((acc, [key, value]) => {
+  const settingsObject = Object.entries(definition).reduce((acc, [key, value]) => {
     if (value && typeof value === 'object' && value[REGISTER_MARK]) {
       acc[key] = value;
       return acc;
@@ -119,24 +119,24 @@ export const registerSettings = (definition) => {
     }
 
     if (key[0] === '_') {
-      reflect.defineProperty(acc, key, { value, enumerable: false, writable: true, configurable: true });
+      Reflect.defineProperty(acc, key, { value, enumerable: false, writable: true, configurable: true });
       return acc;
     }
 
     if (key[0] === '$') {
-      const publicKey = reflect.apply(substr, key, [1]);
-      const descriptor = reflect.getOwnPropertyDescriptor(definition, key) || {};
+      const publicKey = Reflect.apply(substr, key, [1]);
+      const descriptor = Reflect.getOwnPropertyDescriptor(definition, key) || {};
       const originalGet = descriptor.get;
       const originalSet = descriptor.set;
       const elementId = definition[`_${publicKey}`];
 
-      reflect.defineProperty(acc, publicKey, {
+      Reflect.defineProperty(acc, publicKey, {
         get() {
           const stored = getStoredValue(elementId);
           if (stored !== undefined && !isNaN(stored)) return stored;
 
           if (typeof originalGet === 'function') {
-            const computed = reflect.apply(originalGet, this, []);
+            const computed = Reflect.apply(originalGet, this, []);
             if (!isNaN(computed) && computed !== undefined) {
               setStoredValue(elementId, computed);
               return computed;
@@ -149,14 +149,14 @@ export const registerSettings = (definition) => {
           const normalized = typeof v === 'number' ? v : parseInt(v, 10) || 0;
           setStoredValue(elementId, normalized);
           if (typeof originalSet === 'function') {
-            reflect.apply(originalSet, this, [normalized]);
+            Reflect.apply(originalSet, this, [normalized]);
           }
         },
         enumerable: true,
         configurable: true,
       });
 
-      reflect.defineProperty(acc, `_${publicKey}`, {
+      Reflect.defineProperty(acc, `_${publicKey}`, {
         value: elementId,
         enumerable: false,
         writable: true,
@@ -167,7 +167,7 @@ export const registerSettings = (definition) => {
 
     const elementId = value;
 
-    reflect.defineProperty(acc, key, {
+    Reflect.defineProperty(acc, key, {
       get() {
         const stored = getStoredValue(elementId);
         if (stored !== undefined) return stored;
@@ -186,7 +186,7 @@ export const registerSettings = (definition) => {
       configurable: true,
     });
 
-    reflect.defineProperty(acc, `_${key}`, {
+    Reflect.defineProperty(acc, `_${key}`, {
       value: elementId,
       enumerable: false,
       writable: true,
@@ -196,7 +196,7 @@ export const registerSettings = (definition) => {
     return acc;
   }, {});
 
-  reflect.defineProperty(settingsObject, REGISTER_MARK, { value: true, enumerable: false });
+  Reflect.defineProperty(settingsObject, REGISTER_MARK, { value: true, enumerable: false });
   return settingsObject;
 };
 

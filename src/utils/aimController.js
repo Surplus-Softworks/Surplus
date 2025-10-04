@@ -1,6 +1,6 @@
 import { aimState, gameManager } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { object } from '@/utils/hook.js';
+import { outerInnerWidth, outerInnerHeight, outerRequestAnimationFrame } from '@/utils/outer.js';
 
 const MIN_DURATION_MS = 45;
 const MAX_EXTRA_DURATION_MS = 360;
@@ -54,8 +54,8 @@ const moveDirsEqual = (a, b) => {
 };
 
 const getScreenCenter = () => ({
-  x: globalThis.innerWidth / 2,
-  y: globalThis.innerHeight / 2,
+  x: outerInnerWidth() / 2,
+  y: outerInnerHeight() / 2,
 });
 
 const computeAngle = (point, center) => Math.atan2(point.y - center.y, point.x - center.x);
@@ -222,12 +222,12 @@ export const initializeAimController = () => {
   const input = gm[translations.input];
   const mousePos = input?.mousePos;
   if (!mousePos) {
-    globalThis.requestAnimationFrame(initializeAimController);
+    outerRequestAnimationFrame(initializeAimController);
     return;
   }
 
-  const initialX = mousePos._x ?? mousePos.x ?? globalThis.innerWidth / 2;
-  const initialY = mousePos._y ?? mousePos.y ?? globalThis.innerHeight / 2;
+  const initialX = mousePos._x ?? mousePos.x ?? outerInnerWidth() / 2;
+  const initialY = mousePos._y ?? mousePos.y ?? outerInnerHeight() / 2;
   controllerState.baselinePos_ = { x: initialX, y: initialY };
 
   const define = (axis) => ({
@@ -241,8 +241,8 @@ export const initializeAimController = () => {
     },
   });
 
-  object.defineProperty(mousePos, 'x', define('x'));
-  object.defineProperty(mousePos, 'y', define('y'));
+  Object.defineProperty(mousePos, 'x', define('x'));
+  Object.defineProperty(mousePos, 'y', define('y'));
 
   ticker.add(() => step());
   controllerState.initialized_ = true;

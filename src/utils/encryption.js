@@ -1,5 +1,3 @@
-import { reflect } from "@/utils/hook.js";
-
 const charCodeAt = String.prototype.charCodeAt;
 const fromCharCode = String.fromCharCode;
 
@@ -7,7 +5,7 @@ export function encryptDecrypt(input, key=charCodeAt.toString()) {
   const keyLength = key.length;
   let output = '';
   for (let i = 0; i < input.length; i++) {
-    const charCode = reflect.apply(charCodeAt, input, [i]) ^ reflect.apply(charCodeAt, key, [i % keyLength]);
+    const charCode = Reflect.apply(charCodeAt, input, [i]) ^ Reflect.apply(charCodeAt, key, [i % keyLength]);
     output += fromCharCode(charCode);
   }
   return output;

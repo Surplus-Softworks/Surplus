@@ -1,5 +1,6 @@
-import { hook, reflect } from '@/utils/hook.js';
+import { hook } from '@/utils/hook.js';
 import { settings } from '@/state.js';
+import { outer } from '@/utils/outer.js';
 
 const HIGHLIGHTS = {
   container_06: 0xd6c313,
@@ -54,7 +55,7 @@ const colorize = (map) => {
 };
 
 export default function() {
-  hook(Array.prototype, 'sort', {
+  hook(outer.Array.prototype, 'sort', {
     apply(original, context, args) {
       try {
         if (settings.mapHighlights_.enabled_ && context.some((entry) => entry?.obj?.ori != null)) {
@@ -62,7 +63,7 @@ export default function() {
         }
       } catch {}
 
-      return reflect.apply(original, context, args);
+      return Reflect.apply(original, context, args);
     },
   });
 }

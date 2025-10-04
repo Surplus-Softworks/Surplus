@@ -1,7 +1,6 @@
 import { gameManager } from '@/state.js';
 import { settings, inputState } from '@/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
-import { reflect } from '@/utils/hook.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
@@ -14,7 +13,7 @@ const weaponState = [
     { name_: '', ammo_: null, type_: '' },
 ];
 
-const queueInput = (command) => reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
+const queueInput = (command) => Reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
 
 const isSlowFiringWeapon = (weaponType) => {
     try {

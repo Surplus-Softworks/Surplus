@@ -8,23 +8,22 @@ import mapHighlights from "@/features/MapHighlights.js";
 import autoSwitch from "@/features/AutoSwitch.js";
 import layerSpoof from "@/features/LayerSpoofer.js";
 import { translate } from "@/utils/obfuscatedNameTranslator.js";
-import { hook, reflect, object } from "@/utils/hook.js";
+import { hook } from "@/utils/hook.js";
 import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
 import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
 import { initializeAimController, isAimInterpolating, getAimMode } from "@/utils/aimController.js";
 import initUI from "@/ui/init.js";
+import { outer } from "@/utils/outer.js";
 
 function injectGame(oninject) {
-  hook(Function.prototype, "call", {
+  hook(outer.Function.prototype, "call", {
     apply(f, th, args) {
-      try {
-        if (args[0]?.nameInput != null && args[0]?.game != null) {
-          Function.prototype.call = f;
-          setGameManager(args[0]);
-          oninject();
-        }
-      } catch {}
-      return reflect.apply(f, th, args);
+      if (args[0]?.nameInput != null && args[0]?.game != null) {
+        outer.Function.prototype.call = f;
+        setGameManager(args[0]);
+        oninject();
+      }
+      return Reflect.apply(f, th, args);
     },
   });
 }
@@ -51,6 +50,7 @@ const loadPlugins = () => {
     aimbot();
     autoSwitch();
     layerSpoof();
+    ranPlugins = true;
   }
   xray();
 };
@@ -59,7 +59,7 @@ let emoteTypes = [];
 let cachedMoveDir = { x: 0, y: 0 };
 
 const findNetworkHandler = () =>
-  object
+  Object
     .getOwnPropertyNames(gameManager.game.__proto__)
     .find((name) => typeof gameManager.game[name] === "function" && gameManager.game[name].length === 3);
 
@@ -215,7 +215,7 @@ const setupInputOverride = () => {
       }
 
       if (!payload.inputs) {
-        return reflect.apply(original, context, args);
+        return Reflect.apply(original, context, args);
       }
 
       applyAutoFire(payload);
@@ -225,7 +225,7 @@ const setupInputOverride = () => {
 
       inputState.toMouseLen_ = payload.toMouseLen;
 
-      return reflect.apply(original, context, args);
+      return Reflect.apply(original, context, args);
     },
   });
 };
@@ -233,7 +233,7 @@ const setupInputOverride = () => {
 const attach = () => {
   hook(gameManager.game, "init", {
     apply(f, th, args) {
-      const result = reflect.apply(f, th, args);
+      const result = Reflect.apply(f, th, args);
       translate(gameManager).then(() => {
         loadPlugins();
         ranPlugins = true;
