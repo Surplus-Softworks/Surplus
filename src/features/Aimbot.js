@@ -22,6 +22,7 @@ const state = {
 
 const AIM_SMOOTH_DISTANCE_PX = 6;
 const AIM_SMOOTH_ANGLE = Math.PI / 90;
+const MELEE_ENGAGE_DISTANCE = 5.5;
 
 const computeAimAngle = (point) => {
     if (!point) return 0;
@@ -234,51 +235,58 @@ function aimbotTicker() {
             const isMeleeEquipped = currentWeaponIndex === 2;
             const isGrenadeEquipped = currentWeaponIndex === 3;
             const isAiming = game[translations.inputBinds].isBindDown(inputCommands.Fire);
-            const meleeLockActive = settings.meleeLock_.enabled_ && (isMeleeEquipped) && isAiming;
+            const wantsMeleeLock = settings.meleeLock_.enabled_ && isAiming;
 
-            if (meleeLockActive) {
-                if (!isAiming) {
-                    state.meleeLockEnemy_ = null;
-                }
-
-                if (!state.meleeLockEnemy_ || !state.meleeLockEnemy_.active || state.meleeLockEnemy_[translations.netData][translations.dead]) {
-                    state.meleeLockEnemy_ = findClosestTarget(players, me);
-                }
-
-                if (state.meleeLockEnemy_) {
-                    const mePos = me[translations.visualPos];
-                    const enemyPos = state.meleeLockEnemy_[translations.visualPos];
-                    const distanceToEnemy = Math.hypot(mePos.x - enemyPos.x, mePos.y - enemyPos.y);
-
-                    if (distanceToEnemy <= 5.5) {
-                        const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
-                        const moveDir = {
-                            touchMoveActive: true,
-                            touchMoveLen: 255,
-                            x: Math.cos(moveAngle),
-                            y: Math.sin(moveAngle),
-                        };
-
-                        const screenPos = game[translations.camera][translations.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
-                        manageAimState({
-                            mode: 'meleeLock',
-                            targetScreenPos: { x: screenPos.x, y: screenPos.y },
-                            moveDir,
-                        });
-                        aimUpdated = true;
-
-                        if (settings.meleeLock_.autoMelee_ && !isMeleeEquipped) {
-                            queueInput('EquipMelee');
-                        }
-
-                        if (aimbotDot) aimbotDot.style.display = 'none';
-                        state.lastTargetScreenPos_ = null;
-                        return;
-                    }
-
-                    state.meleeLockEnemy_ = null;
+            let meleeEnemy = state.meleeLockEnemy_;
+            if (wantsMeleeLock) {
+                if (!meleeEnemy || !meleeEnemy.active || meleeEnemy[translations.netData][translations.dead]) {
+                    meleeEnemy = findClosestTarget(players, me);
+                    state.meleeLockEnemy_ = meleeEnemy;
                 }
             } else {
+                meleeEnemy = null;
+                state.meleeLockEnemy_ = null;
+            }
+
+            let distanceToMeleeEnemy = Infinity;
+            if (meleeEnemy) {
+                const mePos = me[translations.visualPos];
+                const enemyPos = meleeEnemy[translations.visualPos];
+                distanceToMeleeEnemy = Math.hypot(mePos.x - enemyPos.x, mePos.y - enemyPos.y);
+            }
+
+            const meleeTargetInRange = distanceToMeleeEnemy <= MELEE_ENGAGE_DISTANCE;
+
+            if (wantsMeleeLock && settings.meleeLock_.autoMelee_ && !isMeleeEquipped && meleeTargetInRange) {
+                queueInput('EquipMelee');
+            }
+
+            const meleeLockActive = wantsMeleeLock && isMeleeEquipped && meleeTargetInRange && meleeEnemy;
+
+            if (meleeLockActive) {
+                const mePos = me[translations.visualPos];
+                const enemyPos = meleeEnemy[translations.visualPos];
+                const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
+                const moveDir = {
+                    touchMoveActive: true,
+                    touchMoveLen: 255,
+                    x: Math.cos(moveAngle),
+                    y: Math.sin(moveAngle),
+                };
+
+                const screenPos = game[translations.camera][translations.pointToScreen]({ x: enemyPos.x, y: enemyPos.y });
+                manageAimState({
+                    mode: 'meleeLock',
+                    targetScreenPos: { x: screenPos.x, y: screenPos.y },
+                    moveDir,
+                });
+                aimUpdated = true;
+                if (aimbotDot) aimbotDot.style.display = 'none';
+                state.lastTargetScreenPos_ = null;
+                return;
+            }
+
+            if (wantsMeleeLock && !meleeTargetInRange) {
                 state.meleeLockEnemy_ = null;
             }
 
