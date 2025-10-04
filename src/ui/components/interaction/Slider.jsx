@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const sliderRef = useRef(null);
   const sliderValue = ((value - min) / (max - min)) * 100;
 
   const sliderStyle = {
@@ -16,14 +18,33 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
     e.stopPropagation();
   };
 
+  const handleMouseDown = (e) => {
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging]);
+
   return (
     <div className="checkbox-item slider-container" onClick={handleClick}>
       <label htmlFor={id} style={{ color: '#ddd', fontSize: '0.8125rem', cursor: 'default', pointerEvents: 'none' }}>
         {label}
       </label>
       <input
+        ref={sliderRef}
         type="range"
-        className="slider"
+        className={`slider ${isDragging ? 'slider-dragging' : ''}`}
         id={id}
         min={min}
         max={max}
@@ -31,7 +52,7 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
         onChange={handleChange}
         onInput={handleChange}
         onClick={handleClick}
-        onMouseDown={(e) => e.stopPropagation()}
+        onMouseDown={handleMouseDown}
         style={sliderStyle}
       />
     </div>

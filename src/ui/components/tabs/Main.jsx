@@ -34,7 +34,7 @@ const Main = ({ settings, onSettingChange }) => {
             checked={settings.aimbot_.stickyTarget_}
             onChange={(v) => onSettingChange((s) => (s.aimbot_.stickyTarget_ = v))}
           />
-          <KeybindSlot keybind="N" style={{ marginLeft: '0.625rem' }} />
+          <KeybindSlot keybind="N" />
         </div>
       </div>
 

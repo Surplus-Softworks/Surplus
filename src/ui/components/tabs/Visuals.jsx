@@ -50,7 +50,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       <div className="section-title">
         <Icons.LayerSpoof size={16} />
         <div className="section-title-container">Layer Spoofer</div>
-        <KeybindSlot keybind="Space" style={{ width: '2.375rem' }} />
+        <KeybindSlot keybind="Space" />
         <Checkbox
           id="layerspoof-enable"
           label="Enabled"
@@ -127,8 +127,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       <div className="section-title">
         <Icons.InfiniteZoom size={16} />
         <div className="section-title-container">Infinite Zoom</div>
-        <KeybindSlot keybind="Shift" style={{ width: '2.375rem' }} />
-        <KeybindSlot keybind="Scroll" style={{ width: '2.375rem' }} />
+        <KeybindSlot keybind={['Shift', 'Scroll']} mode="multiple" />
         <Checkbox
           id="infinite-zoom-enable"
           label="Enabled"

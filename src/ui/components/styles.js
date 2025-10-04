@@ -310,19 +310,32 @@ export const globalStylesheet = `
   }
 
   .keybind-slot {
-    min-width: 1.75rem;
+    width: auto;
     height: 1.125rem;
     padding: 0 0.375rem;
     background: linear-gradient(135deg, #2a2a2a 0%, #353535 100%);
     color: #ddd;
     font-size: 0.625rem;
     font-weight: 600;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: var(--border-radius);
     border: var(--border-width) solid #444;
+    border-top-width: calc(var(--border-width) * 0.5);
     box-shadow: 0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)), inset 0 var(--shadow-size) 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .keybind-slot-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .keybind-slot-separator {
+    color: #888;
+    font-size: 0.625rem;
+    font-weight: 600;
   }
 
   .help-section {
@@ -579,6 +592,14 @@ export const globalStylesheet = `
   }
 
   input[type='range']::-moz-range-thumb:active {
+    transform: scale(0.85);
+  }
+
+  input[type='range'].slider-dragging::-webkit-slider-thumb {
+    transform: scale(0.85);
+  }
+
+  input[type='range'].slider-dragging::-moz-range-thumb {
     transform: scale(0.85);
   }
 
