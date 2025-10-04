@@ -5,7 +5,7 @@ import MainTab from '@/ui/components/tabs/Main.jsx';
 import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
 import MiscTab from '@/ui/components/tabs/Misc.jsx';
 import HelpTab from '@/ui/components/tabs/Help.jsx';
-import { outer, outerDocument, outerInnerWidth, outerInnerHeight } from '@/utils/outer.js';
+import { outer, outerDocument} from '@/utils/outer.js';
 
 const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [activeTab, setActiveTab] = useState('help');
@@ -39,10 +39,10 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
         let newY = e.clientY - dragStart.y;
 
         const minX = -(menuWidth - minVisibleWidth);
-        const maxX = outerInnerWidth() - minVisibleWidth;
+        const maxX = outer.innerWidth - minVisibleWidth;
 
         const minY = 0;
-        const maxY = outerInnerHeight() - headerRect.height;
+        const maxY = outer.innerHeight - headerRect.height;
 
         newX = Math.max(minX, Math.min(maxX, newX));
         newY = Math.max(minY, Math.min(maxY, newY));

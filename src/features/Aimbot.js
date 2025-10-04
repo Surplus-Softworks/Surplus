@@ -5,7 +5,7 @@ import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import { ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
 import { manageAimState, getCurrentAimPosition } from '@/utils/aimController.js';
-import { outerInnerWidth, outerInnerHeight, outerDocument, outer } from '@/utils/outer.js';
+import { outerDocument, outer } from '@/utils/outer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
 const arrayPush = Array.prototype.push;
@@ -25,8 +25,8 @@ const AIM_SMOOTH_ANGLE = Math.PI / 90;
 
 const computeAimAngle = (point) => {
     if (!point) return 0;
-    const centerX = outerInnerWidth() / 2;
-    const centerY = outerInnerHeight() / 2;
+    const centerX = outer.innerWidth / 2;
+    const centerY = outer.innerHeight / 2;
     return Math.atan2(point.y - centerY, point.x - centerX);
 };
 

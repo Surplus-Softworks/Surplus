@@ -47,15 +47,15 @@
     }, 2500);
   }
 
+  let injected = false;
+
   whenBodyReady(() => {
     try {
-      const injectionSymbol = Symbol.for('__surplus_injected__');
-
-      if (document.documentElement[injectionSymbol]) {
+      if (injected) {
         return;
       }
 
-      document.documentElement[injectionSymbol] = true;
+      injected = true;
 
       const container = document.createElement('div');
 
