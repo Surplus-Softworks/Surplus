@@ -25,7 +25,7 @@ const isSlowFiringWeapon = (weaponType) => {
 };
 
 const isPlayerFiring = () =>
-    gameManager.game[translations.touch].shotDetected || gameManager.game[translations.inputBinds].isBindDown(inputCommands.Fire);
+    gameManager.game[translations.touch].shotDetected || gameManager.game[translations.inputBinds].isBindDown(inputCommands.Fire_);
 
 const queueWeaponSwitch = (weaponIndex) => {
     queueInput(WEAPON_COMMANDS[weaponIndex]);

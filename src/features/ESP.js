@@ -80,7 +80,7 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
     const game = gameManager.game;
     const isLocalPlayer = player === localPlayer;
     const isSpectating = game[translations.uiManager].spectating;
-    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire);
+    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
 
     let aimAngle;
     const currentAimPos = isLocalPlayer && !isSpectating ? getCurrentAimPosition() : null;
@@ -175,7 +175,7 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
     let dirY;
 
     const isSpectating = game[translations.uiManager].spectating;
-    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire);
+    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
 
     const currentAimPos = !isSpectating ? getCurrentAimPosition() : null;
     if (currentAimPos) {

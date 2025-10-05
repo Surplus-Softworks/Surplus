@@ -43,7 +43,7 @@ const Main = ({ settings, onSettingChange }) => {
       <div className={`group ${!settings.meleeLock_.enabled_ ? 'hidden' : ''}`}>
         <Checkbox
           id="auto-melee"
-          label="Auto Equip"
+          label="Auto Melee"
           checked={settings.meleeLock_.autoMelee_}
           onChange={(v) => onSettingChange((s) => (s.meleeLock_.autoMelee_ = v))}
         />

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 
 const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -18,23 +18,60 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
     e.stopPropagation();
   };
 
-  const handleMouseDown = (e) => {
-    e.stopPropagation();
-    setIsDragging(true);
-  };
+  const startDragging = useCallback(() => setIsDragging(true), []);
+  const stopDragging = useCallback(() => setIsDragging(false), []);
 
-  const handleMouseUp = () => {
-    setIsDragging(false);
-  };
+  const handleMouseDown = useCallback(
+    (e) => {
+      e.stopPropagation();
+      startDragging();
+    },
+    [startDragging]
+  );
+
+  const handleTouchStart = useCallback(
+    (e) => {
+      e.stopPropagation();
+      startDragging();
+    },
+    [startDragging]
+  );
+
+  const handleMouseUp = useCallback(
+    (e) => {
+      if (e) {
+        e.stopPropagation();
+      }
+      stopDragging();
+    },
+    [stopDragging]
+  );
+
+  const handleTouchEnd = useCallback(
+    (e) => {
+      if (e) {
+        e.stopPropagation();
+      }
+      stopDragging();
+    },
+    [stopDragging]
+  );
 
   useEffect(() => {
-    if (isDragging) {
-      window.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        window.removeEventListener('mouseup', handleMouseUp);
-      };
+    if (!isDragging) {
+      return undefined;
     }
-  }, [isDragging]);
+
+    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchcancel', handleTouchEnd);
+
+    return () => {
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchend', handleTouchEnd);
+      window.removeEventListener('touchcancel', handleTouchEnd);
+    };
+  }, [isDragging, handleMouseUp, handleTouchEnd]);
 
   return (
     <div className="checkbox-item slider-container" onClick={handleClick}>
@@ -53,6 +90,11 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
         onInput={handleChange}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         style={sliderStyle}
       />
     </div>

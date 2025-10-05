@@ -234,7 +234,7 @@ function aimbotTicker() {
             const currentWeaponIndex = game[translations.activePlayer][translations.localData][translations.curWeapIdx];
             const isMeleeEquipped = currentWeaponIndex === 2;
             const isGrenadeEquipped = currentWeaponIndex === 3;
-            const isAiming = game[translations.inputBinds].isBindDown(inputCommands.Fire);
+            const isAiming = game[translations.inputBinds].isBindDown(inputCommands.Fire_);
             const wantsMeleeLock = settings.meleeLock_.enabled_ && isAiming;
 
             let meleeEnemy = state.meleeLockEnemy_;

@@ -137,7 +137,7 @@ const applyAimTransitionSafety = (packet) => {
   if (!packet) return;
 
   const aimMode = getAimMode();
-  const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire));
+  const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire_));
 
   if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame && settings.aimbot_.enabled_) {
     suppressedShootState.firstShotFrameCount_ = 3; 
@@ -161,8 +161,8 @@ const applyAimTransitionSafety = (packet) => {
       packet.shootStart = true;
       if (suppressedShootState.pendingHold_) {
         packet.shootHold = true;
-        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput_ && !packet.inputs.includes(inputCommands.Fire)) {
-          packet.inputs.push(inputCommands.Fire);
+        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput_ && !packet.inputs.includes(inputCommands.Fire_)) {
+          packet.inputs.push(inputCommands.Fire_);
         }
       }
     }
@@ -173,7 +173,7 @@ const applyAimTransitionSafety = (packet) => {
   let fireCommandSuppressed = false;
   if (Array.isArray(packet.inputs)) {
     for (let i = packet.inputs.length - 1; i >= 0; i -= 1) {
-      if (packet.inputs[i] === inputCommands.Fire) {
+      if (packet.inputs[i] === inputCommands.Fire_) {
         packet.inputs.splice(i, 1);
         fireCommandSuppressed = true;
       }
@@ -202,11 +202,11 @@ const setupInputOverride = () => {
     apply(original, context, args) {
       const [type, payload] = args;
 
-      if (type === packetTypes.Join) {
+      if (type === packetTypes.Join_) {
         applyAutoLootFlag(payload);
       }
 
-      if (type === packetTypes.Input) {
+      if (type === packetTypes.Input_) {
         flushQueuedInputs(payload);
       }
 

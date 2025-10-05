@@ -15,6 +15,13 @@ const __dirname = path.dirname(__filename);
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
 
+const toMangle = [];
+
+const exactMatchPattern = toMangle.length > 0
+  ? `^(${toMangle.join('|')})$|`
+  : '';
+const mangleRegex = new RegExp(`${exactMatchPattern}_$`);
+
 const TERSER_OPTIONS = {
   parse: {
     bare_returns: true,
@@ -84,7 +91,7 @@ const TERSER_OPTIONS = {
     toplevel: true,
     safari10: false,
     properties: {
-      regex: /_$/,
+      regex: mangleRegex,
     },
     //nth_identifier: undefined
   },
