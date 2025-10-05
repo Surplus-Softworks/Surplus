@@ -15,34 +15,14 @@ const __dirname = path.dirname(__filename);
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
 
-const toMangle = [
-  "getDerivedStateFromProps", 
-  "componentWillMount",
-  "componentDidMount",
-  "componentWillReceiveProps",
-  "shouldComponentUpdate",
-  "componentWillUpdate",
-  "getSnapshotBeforeUpdate",
-  "getChildContext",
-  "componentWillUnmount",
-  "defaultProps",
-  "vnode",
-  "context",
-  "props",
-  "debounceRendering",
-  "componentDidUpdate",
-  "state",
-  "context",
-  "setState",
-  "componentDidCatch",
-  "getDerivedStateFromError",
-  "forceUpdate",
-  "revealOrder",
-  "isReactComponent",
-  "isPropagationStopped",
-  "isDefaultPrevented",
-  "persist",
-  "nativeEvent"
+const toMangle = [ 
+  "getDerivedStateFromProps",  "componentWillMount", "componentDidMount", "componentWillReceiveProps",
+  "getSnapshotBeforeUpdate", "getChildContext", "componentWillUnmount", "defaultProps", "vnode", "context", "props", 
+  "componentDidUpdate", "state", "context", "setState", "componentDidCatch", "getDerivedStateFromError", "forceUpdate",
+  "revealOrder", "isReactComponent", "isPropagationStopped", "isDefaultPrevented", "persist", "nativeEvent",
+  "shouldComponentUpdate", "componentWillUpdate", "debounceRendering", 
+
+  "unmount", "diffed"
 ];
 
 const exactMatchPattern = toMangle.length > 0

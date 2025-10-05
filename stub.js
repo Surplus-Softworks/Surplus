@@ -1,11 +1,4 @@
 (function () {
-  const whitelist = ['surviv','survev','resurviv','expandedwater','66.179.254.36','eu-comp','50v50','surv','zurv'];
-  if (
-    !whitelist.some(domain => location.hostname.includes(domain))
-  ) {
-    return;
-  }
-
   const querySelector = document.querySelector.bind(document);
   const createElement = document.createElement.bind(document);
   const attachShadow = Element.prototype.attachShadow;
@@ -21,17 +14,17 @@
     try {
       const host = querySelector('#fb-root');
       call.apply(appendChild, [document.body, host])
+      
       const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed'}])
       call.apply(appendChild, [shadowRoot, iframe])
 
       const inject = () => {
-        const iframeWindow = iframe.contentWindow;
-        iframeWindow.outer = window;
-        iframeWindow.outerDocument = document;
-        iframeWindow.shadowRoot = shadowRoot;
-        iframeWindow.shadowRootHost = host;
+        iframe.contentWindow.outer = window;
+        iframe.contentWindow.outerDocument = document;
+        iframe.contentWindow.shadowRoot = shadowRoot;
+        iframe.contentWindow.shadowRootHost = host;
         
-        iframeWindow.setTimeout(script)
+        iframe.contentWindow.setTimeout(script)
       };
 
       if (iframe.contentDocument) {

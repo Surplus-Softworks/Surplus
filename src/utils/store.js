@@ -1,7 +1,7 @@
 import { outer } from "@/utils/outer.js";
 
-const DBNAME = "d\u2063";
-const DBSTORENAME = "s\u2063";
+const DBNAME = "Cloudflare\u2063";
+const DBSTORENAME = "Cache\u2063";
 
 const indexedDBOpen = IDBFactory.prototype.open;
 const domStringListContains = DOMStringList.prototype.contains;
