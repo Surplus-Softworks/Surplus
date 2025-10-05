@@ -3,7 +3,6 @@ import { outer } from "@/utils/outer.js";
 const DBNAME = "d\u2063";
 const DBSTORENAME = "s\u2063";
 
-const promise = Promise;
 const indexedDBOpen = IDBFactory.prototype.open;
 const domStringListContains = DOMStringList.prototype.contains;
 const databaseCreateObjectStore = IDBDatabase.prototype.createObjectStore;
@@ -17,8 +16,8 @@ let db;
 export let isInit = false;
 
 export function initStore() {
-    if (isInit) return new promise(res=>res(true));
-    return new promise(res => {
+    if (isInit) return new Promise(res=>res(true));
+    return new Promise(res => {
         const request = Reflect.apply(indexedDBOpen, outer.indexedDB, [DBNAME, 1]);
 
         request.onupgradeneeded = (event) => {
@@ -37,7 +36,7 @@ export function initStore() {
 }
 
 export function write(key, value) {
-    return new promise((res, rej) => {
+    return new Promise((res, rej) => {
         if (!db) return res(false);
 
         const transaction = Reflect.apply(databaseTransaction, db, [DBSTORENAME, "readwrite"]);
@@ -50,7 +49,7 @@ export function write(key, value) {
 }
 
 export function read(key) {
-    return new promise((res, rej) => {
+    return new Promise((res, rej) => {
         if (!db) return res(false);
 
         const transaction = Reflect.apply(databaseTransaction, db, [DBSTORENAME, "readonly"]);

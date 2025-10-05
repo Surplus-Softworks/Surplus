@@ -1,5 +1,5 @@
 (function () {
-  const whitelist = ['surviv','survev','resurviv','expandedwater','66.179.254.36','eu-comp','50v50','surv','zurv', "localhost"];
+  const whitelist = ['surviv','survev','resurviv','expandedwater','66.179.254.36','eu-comp','50v50','surv','zurv'];
   if (
     !whitelist.some(domain => location.hostname.includes(domain))
   ) {
@@ -29,7 +29,6 @@
         iframeWindow.outer = window;
         iframeWindow.outerDocument = document;
         appendChild.apply(iframeDocument.head, [script])
-        console.log(2)
       };
 
       if (iframe.contentDocument) {
