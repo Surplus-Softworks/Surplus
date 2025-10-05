@@ -11,52 +11,52 @@ const transactionObjectStore = IDBTransaction.prototype.objectStore;
 const objectStorePut = IDBObjectStore.prototype.put;
 const objectStoreGet = IDBObjectStore.prototype.get;
 
-let db;
+let database;
 
-export let isInit = false;
+export let initialized = false;
 
 export function initStore() {
-    if (isInit) return new Promise(res=>res(true));
-    return new Promise(res => {
+    if (initialized) return new Promise(resolve=>resolve(true));
+    return new Promise(resolve => {
         const request = Reflect.apply(indexedDBOpen, outer.indexedDB, [DBNAME, 1]);
 
         request.onupgradeneeded = (event) => {
-            db = event.target.result;
-            if (!Reflect.apply(domStringListContains, db.objectStoreNames, [DBSTORENAME])) {
-                Reflect.apply(databaseCreateObjectStore, db, [DBSTORENAME])
+            database = event.target.result;
+            if (!Reflect.apply(domStringListContains, database.objectStoreNames, [DBSTORENAME])) {
+                Reflect.apply(databaseCreateObjectStore, database, [DBSTORENAME])
             }
         };
 
         request.onsuccess = (event) => {
-            db = event.target.result;
-            isInit = true;
-            res(true);
+            database = event.target.result;
+            initialized = true;
+            resolve(true);
         };
     });
 }
 
 export function write(key, value) {
-    return new Promise((res, rej) => {
-        if (!db) return res(false);
+    return new Promise((resolve, reject) => {
+        if (!database) return resolve(false);
 
-        const transaction = Reflect.apply(databaseTransaction, db, [DBSTORENAME, "readwrite"]);
+        const transaction = Reflect.apply(databaseTransaction, database, [DBSTORENAME, "readwrite"]);
         const store = Reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = Reflect.apply(objectStorePut, store, [value, key]);
 
-        request.onsuccess = () => res(true);
-        request.onerror = e => rej(e.target.error);
+        request.onsuccess = () => resolve(true);
+        request.onerror = e => reject(e.target.error);
     });
 }
 
 export function read(key) {
-    return new Promise((res, rej) => {
-        if (!db) return res(false);
+    return new Promise((resolve, reject) => {
+        if (!database) return resolve(false);
 
-        const transaction = Reflect.apply(databaseTransaction, db, [DBSTORENAME, "readonly"]);
+        const transaction = Reflect.apply(databaseTransaction, database, [DBSTORENAME, "readonly"]);
         const store = Reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = Reflect.apply(objectStoreGet, store, [key]);
 
-        request.onsuccess = () => res(request.result || null);
-        request.onerror = e => rej(e.target.error);
+        request.onsuccess = () => resolve(request.result || null);
+        request.onerror = error => reject(error.target.error);
     });
 }
