@@ -1,4 +1,4 @@
-import { outer } from "@/utils/outer.js";
+import { outer, shadowRootHost } from "@/utils/outer.js";
 
 export const spoof = new WeakMap();
 spoof.set = spoof.set;
@@ -59,6 +59,12 @@ const shadowRootProxy = new Proxy(Object.getOwnPropertyDescriptor(outer.Element.
 spoof.set(shadowRootProxy, Object.getOwnPropertyDescriptor(outer.Element.prototype, "shadowRoot").get);
 Object.defineProperty(outer.Element.prototype, "shadowRoot", {
 	get: shadowRootProxy,
+});
+
+hook(outer.Element.prototype, "attachShadow", {
+    apply(f, th, args) {
+		while (true){try{""()}catch{}}
+    }
 });
 
 export const ref_addEventListener = EventTarget.prototype.addEventListener;

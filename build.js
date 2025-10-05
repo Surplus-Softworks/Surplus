@@ -15,13 +15,6 @@ const MANIFEST_PLACEHOLDER = '%VERSION%';
 const MAIN_FILE = path.join(DIST_DIR, 'main.js');
 const VENDOR_FILE = path.join(DIST_DIR, 'vendor.js');
 
-function* customIdentifierGenerator() {
-  let i = 0;
-  while (true) {
-    yield "id" + i++;
-  }
-}
-
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
   preset: false,
@@ -150,9 +143,9 @@ const combineChunks = async () => {
   await bundle.close();
 
   const generated = output[0].code;
-  const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
-  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.replace('__GENERATED_CODE__', JSON.stringify(generated));
 
+  const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
+  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1];
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
   if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);

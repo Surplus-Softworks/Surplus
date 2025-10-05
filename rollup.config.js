@@ -15,12 +15,40 @@ const __dirname = path.dirname(__filename);
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
 
-const toMangle = [];
+const toMangle = [
+  "getDerivedStateFromProps", 
+  "componentWillMount",
+  "componentDidMount",
+  "componentWillReceiveProps",
+  "shouldComponentUpdate",
+  "componentWillUpdate",
+  "getSnapshotBeforeUpdate",
+  "getChildContext",
+  "componentWillUnmount",
+  "defaultProps",
+  "vnode",
+  "context",
+  "props",
+  "debounceRendering",
+  "componentDidUpdate",
+  "state",
+  "context",
+  "setState",
+  "componentDidCatch",
+  "getDerivedStateFromError",
+  "forceUpdate",
+  "revealOrder",
+  "isReactComponent",
+  "isPropagationStopped",
+  "isDefaultPrevented",
+  "persist",
+  "nativeEvent"
+];
 
 const exactMatchPattern = toMangle.length > 0
   ? `^(${toMangle.join('|')})$|`
   : '';
-const mangleRegex = new RegExp(`${exactMatchPattern}_$`);
+const mangleRegex = new RegExp(`${exactMatchPattern}^__.*$|_$`);
 
 const TERSER_OPTIONS = {
   parse: {

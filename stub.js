@@ -7,6 +7,7 @@
   }
 
   const querySelector = document.querySelector.bind(document);
+  const createElement = document.createElement.bind(document);
   const attachShadow = Element.prototype.attachShadow;
   const appendChild = Element.prototype.appendChild;
   const call = Function.prototype.call;
@@ -14,21 +15,23 @@
 
   const iframe = document.createElement('iframe');
   iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:0;opacity:0;pointer-events:none;display:none';
-  const script = document.createElement('script');
-  script.textContent = __GENERATED_CODE__;
+  const script = __SURPLUS__;
 
   const run = () => {
     try {
-      const host = querySelector('#preroll-wrapper');
+      const host = querySelector('#fb-root');
+      call.apply(appendChild, [document.body, host])
       const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed'}])
       call.apply(appendChild, [shadowRoot, iframe])
 
       const inject = () => {
         const iframeWindow = iframe.contentWindow;
-        const iframeDocument = iframe.contentDocument;
         iframeWindow.outer = window;
         iframeWindow.outerDocument = document;
-        appendChild.apply(iframeDocument.head, [script])
+        iframeWindow.shadowRoot = shadowRoot;
+        iframeWindow.shadowRootHost = host;
+        
+        iframeWindow.setTimeout(script)
       };
 
       if (iframe.contentDocument) {
