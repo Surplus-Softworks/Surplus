@@ -1,4 +1,4 @@
-import { aimState, gameManager } from '@/state.js';
+import { aimState, gameManager, settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 const MIN_DURATION_MS = 45;
@@ -71,7 +71,7 @@ const computeDuration = (start, end) => {
   const angleFactor = clamp01(angleDiff / Math.PI);
   const distanceFactor = clamp01(distance / 450);
   const factor = Math.max(angleFactor, distanceFactor);
-  return MIN_DURATION_MS + factor * MAX_EXTRA_DURATION_MS;
+  return MIN_DURATION_MS + factor * MAX_EXTRA_DURATION_MS * (settings.aimbot_.smooth_ / 100);
 };
 
 const updateBodyRotation = () => {
