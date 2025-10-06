@@ -8,13 +8,18 @@ import terser from '@rollup/plugin-terser';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import CleanCSS from 'clean-css';
 
 function cssPlugin() {
+  const cleanCSS = new CleanCSS({ level: 2 });
+
   return {
     name: 'css-string',
     transform(code, id) {
       if (id.endsWith('.css')) {
-        const css = fs.readFileSync(id, 'utf-8');
+        let css = fs.readFileSync(id, 'utf-8');
+        const minified = cleanCSS.minify(css);
+        css = minified.styles;
         return {
           code: `export const globalStylesheet = ${JSON.stringify(css)};`,
           map: null
@@ -37,7 +42,7 @@ const toMangle = [
   "revealOrder", "isReactComponent", "isPropagationStopped", "isDefaultPrevented", "persist", "nativeEvent",
   "shouldComponentUpdate", "componentWillUpdate", "debounceRendering", 
 
-  "unmount", "diffed"
+  "diffed", "onSettingChange", "settings", "onClose"
 ];
 
 const toNotMangle = [

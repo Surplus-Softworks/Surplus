@@ -455,7 +455,9 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
 
                 reflectBullets = reflectivePatterns.some(pattern => obstacleType?.includes(pattern));
             }
-
+            //if (bounceCount === 0) { //debug
+            //    outer.console.log('Hit:', obstacleType, 'reflects:', reflectBullets);
+            //}
             if (reflectBullets && bounceCount < maxBounces) {
                 const dot = v2.dot(currentDir, closestCol.normal);
                 currentDir = v2.add(v2.mul(closestCol.normal, dot * -2), currentDir);

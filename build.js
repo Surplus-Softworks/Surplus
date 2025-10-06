@@ -143,7 +143,7 @@ const combineChunks = async () => {
 © 2025 Surplus Softworks
 */
 
-!function(){
+!function() {
 const whitelist = [
   'surviv',
   'survev',
@@ -159,9 +159,9 @@ const whitelist = [
 if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
   return;
 }
-}()
-;
-` + stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1];
+
+${stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1]}
+}()`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
   if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);

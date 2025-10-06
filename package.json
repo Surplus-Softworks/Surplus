@@ -20,6 +20,7 @@
     "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.4",
     "archiver": "*",
+    "clean-css": "^5.3.3",
     "js-confuser": "^2.0.0",
     "lzma-native": "^8.0.6",
     "rollup": "^4.52.3",
