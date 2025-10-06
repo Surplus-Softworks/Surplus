@@ -1,4 +1,4 @@
-import { outer, shadowRootHost } from "@/utils/outer.js";
+import { outer } from "@/utils/outer.js";
 
 export const spoof = new WeakMap();
 spoof.set = spoof.set;

@@ -16,9 +16,8 @@ const run = () => {
   call.apply(appendChild, [shadowRoot, iframe])
 
   const inject = () => {
-    iframe.contentWindow.outer = window;
-    iframe.contentWindow.shadowRoot = shadowRoot;
-    iframe.contentWindow.shadowRootHost = host;
+    iframe.contentWindow.ou = window;
+    iframe.contentWindow.sr = shadowRoot;
     
     iframe.contentWindow.setTimeout(__SURPLUS__)
   };

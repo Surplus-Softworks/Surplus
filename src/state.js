@@ -262,7 +262,7 @@ export const settings = {
     enabled_: 'esp-enable',
     players_: 'player-esp',
     flashlights_: registerSettings({ own_: 'own-flashlight', others_: 'others-flashlight', trajectory_: 'flashlight-trajectory' }),
-    grenades_: registerSettings({ explosions_: 'grenade-esp', trajectories_: 'grenade-trajectories' }),
+    grenades_: registerSettings({ explosions_: 'grenade-esp', trajectory_: 'grenade-trajectory' }),
   }),
   mapHighlights_: registerSettings({
     enabled_: 'maphighlights',
@@ -309,7 +309,7 @@ export const defaultSettings = {
     players_: true,
     grenades_: {
       explosions_: true,
-      trajectories_: true,
+      trajectory_: true,
     },
     flashlights_: {
       own_: true,

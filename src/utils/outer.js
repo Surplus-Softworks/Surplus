@@ -1,19 +1,14 @@
 /**
  * @type {typeof window}
  */
-export const outer = window.outer;
+export const outer = window.ou;
 
 /**
  * @type {typeof document}
  */
-export const outerDocument = window.outer.document
+export const outerDocument = window.ou.document
 
 /**
  * @type {typeof ShadowRoot}
  */
-export const shadowRoot = window.shadowRoot;
-
-/**
- * @type {typeof HTMLDivElement}
- */
-export const shadowRootHost = window.shadowRootHost;
+export const shadowRoot = window.sr;

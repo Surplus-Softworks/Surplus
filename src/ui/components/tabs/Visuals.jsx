@@ -78,10 +78,10 @@ const Visuals = ({ settings, onSettingChange }) => {
             style={{ marginRight: '0.375rem' }}
           />
           <Checkbox
-            id="grenade-trajectories"
-            label="Trajectories"
-            checked={settings.esp_.grenades_.trajectories_}
-            onChange={(v) => onSettingChange((s) => (s.esp_.grenades_.trajectories_ = v))}
+            id="grenade-trajectory"
+            label="Trajectory"
+            checked={settings.esp_.grenades_.trajectory_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.grenades_.trajectory_ = v))}
             style={{ marginRight: '0.375rem' }}
           />
         </div>

@@ -20,7 +20,6 @@ function injectGame(oninject) {
     apply(f, th, args) {
       try {
         if (args[0]?.nameInput != null && args[0]?.game != null) {
-          console.log(args);
           outer.Function.prototype.call = f;
           setGameManager(args[0]);
           oninject();

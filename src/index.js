@@ -6,6 +6,10 @@ import { outer, outerDocument } from "@/utils/outer.js";
 (async () => {
   if (DEV) {
     console.warn("CHEAT IS OVER HERE")
+    console.warn("CHEAT IS OVER HERE")
+    console.warn("CHEAT IS OVER HERE")
+    console.warn("CHEAT IS OVER HERE")
+    console.warn("CHEAT IS OVER HERE")
   }
 
   const time = Date.now();
@@ -24,15 +28,6 @@ import { outer, outerDocument } from "@/utils/outer.js";
       ""();
     }
   } catch { }
-
-  if (DEV) {
-    hook(outer.Function.prototype, "constructor", {
-      apply(f, th, args) {
-        if (args[0] == "debugger") return Reflect.apply(f, th, [""]);
-        return Reflect.apply(f, th, args);
-      }
-    });
-  }
 
   initStore();
   initialize();
