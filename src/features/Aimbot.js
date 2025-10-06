@@ -8,7 +8,6 @@ import { manageAimState, getCurrentAimPosition, getPing } from '@/utils/aimContr
 import { outerDocument, outer } from '@/utils/outer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
-const arrayPush = Array.prototype.push;
 const isBypassLayer = (layer) => layer === 2 || layer === 3;
 
 const state = {
