@@ -259,7 +259,7 @@ function aimbotTicker() {
             const meleeTargetInRange = distanceToMeleeEnemy <= MELEE_ENGAGE_DISTANCE;
 
             if (wantsMeleeLock && settings.meleeLock_.autoMelee_ && !isMeleeEquipped && meleeTargetInRange) {
-                queueInput('EquipMelee');
+                queueInput(inputCommands.EquipMelee_);
             }
 
             const meleeLockActive = wantsMeleeLock && isMeleeEquipped && meleeTargetInRange && meleeEnemy;
