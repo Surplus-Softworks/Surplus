@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 
-const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
+const Slider = ({ id, label, value, min = 0, max = 100, warning = false, onChange }) => {
   const [isDragging, setIsDragging] = useState(false);
   const sliderRef = useRef(null);
   const sliderValue = ((value - min) / (max - min)) * 100;
@@ -97,7 +97,19 @@ const Slider = ({ id, label, value, min = 0, max = 100, onChange }) => {
         onTouchCancel={handleTouchEnd}
         style={sliderStyle}
       />
+      {warning && <span className="risky-label" style={{ marginLeft: '0.5rem' }}>RISKY!!!</span>}
     </div>
+  );
+};
+
+export const WarningSlider = (props) => {
+  const currentValue = props.value;
+  return (
+    <Slider
+      {...props} 
+      value={currentValue}
+      warning={props.shouldWarning?.(currentValue) ?? false}
+    />
   );
 };
 

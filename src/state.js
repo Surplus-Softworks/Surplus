@@ -203,6 +203,16 @@ export const registerSettings = (definition) => {
 export const settings = {
   aimbot_: registerSettings({
     enabled_: 'aim-enable',
+    _smooth_: 'aim-smooth',
+    get $smooth_() {
+      return parseInt(getValue('aim-smooth'));
+    },
+    set $smooth_(v) {
+      const el = lookupElement(this._smooth_);
+      if (!el) return;
+      el.value = v;
+      el.oninput?.();
+    },
     targetKnocked_: 'target-knocked',
     stickyTarget_: 'sticky-target',
     showDot_: 'aimbot-show-dot',
@@ -270,6 +280,7 @@ export const settings = {
 export const defaultSettings = {
   aimbot_: {
     enabled_: true,
+    smooth_: 50,
     targetKnocked_: true,
     stickyTarget_: true,
     showDot_: true,

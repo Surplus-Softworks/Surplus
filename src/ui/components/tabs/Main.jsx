@@ -1,6 +1,6 @@
 import React from 'react';
 import Checkbox from '@/ui/components/interaction/Checkbox.jsx';
-import Slider from '@/ui/components/interaction/Slider.jsx';
+import Slider, { WarningSlider } from '@/ui/components/interaction/Slider.jsx';
 import SectionTitle from '@/ui/components/layout/SectionTitle.jsx';
 import { Icons } from '@/ui/components/icons.jsx';
 import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
@@ -16,6 +16,13 @@ const Main = ({ settings, onSettingChange }) => {
         onEnabledChange={(v) => onSettingChange((s) => (s.aimbot_.enabled_ = v))}
       />
       <div className={`group ${!settings.aimbot_.enabled_ ? 'hidden' : ''}`}>
+        <WarningSlider
+          id="aim-smooth"
+          label="Smooth"
+          value={settings.aimbot_.smooth_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.smooth_ = v))}
+          shouldWarning={(v) => v <= 20}
+        />
         <Checkbox
           id="target-knocked"
           label="Target Knocked"
