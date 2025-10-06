@@ -251,7 +251,7 @@ export const settings = {
     visibleNametags_: 'visible-nametags',
     enabled_: 'esp-enable',
     players_: 'player-esp',
-    flashlights_: registerSettings({ own_: 'own-flashlight', others_: 'others-flashlight' }),
+    flashlights_: registerSettings({ own_: 'own-flashlight', others_: 'others-flashlight', trajectory_: 'flashlight-trajectory' }),
     grenades_: registerSettings({ explosions_: 'grenade-esp', trajectories_: 'grenade-trajectories' }),
   }),
   mapHighlights_: registerSettings({
@@ -303,6 +303,7 @@ export const defaultSettings = {
     flashlights_: {
       own_: true,
       others_: true,
+      trajectory_: true,
     },
   },
   autoLoot_: {

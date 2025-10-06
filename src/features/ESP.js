@@ -13,6 +13,102 @@ import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.
 import { getCurrentAimPosition, isAimInterpolating } from '@/utils/aimController.js';
 import { outer } from '@/utils/outer.js';
 
+// Vector math helpers
+const v2 = {
+    create: (x, y) => ({ x, y }),
+    copy: (v) => ({ x: v.x, y: v.y }),
+    add: (a, b) => ({ x: a.x + b.x, y: a.y + b.y }),
+    sub: (a, b) => ({ x: a.x - b.x, y: a.y - b.y }),
+    mul: (v, s) => ({ x: v.x * s, y: v.y * s }),
+    dot: (a, b) => a.x * b.x + a.y * b.y,
+    length: (v) => Math.sqrt(v.x * v.x + v.y * v.y),
+    lengthSqr: (v) => v.x * v.x + v.y * v.y,
+    normalize: (v) => {
+        const len = Math.sqrt(v.x * v.x + v.y * v.y);
+        return len > 0.0001 ? { x: v.x / len, y: v.y / len } : { x: 1, y: 0 };
+    },
+};
+
+// Collision detection helpers
+const collisionHelpers = {
+    // Intersect line segment with AABB
+    intersectSegmentAabb: (a, b, min, max) => {
+        const dir = v2.sub(b, a);
+        const invDir = { x: 1 / dir.x, y: 1 / dir.y };
+
+        const t1 = (min.x - a.x) * invDir.x;
+        const t2 = (max.x - a.x) * invDir.x;
+        const t3 = (min.y - a.y) * invDir.y;
+        const t4 = (max.y - a.y) * invDir.y;
+
+        const tmin = Math.max(Math.min(t1, t2), Math.min(t3, t4));
+        const tmax = Math.min(Math.max(t1, t2), Math.max(t3, t4));
+
+        if (tmax < 0 || tmin > tmax || tmin > 1) return null;
+
+        const t = Math.max(0, tmin);
+        const point = v2.add(a, v2.mul(dir, t));
+
+        // Calculate normal
+        const center = v2.mul(v2.add(min, max), 0.5);
+        const extent = v2.mul(v2.sub(max, min), 0.5);
+        const localPt = v2.sub(point, center);
+
+        let normal;
+        const dx = Math.abs(Math.abs(localPt.x) - extent.x);
+        const dy = Math.abs(Math.abs(localPt.y) - extent.y);
+
+        if (dx < dy) {
+            normal = { x: localPt.x > 0 ? 1 : -1, y: 0 };
+        } else {
+            normal = { x: 0, y: localPt.y > 0 ? 1 : -1 };
+        }
+
+        return { point, normal };
+    },
+
+    // Intersect line segment with circle
+    intersectSegmentCircle: (a, b, pos, rad) => {
+        const d = v2.sub(b, a);
+        const f = v2.sub(a, pos);
+
+        const aa = v2.dot(d, d);
+        const bb = 2 * v2.dot(f, d);
+        const c = v2.dot(f, f) - rad * rad;
+
+        let discriminant = bb * bb - 4 * aa * c;
+        if (discriminant < 0) return null;
+
+        discriminant = Math.sqrt(discriminant);
+        const t1 = (-bb - discriminant) / (2 * aa);
+        const t2 = (-bb + discriminant) / (2 * aa);
+
+        let t = -1;
+        if (t1 >= 0 && t1 <= 1) t = t1;
+        else if (t2 >= 0 && t2 <= 1) t = t2;
+
+        if (t < 0) return null;
+
+        const point = v2.add(a, v2.mul(d, t));
+        const normal = v2.normalize(v2.sub(point, pos));
+
+        return { point, normal };
+    },
+
+    // Intersect segment with collider (handles both AABB and Circle)
+    intersectSegment: (collider, a, b) => {
+        if (!collider) return null;
+
+        if (collider.type === 1) { // AABB
+            return collisionHelpers.intersectSegmentAabb(a, b, collider.min, collider.max);
+        } else if (collider.type === 0) { // Circle
+            return collisionHelpers.intersectSegmentCircle(a, b, collider.pos, collider.rad);
+        }
+
+        return null;
+    },
+};
+
 const COLORS = {
     GREEN_: 0x399d37,
     BLUE_: 0x3a88f4,
@@ -247,6 +343,143 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
 }
 
 
+// Calculate bullet trajectory with bounces
+function calculateTrajectory(startPos, dir, distance, layer, maxBounces = 3) {
+    const segments = [];
+    const BULLET_HEIGHT = 0.25;
+    const REFLECT_DIST_DECAY = 1.5;
+
+    let pos = v2.copy(startPos);
+    let currentDir = v2.normalize(dir);
+    let remainingDist = distance;
+    let bounceCount = 0;
+
+    const game = gameManager.game;
+    const idToObj = game?.[translations.objectCreator]?.[translations.idToObj];
+    if (!idToObj) return segments;
+
+    // Get all obstacles - check for objects with collider property
+    const obstacles = Object.values(idToObj).filter(obj => {
+        // Must have a collider to be an obstacle
+        if (!obj.collider) return false;
+        if (obj.dead) return false;
+        if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
+        // Check layer compatibility
+        if (obj.layer !== undefined && obj.layer !== layer && obj.layer !== 0) return false;
+        return true;
+    });
+
+    while (bounceCount <= maxBounces && remainingDist > 0.1) {
+        const endPos = v2.add(pos, v2.mul(currentDir, remainingDist));
+
+        // Find closest collision
+        let closestCol = null;
+        let closestDist = Infinity;
+        let closestObstacle = null;
+
+        for (const obstacle of obstacles) {
+            if (obstacle.collidable === false) continue;
+
+            const res = collisionHelpers.intersectSegment(obstacle.collider, pos, endPos);
+            if (res) {
+                const dist = v2.lengthSqr(v2.sub(res.point, pos));
+                if (dist < closestDist && dist > 0.0001) {
+                    closestDist = dist;
+                    closestCol = res;
+                    closestObstacle = obstacle;
+                }
+            }
+        }
+
+        if (closestCol) {
+            // Add segment to collision point
+            segments.push({
+                start: v2.copy(pos),
+                end: v2.copy(closestCol.point),
+            });
+
+            // Check if obstacle reflects bullets
+            const obstacleType = closestObstacle?.type;
+            const reflectBullets = obstacleType && gameObjects?.[obstacleType]?.reflectBullets;
+
+            if (reflectBullets && bounceCount < maxBounces) {
+                // Calculate reflection
+                const dot = v2.dot(currentDir, closestCol.normal);
+                currentDir = v2.add(v2.mul(closestCol.normal, dot * -2), currentDir);
+                currentDir = v2.normalize(currentDir);
+
+                // Update position and remaining distance
+                pos = v2.add(closestCol.point, v2.mul(currentDir, 0.01)); // Offset slightly
+                const traveledDist = Math.sqrt(closestDist);
+                remainingDist = Math.max(1, remainingDist - traveledDist) / REFLECT_DIST_DECAY;
+                bounceCount++;
+            } else {
+                // Hit non-reflective surface, stop
+                break;
+            }
+        } else {
+            // No collision, add final segment
+            segments.push({
+                start: v2.copy(pos),
+                end: endPos,
+            });
+            break;
+        }
+    }
+
+    return segments;
+}
+
+function renderBulletTrajectory(localPlayer, graphics) {
+    const localWeapon = findWeapon(localPlayer);
+    const localBullet = findBullet(localWeapon);
+
+    if (!localBullet || !localWeapon) return;
+
+    const game = gameManager.game;
+    const playerPos = localPlayer[translations.pos];
+    const isSpectating = game[translations.uiManager].spectating;
+    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
+
+    // Get aim angle
+    let aimAngle;
+    const currentAimPos = !isSpectating ? getCurrentAimPosition() : null;
+    if (currentAimPos) {
+        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerPos.x, y: playerPos.y });
+        aimAngle = Math.atan2(screenPos.y - currentAimPos.y, screenPos.x - currentAimPos.x) - Math.PI;
+    } else if (!isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
+        aimAngle = Math.atan2(game[translations.input].mousePos._y - outer.innerHeight / 2, game[translations.input].mousePos._x - outer.innerWidth / 2);
+    } else if (!isSpectating && aimState.lastAimPos_) {
+        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerPos.x, y: playerPos.y });
+        aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos_.clientY, screenPos.x - aimState.lastAimPos_.clientX) - Math.PI;
+    } else {
+        aimAngle = Math.atan2(localPlayer[translations.dir].x, localPlayer[translations.dir].y) - Math.PI / 2;
+    }
+
+    // Calculate direction vector - flip Y because game coordinate system has Y increasing downward
+    const dir = v2.create(Math.cos(aimAngle), -Math.sin(aimAngle));
+
+    // Calculate trajectory
+    const segments = calculateTrajectory(playerPos, dir, localBullet.distance, localPlayer.layer);
+
+    // Render trajectory segments
+    graphics.lineStyle(2, 0xff00ff, 0.5);
+
+    for (const segment of segments) {
+        const startScreen = {
+            x: (segment.start.x - playerPos.x) * 16,
+            y: (playerPos.y - segment.start.y) * 16,
+        };
+        const endScreen = {
+            x: (segment.end.x - playerPos.x) * 16,
+            y: (playerPos.y - segment.end.y) * 16,
+        };
+
+        graphics.moveTo(startScreen.x, startScreen.y);
+        graphics.lineTo(endScreen.x, endScreen.y);
+    }
+}
+
 function renderFlashlights(localPlayer, players, graphics) {
     const localWeapon = findWeapon(localPlayer);
     const localBullet = findBullet(localWeapon);
@@ -304,6 +537,12 @@ function renderESP() {
     flashlightGraphics.clear();
     if (settings.esp_.enabled_ && (settings.esp_.flashlights_.others_ || settings.esp_.flashlights_.own_)) {
         renderFlashlights(localPlayer, players, flashlightGraphics);
+    }
+
+    const trajectoryGraphics2 = getGraphics(localPlayer.container, 'bulletTrajectory');
+    trajectoryGraphics2.clear();
+    if (settings.esp_.enabled_ && settings.esp_.flashlights_.trajectory_) {
+        renderBulletTrajectory(localPlayer, trajectoryGraphics2);
     }
 
     players.forEach(nameTag);

@@ -102,6 +102,13 @@ const Visuals = ({ settings, onSettingChange }) => {
             onChange={(v) => onSettingChange((s) => (s.esp_.flashlights_.others_ = v))}
             style={{ marginRight: '0.375rem' }}
           />
+          <Checkbox
+            id="flashlight-trajectory"
+            label="Trajectory"
+            checked={settings.esp_.flashlights_.trajectory_}
+            onChange={(v) => onSettingChange((s) => (s.esp_.flashlights_.trajectory_ = v))}
+            style={{ marginRight: '0.375rem' }}
+          />
         </div>
       </div>
 
