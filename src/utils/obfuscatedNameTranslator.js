@@ -140,7 +140,7 @@ export function translate(gameManager) {
         if (game.hasOwnProperty(prop)) {
           try {
             if (game[prop].hasOwnProperty("deadBodyPool")) {
-              translated.dead_BodyBarn_ = prop;
+              translated.deadBodyBarn_ = prop;
             } else if (game[prop].hasOwnProperty("airdropPool")) {
               translated.airdropBarn_ = prop;
             }
