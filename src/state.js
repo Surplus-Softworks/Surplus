@@ -19,14 +19,6 @@ export const inputState = {
 };
 
 export let gameManager;
-export const setGameManager = (gm) => {
-  gameManager = gm;
-  try {
-    if (DEV) {
-      outer.gameManager = gm;
-    }
-  } catch {}
-};
 
 const getElementById = ShadowRoot.prototype.getElementById;
 

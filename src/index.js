@@ -3,21 +3,6 @@ import { hook } from "@/utils/hook.js";
 import { initStore } from "@/utils/store.js";
 import { outer, outerDocument } from "@/utils/outer.js";
 
-setTimeout(() => {
-  if (new Error().stack.split("\n").length > 6) {
-    outerDocument.head.innerHTML = "";
-    outerDocument.body.innerHTML = `<h1>This copy of Surplus is illegitimate! Please UNINSTALL IT and get a real copy ASAP! ⛔⛔⛔<br>
-Please don't install Surplus from anywhere other than our official site ( https://s.urpl.us/ )<br>
-"plazma" is a skid and anything that comes out of him is likely malware, so be vigilant!<br><br>
-
-Redirecting you to the official Surplus website in 10 seconds...
-</h1>`;
-    setTimeout(() => {
-      outer.location.href = "https://s.urpl.us/"
-    }, 10000);
-    return;
-  }
-}, Math.random() * 15e3 + 10e3);
 (async () => {
   const time = Date.now();
   try {

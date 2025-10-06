@@ -9,6 +9,21 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 
+function cssPlugin() {
+  return {
+    name: 'css-string',
+    transform(code, id) {
+      if (id.endsWith('.css')) {
+        const css = fs.readFileSync(id, 'utf-8');
+        return {
+          code: `export const globalStylesheet = ${JSON.stringify(css)};`,
+          map: null
+        };
+      }
+    }
+  };
+}
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -163,6 +178,7 @@ export default (commandLineArgs) => {
           { find: 'react-dom/client', replacement: 'preact/compat' }
         ],
       }),
+      cssPlugin(),
       string({
         include: '**/*.html',
       }),
