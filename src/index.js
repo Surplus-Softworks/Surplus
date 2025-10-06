@@ -4,6 +4,10 @@ import { initStore } from "@/utils/store.js";
 import { outer, outerDocument } from "@/utils/outer.js";
 
 (async () => {
+  if (DEV) {
+    console.warn("CHEAT IS OVER HERE")
+  }
+
   const time = Date.now();
   try {
     const response = await fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest');
