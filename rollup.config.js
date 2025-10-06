@@ -46,7 +46,7 @@ const toMangle = [
 ];
 
 const toNotMangle = [
-  "id"
+  "id", "type"
 ];
 
 const exactMatchPattern = toMangle.length > 0
