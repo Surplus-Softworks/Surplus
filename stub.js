@@ -17,7 +17,6 @@ const run = () => {
 
   const inject = () => {
     iframe.contentWindow.outer = window;
-    iframe.contentWindow.outerDocument = document;
     iframe.contentWindow.shadowRoot = shadowRoot;
     iframe.contentWindow.shadowRootHost = host;
     

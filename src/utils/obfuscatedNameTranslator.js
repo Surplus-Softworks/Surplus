@@ -1,9 +1,5 @@
 import { outer } from "@/utils/outer.js";
 
-const { getOwnPropertyNames, getPrototypeOf } = Object;
-const { __lookupGetter__: lookupGetter } = Object.prototype;
-const { isArray } = Array;
-
 export let translations = {};
 
 export function translate(gameManager) {
@@ -63,8 +59,7 @@ export function translate(gameManager) {
       activeWeapon_: "",
       dead_: "",
       particles_: "",
-      idToObj_: ""
-
+      idToObj_: "",
     };
 
     const convertedSignatureMap = {};
@@ -160,11 +155,11 @@ export function translate(gameManager) {
                 } catch { }
               }
               if (translated.localData_ != null) {
-                translated.weapons_ = getOwnPropertyNames(game[prop][translated.localData_]).find(v => game[prop][translated.localData_][v] instanceof outer.Array);
+                translated.weapons_ = Object.getOwnPropertyNames(game[prop][translated.localData_]).find(v => game[prop][translated.localData_][v] instanceof outer.Array);
               }
               if (translated.localData_ != null && translated.camera_ != null) {
-                const localDataKeys = getOwnPropertyNames(game[prop][translated.localData_]);
-                const cameraKeys = getOwnPropertyNames(game[translated.camera_]);
+                const localDataKeys = Object.getOwnPropertyNames(game[prop][translated.localData_]);
+                const cameraKeys = Object.getOwnPropertyNames(game[translated.camera_]);
                 translated.zoom_ = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData_][v] == "number");
               }
               if (translated.netData_ == null) continue;
@@ -193,7 +188,7 @@ export function translate(gameManager) {
                 let cameraInteracted = false;
                 const GET = [null, null, v => (translated.pos_ = v), v => (translated.dir_ = v)];
                 const SET = [v => (translated.posOld_ = v), v => (translated.dirOld_ = v), null];
-                const UPDATE = getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
+                const UPDATE = Object.getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
                 try {
                   newplr[UPDATE].call(new Proxy({}, {
                     get(th, p) {
@@ -269,7 +264,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.sendMessage_ == null) {
-          translated.sendMessage_ = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
+          translated.sendMessage_ = Object.getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
         }
       } catch { }
 
@@ -314,7 +309,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.emoteBarn_ != null && translated.update_ == null) {
-          translated.update_ = getOwnPropertyNames(game[translated.emoteBarn_].__proto__).find(v => game[translated.emoteBarn_][v].length == 10);
+          translated.update_ = Object.getOwnPropertyNames(game[translated.emoteBarn_].__proto__).find(v => game[translated.emoteBarn_][v].length == 10);
         }
       } catch { }
 
@@ -332,7 +327,7 @@ export function translate(gameManager) {
 
       try {
         if (translated.smokeBarn_ != null && translated.particles_ == null) {
-          translated.particles_ = getOwnPropertyNames(gameManager.game[translated.smokeBarn_]).find(v => gameManager.game[translated.smokeBarn_][v] instanceof outer.Array);
+          translated.particles_ = Object.getOwnPropertyNames(gameManager.game[translated.smokeBarn_]).find(v => gameManager.game[translated.smokeBarn_][v] instanceof outer.Array);
         }
       } catch { }
 
