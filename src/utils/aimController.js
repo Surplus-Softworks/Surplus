@@ -309,6 +309,16 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
   step(now);
 };
 
+let lastPing;
+
+export function getPing() {
+    if (gameManager.game.pings.length == 0) return lastPing ?? 0;
+    let slice = Reflect.apply(Array.prototype.slice, gameManager.game.pings, [-5]);
+    let sum = slice.reduce((a,b) => a+b);
+    lastPing = (sum / slice.length) / 1000;
+    return lastPing;
+}
+
 export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos_);
 export const isAimInterpolating = () => controllerState.isInterpolating_;
 export const getAimMode = () => controllerState.mode_;
