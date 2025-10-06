@@ -280,6 +280,7 @@ function aimbotTicker() {
                     mode: 'meleeLock',
                     targetScreenPos: { x: screenPos.x, y: screenPos.y },
                     moveDir,
+                    immediate: true,
                 });
                 aimUpdated = true;
                 if (aimbotDot) aimbotDot.style.display = 'none';
