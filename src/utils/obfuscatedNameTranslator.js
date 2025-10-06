@@ -197,8 +197,7 @@ export function translate(gameManager) {
                 try {
                   newplr[UPDATE].call(new Proxy({}, {
                     get(th, p) {
-                      const val = GET.shift();
-                      val?.(p);
+                      GET.shift()?.(p);
                       return new Proxy({ x: 0, y: 0 }, {
                         get(th, p) {
                           return th[p] || { x: 0, y: 0 }
@@ -210,8 +209,7 @@ export function translate(gameManager) {
                         nextIsVisual = false;
                         translated.visualPos_ = p;
                       }
-                      const val = SET.shift();
-                      if (val) translated[val] = p;
+                      SET.shift()?.(p);
                       return true;
                     }
                   }), null, { getPlayerById: () => { } }, null, { isSoundPlaying: () => false }, null, {
