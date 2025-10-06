@@ -13,7 +13,6 @@ import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.
 import { getCurrentAimPosition, isAimInterpolating } from '@/utils/aimController.js';
 import { outer } from '@/utils/outer.js';
 
-// Vector math helpers
 const v2 = {
     create: (x, y) => ({ x, y }),
     copy: (v) => ({ x: v.x, y: v.y }),
@@ -29,9 +28,7 @@ const v2 = {
     },
 };
 
-// Collision detection helpers
 const collisionHelpers = {
-    // Intersect line segment with AABB
     intersectSegmentAabb: (a, b, min, max) => {
         const dir = v2.sub(b, a);
         const invDir = { x: 1 / dir.x, y: 1 / dir.y };
@@ -49,7 +46,6 @@ const collisionHelpers = {
         const t = Math.max(0, tmin);
         const point = v2.add(a, v2.mul(dir, t));
 
-        // Calculate normal
         const center = v2.mul(v2.add(min, max), 0.5);
         const extent = v2.mul(v2.sub(max, min), 0.5);
         const localPt = v2.sub(point, center);
@@ -67,7 +63,6 @@ const collisionHelpers = {
         return { point, normal };
     },
 
-    // Intersect line segment with circle
     intersectSegmentCircle: (a, b, pos, rad) => {
         const d = v2.sub(b, a);
         const f = v2.sub(a, pos);
@@ -95,13 +90,12 @@ const collisionHelpers = {
         return { point, normal };
     },
 
-    // Intersect segment with collider (handles both AABB and Circle)
     intersectSegment: (collider, a, b) => {
         if (!collider) return null;
 
-        if (collider.type === 1) { // AABB
+        if (collider.type === 1) {
             return collisionHelpers.intersectSegmentAabb(a, b, collider.min, collider.max);
-        } else if (collider.type === 0) { // Circle
+        } else if (collider.type === 0) {
             return collisionHelpers.intersectSegmentCircle(a, b, collider.pos, collider.rad);
         }
 
@@ -343,8 +337,7 @@ function renderGrenadeTrajectory(localPlayer, graphics) {
 }
 
 
-// Calculate bullet trajectory with bounces
-function calculateTrajectory(startPos, dir, distance, layer, maxBounces = 3) {
+function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBounces = 3) {
     const segments = [];
     const BULLET_HEIGHT = 0.25;
     const REFLECT_DIST_DECAY = 1.5;
@@ -358,21 +351,20 @@ function calculateTrajectory(startPos, dir, distance, layer, maxBounces = 3) {
     const idToObj = game?.[translations.objectCreator]?.[translations.idToObj];
     if (!idToObj) return segments;
 
-    // Get all obstacles - check for objects with collider property
+    const trueLayer = isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : layer;
+
     const obstacles = Object.values(idToObj).filter(obj => {
-        // Must have a collider to be an obstacle
         if (!obj.collider) return false;
         if (obj.dead) return false;
         if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
-        // Check layer compatibility
-        if (obj.layer !== undefined && obj.layer !== layer && obj.layer !== 0) return false;
+        if (obj.layer !== undefined && obj.layer !== trueLayer && obj.layer !== 0) return false;
+        if (obj?.type.includes('decal') || obj?.type.includes('decal')) return false;
         return true;
     });
 
     while (bounceCount <= maxBounces && remainingDist > 0.1) {
         const endPos = v2.add(pos, v2.mul(currentDir, remainingDist));
 
-        // Find closest collision
         let closestCol = null;
         let closestDist = Infinity;
         let closestObstacle = null;
@@ -380,7 +372,51 @@ function calculateTrajectory(startPos, dir, distance, layer, maxBounces = 3) {
         for (const obstacle of obstacles) {
             if (obstacle.collidable === false) continue;
 
-            const res = collisionHelpers.intersectSegment(obstacle.collider, pos, endPos);
+            let colliderToUse = obstacle.collider;
+
+            if (obstacle.destructible && obstacle.healthT !== undefined && obstacle.healthT > 0 && obstacle.collider) {
+                const obstacleType = obstacle.type;
+
+                if (obstacleType && obstacleType.includes('barrel') && obstacle.collider.type === 0) {
+                    const isMetalBarrel = obstacleType.includes('barrel');
+                    const maxHealth = isMetalBarrel ? 150 : 60;
+                    const minScale = isMetalBarrel ? 0.6 : 0.8;
+                    const maxScale = 1;
+
+                    const currentHealth = obstacle.healthT * maxHealth;
+
+                    const weapon = findWeapon(localPlayer);
+                    const bullet = findBullet(weapon);
+
+                    const baseDamage = bullet ? bullet.damage : 13.5;
+                    const obstacleMult = bullet ? (bullet.obstacleDamage || 1) : 1;
+                    const bulletDamage = baseDamage * obstacleMult;
+
+                    const futureHealth = Math.max(0, currentHealth - bulletDamage);
+
+                    if (futureHealth <= 0) {
+                        continue;
+                    }
+
+                    const futureHealthT = futureHealth / maxHealth;
+
+                    const futureScale = minScale + futureHealthT * (maxScale - minScale);
+
+                    const currentRadius = obstacle.collider.rad;
+                    const baseRadius = currentRadius / obstacle.scale;
+                    const futureRadius = baseRadius * futureScale;
+
+                    const futureCollider = {
+                        type: 0,
+                        pos: v2.copy(obstacle.collider.pos),
+                        rad: futureRadius,
+                    };
+
+                    colliderToUse = futureCollider;
+                }
+            }
+
+            const res = collisionHelpers.intersectSegment(colliderToUse, pos, endPos);
             if (res) {
                 const dist = v2.lengthSqr(v2.sub(res.point, pos));
                 if (dist < closestDist && dist > 0.0001) {
@@ -392,33 +428,47 @@ function calculateTrajectory(startPos, dir, distance, layer, maxBounces = 3) {
         }
 
         if (closestCol) {
-            // Add segment to collision point
             segments.push({
                 start: v2.copy(pos),
                 end: v2.copy(closestCol.point),
             });
 
-            // Check if obstacle reflects bullets
             const obstacleType = closestObstacle?.type;
-            const reflectBullets = obstacleType && gameObjects?.[obstacleType]?.reflectBullets;
+            let reflectBullets = false;
+
+            if (closestObstacle.reflectBullets !== undefined) {
+                reflectBullets = closestObstacle.reflectBullets === true;
+            } else {
+                const reflectivePatterns = [
+                    'metal_wall',
+                    'stone_wall',
+                    'container_wall',
+                    'hedgehog',
+                    'barrel_',
+                    'sandbags',
+                    'bollard',
+                    'airdop',
+                    'silo',
+                    'collider',
+                    'warehouse_wall_edge'
+                ];
+
+                reflectBullets = reflectivePatterns.some(pattern => obstacleType?.includes(pattern));
+            }
 
             if (reflectBullets && bounceCount < maxBounces) {
-                // Calculate reflection
                 const dot = v2.dot(currentDir, closestCol.normal);
                 currentDir = v2.add(v2.mul(closestCol.normal, dot * -2), currentDir);
                 currentDir = v2.normalize(currentDir);
 
-                // Update position and remaining distance
-                pos = v2.add(closestCol.point, v2.mul(currentDir, 0.01)); // Offset slightly
+                pos = v2.add(closestCol.point, v2.mul(currentDir, 0.01));
                 const traveledDist = Math.sqrt(closestDist);
                 remainingDist = Math.max(1, remainingDist - traveledDist) / REFLECT_DIST_DECAY;
                 bounceCount++;
             } else {
-                // Hit non-reflective surface, stop
                 break;
             }
         } else {
-            // No collision, add final segment
             segments.push({
                 start: v2.copy(pos),
                 end: endPos,
@@ -441,7 +491,6 @@ function renderBulletTrajectory(localPlayer, graphics) {
     const isSpectating = game[translations.uiManager].spectating;
     const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
 
-    // Get aim angle
     let aimAngle;
     const currentAimPos = !isSpectating ? getCurrentAimPosition() : null;
     if (currentAimPos) {
@@ -456,13 +505,10 @@ function renderBulletTrajectory(localPlayer, graphics) {
         aimAngle = Math.atan2(localPlayer[translations.dir].x, localPlayer[translations.dir].y) - Math.PI / 2;
     }
 
-    // Calculate direction vector - flip Y because game coordinate system has Y increasing downward
     const dir = v2.create(Math.cos(aimAngle), -Math.sin(aimAngle));
 
-    // Calculate trajectory
-    const segments = calculateTrajectory(playerPos, dir, localBullet.distance, localPlayer.layer);
+    const segments = calculateTrajectory(playerPos, dir, localBullet.distance, localPlayer.layer, localPlayer);
 
-    // Render trajectory segments
     graphics.lineStyle(2, 0xff00ff, 0.5);
 
     for (const segment of segments) {
