@@ -91,7 +91,7 @@ function predictPosition(enemy, currentPlayer) {
     const currentPlayerPos = currentPlayer[translations.visualPos_];
     const now = performance.now();
     const enemyId = enemy.__id;
-    const ping = getPing() / 2;
+    const ping = getPing();
 
     const history = state.previousEnemies_[enemyId] ?? (state.previousEnemies_[enemyId] = []);
     history.push([now, { ...enemyPos }]);
