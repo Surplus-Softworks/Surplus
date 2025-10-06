@@ -11,7 +11,7 @@
   const script = __SURPLUS__;
 
   const run = () => {
-    const host = querySelector('#fb-root');
+    const host = createElement('div');
     call.apply(appendChild, [document.body, host])
     
     const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed'}])
