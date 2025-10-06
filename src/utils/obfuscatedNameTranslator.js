@@ -236,7 +236,7 @@ export function translate(gameManager) {
               translated.uiManager_ = prop;
               Object.getOwnPropertyNames(game[prop]).forEach(v => {
                 if (typeof game[prop][v] == "object" && game[prop][v] != null)
-                  if (getSignature(game[prop][v]) == convertedSignatureMap.pieTimer) {
+                  if (getSignature(game[prop][v]) == convertedSignatureMap.pieTimer_) {
                     translated.pieTimer_ = v;
                   }
               })

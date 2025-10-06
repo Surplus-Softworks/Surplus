@@ -28,6 +28,12 @@ const v2 = {
     },
 };
 
+// Game layer collision logic from survev/shared/utils/util.ts
+// Layers: 0=ground, 1=bunker, 2=ground+stairs, 3=bunker+stairs
+const sameLayer = (a, b) => {
+    return (a & 0x1) === (b & 0x1) || (a & 0x2 && b & 0x2);
+};
+
 const collisionHelpers = {
     intersectSegmentAabb: (a, b, min, max) => {
         const dir = v2.sub(b, a);
@@ -357,7 +363,7 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
         if (!obj.collider) return false;
         if (obj.dead) return false;
         if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
-        if (obj.layer !== undefined && obj.layer !== trueLayer && obj.layer !== 0) return false;
+        if (obj.layer !== undefined && !sameLayer(obj.layer, trueLayer)) return false;
         if (obj?.type.includes('decal') || obj?.type.includes('decal')) return false;
         return true;
     });
@@ -455,9 +461,6 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
 
                 reflectBullets = reflectivePatterns.some(pattern => obstacleType?.includes(pattern));
             }
-            //if (bounceCount === 0) { //debug
-            //    outer.console.log('Hit:', obstacleType, 'reflects:', reflectBullets);
-            //}
             if (reflectBullets && bounceCount < maxBounces) {
                 const dot = v2.dot(currentDir, closestCol.normal);
                 currentDir = v2.add(v2.mul(closestCol.normal, dot * -2), currentDir);
