@@ -10,7 +10,7 @@ import layerSpoof from "@/features/LayerSpoofer.js";
 import { translate } from "@/utils/obfuscatedNameTranslator.js";
 import { hook } from "@/utils/hook.js";
 import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
-import { aimState, inputState, settings, gameManager } from "@/state.js";
+import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
 import { initializeAimController, isAimInterpolating, getAimMode } from "@/utils/aimController.js";
 import initUI from "@/ui/init.js";
 import { outer } from "@/utils/outer.js";
@@ -20,7 +20,7 @@ function injectGame(oninject) {
     apply(f, th, args) {
       if (args[0]?.nameInput != null && args[0]?.game != null) {
         outer.Function.prototype.call = f;
-        gameManager = args[0];
+        setGameManager(args[0]);
         oninject();
       }
       return Reflect.apply(f, th, args);
