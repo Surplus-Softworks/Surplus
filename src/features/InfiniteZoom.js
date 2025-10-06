@@ -13,14 +13,14 @@ const handleWheelEvent = (event) => {
 
   try {
     const game = gameManager.game;
-    const activePlayer = game[translations.activePlayer];
-    const localData = activePlayer[translations.localData];
-    let zoom = localData[translations.zoom];
+    const activePlayer = game[translations.activePlayer_];
+    const localData = activePlayer[translations.localData_];
+    let zoom = localData[translations.zoom_];
 
     zoom += event.deltaY > 0 ? ZOOM_IN_STEP : -ZOOM_OUT_STEP;
     zoom = Math.max(MIN_ZOOM, zoom);
 
-    Object.defineProperty(localData, translations.zoom, {
+    Object.defineProperty(localData, translations.zoom_, {
       configurable: true,
       get: () => zoom,
       set: () => {},

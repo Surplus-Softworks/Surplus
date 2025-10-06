@@ -14,7 +14,7 @@ function processEnvironment() {
 
 function processCeilings(isXrayEnabled) {
   if (isXrayEnabled && settings.xray_.removeCeilings_) {
-    gameManager.game[translations.renderer].layers[3].children.forEach(element => {
+    gameManager.game[translations.renderer_].layers[3].children.forEach(element => {
       if (element._texture?.textureCacheIds) {
         const textures = element._texture.textureCacheIds;
         const shouldHide = textures.some(texture => 
@@ -32,7 +32,7 @@ function processCeilings(isXrayEnabled) {
 
 function processSmokes(isEnabled) {
   if (isEnabled) {
-    gameManager.game[translations.smokeBarn][translations.particles].forEach(particle => {
+    gameManager.game[translations.smokeBarn_][translations.particles_].forEach(particle => {
       if (settings.xray_.darkerSmokes_) {
         particle.sprite._tintRGB = 1;
       }
@@ -44,7 +44,7 @@ function processSmokes(isEnabled) {
 
 function processObstacles(isXrayEnabled) {
   if (isXrayEnabled) {
-    gameManager.game[translations.map][translations.obstaclePool][translations.pool].forEach(obstacle => {
+    gameManager.game[translations.map][translations.obstaclePool_][translations.pool_].forEach(obstacle => {
       if (["tree", "table", "stairs"].some(type => obstacle.type.includes(type))) {
         obstacle.sprite.alpha = settings.xray_.treeOpacity_ / 100;
       }

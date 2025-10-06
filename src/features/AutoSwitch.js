@@ -25,7 +25,7 @@ const isSlowFiringWeapon = (weaponType) => {
 };
 
 const isPlayerFiring = () =>
-    gameManager.game[translations.touch].shotDetected || gameManager.game[translations.inputBinds].isBindDown(inputCommands.Fire_);
+    gameManager.game[translations.touch_].shotDetected || gameManager.game[translations.inputBinds_].isBindDown(inputCommands.Fire_);
 
 const queueWeaponSwitch = (weaponIndex) => {
     queueInput(WEAPON_COMMANDS[weaponIndex]);
@@ -48,10 +48,10 @@ const handleWeaponSwitch = () => {
 
     try {
         const game = gameManager.game;
-        const player = game[translations.activePlayer];
-        const localData = player[translations.localData];
-        const currentWeaponIndex = localData[translations.curWeapIdx];
-        const weapons = localData[translations.weapons];
+        const player = game[translations.activePlayer_];
+        const localData = player[translations.localData_];
+        const currentWeaponIndex = localData[translations.curWeapIdx_];
+        const weapons = localData[translations.weapons_];
         const currentWeapon = weapons[currentWeaponIndex];
         const currentWeaponState = weaponState[currentWeaponIndex];
 

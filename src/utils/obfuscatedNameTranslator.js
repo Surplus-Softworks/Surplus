@@ -9,61 +9,61 @@ export let translations = {};
 export function translate(gameManager) {
   return new Promise((resolve) => {
     const signatureMap = {
-      ws: "10-7-0-0-17",
-      touch: "21-20-11-1-53",
-      camera: ["7-9-1-0-17", "9-10-1-0-20", "10-11-1-0-22"],
-      renderer: "9-9-3-1-22",
-      particleBarn: "1-7-1-2-11",
-      decalBarn: "0-4-1-1-6",
-      playerBarn: ["1-19-5-1-26", "1-18-5-1-25"],
-      bulletBarn: "0-6-1-1-8",
-      flareBarn: "0-4-0-1-5",
-      projectileBarn: "0-2-1-0-3",
-      explosionBarn: "0-4-0-2-6",
-      planeBarn: "0-7-2-2-11",
-      airdropBarn: "0-3-1-0-4",
-      smokeBarn: "1-3-1-1-6",
-      deadBodyBarn: "0-3-1-0-4",
-      lootBarn: "1-3-1-0-5",
-      gas: ["3-8-3-0-14", "5-8-3-0-16"],
-      uiManager: "51-64-87-2-204",
-      ui2Manager: "1-28-5-4-38",
-      emoteBarn: "",
-      shotBarn: "0-3-0-1-4",
-      objectCreator: "1-7-2-0-10",
-      debugDisplay: "36-42-12-3-93",
-      prevInputMsg: "12-4-2-1-19",
-      activePlayer: "52-40-44-3-139",
-      pixi: "2-8-5-0-15",
-      audioManager: "8-23-3-1-35",
-      localization: "1-7-1-1-10",
-      config: "2-8-1-1-12",
-      input: "4-28-6-1-39",
-      inputBinds: "1-17-3-1-22",
-      inputBindUi: "0-3-2-0-5",
-      ambience: "3-5-1-1-10",
-      resourceManager: "5-7-4-0-16",
-      netData: ["21-11-3-1-36", "23-11-3-1-38"],
-      localData: "6-11-2-1-20",
-      pieTimer: "6-6-5-0-17",
-      pos: "",
-      posOld: "",
-      visualPos: "",
-      dir: "",
-      dirOld: "",
-      zoom: "",
-      update: "",
-      pool: "",
-      sendMessage: "",
-      obstaclePool: "",
-      pointToScreen: "",
-      screenToPoint: "",
-      curWeapIdx: "",
-      weapons: "",
-      activeWeapon: "",
-      dead: "",
-      particles: "",
-      idToObj: ""
+      ws_: "10-7-0-0-17",
+      touch_: "21-20-11-1-53",
+      camera_: ["7-9-1-0-17", "9-10-1-0-20", "10-11-1-0-22"],
+      renderer_: "9-9-3-1-22",
+      particleBarn_: "1-7-1-2-11",
+      decalBarn_: "0-4-1-1-6",
+      playerBarn_: ["1-19-5-1-26", "1-18-5-1-25"],
+      bulletBarn_: "0-6-1-1-8",
+      flareBarn_: "0-4-0-1-5",
+      projectileBarn_: "0-2-1-0-3",
+      explosionBarn_: "0-4-0-2-6",
+      planeBarn_: "0-7-2-2-11",
+      airdropBarn_: "0-3-1-0-4",
+      smokeBarn_: "1-3-1-1-6",
+      deadBodyBarn_: "0-3-1-0-4",
+      lootBarn_: "1-3-1-0-5",
+      gas_: ["3-8-3-0-14", "5-8-3-0-16"],
+      uiManager_: "51-64-87-2-204",
+      ui2Manager_: "1-28-5-4-38",
+      emoteBarn_: "",
+      shotBarn_: "0-3-0-1-4",
+      objectCreator_: "1-7-2-0-10",
+      debugDisplay_: "36-42-12-3-93",
+      prevInputMsg_: "12-4-2-1-19",
+      activePlayer_: "52-40-44-3-139",
+      pixi_: "2-8-5-0-15",
+      audioManager_: "8-23-3-1-35",
+      localization_: "1-7-1-1-10",
+      config_: "2-8-1-1-12",
+      input_: "4-28-6-1-39",
+      inputBinds_: "1-17-3-1-22",
+      inputBindUi_: "0-3-2-0-5",
+      ambience_: "3-5-1-1-10",
+      resourceManager_: "5-7-4-0-16",
+      netData_: ["21-11-3-1-36", "23-11-3-1-38"],
+      localData_: "6-11-2-1-20",
+      pieTimer_: "6-6-5-0-17",
+      pos_: "",
+      posOld_: "",
+      visualPos_: "",
+      dir_: "",
+      dirOld_: "",
+      zoom_: "",
+      update_: "",
+      pool_: "",
+      sendMessage_: "",
+      obstaclePool_: "",
+      pointToScreen_: "",
+      screenToPoint_: "",
+      curWeapIdx_: "",
+      weapons_: "",
+      activeWeapon_: "",
+      dead_: "",
+      particles_: "",
+      idToObj_: ""
 
     };
 
@@ -145,44 +145,44 @@ export function translate(gameManager) {
         if (game.hasOwnProperty(prop)) {
           try {
             if (game[prop].hasOwnProperty("deadBodyPool")) {
-              translated.deadBodyBarn = prop;
+              translated.dead_BodyBarn_ = prop;
             } else if (game[prop].hasOwnProperty("airdropPool")) {
-              translated.airdropBarn = prop;
+              translated.airdropBarn_ = prop;
             }
           } catch { }
           try {
             if (game[prop].hasOwnProperty("bones")) {
-              translated["activePlayer"] = prop;
+              translated.activePlayer_ = prop;
               const newplr = new game[prop].constructor();
               for (const pProp in newplr) {
                 try {
                   matchSignature(game[prop], pProp);
                 } catch { }
               }
-              if (translated.localData != null) {
-                translated.weapons = getOwnPropertyNames(game[prop][translated.localData]).find(v => game[prop][translated.localData][v] instanceof outer.Array);
+              if (translated.localData_ != null) {
+                translated.weapons_ = getOwnPropertyNames(game[prop][translated.localData_]).find(v => game[prop][translated.localData_][v] instanceof outer.Array);
               }
-              if (translated.localData != null && translated.camera != null) {
-                const localDataKeys = getOwnPropertyNames(game[prop][translated.localData]);
-                const cameraKeys = getOwnPropertyNames(game[translated.camera]);
-                translated.zoom = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData][v] == "number");
+              if (translated.localData_ != null && translated.camera_ != null) {
+                const localDataKeys = getOwnPropertyNames(game[prop][translated.localData_]);
+                const cameraKeys = getOwnPropertyNames(game[translated.camera_]);
+                translated.zoom_ = localDataKeys.filter(v => cameraKeys.includes(v)).find(v => typeof game[prop][translated.localData_][v] == "number");
               }
-              if (translated.netData == null) continue;
-              if (translated.activePlayer != null) {
+              if (translated.netData_ == null) continue;
+              if (translated.activePlayer_ != null) {
                 try {
-                  game[translated.activePlayer].selectIdlePose.call({
-                    [translated.netData]: new Proxy({}, {
+                  game[translated.activePlayer_].selectIdlePose.call({
+                    [translated.netData_]: new Proxy({}, {
                       get(th, p) {
-                        translated.activeWeapon = p;
+                        translated.activeWeapon_ = p;
                       }
                     })
                   })
                 } catch { }
                 try {
-                  game[translated.activePlayer].canInteract.call({
-                    [translated.netData]: new Proxy({}, {
+                  game[translated.activePlayer_].canInteract.call({
+                    [translated.netData_]: new Proxy({}, {
                       get(th, p) {
-                        translated.dead = p;
+                        translated.dead_ = p;
                       }
                     })
                   })
@@ -191,14 +191,14 @@ export function translate(gameManager) {
               (() => {
                 let nextIsVisual = false;
                 let cameraInteracted = false;
-                const GET = [null, null, "pos", "dir"];
-                const SET = ["posOld", "dirOld", null];
+                const GET = [null, null, v => (translated.pos_ = v), v => (translated.dir_ = v)];
+                const SET = [v => (translated.posOld_ = v), v => (translated.dirOld_ = v), null];
                 const UPDATE = getOwnPropertyNames(newplr.__proto__).find(v => newplr[v].length == 13);
                 try {
                   newplr[UPDATE].call(new Proxy({}, {
                     get(th, p) {
                       const val = GET.shift();
-                      if (val) translated[val] = p;
+                      val?.(p);
                       return new Proxy({ x: 0, y: 0 }, {
                         get(th, p) {
                           return th[p] || { x: 0, y: 0 }
@@ -208,7 +208,7 @@ export function translate(gameManager) {
                     set(th, p, v) {
                       if (nextIsVisual) {
                         nextIsVisual = false;
-                        translated.visualPos = p;
+                        translated.visualPos_ = p;
                       }
                       const val = SET.shift();
                       if (val) translated[val] = p;
@@ -226,25 +226,25 @@ export function translate(gameManager) {
                     }
                   }))
                 } catch { }
-                if (!cameraInteracted) translated.visualPos = translated.pos;
+                if (!cameraInteracted) translated.visualPos_ = translated.pos_;
               })();
 
               continue;
             }
             if (game[prop].hasOwnProperty("triggerPing")) {
-              translated["emoteBarn"] = prop;
+              translated.emoteBarn_ = prop;
               continue;
             }
             if (game[prop].hasOwnProperty("mapTexture")) {
-              translated["map"] = prop;
+              translated.map = prop;
               continue;
             }
             if (game[prop].hasOwnProperty("topLeft")) {
-              translated["uiManager"] = prop;
+              translated.uiManager_ = prop;
               Object.getOwnPropertyNames(game[prop]).forEach(v => {
                 if (typeof game[prop][v] == "object" && game[prop][v] != null)
                   if (getSignature(game[prop][v]) == convertedSignatureMap.pieTimer) {
-                    translated.pieTimer = v;
+                    translated.pieTimer_ = v;
                   }
               })
               continue;
@@ -258,26 +258,26 @@ export function translate(gameManager) {
         }
       }
       try {
-        if (translated.playerBarn != null) {
-          Object.getOwnPropertyNames(game[translated.playerBarn].playerPool).forEach(v => {
-            if (Array.isArray(game[translated.playerBarn].playerPool[v])) {
-              translated.pool = v
+        if (translated.playerBarn_ != null) {
+          Object.getOwnPropertyNames(game[translated.playerBarn_].playerPool).forEach(v => {
+            if (Array.isArray(game[translated.playerBarn_].playerPool[v])) {
+              translated.pool_ = v
             }
           })
         }
       } catch { }
 
       try {
-        if (translated.sendMessage == null) {
-          translated.sendMessage = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
+        if (translated.sendMessage_ == null) {
+          translated.sendMessage_ = getOwnPropertyNames(game.__proto__).filter(v => typeof game[v] == "function").find(v => game[v].length == 3);
         }
       } catch { }
 
       try {
-        if (translated.map != null && translated.obstaclePool == null) {
+        if (translated.map != null && translated.obstaclePool_ == null) {
           const objectProps = Object.getOwnPropertyNames(game[translated.map]).filter(v => typeof game[translated.map][v] == "object" && game[translated.map][v] != null);
-          translated.obstaclePool = objectProps.filter(v => translated.pool in game[translated.map][v]).find(v => {
-            const pool = game[translated.map][v][translated.pool]
+          translated.obstaclePool_ = objectProps.filter(v => translated.pool_ in game[translated.map][v]).find(v => {
+            const pool = game[translated.map][v][translated.pool_]
             if (pool.some(V => V.isBush != null)) {
               return true;
             }
@@ -286,11 +286,11 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.obstaclePool != null && translated.pointToScreen == null) {
-          const pool = game[translated.map][translated.obstaclePool][translated.pool];
+        if (translated.obstaclePool_ != null && translated.pointToScreen_ == null) {
+          const pool = game[translated.map][translated.obstaclePool_][translated.pool_];
           const proxyarg = new Proxy({}, {
             get(th, p) {
-              translated.pointToScreen = p;
+              translated.pointToScreen_ = p;
             }
           });
           pool[0].render.call({}, proxyarg, proxyarg)
@@ -298,14 +298,14 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.emoteBarn != null && translated.screenToPoint == null) {
-          let emotebarn = new game[translated.emoteBarn].constructor();
+        if (translated.emoteBarn_ != null && translated.screenToPoint_ == null) {
+          let emotebarn = new game[translated.emoteBarn_].constructor();
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = "ping_danger";
           emotebarn.uiManager = { getWorldPosFromMapPos: () => { } }
           emotebarn.camera = new Proxy({}, {
             get(th, p) {
-              translated.screenToPoint = p;
+              translated.screenToPoint_ = p;
             }
           })
           emotebarn.triggerPing();
@@ -313,17 +313,17 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.emoteBarn != null && translated.update == null) {
-          translated.update = getOwnPropertyNames(game[translated.emoteBarn].__proto__).find(v => game[translated.emoteBarn][v].length == 10);
+        if (translated.emoteBarn_ != null && translated.update_ == null) {
+          translated.update_ = getOwnPropertyNames(game[translated.emoteBarn_].__proto__).find(v => game[translated.emoteBarn_][v].length == 10);
         }
       } catch { }
 
       try {
-        if (translated.touch != null && translated.curWeapIdx == null) {
-          game[translated.touch].getAimMovement.call({}, {
-            [translated.localData]: new Proxy({}, {
+        if (translated.touch_ != null && translated.curWeapIdx_ == null) {
+          game[translated.touch_].getAimMovement.call({}, {
+            [translated.localData_]: new Proxy({}, {
               get(th, p) {
-                translated.curWeapIdx = p;
+                translated.curWeapIdx_ = p;
               }
             })
           })
@@ -331,19 +331,19 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.smokeBarn != null && translated.particles == null) {
-          translated.particles = getOwnPropertyNames(gameManager.game[translated.smokeBarn]).find(v => gameManager.game[translated.smokeBarn][v] instanceof outer.Array);
+        if (translated.smokeBarn_ != null && translated.particles_ == null) {
+          translated.particles_ = getOwnPropertyNames(gameManager.game[translated.smokeBarn_]).find(v => gameManager.game[translated.smokeBarn_][v] instanceof outer.Array);
         }
       } catch { }
 
       try {
-        if (translated.objectCreator != null && translated.idToObj == null) {
-          f = Object.getOwnPropertyNames(gameManager.game[translated.objectCreator].__proto__).find(v => gameManager.game[translated.objectCreator][v].length == 4)
-          gameManager.game[translated.objectCreator][f].call(new Proxy(gameManager.game[translated.objectCreator], {
+        if (translated.objectCreator_ != null && translated.idToObj_ == null) {
+          f = Object.getOwnPropertyNames(gameManager.game[translated.objectCreator_].__proto__).find(v => gameManager.game[translated.objectCreator_][v].length == 4)
+          gameManager.game[translated.objectCreator_][f].call(new Proxy(gameManager.game[translated.objectCreator_], {
             get(th, p) {
               return th[p].bind(new Proxy({}, {
                 get(th, p) {
-                  translated.idToObj = p;
+                  translated.idToObj_ = p;
                 }
               }))
             }

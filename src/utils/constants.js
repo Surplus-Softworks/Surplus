@@ -81,17 +81,17 @@ hook(outer.Object, "keys", {
 });
 
 export function isGameReady() {
-    return gameManager.game?.[translations.ws] && 
-           gameManager.game?.[translations.activePlayer]?.[translations.localData]?.[translations.curWeapIdx] != null && 
+    return gameManager.game?.[translations.ws_] && 
+           gameManager.game?.[translations.activePlayer_]?.[translations.localData_]?.[translations.curWeapIdx_] != null && 
            gameManager.game?.initialized;
 }
 
 export function findTeam(player) {
-    return Object.keys(gameManager.game[translations.playerBarn].teamInfo).find(team => gameManager.game[translations.playerBarn].teamInfo[team].playerIds.includes(player.__id));
+    return Object.keys(gameManager.game[translations.playerBarn_].teamInfo).find(team => gameManager.game[translations.playerBarn_].teamInfo[team].playerIds.includes(player.__id));
 }
 
 export function findWeapon(player) {
-    const weaponType = player[translations.netData][translations.activeWeapon];
+    const weaponType = player[translations.netData_][translations.activeWeapon_];
     return weaponType && gameObjects[weaponType] ? gameObjects[weaponType] : null;
 }
 

@@ -11,16 +11,16 @@ let timerUI = null;
 const isGameInitialized = () => {
     const game = gameManager.game;
     if (!game?.initialized) return false;
-    const player = game[translations.activePlayer];
+    const player = game[translations.activePlayer_];
     return (
-        player?.[translations.localData]?.[translations.curWeapIdx] != null &&
-        player?.[translations.netData]?.[translations.activeWeapon] != null
+        player?.[translations.localData_]?.[translations.curWeapIdx_] != null &&
+        player?.[translations.netData_]?.[translations.activeWeapon_] != null
     );
 };
 
 const isHoldingNade = () => {
     const game = gameManager.game;
-    return game[translations.activePlayer][translations.localData][translations.curWeapIdx] === 3;
+    return game[translations.activePlayer_][translations.localData_][translations.curWeapIdx_] === 3;
 };
 
 const isCooking = (player) => player.throwableState === 'cook';
@@ -37,7 +37,7 @@ const resetTimer = () => {
 
 const createNewTimer = () => {
     resetTimer();
-    const PieTimer = gameManager.game[translations.uiManager][translations.pieTimer].constructor;
+    const PieTimer = gameManager.game[translations.uiManager_][translations.pieTimer_].constructor;
     timerUI = new PieTimer();
     gameManager.pixi.stage.addChild(timerUI.container);
     timerUI.start('Grenade', 0, MAX_TIMER_DURATION);
@@ -50,8 +50,8 @@ const updateGrenadeTimer = () => {
 
     try {
         const game = gameManager.game;
-        const player = game[translations.activePlayer];
-        const activeWeapon = player[translations.netData][translations.activeWeapon];
+        const player = game[translations.activePlayer_];
+        const activeWeapon = player[translations.netData_][translations.activeWeapon_];
         const secondsElapsed = (Date.now() - lastTimestamp) / 1000;
 
         if (!isCooking(player) || !isExplosiveGrenade(activeWeapon)) {
@@ -64,9 +64,9 @@ const updateGrenadeTimer = () => {
         if (!timerActive) {
             createNewTimer();
             return;
-        }
+        } 
 
-        timerUI.update(secondsElapsed - timerUI.elapsed, game[translations.camera]);
+        timerUI.update(secondsElapsed - timerUI.elapsed, game[translations.camera_]);
     } catch {}
 };
 

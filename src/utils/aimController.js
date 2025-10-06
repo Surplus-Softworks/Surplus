@@ -78,7 +78,7 @@ const updateBodyRotation = () => {
   if (!controllerState.overrideActive_ || controllerState.mode_ === 'idle') return;
   const gm = gameManager?.game;
   if (!gm?.initialized) return;
-  const player = gm[translations.activePlayer];
+  const player = gm[translations.activePlayer_];
   const body = player?.bodyContainer;
   const target = controllerState.currentPos_;
   if (!body || !target) return;
@@ -218,7 +218,7 @@ export const initializeAimController = () => {
   const ticker = gameManager?.pixi?._ticker;
   if (!gm || !ticker) return;
 
-  const input = gm[translations.input];
+  const input = gm[translations.input_];
   const mousePos = input?.mousePos;
   if (!mousePos) {
     outer.requestAnimationFrame(initializeAimController);

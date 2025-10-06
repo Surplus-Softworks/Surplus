@@ -144,7 +144,7 @@ const getGraphics = (container, key) => {
 };
 
 function nameTag(player) {
-    const localPlayer = gameManager.game[translations.activePlayer];
+    const localPlayer = gameManager.game[translations.activePlayer_];
     const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
     Reflect.defineProperty(player.nameText, "visible", {
@@ -163,27 +163,27 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
     if (!bullet || !weapon) return;
 
     const center = {
-        x: (player[translations.pos].x - localPlayer[translations.pos].x) * 16,
-        y: (localPlayer[translations.pos].y - player[translations.pos].y) * 16,
+        x: (player[translations.pos_].x - localPlayer[translations.pos_].x) * 16,
+        y: (localPlayer[translations.pos_].y - player[translations.pos_].y) * 16,
     };
 
     const game = gameManager.game;
     const isLocalPlayer = player === localPlayer;
-    const isSpectating = game[translations.uiManager].spectating;
-    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
+    const isSpectating = game[translations.uiManager_].spectating;
+    const isAiming = game[translations.touch_].shotDetected || game[translations.inputBinds_].isBindDown(inputCommands.Fire_);
 
     let aimAngle;
     const currentAimPos = isLocalPlayer && !isSpectating ? getCurrentAimPosition() : null;
     if (currentAimPos) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: player[translations.pos].x, y: player[translations.pos].y });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: player[translations.pos_].x, y: player[translations.pos_].y });
         aimAngle = Math.atan2(screenPos.y - currentAimPos.y, screenPos.x - currentAimPos.x) - Math.PI;
     } else if (isLocalPlayer && !isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
-        aimAngle = Math.atan2(game[translations.input].mousePos._y - outer.innerHeight / 2, game[translations.input].mousePos._x - outer.innerWidth / 2);
+        aimAngle = Math.atan2(game[translations.input_].mousePos._y - outer.innerHeight / 2, game[translations.input_].mousePos._x - outer.innerWidth / 2);
     } else if (isLocalPlayer && !isSpectating && aimState.lastAimPos_) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: player[translations.pos].x, y: player[translations.pos].y });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: player[translations.pos_].x, y: player[translations.pos_].y });
         aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos_.clientY, screenPos.x - aimState.lastAimPos_.clientX) - Math.PI;
     } else {
-        aimAngle = Math.atan2(player[translations.dir].x, player[translations.dir].y) - Math.PI / 2;
+        aimAngle = Math.atan2(player[translations.dir_].x, player[translations.dir_].y) - Math.PI / 2;
     }
 
     const spreadAngle = weapon.shotSpread * (Math.PI / 180);
@@ -201,14 +201,14 @@ const drawFlashlight = (localPlayer, player, bullet, weapon, graphics, color = 0
 };
 
 function renderPlayerLines(localPlayer, players, graphics) {
-    const playerX = localPlayer[translations.pos].x;
-    const playerY = localPlayer[translations.pos].y;
+    const playerX = localPlayer[translations.pos_].x;
+    const playerY = localPlayer[translations.pos_].y;
     const playerTeam = findTeam(localPlayer);
     const isLocalOnBypassLayer = isBypassLayer(localPlayer.layer);
     const localLayer = getLocalLayer(localPlayer);
 
     players.forEach((player) => {
-        if (!player.active || player[translations.netData][translations.dead] || localPlayer.__id === player.__id) return;
+        if (!player.active || player[translations.netData_][translations.dead_] || localPlayer.__id === player.__id) return;
 
         const team = findTeam(player);
         const isOnEffectiveLayer = meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer);
@@ -217,18 +217,18 @@ function renderPlayerLines(localPlayer, players, graphics) {
 
         graphics.lineStyle(2, lineColor, 0.45);
         graphics.moveTo(0, 0);
-        graphics.lineTo((player[translations.pos].x - playerX) * 16, (playerY - player[translations.pos].y) * 16);
+        graphics.lineTo((player[translations.pos_].x - playerX) * 16, (playerY - player[translations.pos_].y) * 16);
     });
 }
 
 
 function renderGrenadeZones(localPlayer, graphics) {
-    const playerX = localPlayer[translations.pos].x;
-    const playerY = localPlayer[translations.pos].y;
+    const playerX = localPlayer[translations.pos_].x;
+    const playerY = localPlayer[translations.pos_].y;
     const isLocalOnBypassLayer = isBypassLayer(localPlayer.layer);
     const playerLayer = getLocalLayer(localPlayer);
 
-    const idToObj = gameManager.game?.[translations.objectCreator]?.[translations.idToObj];
+    const idToObj = gameManager.game?.[translations.objectCreator_]?.[translations.idToObj_];
     if (!idToObj) return;
 
     const grenades = Object.values(idToObj).filter(
@@ -252,45 +252,45 @@ function renderGrenadeZones(localPlayer, graphics) {
 
 
 function renderGrenadeTrajectory(localPlayer, graphics) {
-    if (localPlayer[translations.localData][translations.curWeapIdx] !== 3) return;
+    if (localPlayer[translations.localData_][translations.curWeapIdx_] !== 3) return;
 
-    const activeItem = localPlayer[translations.netData][translations.activeWeapon];
+    const activeItem = localPlayer[translations.netData_][translations.activeWeapon_];
     if (!activeItem) return;
 
     const game = gameManager.game;
-    const playerX = localPlayer[translations.pos].x;
-    const playerY = localPlayer[translations.pos].y;
+    const playerX = localPlayer[translations.pos_].x;
+    const playerY = localPlayer[translations.pos_].y;
     const throwableMaxRange = 18;
     let dirX;
     let dirY;
 
-    const isSpectating = game[translations.uiManager].spectating;
-    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
+    const isSpectating = game[translations.uiManager_].spectating;
+    const isAiming = game[translations.touch_].shotDetected || game[translations.inputBinds_].isBindDown(inputCommands.Fire_);
 
     const currentAimPos = !isSpectating ? getCurrentAimPosition() : null;
     if (currentAimPos) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerX, y: playerY });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: playerX, y: playerY });
         const aimX = currentAimPos.x - screenPos.x;
         const aimY = currentAimPos.y - screenPos.y;
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
         dirX = aimX / magnitude;
         dirY = aimY / magnitude;
     } else if (!isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
-        const mouseX = game[translations.input].mousePos._x - outer.innerWidth / 2;
-        const mouseY = game[translations.input].mousePos._y - outer.innerHeight / 2;
+        const mouseX = game[translations.input_].mousePos._x - outer.innerWidth / 2;
+        const mouseY = game[translations.input_].mousePos._y - outer.innerHeight / 2;
         const magnitude = Math.sqrt(mouseX * mouseX + mouseY * mouseY);
         dirX = mouseX / magnitude;
         dirY = mouseY / magnitude;
     } else if (!isSpectating && aimState.lastAimPos_) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerX, y: playerY });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: playerX, y: playerY });
         const aimX = aimState.lastAimPos_.clientX - screenPos.x;
         const aimY = aimState.lastAimPos_.clientY - screenPos.y;
         const magnitude = Math.sqrt(aimX * aimX + aimY * aimY);
         dirX = aimX / magnitude;
         dirY = aimY / magnitude;
     } else {
-        dirX = localPlayer[translations.dir].x;
-        dirY = localPlayer[translations.dir].y;
+        dirX = localPlayer[translations.dir_].x;
+        dirY = localPlayer[translations.dir_].y;
     }
 
     const offsetAngle = 2 * (Math.PI / 180);
@@ -348,7 +348,7 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
     let bounceCount = 0;
 
     const game = gameManager.game;
-    const idToObj = game?.[translations.objectCreator]?.[translations.idToObj];
+    const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
     if (!idToObj) return segments;
 
     const trueLayer = isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : layer;
@@ -489,22 +489,22 @@ function renderBulletTrajectory(localPlayer, graphics) {
     if (!localBullet || !localWeapon) return;
 
     const game = gameManager.game;
-    const playerPos = localPlayer[translations.pos];
-    const isSpectating = game[translations.uiManager].spectating;
-    const isAiming = game[translations.touch].shotDetected || game[translations.inputBinds].isBindDown(inputCommands.Fire_);
+    const playerPos = localPlayer[translations.pos_];
+    const isSpectating = game[translations.uiManager_].spectating;
+    const isAiming = game[translations.touch_].shotDetected || game[translations.inputBinds_].isBindDown(inputCommands.Fire_);
 
     let aimAngle;
     const currentAimPos = !isSpectating ? getCurrentAimPosition() : null;
     if (currentAimPos) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerPos.x, y: playerPos.y });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: playerPos.x, y: playerPos.y });
         aimAngle = Math.atan2(screenPos.y - currentAimPos.y, screenPos.x - currentAimPos.x) - Math.PI;
     } else if (!isSpectating && (!aimState.lastAimPos_ || !isAiming)) {
-        aimAngle = Math.atan2(game[translations.input].mousePos._y - outer.innerHeight / 2, game[translations.input].mousePos._x - outer.innerWidth / 2);
+        aimAngle = Math.atan2(game[translations.input_].mousePos._y - outer.innerHeight / 2, game[translations.input_].mousePos._x - outer.innerWidth / 2);
     } else if (!isSpectating && aimState.lastAimPos_) {
-        const screenPos = game[translations.camera][translations.pointToScreen]({ x: playerPos.x, y: playerPos.y });
+        const screenPos = game[translations.camera_][translations.pointToScreen_]({ x: playerPos.x, y: playerPos.y });
         aimAngle = Math.atan2(screenPos.y - aimState.lastAimPos_.clientY, screenPos.x - aimState.lastAimPos_.clientX) - Math.PI;
     } else {
-        aimAngle = Math.atan2(localPlayer[translations.dir].x, localPlayer[translations.dir].y) - Math.PI / 2;
+        aimAngle = Math.atan2(localPlayer[translations.dir_].x, localPlayer[translations.dir_].y) - Math.PI / 2;
     }
 
     const dir = v2.create(Math.cos(aimAngle), -Math.sin(aimAngle));
@@ -542,7 +542,7 @@ function renderFlashlights(localPlayer, players, graphics) {
 
     const enemies = players.filter((player) => {
         if (!player.active) return false;
-        if (player[translations.netData][translations.dead]) return false;
+        if (player[translations.netData_][translations.dead_]) return false;
         if (localPlayer.__id === player.__id) return false;
         if (!meetsLayerCriteria(player.layer, localLayer, isLocalOnBypassLayer)) return false;
         if (!player.container.worldVisible) return false;
@@ -558,8 +558,8 @@ function renderFlashlights(localPlayer, players, graphics) {
 
 function renderESP() {
     const pixi = gameManager.pixi;
-    const localPlayer = gameManager.game[translations.activePlayer];
-    const players = gameManager.game[translations.playerBarn].playerPool[translations.pool];
+    const localPlayer = gameManager.game[translations.activePlayer_];
+    const players = gameManager.game[translations.playerBarn_].playerPool[translations.pool_];
 
     if (!pixi || !localPlayer || !localPlayer.container || !gameManager.game?.initialized) return;
 
