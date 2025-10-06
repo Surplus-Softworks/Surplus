@@ -31,6 +31,12 @@ const Main = ({ settings, onSettingChange }) => {
           />
           <KeybindSlot keybind="N" />
         </div>
+        <Checkbox
+          id="aimbot-show-dot"
+          label="Aimbot Dot"
+          checked={settings.aimbot_.showDot_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.showDot_ = v))}
+        />
       </div>
 
       <SectionTitle

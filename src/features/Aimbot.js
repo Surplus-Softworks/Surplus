@@ -375,7 +375,7 @@ function aimbotTicker() {
                     displayPos = { x: previewTargetPos.x, y: previewTargetPos.y };
                 }
 
-                if (displayPos) {
+                if (displayPos && settings.aimbot_.showDot_) {
                     const { x, y } = displayPos;
                     if (aimbotDot.style.left !== `${x}px` || aimbotDot.style.top !== `${y}px`) {
                         aimbotDot.style.left = `${x}px`;

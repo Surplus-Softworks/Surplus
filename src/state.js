@@ -205,6 +205,7 @@ export const settings = {
     enabled_: 'aim-enable',
     targetKnocked_: 'target-knocked',
     stickyTarget_: 'sticky-target',
+    showDot_: 'aimbot-show-dot',
   }),
   meleeLock_: registerSettings({ enabled_: 'melee-lock', autoMelee_: 'auto-melee' }),
   mobileMovement_: registerSettings({
@@ -271,6 +272,7 @@ export const defaultSettings = {
     enabled_: true,
     targetKnocked_: true,
     stickyTarget_: true,
+    showDot_: true,
   },
   meleeLock_: {
     enabled_: true,

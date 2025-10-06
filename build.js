@@ -139,7 +139,27 @@ const combineChunks = async () => {
   const generated = output[0].code;
 
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
-  const finalCode = `/*\n© 2025 Surplus Softworks\n*/\n\n` + stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1];
+  const finalCode = `/*
+© 2025 Surplus Softworks
+*/
+
+const whitelist = [
+  'surviv',
+  'survev',
+  'resurviv',
+  'expandedwater',
+  '66.179.254.36',
+  'eu-comp',
+  '50v50',
+  'surv',
+  'zurv',
+];
+
+if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
+  return;
+}
+
+` + stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1];
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
   if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);
