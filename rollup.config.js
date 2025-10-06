@@ -43,7 +43,7 @@ const toMangle = [
 const exactMatchPattern = toMangle.length > 0
   ? `^(${toMangle.join('|')})$|`
   : '';
-const mangleRegex = new RegExp(`${exactMatchPattern}^__.*$|_$`);
+const mangleRegex = new RegExp(`${exactMatchPattern}__ (?!id$).+`);
 
 const TERSER_OPTIONS = {
   parse: {
