@@ -3,7 +3,6 @@ import { settings, inputState } from '@/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
-const arrayPush = Array.prototype.push;
 const WEAPON_COMMANDS = [inputCommands.EquipPrimary_, inputCommands.EquipSecondary_];
 
 const weaponState = [
@@ -13,7 +12,7 @@ const weaponState = [
     { name_: '', ammo_: null, type_: '' },
 ];
 
-const queueInput = (command) => Reflect.apply(arrayPush, inputState.queuedInputs_, [command]);
+const queueInput = (command) => inputState.queuedInputs_.push(command)
 
 const isSlowFiringWeapon = (weaponType) => {
     try {
