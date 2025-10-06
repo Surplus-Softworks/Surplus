@@ -580,7 +580,7 @@ function renderESP() {
 
     const trajectoryGraphics = getGraphics(localPlayer.container, 'grenadeTrajectory');
     trajectoryGraphics.clear();
-    if (settings.esp_.enabled_ && settings.esp_.grenades_.trajectories_) {
+    if (settings.esp_.enabled_ && settings.esp_.grenades_.trajectory_) {
         renderGrenadeTrajectory(localPlayer, trajectoryGraphics);
     }
 
