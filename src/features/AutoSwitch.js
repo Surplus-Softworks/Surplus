@@ -4,7 +4,7 @@ import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 
 const arrayPush = Array.prototype.push;
-const WEAPON_COMMANDS = ['EquipPrimary', 'EquipSecondary'];
+const WEAPON_COMMANDS = [inputCommands.EquipPrimary_, inputCommands.EquipSecondary_];
 
 const weaponState = [
     { name_: '', ammo_: null, lastShotDate_: Date.now(), type_: '' },
@@ -37,7 +37,7 @@ const queueWeaponCycleAndBack = (firstIndex, secondIndex) => {
 };
 
 const queueMeleeCycleAndBack = (weaponIndex) => {
-    queueInput('EquipMelee');
+    queueInput(inputCommands.EquipMelee_);
     queueWeaponSwitch(weaponIndex);
 };
 

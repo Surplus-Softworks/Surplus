@@ -72,7 +72,7 @@ const applyAutoLootFlag = (packet) => {
 
 const flushQueuedInputs = (packet) => {
   for (const command of inputState.queuedInputs_) {
-    packet.addInput(inputCommands[command]);
+    packet.addInput(command);
   }
   inputState.queuedInputs_.length = 0;
 };
