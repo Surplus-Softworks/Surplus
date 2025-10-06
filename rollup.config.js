@@ -50,7 +50,7 @@ const exactMatchPattern = toMangle.length > 0
 const exactlyNotMatchPattern = toNotMangle.length > 0
   ? `(?!${toNotMangle.map(v=>v+"$").join('|')})`
   : '';
-const mangleRegex = new RegExp(`${exactMatchPattern}__${exactlyNotMatchPattern}(?!id$).+`);
+const mangleRegex = new RegExp(`${exactMatchPattern}(?:^__${exactlyNotMatchPattern}.*$|_$)`);
 
 const TERSER_OPTIONS = {
   parse: {
