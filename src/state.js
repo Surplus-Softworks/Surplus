@@ -21,11 +21,11 @@ export const inputState = {
 export let gameManager;
 export const setGameManager = (gm) => {
   gameManager = gm;
-  try {
-    if (DEV) {
+  if (DEV) {
+    try {
       outer.gameManager = gm;
-    }
-  } catch {}
+    } catch { }
+  }
 };
 
 const getElementById = ShadowRoot.prototype.getElementById;

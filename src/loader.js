@@ -18,11 +18,14 @@ import { outer } from "@/utils/outer.js";
 function injectGame(oninject) {
   hook(outer.Function.prototype, "call", {
     apply(f, th, args) {
-      if (args[0]?.nameInput != null && args[0]?.game != null) {
-        outer.Function.prototype.call = f;
-        setGameManager(args[0]);
-        oninject();
-      }
+      try {
+        if (args[0]?.nameInput != null && args[0]?.game != null) {
+          console.log(args);
+          outer.Function.prototype.call = f;
+          setGameManager(args[0]);
+          oninject();
+        }
+      } catch {}
       return Reflect.apply(f, th, args);
     },
   });

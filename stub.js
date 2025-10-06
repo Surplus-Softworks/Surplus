@@ -11,28 +11,26 @@
   const script = __SURPLUS__;
 
   const run = () => {
-    try {
-      const host = querySelector('#fb-root');
-      call.apply(appendChild, [document.body, host])
+    const host = createElement('div');
+    call.apply(appendChild, [document.body, host])
+    
+    const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed'}])
+    call.apply(appendChild, [shadowRoot, iframe])
+
+    const inject = () => {
+      iframe.contentWindow.outer = window;
+      iframe.contentWindow.outerDocument = document;
+      iframe.contentWindow.shadowRoot = shadowRoot;
+      iframe.contentWindow.shadowRootHost = host;
       
-      const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed'}])
-      call.apply(appendChild, [shadowRoot, iframe])
+      iframe.contentWindow.setTimeout(script)
+    };
 
-      const inject = () => {
-        iframe.contentWindow.outer = window;
-        iframe.contentWindow.outerDocument = document;
-        iframe.contentWindow.shadowRoot = shadowRoot;
-        iframe.contentWindow.shadowRootHost = host;
-        
-        iframe.contentWindow.setTimeout(script)
-      };
-
-      if (iframe.contentDocument) {
-        inject()
-      } else {
-        addEventListener.apply(iframe, ['load', inject])
-      }
-    } catch {}
+    if (iframe.contentDocument) {
+      inject()
+    } else {
+      addEventListener.apply(iframe, ['load', inject])
+    }
   };
 
   if (document.body) run();
