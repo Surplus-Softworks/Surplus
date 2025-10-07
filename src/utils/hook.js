@@ -6,12 +6,6 @@ spoof.get = spoof.get;
 spoof.delete = spoof.delete;
 spoof.has = spoof.has;
 
-const spoofedNodes = new WeakMap();
-spoofedNodes.set = spoofedNodes.set;
-spoofedNodes.get = spoofedNodes.get;
-spoofedNodes.delete = spoofedNodes.delete;
-spoofedNodes.has = spoofedNodes.has;
-
 export function hook(object, name, handler) {
 	const original = object[name];
 	const hooked = new Proxy(original, handler);
@@ -36,21 +30,6 @@ hook(outer.Function.prototype, "toString", {
 	apply(f, th, args) {
 		return Reflect.apply(f, spoof.get(th) || th, args);
 	},
-});
-
-hook(outer.Element.prototype, "attachShadow", {
-	apply(f, th, args) {
-		return Reflect.apply(f, spoofedNodes.get(th) || th, args);
-	},
-});
-const shadowRootProxy = new Proxy(Object.getOwnPropertyDescriptor(outer.Element.prototype, "shadowRoot").get, {
-	apply(f, th, args) {
-		return Reflect.apply(f, spoofedNodes.get(th) || th, args);
-	},
-});
-spoof.set(shadowRootProxy, Object.getOwnPropertyDescriptor(outer.Element.prototype, "shadowRoot").get);
-Object.defineProperty(outer.Element.prototype, "shadowRoot", {
-	get: shadowRootProxy,
 });
 
 hook(outer.Element.prototype, "attachShadow", {
