@@ -180,8 +180,6 @@ export default (commandLineArgs) => {
   const isDev = commandLineArgs.dev === true;
   const EPOCH = Date.now() + 1000 * 60 * 60;
 
-  if (isDev) delete TERSER_OPTIONS.mangle;
-
   return {
     input: './src/index.js',
     output: {

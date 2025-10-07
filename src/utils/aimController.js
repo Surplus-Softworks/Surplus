@@ -23,6 +23,7 @@ const controllerState = {
   targetMoveDir_: null,
   moveAnimation_: null,
   isInterpolating_: false,
+  idleReleaseTimeout_: null,
 };
 
 const clonePoint = (point) => (point ? { x: point.x, y: point.y } : null);
@@ -98,6 +99,24 @@ const applyAimStateSnapshot = (pos) => {
     controllerState.currentPos_ = null;
     aimState.lastAimPos_ = null;
   }
+};
+
+const clearIdleReleaseTimeout = () => {
+  if (controllerState.idleReleaseTimeout_ !== null) {
+    clearTimeout(controllerState.idleReleaseTimeout_);
+    controllerState.idleReleaseTimeout_ = null;
+  }
+};
+
+const scheduleIdleRelease = (duration) => {
+  clearIdleReleaseTimeout();
+  controllerState.idleReleaseTimeout_ = setTimeout(() => {
+    controllerState.idleReleaseTimeout_ = null;
+    if (controllerState.mode_ === 'idle') {
+      controllerState.animation_ = null;
+      applyAimStateSnapshot(null);
+    }
+  }, Math.max(0, duration));
 };
 
 const updateMoveDir = (now) => {
@@ -215,9 +234,39 @@ const updateBaselineAxis = (axis, value) => {
     ...controllerState.baselinePos_,
     [axis]: value,
   };
-  if (controllerState.mode_ === 'idle' && !controllerState.animation_) {
-    controllerState.currentPos_ = null;
+  if (controllerState.mode_ !== 'idle') {
+    return;
   }
+
+  if (!controllerState.overrideActive_) {
+    controllerState.currentPos_ = null;
+    controllerState.animation_ = null;
+    return;
+  }
+
+  const now = performance.now();
+  step(now);
+
+  const baselinePoint = clonePoint(controllerState.baselinePos_);
+  const current = controllerState.currentPos_ ?? baselinePoint;
+
+  if (!positionsDiffer(current, baselinePoint)) {
+    clearIdleReleaseTimeout();
+    controllerState.animation_ = null;
+    controllerState.targetPos_ = null;
+    applyAimStateSnapshot(null);
+    return;
+  }
+
+  const duration = computeDuration(current, baselinePoint);
+
+  controllerState.animation_ = {
+    startPos: clonePoint(current),
+    targetPos: baselinePoint,
+    startTime: now,
+    duration,
+  };
+  scheduleIdleRelease(duration);
 };
 
 export const initializeAimController = () => {
@@ -268,26 +317,28 @@ export const manageAimState = ({
   step(now);
 
   if (normalizedMode === 'idle') {
-    if (controllerState.mode_ !== 'idle') {
-      const baseline = clonePoint(controllerState.baselinePos_);
-      const start = controllerState.currentPos_ ?? baseline;
-      const duration = immediate ? 0 : computeDuration(start, baseline);
+    clearIdleReleaseTimeout();
+    const baseline = clonePoint(controllerState.baselinePos_);
+    const start = controllerState.currentPos_ ?? clonePoint(baseline);
+    const needsInterpolation = !immediate && positionsDiffer(start, baseline);
+
+    if (needsInterpolation) {
+      const duration = computeDuration(start, baseline);
       controllerState.animation_ = {
         startPos: clonePoint(start),
-        targetPos: baseline,
+        targetPos: clonePoint(baseline),
         startTime: now,
-        duration: duration,
+        duration,
       };
-      setTimeout(() => {
-        if (controllerState.mode_ === 'idle') {
-          controllerState.animation_ = null;
-          applyAimStateSnapshot(null);
-        }
-      }, duration);
+      scheduleIdleRelease(duration);
+    } else {
+      controllerState.animation_ = null;
+      applyAimStateSnapshot(null);
     }
     controllerState.mode_ = 'idle';
     controllerState.targetPos_ = null;
   } else {
+    clearIdleReleaseTimeout();
     const resolvedTarget = targetScreenPos
       ? { x: targetScreenPos.x, y: targetScreenPos.y }
       : clonePoint(controllerState.baselinePos_);
