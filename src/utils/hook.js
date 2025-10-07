@@ -32,18 +32,10 @@ export function restore(object, name) {
 	object[name] = getnative(object[name]);
 }
 
-hook(outer.Object.getPrototypeOf(outer.Object.getPrototypeOf(() => {})), "toString", {
+hook(outer.Function.prototype, "toString", {
 	apply(f, th, args) {
 		return Reflect.apply(f, spoof.get(th) || th, args);
 	},
-});
-
-hook(outer.Function.prototype, "bind", {
-    apply(f, th, args) {
-        const ret = Reflect.apply(f, th, args);
-        spoof.set(ret, getnative(th));
-        return ret;
-    }
 });
 
 hook(outer.Element.prototype, "attachShadow", {

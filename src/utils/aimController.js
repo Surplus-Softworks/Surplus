@@ -1,5 +1,6 @@
 import { aimState, gameManager, settings } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { outer } from './outer';
 
 const MIN_DURATION_MS = 45;
 const MAX_EXTRA_DURATION_MS = 360;

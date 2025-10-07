@@ -1,5 +1,6 @@
 import { settings } from '@/state.js';
 import { ref_addEventListener } from '@/utils/hook.js';
+import { outer } from '@/utils/outer';
 
 export let autoFireEnabled;
 
