@@ -14,15 +14,15 @@ import { getCurrentAimPosition, isAimInterpolating } from '@/utils/aimController
 import { outer } from '@/utils/outer.js';
 
 const v2 = {
-  create: (x, y) => ({ x, y }),
-  copy: (v) => ({ x: v.x, y: v.y }),
-  add: (a, b) => ({ x: a.x + b.x, y: a.y + b.y }),
-  sub: (a, b) => ({ x: a.x - b.x, y: a.y - b.y }),
-  mul: (v, s) => ({ x: v.x * s, y: v.y * s }),
-  dot: (a, b) => a.x * b.x + a.y * b.y,
-  length: (v) => Math.sqrt(v.x * v.x + v.y * v.y),
-  lengthSqr: (v) => v.x * v.x + v.y * v.y,
-  normalize: (v) => {
+  create_: (x, y) => ({ x, y }),
+  copy_: (v) => ({ x: v.x, y: v.y }),
+  add_: (a, b) => ({ x: a.x + b.x, y: a.y + b.y }),
+  sub_: (a, b) => ({ x: a.x - b.x, y: a.y - b.y }),
+  mul_: (v, s) => ({ x: v.x * s, y: v.y * s }),
+  dot_: (a, b) => a.x * b.x + a.y * b.y,
+  length_: (v) => Math.sqrt(v.x * v.x + v.y * v.y),
+  lengthSqr_: (v) => v.x * v.x + v.y * v.y,
+  normalize_: (v) => {
     const len = Math.sqrt(v.x * v.x + v.y * v.y);
     return len > 0.0001 ? { x: v.x / len, y: v.y / len } : { x: 1, y: 0 };
   },
@@ -33,8 +33,8 @@ const sameLayer = (a, b) => {
 };
 
 const collisionHelpers = {
-  intersectSegmentAabb: (a, b, min, max) => {
-    const dir = v2.sub(b, a);
+  intersectSegmentAabb_: (a, b, min, max) => {
+    const dir = v2.sub_(b, a);
     const invDir = { x: 1 / dir.x, y: 1 / dir.y };
 
     const t1 = (min.x - a.x) * invDir.x;
@@ -48,11 +48,11 @@ const collisionHelpers = {
     if (tmax < 0 || tmin > tmax || tmin > 1) return null;
 
     const t = Math.max(0, tmin);
-    const point = v2.add(a, v2.mul(dir, t));
+    const point = v2.add_(a, v2.mul_(dir, t));
 
-    const center = v2.mul(v2.add(min, max), 0.5);
-    const extent = v2.mul(v2.sub(max, min), 0.5);
-    const localPt = v2.sub(point, center);
+    const center = v2.mul_(v2.add_(min, max), 0.5);
+    const extent = v2.mul_(v2.sub_(max, min), 0.5);
+    const localPt = v2.sub_(point, center);
 
     let normal;
     const dx = Math.abs(Math.abs(localPt.x) - extent.x);
@@ -67,13 +67,13 @@ const collisionHelpers = {
     return { point, normal };
   },
 
-  intersectSegmentCircle: (a, b, pos, rad) => {
-    const d = v2.sub(b, a);
-    const f = v2.sub(a, pos);
+  intersectSegmentCircle_: (a, b, pos, rad) => {
+    const d = v2.sub_(b, a);
+    const f = v2.sub_(a, pos);
 
-    const aa = v2.dot(d, d);
-    const bb = 2 * v2.dot(f, d);
-    const c = v2.dot(f, f) - rad * rad;
+    const aa = v2.dot_(d, d);
+    const bb = 2 * v2.dot_(f, d);
+    const c = v2.dot_(f, f) - rad * rad;
 
     let discriminant = bb * bb - 4 * aa * c;
     if (discriminant < 0) return null;
@@ -88,19 +88,19 @@ const collisionHelpers = {
 
     if (t < 0) return null;
 
-    const point = v2.add(a, v2.mul(d, t));
-    const normal = v2.normalize(v2.sub(point, pos));
+    const point = v2.add_(a, v2.mul_(d, t));
+    const normal = v2.normalize_(v2.sub_(point, pos));
 
     return { point, normal };
   },
 
-  intersectSegment: (collider, a, b) => {
+  intersectSegment_: (collider, a, b) => {
     if (!collider) return null;
 
     if (collider.type === 1) {
-      return collisionHelpers.intersectSegmentAabb(a, b, collider.min, collider.max);
+      return collisionHelpers.intersectSegmentAabb_(a, b, collider.min, collider.max);
     } else if (collider.type === 0) {
-      return collisionHelpers.intersectSegmentCircle(a, b, collider.pos, collider.rad);
+      return collisionHelpers.intersectSegmentCircle_(a, b, collider.pos, collider.rad);
     }
 
     return null;
@@ -387,8 +387,8 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
   const BULLET_HEIGHT = 0.25;
   const REFLECT_DIST_DECAY = 1.5;
 
-  let pos = v2.copy(startPos);
-  let currentDir = v2.normalize(dir);
+  let pos = v2.copy_(startPos);
+  let currentDir = v2.normalize_(dir);
   let remainingDist = distance;
   let bounceCount = 0;
 
@@ -408,39 +408,101 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
     return true;
   });
 
+  const playerBarn = game?.[translations.playerBarn_];
+  const playerPool = playerBarn?.playerPool?.[translations.pool_];
+  const configKey = translations.config_;
+  const gameConfig = configKey ? game?.[configKey] : null;
+  const basePlayerRadius = gameConfig?.player?.radius ?? 1;
+
+  const playerColliders = [];
+
+  if (Array.isArray(playerPool)) {
+    for (const player of playerPool) {
+      if (!player || !player.active) continue;
+      if (player.__id === localPlayer.__id) continue;
+
+      const netData = player[translations.netData_];
+      if (!netData) continue;
+      if (netData[translations.dead_]) continue;
+
+      const playerLayer = player.layer ?? netData.m_layer ?? 0;
+      if (!sameLayer(playerLayer, trueLayer) && !(playerLayer & 0x2)) continue;
+
+      const playerPos = player[translations.pos_] ?? player.m_pos;
+      if (!playerPos) continue;
+
+      const scale =
+        typeof netData.m_scale === 'number'
+          ? netData.m_scale
+          : typeof netData.scale === 'number'
+            ? netData.scale
+            : 1;
+
+      const radCandidate =
+        typeof player.m_rad === 'number'
+          ? player.m_rad
+          : typeof player.rad === 'number'
+            ? player.rad
+            : basePlayerRadius * scale;
+
+      if (!(radCandidate > 0)) continue;
+
+      playerColliders.push({ pos: { x: playerPos.x, y: playerPos.y }, rad: radCandidate });
+    }
+  }
+
   while (bounceCount <= maxBounces && remainingDist > 0.1) {
-    const endPos = v2.add(pos, v2.mul(currentDir, remainingDist));
+    const endPos = v2.add_(pos, v2.mul_(currentDir, remainingDist));
 
     let closestCol = null;
     let closestDist = Infinity;
     let closestObstacle = null;
+    let closestHitType = null;
 
     for (const obstacle of obstacles) {
       if (obstacle.collidable === false) continue;
 
       const colliderToUse = obstacle.collider;
 
-      const res = collisionHelpers.intersectSegment(colliderToUse, pos, endPos);
+      const res = collisionHelpers.intersectSegment_(colliderToUse, pos, endPos);
       if (res) {
-        const dist = v2.lengthSqr(v2.sub(res.point, pos));
+        const dist = v2.lengthSqr_(v2.sub_(res.point, pos));
         if (dist < closestDist && dist > 0.0001) {
           closestDist = dist;
           closestCol = res;
           closestObstacle = obstacle;
+          closestHitType = 'obstacle';
+        }
+      }
+    }
+
+    for (const collider of playerColliders) {
+      const res = collisionHelpers.intersectSegmentCircle_(pos, endPos, collider.pos, collider.rad);
+      if (res) {
+        const dist = v2.lengthSqr_(v2.sub_(res.point, pos));
+        if (dist < closestDist && dist > 0.0001) {
+          closestDist = dist;
+          closestCol = res;
+          closestObstacle = null;
+          closestHitType = 'player';
         }
       }
     }
 
     if (closestCol) {
       segments.push({
-        start: v2.copy(pos),
-        end: v2.copy(closestCol.point),
+        start: v2.copy_(pos),
+        end: v2.copy_(closestCol.point),
+        hitPlayer: closestHitType === 'player',
       });
+      if (closestHitType === 'player') {
+        break;
+      }
 
       const obstacleType = closestObstacle?.type;
       let reflectBullets = false;
 
-      if (closestObstacle.reflectBullets !== undefined) {
+      if (closestObstacle && closestObstacle.reflectBullets !== undefined) {
         reflectBullets = closestObstacle.reflectBullets === true;
       } else {
         const reflectivePatterns = [
@@ -457,16 +519,16 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
 
         reflectBullets = reflectivePatterns.some((pattern) => obstacleType?.includes(pattern));
       }
-      if (bounceCount === 0) {
-        //debug
-        outer.console.log('Hit:', obstacleType, 'reflects:', reflectBullets);
-      }
+      //if (bounceCount === 0 && closestObstacle) {
+      //  //debug
+      //  outer.console.log('Hit:', obstacleType, 'reflects:', reflectBullets);
+      //}
       if (reflectBullets && bounceCount < maxBounces) {
-        const dot = v2.dot(currentDir, closestCol.normal);
-        currentDir = v2.add(v2.mul(closestCol.normal, dot * -2), currentDir);
-        currentDir = v2.normalize(currentDir);
+        const dot = v2.dot_(currentDir, closestCol.normal);
+        currentDir = v2.add_(v2.mul_(closestCol.normal, dot * -2), currentDir);
+        currentDir = v2.normalize_(currentDir);
 
-        pos = v2.add(closestCol.point, v2.mul(currentDir, 0.01));
+        pos = v2.add_(closestCol.point, v2.mul_(currentDir, 0.01));
         const traveledDist = Math.sqrt(closestDist);
         remainingDist = Math.max(1, remainingDist - traveledDist) / REFLECT_DIST_DECAY;
         bounceCount++;
@@ -475,8 +537,9 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
       }
     } else {
       segments.push({
-        start: v2.copy(pos),
+        start: v2.copy_(pos),
         end: endPos,
+        hitPlayer: false,
       });
       break;
     }
@@ -526,7 +589,7 @@ function renderBulletTrajectory(localPlayer, graphics) {
       Math.atan2(localPlayer[translations.dir_].x, localPlayer[translations.dir_].y) - Math.PI / 2;
   }
 
-  const dir = v2.create(Math.cos(aimAngle), -Math.sin(aimAngle));
+  const dir = v2.create_(Math.cos(aimAngle), -Math.sin(aimAngle));
 
   const segments = calculateTrajectory(
     playerPos,
@@ -536,7 +599,11 @@ function renderBulletTrajectory(localPlayer, graphics) {
     localPlayer
   );
 
-  graphics.lineStyle(2, 0xff00ff, 0.5);
+  const hitPlayer = segments.some((segment) => segment.hitPlayer);
+  const trajectoryColor = hitPlayer ? COLORS.RED_ : 0xff00ff;
+  const trajectoryWidth = hitPlayer ? 4 : 2;
+
+  graphics.lineStyle(trajectoryWidth, trajectoryColor, 0.5);
 
   for (const segment of segments) {
     const startScreen = {
