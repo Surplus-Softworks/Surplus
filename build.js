@@ -39,10 +39,10 @@ const OBFUSCATE_OPTIONS = {
   objectExtraction: true,
   deadCode: false,
   compact: true,
-  pack: true, 
+  pack: true,
 
   preset: false,
-}
+};
 
 const clearDist = async () => {
   await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});

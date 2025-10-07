@@ -5,7 +5,7 @@ import MainTab from '@/ui/components/tabs/Main.jsx';
 import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
 import MiscTab from '@/ui/components/tabs/Misc.jsx';
 import HelpTab from '@/ui/components/tabs/Help.jsx';
-import { outer, outerDocument} from '@/utils/outer.js';
+import { outer, outerDocument } from '@/utils/outer.js';
 
 const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [activeTab, setActiveTab] = useState('help');
@@ -110,9 +110,7 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       <div className="popup">
         <Header onMouseDown={handleMouseDown} version={version} />
         <Navbar activeTab={activeTab} onTabChange={setActiveTab} onClose={onClose} />
-        <div className={`content-container ${activeTab ? 'active' : ''}`}>
-          {renderActiveTab()}
-        </div>
+        <div className={`content-container ${activeTab ? 'active' : ''}`}>{renderActiveTab()}</div>
       </div>
     </div>
   );

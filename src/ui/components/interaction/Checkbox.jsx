@@ -8,11 +8,7 @@ const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
   };
 
   return (
-    <div
-      className="checkbox-item"
-      style={style}
-      onClick={handleClick}
-    >
+    <div className="checkbox-item" style={style} onClick={handleClick}>
       <input
         type="checkbox"
         id={id}
@@ -23,11 +19,7 @@ const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
         }}
         className={`checkbox ${checked ? 'checkbox-checked' : ''}`}
       />
-      <label
-        htmlFor={id}
-        className="checkbox-item-label"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <label htmlFor={id} className="checkbox-item-label" onClick={(e) => e.stopPropagation()}>
         {label}
       </label>
     </div>

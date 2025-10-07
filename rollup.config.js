@@ -22,10 +22,10 @@ function cssPlugin() {
         css = minified.styles;
         return {
           code: `export const globalStylesheet = ${JSON.stringify(css)};`,
-          map: null
+          map: null,
         };
       }
-    }
+    },
   };
 }
 
@@ -35,26 +35,46 @@ const __dirname = path.dirname(__filename);
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
 
-const toMangle = [ 
-  "getDerivedStateFromProps",  "componentWillMount", "componentDidMount", "componentWillReceiveProps",
-  "getSnapshotBeforeUpdate", "getChildContext", "componentWillUnmount", "defaultProps", "vnode", "context", "props", 
-  "componentDidUpdate", "state", "context", "setState", "componentDidCatch", "getDerivedStateFromError", "forceUpdate",
-  "revealOrder", "isReactComponent", "isPropagationStopped", "isDefaultPrevented", "persist", "nativeEvent",
-  "shouldComponentUpdate", "componentWillUpdate", "debounceRendering", 
+const toMangle = [
+  'getDerivedStateFromProps',
+  'componentWillMount',
+  'componentDidMount',
+  'componentWillReceiveProps',
+  'getSnapshotBeforeUpdate',
+  'getChildContext',
+  'componentWillUnmount',
+  'defaultProps',
+  'vnode',
+  'context',
+  'props',
+  'componentDidUpdate',
+  'state',
+  'context',
+  'setState',
+  'componentDidCatch',
+  'getDerivedStateFromError',
+  'forceUpdate',
+  'revealOrder',
+  'isReactComponent',
+  'isPropagationStopped',
+  'isDefaultPrevented',
+  'persist',
+  'nativeEvent',
+  'shouldComponentUpdate',
+  'componentWillUpdate',
+  'debounceRendering',
 
-  "diffed", "onSettingChange", "settings", "onClose"
+  'diffed',
+  'onSettingChange',
+  'settings',
+  'onClose',
 ];
 
-const toNotMangle = [
-  "id", "type"
-];
+const toNotMangle = ['id', 'type'];
 
-const exactMatchPattern = toMangle.length > 0
-  ? `^(${toMangle.join('|')})$|`
-  : '';
-const exactlyNotMatchPattern = toNotMangle.length > 0
-  ? `(?!${toNotMangle.map(v=>v+"$").join('|')})`
-  : '';
+const exactMatchPattern = toMangle.length > 0 ? `^(${toMangle.join('|')})$|` : '';
+const exactlyNotMatchPattern =
+  toNotMangle.length > 0 ? `(?!${toNotMangle.map((v) => v + '$').join('|')})` : '';
 const mangleRegex = new RegExp(`${exactMatchPattern}(?:^__${exactlyNotMatchPattern}.*$|_$)`);
 
 const TERSER_OPTIONS = {
@@ -160,8 +180,7 @@ export default (commandLineArgs) => {
   const isDev = commandLineArgs.dev === true;
   const EPOCH = Date.now() + 1000 * 60 * 60;
 
-  if (isDev)
-    delete TERSER_OPTIONS.mangle;
+  if (isDev) delete TERSER_OPTIONS.mangle;
 
   return {
     input: './src/index.js',
@@ -190,7 +209,7 @@ export default (commandLineArgs) => {
           { find: '@', replacement: path.resolve(__dirname, 'src') },
           { find: 'react', replacement: 'preact/compat' },
           { find: 'react-dom', replacement: 'preact/compat' },
-          { find: 'react-dom/client', replacement: 'preact/compat' }
+          { find: 'react-dom/client', replacement: 'preact/compat' },
         ],
       }),
       cssPlugin(),
@@ -206,9 +225,7 @@ export default (commandLineArgs) => {
       }),
       babel({
         babelHelpers: 'bundled',
-        presets: [
-          ["@babel/preset-react", { "runtime": "automatic", "importSource": "preact" }]
-        ],
+        presets: [['@babel/preset-react', { runtime: 'automatic', importSource: 'preact' }]],
         extensions: ['.js', '.jsx'],
         exclude: 'node_modules/**',
       }),
@@ -216,7 +233,7 @@ export default (commandLineArgs) => {
         extensions: ['.js', '.jsx'],
       }),
       commonjs(),
-      terser(TERSER_OPTIONS)
+      terser(TERSER_OPTIONS),
     ],
     onwarn(warning, warn) {
       if (warning.code === 'THIS_IS_UNDEFINED') return;

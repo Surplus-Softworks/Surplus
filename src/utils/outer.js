@@ -6,7 +6,7 @@ export const outer = window.ou;
 /**
  * @type {typeof document}
  */
-export const outerDocument = window.ou.document
+export const outerDocument = window.ou.document;
 
 /**
  * @type {typeof ShadowRoot}

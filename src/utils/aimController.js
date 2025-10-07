@@ -118,7 +118,8 @@ const updateMoveDir = (now) => {
     } else if (startDir && targetDir) {
       working = {
         touchMoveActive: true,
-        touchMoveLen: startDir.touchMoveLen + (targetDir.touchMoveLen - startDir.touchMoveLen) * eased,
+        touchMoveLen:
+          startDir.touchMoveLen + (targetDir.touchMoveLen - startDir.touchMoveLen) * eased,
         x: startDir.x + (targetDir.x - startDir.x) * eased,
         y: startDir.y + (targetDir.y - startDir.y) * eased,
       };
@@ -141,7 +142,10 @@ const updateMoveDir = (now) => {
     }
   }
 
-  if (controllerState.currentMoveDir_?.touchMoveActive && controllerState.currentMoveDir_.touchMoveLen > EPSILON) {
+  if (
+    controllerState.currentMoveDir_?.touchMoveActive &&
+    controllerState.currentMoveDir_.touchMoveLen > EPSILON
+  ) {
     aimState.aimTouchMoveDir_ = cloneMoveDir(controllerState.currentMoveDir_);
   } else {
     aimState.aimTouchMoveDir_ = null;
@@ -165,7 +169,10 @@ const step = (now = performance.now()) => {
         hasMovement = true;
       } else {
         const center = getScreenCenter();
-        const angleDiff = angleDifference(computeAngle(startPos, center), computeAngle(targetPos, center));
+        const angleDiff = angleDifference(
+          computeAngle(startPos, center),
+          computeAngle(targetPos, center)
+        );
         hasMovement = angleDiff > MIN_INTERPOLATION_ANGLE;
       }
     }
@@ -248,7 +255,12 @@ export const initializeAimController = () => {
   controllerState.initialized_ = true;
 };
 
-export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immediate = false } = {}) => {
+export const manageAimState = ({
+  mode = 'idle',
+  targetScreenPos,
+  moveDir,
+  immediate = false,
+} = {}) => {
   if (!controllerState.initialized_) return;
 
   const normalizedMode = mode ?? 'idle';
@@ -276,7 +288,9 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
     controllerState.mode_ = 'idle';
     controllerState.targetPos_ = null;
   } else {
-    const resolvedTarget = targetScreenPos ? { x: targetScreenPos.x, y: targetScreenPos.y } : clonePoint(controllerState.baselinePos_);
+    const resolvedTarget = targetScreenPos
+      ? { x: targetScreenPos.x, y: targetScreenPos.y }
+      : clonePoint(controllerState.baselinePos_);
     const start = controllerState.currentPos_ ?? clonePoint(controllerState.baselinePos_);
     const targetChanged = positionsDiffer(resolvedTarget, controllerState.targetPos_);
     const modeChanged = normalizedMode !== controllerState.mode_;
@@ -313,11 +327,11 @@ export const manageAimState = ({ mode = 'idle', targetScreenPos, moveDir, immedi
 let lastPing;
 
 export function getPing() {
-    if (gameManager.game.pings.length == 0) return lastPing ?? 0;
-    let slice = Reflect.apply(Array.prototype.slice, gameManager.game.pings, [-5]);
-    let sum = slice.reduce((a,b) => a+b);
-    lastPing = (sum / slice.length) / 1000;
-    return lastPing;
+  if (gameManager.game.pings.length == 0) return lastPing ?? 0;
+  let slice = Reflect.apply(Array.prototype.slice, gameManager.game.pings, [-5]);
+  let sum = slice.reduce((a, b) => a + b);
+  lastPing = sum / slice.length / 1000;
+  return lastPing;
 }
 
 export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos_);

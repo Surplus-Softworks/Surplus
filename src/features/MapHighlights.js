@@ -54,7 +54,7 @@ const colorize = (map) => {
   });
 };
 
-export default function() {
+export default function () {
   hook(outer.Array.prototype, 'sort', {
     apply(original, context, args) {
       try {

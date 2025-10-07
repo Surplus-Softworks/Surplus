@@ -7,17 +7,9 @@ const Header = ({ onMouseDown, version }) => {
 
   return (
     <div className="header" onMouseDown={handleMouseDown}>
-      <img
-        src="https://i.postimg.cc/W4g7cxLP/image.png"
-        alt="Menu"
-        className="menu-icon"
-      />
-      <div className="title">
-        Surplus{version && ` ${version}`}
-      </div>
-      <div className="credit">
-        by mahdi, noam
-      </div>
+      <img src="https://i.postimg.cc/W4g7cxLP/image.png" alt="Menu" className="menu-icon" />
+      <div className="title">Surplus{version && ` ${version}`}</div>
+      <div className="credit">by mahdi, noam</div>
     </div>
   );
 };

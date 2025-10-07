@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "build": "node build.js",
-    "dev": "node build.js dev"
+    "dev": "node build.js dev",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "lucide-preact": "^0.544.0",
@@ -28,5 +29,15 @@
     "rollup-plugin-string": "^3.0.0",
     "terser": "^5.39.0",
     "ws": "^8.18.1"
+  },
+  "prettier": {
+    "useTabs": false,
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "printWidth": 100,
+    "arrowParens": "always",
+    "endOfLine": "crlf"
   }
 }

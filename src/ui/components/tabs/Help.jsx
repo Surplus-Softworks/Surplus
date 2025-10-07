@@ -50,9 +50,26 @@ const Help = () => {
         <div className="discord-panel">
           <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
             <Icons.Discord style={{ color: '#5865F2' }} />
-            <span style={{ marginLeft: '0.375rem', color: '#fff', fontSize: '0.875rem', fontWeight: 600 }}>Discord Server</span>
+            <span
+              style={{
+                marginLeft: '0.375rem',
+                color: '#fff',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+              }}
+            >
+              Discord Server
+            </span>
           </div>
-          <p style={{ color: '#bbb', fontSize: '0.75rem', lineHeight: 1.4, marginBottom: '0.625rem', flexGrow: 1 }}>
+          <p
+            style={{
+              color: '#bbb',
+              fontSize: '0.75rem',
+              lineHeight: 1.4,
+              marginBottom: '0.625rem',
+              flexGrow: 1,
+            }}
+          >
             Join for support, bug reports, suggestions, and announcements:
           </p>
           <a
@@ -68,9 +85,26 @@ const Help = () => {
         <div className="website-panel">
           <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
             <Icons.Website style={{ color: '#69f74c' }} />
-            <span style={{ marginLeft: '0.375rem', color: '#fff', fontSize: '0.875rem', fontWeight: 600 }}>Official Website</span>
+            <span
+              style={{
+                marginLeft: '0.375rem',
+                color: '#fff',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+              }}
+            >
+              Official Website
+            </span>
           </div>
-          <p style={{ color: '#bbb', fontSize: '0.75rem', lineHeight: 1.4, marginBottom: '0.625rem', flexGrow: 1 }}>
+          <p
+            style={{
+              color: '#bbb',
+              fontSize: '0.75rem',
+              lineHeight: 1.4,
+              marginBottom: '0.625rem',
+              flexGrow: 1,
+            }}
+          >
             Visit our website for the latest updates and a backup Discord invite link:
           </p>
           <a

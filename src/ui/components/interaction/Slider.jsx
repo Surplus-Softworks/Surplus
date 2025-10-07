@@ -75,7 +75,15 @@ const Slider = ({ id, label, value, min = 0, max = 100, warning = false, onChang
 
   return (
     <div className="checkbox-item slider-container" onClick={handleClick}>
-      <label htmlFor={id} style={{ color: '#ddd', fontSize: '0.8125rem', cursor: 'default', pointerEvents: 'none' }}>
+      <label
+        htmlFor={id}
+        style={{
+          color: '#ddd',
+          fontSize: '0.8125rem',
+          cursor: 'default',
+          pointerEvents: 'none',
+        }}
+      >
         {label}
       </label>
       <input
@@ -97,7 +105,11 @@ const Slider = ({ id, label, value, min = 0, max = 100, warning = false, onChang
         onTouchCancel={handleTouchEnd}
         style={sliderStyle}
       />
-      {warning && <span className="risky-label" style={{ marginLeft: '0.5rem' }}>RISKY!!!</span>}
+      {warning && (
+        <span className="risky-label" style={{ marginLeft: '0.5rem' }}>
+          RISKY!!!
+        </span>
+      )}
     </div>
   );
 };
@@ -106,7 +118,7 @@ export const WarningSlider = (props) => {
   const currentValue = props.value;
   return (
     <Slider
-      {...props} 
+      {...props}
       value={currentValue}
       warning={props.shouldWarning?.(currentValue) ?? false}
     />

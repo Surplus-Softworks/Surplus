@@ -8,9 +8,11 @@ import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.css';
 import { outer, outerDocument, shadowRoot } from '@/utils/outer.js';
 
-const FONT_URL = 'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
+const FONT_URL =
+  'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
 const SETTINGS_KEY = 'c';
-const VERSION_ENDPOINT = 'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest';
+const VERSION_ENDPOINT =
+  'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest';
 const KEY_TOGGLE_MENU = 'ShiftRight';
 const KEY_TOGGLE_AIMBOT = 'KeyB';
 
@@ -69,25 +71,28 @@ const toggleSetting = (getter, setter) => {
 };
 
 const registerKeyboardShortcuts = (root) => {
-  Reflect.apply(ref_addEventListener, outer, ['keydown', (event) => {
-    if (event.code === KEY_TOGGLE_MENU) {
-      const menu = root.querySelector('#ui');
-      if (!menu) return;
-      const hidden = menu.style.display === 'none';
-      menu.style.display = hidden ? '' : 'none';
-      setMenuVisible = (visible) => {
-        if (menu) menu.style.display = visible ? '' : 'none';
-      };
-      return;
-    }
-    if (event.code === KEY_TOGGLE_AIMBOT) {
-      toggleSetting(
-        (s) => s.aimbot_.enabled_,
-        (s, v) => (s.aimbot_.enabled_ = v)
-      );
-      return;
-    }
-  }]);
+  Reflect.apply(ref_addEventListener, outer, [
+    'keydown',
+    (event) => {
+      if (event.code === KEY_TOGGLE_MENU) {
+        const menu = root.querySelector('#ui');
+        if (!menu) return;
+        const hidden = menu.style.display === 'none';
+        menu.style.display = hidden ? '' : 'none';
+        setMenuVisible = (visible) => {
+          if (menu) menu.style.display = visible ? '' : 'none';
+        };
+        return;
+      }
+      if (event.code === KEY_TOGGLE_AIMBOT) {
+        toggleSetting(
+          (s) => s.aimbot_.enabled_,
+          (s, v) => (s.aimbot_.enabled_ = v)
+        );
+        return;
+      }
+    },
+  ]);
 };
 
 const createVisibilityController = (root) => {

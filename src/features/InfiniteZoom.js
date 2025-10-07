@@ -32,6 +32,6 @@ const handleWheelEvent = (event) => {
   } catch {}
 };
 
-export default function() {
+export default function () {
   Reflect.apply(ref_addEventListener, outer, ['wheel', handleWheelEvent, WHEEL_OPTIONS]);
 }

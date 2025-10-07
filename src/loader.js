@@ -1,22 +1,22 @@
-import xray from "@/features/X-Ray.js";
-import infiniteZoom from "@/features/InfiniteZoom.js";
-import esp from "@/features/ESP.js";
-import grenadeTimer from "@/features/GrenadeTimer.js";
-import autoFire, { autoFireEnabled } from "@/features/AutoFire.js";
-import aimbot from "@/features/Aimbot.js";
-import mapHighlights from "@/features/MapHighlights.js";
-import autoSwitch from "@/features/AutoSwitch.js";
-import layerSpoof from "@/features/LayerSpoofer.js";
-import { translate } from "@/utils/obfuscatedNameTranslator.js";
-import { hook } from "@/utils/hook.js";
-import { PIXI, inputCommands, packetTypes } from "@/utils/constants.js";
-import { aimState, inputState, settings, gameManager, setGameManager } from "@/state.js";
-import { initializeAimController, isAimInterpolating, getAimMode } from "@/utils/aimController.js";
-import initUI from "@/ui/init.js";
-import { outer } from "@/utils/outer.js";
+import xray from '@/features/X-Ray.js';
+import infiniteZoom from '@/features/InfiniteZoom.js';
+import esp from '@/features/ESP.js';
+import grenadeTimer from '@/features/GrenadeTimer.js';
+import autoFire, { autoFireEnabled } from '@/features/AutoFire.js';
+import aimbot from '@/features/Aimbot.js';
+import mapHighlights from '@/features/MapHighlights.js';
+import autoSwitch from '@/features/AutoSwitch.js';
+import layerSpoof from '@/features/LayerSpoofer.js';
+import { translate } from '@/utils/obfuscatedNameTranslator.js';
+import { hook } from '@/utils/hook.js';
+import { PIXI, inputCommands, packetTypes } from '@/utils/constants.js';
+import { aimState, inputState, settings, gameManager, setGameManager } from '@/state.js';
+import { initializeAimController, isAimInterpolating, getAimMode } from '@/utils/aimController.js';
+import initUI from '@/ui/init.js';
+import { outer } from '@/utils/outer.js';
 
 function injectGame(oninject) {
-  hook(outer.Function.prototype, "call", {
+  hook(outer.Function.prototype, 'call', {
     apply(f, th, args) {
       try {
         if (args[0]?.nameInput != null && args[0]?.game != null) {
@@ -38,7 +38,7 @@ const loadStaticPlugins = () => {
 
 const loadPIXI = () => {
   PIXI.Container_ = gameManager.pixi.stage.constructor;
-  PIXI.Graphics_ = gameManager.pixi.stage.children.find(child => child.lineStyle)?.constructor;
+  PIXI.Graphics_ = gameManager.pixi.stage.children.find((child) => child.lineStyle)?.constructor;
 };
 
 let ranPlugins = false;
@@ -61,9 +61,9 @@ let emoteTypes = [];
 let cachedMoveDir = { x: 0, y: 0 };
 
 const findNetworkHandler = () =>
-  Object
-    .getOwnPropertyNames(gameManager.game.__proto__)
-    .find((name) => typeof gameManager.game[name] === "function" && gameManager.game[name].length === 3);
+  Object.getOwnPropertyNames(gameManager.game.__proto__).find(
+    (name) => typeof gameManager.game[name] === 'function' && gameManager.game[name].length === 3
+  );
 
 const applyAutoLootFlag = (packet) => {
   packet.isMobile = settings.autoLoot_.enabled_;
@@ -139,10 +139,17 @@ const applyAimTransitionSafety = (packet) => {
   if (!packet) return;
 
   const aimMode = getAimMode();
-  const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire_));
+  const isCurrentlyShooting =
+    !!packet.shootStart ||
+    !!packet.shootHold ||
+    (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire_));
 
-  if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame_ && settings.aimbot_.enabled_) {
-    suppressedShootState.firstShotFrameCount_ = 3; 
+  if (
+    isCurrentlyShooting &&
+    !suppressedShootState.wasShootingLastFrame_ &&
+    settings.aimbot_.enabled_
+  ) {
+    suppressedShootState.firstShotFrameCount_ = 3;
   }
 
   suppressedShootState.wasShootingLastFrame_ = isCurrentlyShooting;
@@ -163,7 +170,11 @@ const applyAimTransitionSafety = (packet) => {
       packet.shootStart = true;
       if (suppressedShootState.pendingHold_) {
         packet.shootHold = true;
-        if (Array.isArray(packet.inputs) && suppressedShootState.suppressedFireInput_ && !packet.inputs.includes(inputCommands.Fire_)) {
+        if (
+          Array.isArray(packet.inputs) &&
+          suppressedShootState.suppressedFireInput_ &&
+          !packet.inputs.includes(inputCommands.Fire_)
+        ) {
           packet.inputs.push(inputCommands.Fire_);
         }
       }
@@ -192,9 +203,11 @@ const applyAimTransitionSafety = (packet) => {
   packet.shootStart = false;
   packet.shootHold = false;
 
-  suppressedShootState.pendingStart_ = suppressedShootState.pendingStart_ || intendedStart || intendedHold;
+  suppressedShootState.pendingStart_ =
+    suppressedShootState.pendingStart_ || intendedStart || intendedHold;
   suppressedShootState.pendingHold_ = suppressedShootState.pendingHold_ || intendedHold;
-  suppressedShootState.suppressedFireInput_ = suppressedShootState.suppressedFireInput_ || fireCommandSuppressed;
+  suppressedShootState.suppressedFireInput_ =
+    suppressedShootState.suppressedFireInput_ || fireCommandSuppressed;
 };
 
 const setupInputOverride = () => {
@@ -233,7 +246,7 @@ const setupInputOverride = () => {
 };
 
 const attach = () => {
-  hook(gameManager.game, "init", {
+  hook(gameManager.game, 'init', {
     apply(f, th, args) {
       const result = Reflect.apply(f, th, args);
       translate(gameManager).then(() => {
@@ -241,7 +254,7 @@ const attach = () => {
         ranPlugins = true;
       });
       return result;
-    }
+    },
   });
   setupInputOverride();
 };

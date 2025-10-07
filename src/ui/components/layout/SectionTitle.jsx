@@ -9,14 +9,18 @@ const SectionTitle = ({
   keybindMode,
   enabled,
   onEnabledChange,
-  warning = false
+  warning = false,
 }) => {
   return (
     <div className="section-title">
       {Icon && <Icon size={16} />}
       <div className="section-title-container">
         {label}
-        {warning && <span className="risky-label" style={{ marginLeft: '0.5rem' }}>RISKY!!!</span>}
+        {warning && (
+          <span className="risky-label" style={{ marginLeft: '0.5rem' }}>
+            RISKY!!!
+          </span>
+        )}
       </div>
       {keybind && <KeybindSlot keybind={keybind} mode={keybindMode} />}
       <Checkbox
