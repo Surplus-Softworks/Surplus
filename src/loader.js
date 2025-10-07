@@ -124,7 +124,7 @@ const suppressedShootState = {
   pendingStart_: false,
   pendingHold_: false,
   suppressedFireInput_: false,
-  wasShootingLastFrame: false,
+  wasShootingLastFrame_: false,
   firstShotFrameCount_: 0,
 };
 
@@ -141,11 +141,11 @@ const applyAimTransitionSafety = (packet) => {
   const aimMode = getAimMode();
   const isCurrentlyShooting = !!packet.shootStart || !!packet.shootHold || (Array.isArray(packet.inputs) && packet.inputs.includes(inputCommands.Fire_));
 
-  if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame && settings.aimbot_.enabled_) {
+  if (isCurrentlyShooting && !suppressedShootState.wasShootingLastFrame_ && settings.aimbot_.enabled_) {
     suppressedShootState.firstShotFrameCount_ = 3; 
   }
 
-  suppressedShootState.wasShootingLastFrame = isCurrentlyShooting;
+  suppressedShootState.wasShootingLastFrame_ = isCurrentlyShooting;
 
   if (!isCurrentlyShooting) {
     suppressedShootState.firstShotFrameCount_ = 0;

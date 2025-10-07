@@ -6,7 +6,6 @@ const call = Function.prototype.call;
 const addEventListener = Element.prototype.addEventListener;
 
 const iframe = document.createElement('iframe');
-iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:0;opacity:0;pointer-events:none;display:none';
 
 const run = () => {
   const host = createElement('div');
