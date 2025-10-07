@@ -418,54 +418,7 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
     for (const obstacle of obstacles) {
       if (obstacle.collidable === false) continue;
 
-      let colliderToUse = obstacle.collider;
-
-      if (
-        obstacle.destructible &&
-        obstacle.healthT !== undefined &&
-        obstacle.healthT > 0 &&
-        obstacle.collider
-      ) {
-        const obstacleType = obstacle.type;
-
-        if (obstacleType && obstacleType.includes('barrel') && obstacle.collider.type === 0) {
-          const isMetalBarrel = obstacleType.includes('barrel');
-          const maxHealth = isMetalBarrel ? 150 : 60;
-          const minScale = isMetalBarrel ? 0.6 : 0.8;
-          const maxScale = 1;
-
-          const currentHealth = obstacle.healthT * maxHealth;
-
-          const weapon = findWeapon(localPlayer);
-          const bullet = findBullet(weapon);
-
-          const baseDamage = bullet ? bullet.damage : 13.5;
-          const obstacleMult = bullet ? bullet.obstacleDamage || 1 : 1;
-          const bulletDamage = baseDamage * obstacleMult;
-
-          const futureHealth = Math.max(0, currentHealth - bulletDamage);
-
-          if (futureHealth <= 0) {
-            continue;
-          }
-
-          const futureHealthT = futureHealth / maxHealth;
-
-          const futureScale = minScale + futureHealthT * (maxScale - minScale);
-
-          const currentRadius = obstacle.collider.rad;
-          const baseRadius = currentRadius / obstacle.scale;
-          const futureRadius = baseRadius * futureScale;
-
-          const futureCollider = {
-            type: 0,
-            pos: v2.copy(obstacle.collider.pos),
-            rad: futureRadius,
-          };
-
-          colliderToUse = futureCollider;
-        }
-      }
+      const colliderToUse = obstacle.collider;
 
       const res = collisionHelpers.intersectSegment(colliderToUse, pos, endPos);
       if (res) {
@@ -495,16 +448,18 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
           'stone_wall',
           'container_wall',
           'hedgehog',
-          'barrel_',
-          'sandbags',
           'bollard',
           'airdop',
           'silo',
           'collider',
-          'warehouse_wall_edge',
+          'warehouse_wall',
         ];
 
         reflectBullets = reflectivePatterns.some((pattern) => obstacleType?.includes(pattern));
+      }
+      if (bounceCount === 0) {
+        //debug
+        outer.console.log('Hit:', obstacleType, 'reflects:', reflectBullets);
       }
       if (reflectBullets && bounceCount < maxBounces) {
         const dot = v2.dot(currentDir, closestCol.normal);

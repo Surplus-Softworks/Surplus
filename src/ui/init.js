@@ -105,23 +105,21 @@ const createVisibilityController = (root) => {
 const scheduleSettingsLoad = () => {
   const parse = JSON.parse;
   setTimeout(() => {
-    initStore()
-      .then(() => read(SETTINGS_KEY))
-      .then((stored) => {
-        if (stored !== null && stored !== undefined) {
-          const decrypted = encryptDecrypt(stored);
-          const parsed = parse(decrypted);
-          settings._deserialize(parsed);
-        }
-        markConfigLoaded();
-        settingsLoaded = true;
-        renderMenu();
-      })
-      .catch(() => {
-        markConfigLoaded();
-        settingsLoaded = true;
-        renderMenu();
-      });
+    try {
+      initStore();
+      const stored = read(SETTINGS_KEY);
+      if (stored !== null && stored !== undefined) {
+        const decrypted = encryptDecrypt(stored);
+        const parsed = parse(decrypted);
+        settings._deserialize(parsed);
+      }
+    } catch {
+      // ignore cookie access issues
+    } finally {
+      markConfigLoaded();
+      settingsLoaded = true;
+      renderMenu();
+    }
   }, 1000);
 };
 

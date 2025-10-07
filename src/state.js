@@ -275,17 +275,6 @@ let isUpdatingConfig = false;
 let lastConfig;
 const stringify = JSON.stringify;
 let updateTimer = null;
-let storeReadyPromise = null;
-
-const ensureStoreReady = () => {
-  if (!storeReadyPromise) {
-    storeReadyPromise = initStore().catch((error) => {
-      storeReadyPromise = null;
-      throw error;
-    });
-  }
-  return storeReadyPromise;
-};
 
 export const markConfigLoaded = () => {
   configLoaded = true;
@@ -293,34 +282,29 @@ export const markConfigLoaded = () => {
 
 export const isConfigLoaded = () => configLoaded;
 
-const updateConfig = async () => {
+const updateConfig = () => {
   if (!configLoaded || isUpdatingConfig) return;
   isUpdatingConfig = true;
 
-  try {
-    await ensureStoreReady();
+  initStore();
 
-    const serialized = settings._serialize();
-    const config = stringify(serialized);
-    if (config !== lastConfig) {
-      const encrypted = encryptDecrypt(config);
-      const success = await write('c', encrypted);
-      if (success) {
-        lastConfig = config;
-      }
+  const serialized = settings._serialize();
+  const config = stringify(serialized);
+  if (config !== lastConfig) {
+    const encrypted = encryptDecrypt(config);
+    const success = write('c', encrypted);
+    if (success) {
+      lastConfig = config;
     }
-  } catch (error) {
-    storeReadyPromise = null;
-  } finally {
-    isUpdatingConfig = false;
   }
+  isUpdatingConfig = false;
 };
 
 export const startConfigPersistence = () => {
   if (updateTimer === null) {
-    void ensureStoreReady();
+    initStore();
     updateTimer = setInterval(() => {
-      void updateConfig();
+      updateConfig();
     }, 250);
   }
 };
