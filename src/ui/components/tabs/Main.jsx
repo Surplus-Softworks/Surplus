@@ -9,7 +9,7 @@ const Main = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
       <SectionTitle
-        icon={Icons.Aimbot}
+        icon={Icons.Aimbot_}
         label="Aimbot"
         keybind="B"
         enabled={settings.aimbot_.enabled_}
@@ -47,7 +47,7 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.MeleeLock}
+        icon={Icons.MeleeLock_}
         label="Melee Lock"
         enabled={settings.meleeLock_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.meleeLock_.enabled_ = v))}
@@ -63,7 +63,7 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.AutoSwitch}
+        icon={Icons.AutoSwitch_}
         label="Auto Switch"
         enabled={settings.autoSwitch_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.autoSwitch_.enabled_ = v))}
@@ -78,7 +78,7 @@ const Main = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.SemiAuto}
+        icon={Icons.SemiAuto_}
         label="Semi Auto"
         enabled={settings.autoFire_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.autoFire_.enabled_ = v))}

@@ -6,7 +6,7 @@ const Help = () => {
   return (
     <div className="section help-section">
       <div className="help-title">
-        <Icons.Help size={16} />
+        <Icons.Help_ size={16} />
         <span>Controls & Information</span>
       </div>
 
@@ -42,7 +42,7 @@ const Help = () => {
       </div>
 
       <div className="help-title" style={{ marginTop: '1rem' }}>
-        <Icons.Community size={16} />
+        <Icons.Community_ size={16} />
         <span>Community & Support</span>
       </div>
 
@@ -84,7 +84,7 @@ const Help = () => {
 
         <div className="website-panel">
           <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
-            <Icons.Website style={{ color: '#69f74c' }} />
+            <Icons.Website_ style={{ color: '#69f74c' }} />
             <span
               style={{
                 marginLeft: '0.375rem',
@@ -119,7 +119,7 @@ const Help = () => {
       </div>
 
       <div className="help-title">
-        <Icons.Credits size={16} />
+        <Icons.Credits_ size={16} />
         <span>Credits</span>
       </div>
       <div className="credits-panel">

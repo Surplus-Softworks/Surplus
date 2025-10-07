@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node build.js",
     "dev": "node build.js dev",
+    "release": "node build.js release",
     "format": "prettier --write ."
   },
   "dependencies": {

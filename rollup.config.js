@@ -10,16 +10,18 @@ import { fileURLToPath } from 'url';
 import fs from 'fs';
 import CleanCSS from 'clean-css';
 
-function cssPlugin() {
-  const cleanCSS = new CleanCSS({ level: 2 });
+function cssPlugin({ minify }) {
+  const cleanCSS = minify ? new CleanCSS({ level: 2 }) : null;
 
   return {
     name: 'css-string',
     transform(code, id) {
       if (id.endsWith('.css')) {
         let css = fs.readFileSync(id, 'utf-8');
-        const minified = cleanCSS.minify(css);
-        css = minified.styles;
+        if (cleanCSS) {
+          const { styles } = cleanCSS.minify(css);
+          css = styles;
+        }
         return {
           code: `export const globalStylesheet = ${JSON.stringify(css)};`,
           map: null,
@@ -176,8 +178,19 @@ const TERSER_OPTIONS = {
   },
 };
 
-export default (commandLineArgs) => {
-  const isDev = commandLineArgs.dev === true;
+const MODES = {
+  DEV: 'dev',
+  BUILD: 'build',
+  RELEASE: 'release',
+};
+
+export default (commandLineArgs = {}) => {
+  const rawMode = (commandLineArgs.mode || (commandLineArgs.dev ? 'dev' : 'build'))
+    .toString()
+    .toLowerCase();
+  const mode = Object.values(MODES).includes(rawMode) ? rawMode : MODES.BUILD;
+  const isDev = mode === MODES.DEV;
+  const shouldMinify = mode !== MODES.DEV;
   const EPOCH = Date.now() + 1000 * 60 * 60;
 
   return {
@@ -210,7 +223,7 @@ export default (commandLineArgs) => {
           { find: 'react-dom/client', replacement: 'preact/compat' },
         ],
       }),
-      cssPlugin(),
+      cssPlugin({ minify: shouldMinify }),
       string({
         include: '**/*.html',
       }),
@@ -231,7 +244,7 @@ export default (commandLineArgs) => {
         extensions: ['.js', '.jsx'],
       }),
       commonjs(),
-      terser(TERSER_OPTIONS),
+      shouldMinify && terser(TERSER_OPTIONS),
     ],
     onwarn(warning, warn) {
       if (warning.code === 'THIS_IS_UNDEFINED') return;

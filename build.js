@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 import archiver from 'archiver';
 import { obfuscate } from 'js-confuser';
-import { minify } from 'terser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
 
@@ -15,11 +14,17 @@ const MANIFEST_PLACEHOLDER = '%VERSION%';
 const MAIN_FILE = path.join(DIST_DIR, 'main.js');
 const VENDOR_FILE = path.join(DIST_DIR, 'vendor.js');
 
+const MODES = {
+  DEV: 'dev',
+  BUILD: 'build',
+  RELEASE: 'release',
+};
+
 const OBFUSCATE_OPTIONS = {
   target: 'browser',
   minify: true,
   identifierGenerator: 'zeroWidth',
-  renameLabels: true,
+  renameLabels: false,
   renameVariables: true,
   renameGlobals: true,
   variableMasking: false,
@@ -39,7 +44,42 @@ const OBFUSCATE_OPTIONS = {
   objectExtraction: true,
   deadCode: false,
   compact: true,
-  pack: true,
+  pack: false,
+
+  preset: false,
+};
+
+const STUB_OBFUSCATE_OPTIONS = {
+  target: 'browser',
+  calculator: true,
+  compact: true,
+  hexadecimalNumbers: true,
+  deadCode: true,
+  dispatcher: true,
+  duplicateLiteralsRemoval: true,
+  flatten: true,
+  globalConcealing: true,
+  identifierGenerator: 'zeroWidth',
+  minify: true,
+  movedDeclarations: true,
+  objectExtraction: true,
+  renameVariables: true,
+  renameGlobals: true,
+  shuffle: true,
+  stringConcealing: true,
+  stringCompression: true,
+  stringEncoding: true,
+  stringSplitting: true,
+  astScrambler: true,
+  pack: false,
+  renameLabels: true,
+  preserveFunctionLength: true,
+  lock: {
+    tamperProtection: true,
+    selfDefending: true,
+    integrity: true,
+  },
+  variableMasking: true,
 
   preset: false,
 };
@@ -89,14 +129,14 @@ const createArchive = (filename = DEFAULT_ARCHIVE_NAME) => {
   });
 };
 
-const getRollupConfig = (dev) => {
+const getRollupConfig = (mode) => {
   const configFactory = rollupConfig.default || rollupConfig;
-  return configFactory({ dev });
+  return configFactory({ mode });
 };
 
-const buildWithRollup = async (dev) => {
-  console.log('Building with Rollup...');
-  const config = getRollupConfig(dev);
+const buildWithRollup = async (mode) => {
+  console.log(`Building with Rollup (${mode})...`);
+  const config = getRollupConfig(mode);
   const { input, plugins, output, ...rest } = config;
   const bundle = await rollup.rollup({ input, plugins, ...rest });
   await bundle.write({ ...output });
@@ -104,17 +144,17 @@ const buildWithRollup = async (dev) => {
   console.log('Rollup build completed');
 };
 
-const obfuscateMain = async (dev) => {
-  if (dev) return;
+const obfuscateMainChunk = async (mode) => {
+  if (mode !== MODES.RELEASE) return;
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk not found for obfuscation');
-  console.log('Obfuscating main.js...');
+  console.log('Obfuscating main.js before combination...');
   const code = await fs.promises.readFile(MAIN_FILE, 'utf-8');
   const { code: obfuscated } = await obfuscate(code, OBFUSCATE_OPTIONS);
   await fs.promises.writeFile(MAIN_FILE, obfuscated);
-  console.log('Obfuscation completed');
+  console.log('Main chunk obfuscation completed');
 };
 
-const combineChunks = async () => {
+const combineChunks = async (mode) => {
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk missing for combination');
 
   const bundle = await rollup.rollup({
@@ -139,6 +179,18 @@ const combineChunks = async () => {
   const generated = output[0].code;
 
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
+  const stubSegments = stubTemplate.split('__SURPLUS__');
+  if (stubSegments.length !== 2)
+    throw new Error('Stub template is missing the __SURPLUS__ placeholder');
+
+  let stubCode = `${stubSegments[0]}${JSON.stringify(generated)}${stubSegments[1]}`;
+
+  if (mode === MODES.RELEASE) {
+    console.log('Obfuscating stub template...');
+    const { code: obfuscatedStub } = await obfuscate(stubCode, STUB_OBFUSCATE_OPTIONS);
+    stubCode = obfuscatedStub;
+  }
+
   const finalCode = `/*
 © 2025 Surplus Softworks
 */
@@ -160,7 +212,7 @@ if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
   return;
 }
 
-${stubTemplate.split('__SURPLUS__')[0] + JSON.stringify(generated) + stubTemplate.split('__SURPLUS__')[1]}
+${stubCode}
 }()`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
@@ -182,12 +234,16 @@ ${finalCode}`;
 };
 
 const runBuild = async (argv) => {
-  const devMode = argv.some((arg) => arg.toLowerCase() === 'dev');
+  const modeArg = argv
+    .map((arg) => arg.toLowerCase())
+    .find((arg) => Object.values(MODES).includes(arg));
+  const mode = modeArg || MODES.BUILD;
+  console.log(`Running Surplus build in "${mode}" mode`);
   await clearDist();
   await copyStaticFiles();
-  await buildWithRollup(devMode);
-  await obfuscateMain(devMode);
-  await combineChunks();
+  await buildWithRollup(mode);
+  await obfuscateMainChunk(mode);
+  await combineChunks(mode);
   await createArchive();
   console.log('Build completed successfully');
 };
@@ -196,3 +252,4 @@ runBuild(process.argv.slice(2)).catch((error) => {
   console.error('Build failed:', error);
   process.exit(1);
 });
+

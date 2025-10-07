@@ -8,7 +8,7 @@ const Visuals = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
       <SectionTitle
-        icon={Icons.XRay}
+        icon={Icons.XRay_}
         label="X-Ray"
         enabled={settings.xray_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.xray_.enabled_ = v))}
@@ -41,7 +41,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.LayerSpoof}
+        icon={Icons.LayerSpoof_}
         label="Layer Spoofer"
         keybind="Space"
         enabled={settings.layerSpoof_.enabled_}
@@ -49,7 +49,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       />
 
       <SectionTitle
-        icon={Icons.ESP}
+        icon={Icons.ESP_}
         label="ESP"
         enabled={settings.esp_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.esp_.enabled_ = v))}
@@ -113,7 +113,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.InfiniteZoom}
+        icon={Icons.InfiniteZoom_}
         label="Infinite Zoom"
         keybind={['Shift', 'Scroll']}
         keybindMode="multiple"

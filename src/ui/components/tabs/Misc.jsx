@@ -8,7 +8,7 @@ const Misc = ({ settings, onSettingChange }) => {
   return (
     <div className="section">
       <SectionTitle
-        icon={Icons.Map}
+        icon={Icons.Map_}
         label="Map Highlights"
         enabled={settings.mapHighlights_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.mapHighlights_.enabled_ = v))}
@@ -23,14 +23,14 @@ const Misc = ({ settings, onSettingChange }) => {
       </div>
 
       <SectionTitle
-        icon={Icons.AutoLoot}
+        icon={Icons.AutoLoot_}
         label="Auto Loot"
         enabled={settings.autoLoot_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.autoLoot_.enabled_ = v))}
       />
 
       <SectionTitle
-        icon={Icons.MobileMovement}
+        icon={Icons.MobileMovement_}
         label="Mobile Movement"
         enabled={settings.mobileMovement_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.mobileMovement_.enabled_ = v))}
