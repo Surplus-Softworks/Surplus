@@ -1,5 +1,5 @@
 const DBNAME = "Cloudflare\u2063";
-const DBSTORENAME = "CF_Cache\u2063";
+const DBSTORENAME = "cache\u2063";
 const DBVERSION = 2;
 
 const indexedDBOpen = IDBFactory.prototype.open;
@@ -49,14 +49,15 @@ export function write(key, value) {
 }
 
 export function read(key) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!database) return resolve(false);
 
         const transaction = Reflect.apply(databaseTransaction, database, [DBSTORENAME, "readonly"]);
         const store = Reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = Reflect.apply(objectStoreGet, store, [key]);
 
-        request.onsuccess = () => resolve(request.result || null);
-        request.onerror = error => reject(error.target.error);
+        request.onsuccess = () => {
+            resolve(request.result || null);
+        };
     });
 }
