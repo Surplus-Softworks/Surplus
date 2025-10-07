@@ -18,7 +18,6 @@ let uiShadow;
 export let menuElement;
 
 let reactRoot = null;
-let currentSettings = {};
 let setMenuVisible = () => {};
 let menuVersion = '';
 let settingsLoaded = false;
@@ -27,7 +26,7 @@ const renderMenu = () => {
   if (!reactRoot || !settingsLoaded) return;
   reactRoot.render(
     <Menu
-      settings={currentSettings}
+      settings={settings}
       onSettingChange={handleSettingChange}
       onClose={() => setMenuVisible(false)}
       version={menuVersion}
@@ -37,32 +36,8 @@ const renderMenu = () => {
 
 function handleSettingChange(updater) {
   updater(settings);
-  updater(currentSettings);
   renderMenu();
 }
-
-const cloneSettings = (source) => {
-  if (source === null || typeof source !== 'object') return source;
-  const clone = {};
-  Object.entries(source).forEach(([key, value]) => {
-    clone[key] = cloneSettings(value);
-  });
-  return clone;
-};
-
-const mergeSettings = (patch, target, stateTarget) => {
-  if (!patch || typeof patch !== 'object') return;
-  Object.entries(patch).forEach(([key, value]) => {
-    if (value && typeof value === 'object' && target[key] && stateTarget[key]) {
-      mergeSettings(value, target[key], stateTarget[key]);
-      return;
-    }
-    if (typeof value === typeof target[key]) {
-      target[key] = value;
-      if (stateTarget[key] !== undefined) stateTarget[key] = value;
-    }
-  });
-};
 
 const attachFont = () => {
   const link = document.createElement('link');
@@ -90,7 +65,6 @@ const createMenuContainer = (shadow) => {
 const toggleSetting = (getter, setter) => {
   const newValue = !getter(settings);
   setter(settings, newValue);
-  setter(currentSettings, newValue);
   renderMenu();
 };
 
@@ -126,12 +100,14 @@ const createVisibilityController = (root) => {
 const scheduleSettingsLoad = () => {
   const parse = JSON.parse;
   setTimeout(() => {
-    mergeSettings(defaultSettings, currentSettings, settings);
     initStore()
       .then(() => read(SETTINGS_KEY))
-      .then((stored) => (stored === null || stored === undefined ? defaultSettings : parse(encryptDecrypt(stored))))
-      .then((config) => {
-        mergeSettings(config, currentSettings, settings);
+      .then((stored) => {
+        if (stored !== null && stored !== undefined) {
+          const decrypted = encryptDecrypt(stored);
+          const parsed = parse(decrypted);
+          settings._deserialize(parsed);
+        }
         markConfigLoaded();
         settingsLoaded = true;
         renderMenu();
@@ -166,7 +142,6 @@ function buildUI() {
   const root = createMenuContainer(shadow);
   registerKeyboardShortcuts(root);
   createVisibilityController(root);
-  currentSettings = cloneSettings(defaultSettings);
   scheduleSettingsLoad();
   fetchVersion();
 }

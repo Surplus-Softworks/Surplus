@@ -28,255 +28,6 @@ export const setGameManager = (gm) => {
   }
 };
 
-const getElementById = ShadowRoot.prototype.getElementById;
-
-let uiRoot;
-let configLoaded = false;
-let isUpdatingConfig = false;
-let lastConfig;
-const stringify = JSON.stringify;
-let updateTimer = null;
-let storeReadyPromise = null;
-const REGISTER_MARK = Symbol('registerSettings');
-const valueStore = Object.create(null);
-
-const getStoredValue = (id) => (id !== undefined ? valueStore[id] : undefined);
-
-const setStoredValue = (id, value) => {
-  if (id === undefined) return;
-  valueStore[id] = value;
-};
-
-const mergeConfigIntoSettings = (config, target) => {
-  if (!config || typeof config !== 'object' || !target) return;
-
-  Object.entries(config).forEach(([key, value]) => {
-    const targetValue = target[key];
-
-    if (value && typeof value === 'object' && targetValue && typeof targetValue === 'object' && targetValue[REGISTER_MARK]) {
-      mergeConfigIntoSettings(value, targetValue);
-    } else if (value && typeof value === 'object' && targetValue && typeof targetValue === 'object') {
-      mergeConfigIntoSettings(value, targetValue);
-    } else if (value !== undefined && value !== null) {
-      target[key] = value;
-    }
-  });
-};
-
-const ensureStoreReady = () => {
-  if (!storeReadyPromise) {
-    storeReadyPromise = initStore().catch((error) => {
-      storeReadyPromise = null;
-      throw error;
-    });
-  }
-  return storeReadyPromise;
-};
-
-const lookupElement = (id) => (uiRoot ? Reflect.apply(getElementById, uiRoot, [id]) : undefined);
-
-export const setUIRoot = (root) => {
-  uiRoot = root;
-};
-
-export const getUIRoot = () => uiRoot;
-
-export const markConfigLoaded = () => {
-  configLoaded = true;
-};
-
-export const isConfigLoaded = () => configLoaded;
-
-export const getChecked = (id) => !!lookupElement(id)?.checked;
-
-export const setChecked = (id, checked) => {
-  const el = lookupElement(id);
-  if (el) el.checked = checked;
-};
-
-export const getValue = (id) => {
-  const el = lookupElement(id);
-  return el ? el.value : undefined;
-};
-
-export const setValue = (id, value) => {
-  const el = lookupElement(id);
-  if (el) el.value = value;
-};
-
-export const registerSettings = (definition) => {
-  const substr = String.prototype.substr;
-
-  const settingsObject = Object.entries(definition).reduce((acc, [key, value]) => {
-    if (value && typeof value === 'object' && value[REGISTER_MARK]) {
-      acc[key] = value;
-      return acc;
-    }
-
-    if (typeof value === 'object' && value !== null && !Array.isArray(value) && key[0] !== '_' && key[0] !== '$') {
-      acc[key] = registerSettings(value);
-      return acc;
-    }
-
-    if (key[0] === '_') {
-      Reflect.defineProperty(acc, key, { value, enumerable: false, writable: true, configurable: true });
-      return acc;
-    }
-
-    if (key[0] === '$') {
-      const publicKey = Reflect.apply(substr, key, [1]);
-      const descriptor = Reflect.getOwnPropertyDescriptor(definition, key) || {};
-      const originalGet = descriptor.get;
-      const originalSet = descriptor.set;
-      const elementId = definition[`_${publicKey}`];
-
-      Reflect.defineProperty(acc, publicKey, {
-        get() {
-          const stored = getStoredValue(elementId);
-          if (stored !== undefined && !isNaN(stored)) return stored;
-
-          if (typeof originalGet === 'function') {
-            const computed = Reflect.apply(originalGet, this, []);
-            if (!isNaN(computed) && computed !== undefined) {
-              setStoredValue(elementId, computed);
-              return computed;
-            }
-          }
-
-          return stored !== undefined ? stored : 0;
-        },
-        set(v) {
-          const normalized = typeof v === 'number' ? v : parseInt(v, 10) || 0;
-          setStoredValue(elementId, normalized);
-          if (typeof originalSet === 'function') {
-            Reflect.apply(originalSet, this, [normalized]);
-          }
-        },
-        enumerable: true,
-        configurable: true,
-      });
-
-      Reflect.defineProperty(acc, `_${publicKey}`, {
-        value: elementId,
-        enumerable: false,
-        writable: true,
-        configurable: true,
-      });
-      return acc;
-    }
-
-    const elementId = value;
-
-    Reflect.defineProperty(acc, key, {
-      get() {
-        const stored = getStoredValue(elementId);
-        if (stored !== undefined) return stored;
-
-        const initial = getChecked(elementId);
-        const normalized = Boolean(initial);
-        setStoredValue(elementId, normalized);
-        return normalized;
-      },
-      set(v) {
-        const normalized = typeof v === 'boolean' ? v : Boolean(v);
-        setStoredValue(elementId, normalized);
-        setChecked(elementId, normalized);
-      },
-      enumerable: true,
-      configurable: true,
-    });
-
-    Reflect.defineProperty(acc, `_${key}`, {
-      value: elementId,
-      enumerable: false,
-      writable: true,
-      configurable: true,
-    });
-
-    return acc;
-  }, {});
-
-  Reflect.defineProperty(settingsObject, REGISTER_MARK, { value: true, enumerable: false });
-  return settingsObject;
-};
-
-export const settings = {
-  aimbot_: registerSettings({
-    enabled_: 'aim-enable',
-    _smooth_: 'aim-smooth',
-    get $smooth_() {
-      return parseInt(getValue('aim-smooth'));
-    },
-    set $smooth_(v) {
-      const el = lookupElement(this._smooth_);
-      if (!el) return;
-      el.value = v;
-      el.oninput?.();
-    },
-    targetKnocked_: 'target-knocked',
-    stickyTarget_: 'sticky-target',
-    showDot_: 'aimbot-show-dot',
-  }),
-  meleeLock_: registerSettings({ enabled_: 'melee-lock', autoMelee_: 'auto-melee' }),
-  mobileMovement_: registerSettings({
-    enabled_: 'mobile-movement-enable',
-    get $smooth_() {
-      return parseInt(getValue('mobile-movement-smooth'));
-    },
-    set $smooth_(v) {
-      const el = lookupElement(this._smooth_);
-      if (!el) return;
-      el.value = v;
-      el.oninput?.();
-    },
-    _smooth_: 'mobile-movement-smooth',
-  }),
-  autoFire_: registerSettings({ enabled_: 'semiauto-enable' }),
-  xray_: registerSettings({
-    enabled_: 'xray',
-    get $smokeOpacity_() {
-      return parseInt(getValue('smoke-opacity'));
-    },
-    set $smokeOpacity_(v) {
-      const el = lookupElement(this._smokeOpacity_);
-      if (!el) return;
-      el.value = v;
-      el.oninput?.();
-    },
-    _smokeOpacity_: 'smoke-opacity',
-    get $treeOpacity_() {
-      return parseInt(getValue('tree-opacity'));
-    },
-    set $treeOpacity_(v) {
-      const el = lookupElement(this._treeOpacity_);
-      if (!el) return;
-      el.value = v;
-      el.oninput?.();
-    },
-    _treeOpacity_: 'tree-opacity',
-    removeCeilings_: 'remove-ceilings',
-    darkerSmokes_: 'darker-smokes',
-  }),
-  esp_: registerSettings({
-    visibleNametags_: 'visible-nametags',
-    enabled_: 'esp-enable',
-    players_: 'player-esp',
-    flashlights_: registerSettings({ own_: 'own-flashlight', others_: 'others-flashlight', trajectory_: 'flashlight-trajectory' }),
-    grenades_: registerSettings({ explosions_: 'grenade-esp', trajectory_: 'grenade-trajectory' }),
-  }),
-  mapHighlights_: registerSettings({
-    enabled_: 'maphighlights',
-    smallerTrees_: 'smaller-trees',
-  }),
-  autoLoot_: registerSettings({ enabled_: 'auto-loot' }),
-  infiniteZoom_: registerSettings({ enabled_: 'infinite-zoom-enable' }),
-  autoSwitch_: registerSettings({
-    enabled_: 'autoswitch-enable',
-    useOneGun_: 'useonegun',
-  }),
-  layerSpoof_: registerSettings({ enabled_: 'layerspoof-enable' }),
-};
-
 export const defaultSettings = {
   aimbot_: {
     enabled_: true,
@@ -336,7 +87,211 @@ export const defaultSettings = {
   },
 };
 
-mergeConfigIntoSettings(defaultSettings, settings);
+const settingsKeys = {
+  aimbot_: {
+    _k: 'ab',
+    enabled_: 'e',
+    smooth_: 's',
+    targetKnocked_: 'tk',
+    stickyTarget_: 'st',
+    showDot_: 'sd',
+  },
+  meleeLock_: {
+    _k: 'ml',
+    enabled_: 'e',
+    autoMelee_: 'am',
+  },
+  mobileMovement_: {
+    _k: 'mm',
+    enabled_: 'e',
+    smooth_: 's',
+  },
+  autoFire_: {
+    _k: 'af',
+    enabled_: 'e',
+  },
+  xray_: {
+    _k: 'xr',
+    enabled_: 'e',
+    smokeOpacity_: 'so',
+    treeOpacity_: 'to',
+    removeCeilings_: 'rc',
+    darkerSmokes_: 'ds',
+  },
+  esp_: {
+    _k: 'es',
+    visibleNametags_: 'vn',
+    enabled_: 'e',
+    players_: 'p',
+    flashlights_: {
+      _k: 'fl',
+      own_: 'o',
+      others_: 'ot',
+      trajectory_: 't',
+    },
+    grenades_: {
+      _k: 'gr',
+      explosions_: 'ex',
+      trajectory_: 't',
+    },
+  },
+  mapHighlights_: {
+    _k: 'mh',
+    enabled_: 'e',
+    smallerTrees_: 'st',
+  },
+  autoLoot_: {
+    _k: 'al',
+    enabled_: 'e',
+  },
+  infiniteZoom_: {
+    _k: 'iz',
+    enabled_: 'e',
+  },
+  autoSwitch_: {
+    _k: 'as',
+    enabled_: 'e',
+    useOneGun_: 'uo',
+  },
+  layerSpoof_: {
+    _k: 'ls',
+    enabled_: 'e',
+  },
+};
+
+const createSettings = (keys, defaults) => {
+  const store = {};
+  const obj = {};
+
+  const build = (k, d, storePath) => {
+    const result = {};
+    for (const prop in k) {
+      if (prop === '_k') continue;
+      const key = k[prop];
+      const defaultVal = d?.[prop];
+      if (typeof key === 'object' && key._k) {
+        result[prop] = build(key, defaultVal, storePath + '.' + prop);
+      } else {
+        const fullPath = storePath + '.' + prop;
+        if (typeof defaultVal === 'number') {
+          store[fullPath] = defaultVal;
+        } else {
+          store[fullPath] = Boolean(defaultVal);
+        }
+        Object.defineProperty(result, prop, {
+          get() {
+            return store[fullPath];
+          },
+          set(v) {
+            if (typeof store[fullPath] === 'number') {
+              store[fullPath] = typeof v === 'number' ? v : 0;
+            } else {
+              store[fullPath] = Boolean(v);
+            }
+          },
+          enumerable: true,
+        });
+      }
+    }
+    return result;
+  };
+
+  for (const topKey in keys) {
+    obj[topKey] = build(keys[topKey], defaults[topKey], topKey);
+  }
+
+  const serialize = () => {
+    const serializeGroup = (k, prefix) => {
+      const result = {};
+      for (const prop in k) {
+        if (prop === '_k') continue;
+        const key = k[prop];
+        if (typeof key === 'object' && key._k) {
+          result[key._k] = serializeGroup(key, prefix + '.' + prop);
+        } else {
+          const fullPath = prefix + '.' + prop;
+          result[key] = store[fullPath];
+        }
+      }
+      return result;
+    };
+
+    const result = {};
+    for (const topKey in keys) {
+      result[keys[topKey]._k] = serializeGroup(keys[topKey], topKey);
+    }
+    return result;
+  };
+
+  const deserialize = (data) => {
+    if (!data || typeof data !== 'object') return;
+
+    const deserializeGroup = (k, d, prefix) => {
+      if (!d || typeof d !== 'object') return;
+      for (const prop in k) {
+        if (prop === '_k') continue;
+        const key = k[prop];
+        if (typeof key === 'object' && key._k) {
+          const nested = d[key._k];
+          deserializeGroup(key, nested, prefix + '.' + prop);
+        } else {
+          const value = d[key];
+          if (value !== undefined) {
+            const fullPath = prefix + '.' + prop;
+            if (typeof store[fullPath] === 'number') {
+              store[fullPath] = typeof value === 'number' ? value : 0;
+            } else {
+              store[fullPath] = Boolean(value);
+            }
+          }
+        }
+      }
+    };
+
+    for (const topKey in keys) {
+      const topData = data[keys[topKey]._k];
+      deserializeGroup(keys[topKey], topData, topKey);
+    }
+  };
+
+  obj._serialize = serialize;
+  obj._deserialize = deserialize;
+
+  return obj;
+};
+
+export const settings = createSettings(settingsKeys, defaultSettings);
+
+let uiRoot;
+
+export const setUIRoot = (root) => {
+  uiRoot = root;
+};
+
+export const getUIRoot = () => uiRoot;
+
+let configLoaded = false;
+let isUpdatingConfig = false;
+let lastConfig;
+const stringify = JSON.stringify;
+let updateTimer = null;
+let storeReadyPromise = null;
+
+const ensureStoreReady = () => {
+  if (!storeReadyPromise) {
+    storeReadyPromise = initStore().catch((error) => {
+      storeReadyPromise = null;
+      throw error;
+    });
+  }
+  return storeReadyPromise;
+};
+
+export const markConfigLoaded = () => {
+  configLoaded = true;
+};
+
+export const isConfigLoaded = () => configLoaded;
 
 const updateConfig = async () => {
   if (!configLoaded || isUpdatingConfig) return;
@@ -345,9 +300,11 @@ const updateConfig = async () => {
   try {
     await ensureStoreReady();
 
-    const config = stringify(settings);
+    const serialized = settings._serialize();
+    const config = stringify(serialized);
     if (config !== lastConfig) {
-      const success = await write('c', encryptDecrypt(config));
+      const encrypted = encryptDecrypt(config);
+      const success = await write('c', encrypted);
       if (success) {
         lastConfig = config;
       }
@@ -365,6 +322,12 @@ export const startConfigPersistence = () => {
     updateTimer = setInterval(() => {
       void updateConfig();
     }, 250);
+  }
+};
+
+export const loadSettings = (data) => {
+  if (data && typeof data === 'object') {
+    settings._deserialize(data);
   }
 };
 

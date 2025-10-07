@@ -1,7 +1,6 @@
-import { outer } from "@/utils/outer.js";
-
 const DBNAME = "Cloudflare\u2063";
-const DBSTORENAME = "Cache\u2063";
+const DBSTORENAME = "CF_Cache\u2063";
+const DBVERSION = 2;
 
 const indexedDBOpen = IDBFactory.prototype.open;
 const domStringListContains = DOMStringList.prototype.contains;
@@ -17,8 +16,8 @@ export let initialized = false;
 
 export function initStore() {
     if (initialized) return new Promise(resolve=>resolve(true));
-    return new Promise(resolve => {
-        const request = Reflect.apply(indexedDBOpen, outer.indexedDB, [DBNAME, 1]);
+    return new Promise((resolve) => {
+        const request = Reflect.apply(indexedDBOpen, window.indexedDB, [DBNAME, DBVERSION]);
 
         request.onupgradeneeded = (event) => {
             database = event.target.result;
@@ -36,15 +35,16 @@ export function initStore() {
 }
 
 export function write(key, value) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         if (!database) return resolve(false);
 
         const transaction = Reflect.apply(databaseTransaction, database, [DBSTORENAME, "readwrite"]);
         const store = Reflect.apply(transactionObjectStore, transaction, [DBSTORENAME]);
         const request = Reflect.apply(objectStorePut, store, [value, key]);
 
-        request.onsuccess = () => resolve(true);
-        request.onerror = e => reject(e.target.error);
+        request.onsuccess = () => {
+            resolve(true);
+        };
     });
 }
 

@@ -28,8 +28,6 @@ const v2 = {
     },
 };
 
-// Game layer collision logic from survev/shared/utils/util.ts
-// Layers: 0=ground, 1=bunker, 2=ground+stairs, 3=bunker+stairs
 const sameLayer = (a, b) => {
     return (a & 0x1) === (b & 0x1) || (a & 0x2 && b & 0x2);
 };
@@ -350,8 +348,8 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
 
     let pos = v2.copy(startPos);
     let currentDir = v2.normalize(dir);
+    let remainingDist = distance;
     let bounceCount = 0;
-    let reflectObjId = null;
 
     const game = gameManager.game;
     const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
@@ -368,14 +366,8 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
         return true;
     });
 
-    while (bounceCount <= maxBounces) {
-        // Calculate distance for current bounce using server formula:
-        // distance = bulletDef.distance / Math.pow(reflectDistDecay, reflectCount)
-        const currentDistance = distance / Math.pow(REFLECT_DIST_DECAY, bounceCount);
-
-        if (currentDistance < 0.1) break;
-
-        const endPos = v2.add(pos, v2.mul(currentDir, currentDistance));
+    while (bounceCount <= maxBounces && remainingDist > 0.1) {
+        const endPos = v2.add(pos, v2.mul(currentDir, remainingDist));
 
         let closestCol = null;
         let closestDist = Infinity;
@@ -383,9 +375,6 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
 
         for (const obstacle of obstacles) {
             if (obstacle.collidable === false) continue;
-
-            // Skip the obstacle we just bounced off (matches server reflectObjId logic)
-            if (reflectObjId !== null && obstacle.__id === reflectObjId) continue;
 
             let colliderToUse = obstacle.collider;
 
@@ -476,7 +465,8 @@ function calculateTrajectory(startPos, dir, distance, layer, localPlayer, maxBou
                 currentDir = v2.normalize(currentDir);
 
                 pos = v2.add(closestCol.point, v2.mul(currentDir, 0.01));
-                reflectObjId = closestObstacle.__id;
+                const traveledDist = Math.sqrt(closestDist);
+                remainingDist = Math.max(1, remainingDist - traveledDist) / REFLECT_DIST_DECAY;
                 bounceCount++;
             } else {
                 break;
