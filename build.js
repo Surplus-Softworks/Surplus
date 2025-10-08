@@ -4,6 +4,7 @@ import archiver from 'archiver';
 import { obfuscate } from 'js-confuser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
+import { minify } from 'terser';
 
 const packageJson = JSON.parse(await fs.promises.readFile('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
@@ -136,7 +137,30 @@ const combineChunks = async (mode) => {
 
   await bundle.close();
 
-  const generated = output[0].code;
+  const _generated = output[0].code;
+  console.log("Obfuscating main code")
+  const { code: __generated } = await obfuscate(_generated, {
+    renameGlobals: false,
+    renameLabels: false,
+    renameVariables: false,
+    stringEncoding: true,
+    stringConcealing: true,
+    stringSplitting: true,
+    astScrambler: true,
+    shuffle: true,
+    deadCode: 0.2,
+    movedDeclarations: true,
+    objectExtraction: true,
+    pack: true,
+    preserveFunctionLength: true,
+    globalConcealing: true,
+    target: "browser"
+  });
+
+  console.log("Minifying (again)");
+  const { code: generated } = await minify(__generated, {
+    mangle: true
+  });
 
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
   const stubSegments = stubTemplate.split('__SURPLUS__');
