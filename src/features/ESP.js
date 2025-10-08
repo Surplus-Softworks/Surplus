@@ -153,7 +153,7 @@ function nameTag(player) {
 
   Reflect.defineProperty(player.nameText, 'visible', {
     get: () => settings.esp_.visibleNametags_ && settings.esp_.enabled_,
-    set: () => { },
+    set: () => {},
   });
 
   player.nameText.visible = true;
@@ -690,7 +690,7 @@ function renderESP() {
     }
 
     players.forEach(nameTag);
-  } catch { }
+  } catch {}
 }
 
 export default function () {

@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
 };
 
 const copyDirectory = async (source, target) => {
@@ -139,7 +139,7 @@ const combineChunks = async (mode) => {
 
   let generated = output[0].code;
   if (mode == MODES.RELEASE) {
-    console.log("Obfuscating main code");
+    console.log('Obfuscating main code');
     const result = await obfuscate(generated, {
       renameGlobals: false,
       renameLabels: false,
@@ -155,7 +155,7 @@ const combineChunks = async (mode) => {
       objectExtraction: true,
       preserveFunctionLength: true,
       preset: false,
-      target: "browser"
+      target: 'browser',
     });
     generated = result.code;
   }
