@@ -153,7 +153,7 @@ function nameTag(player) {
 
   Reflect.defineProperty(player.nameText, 'visible', {
     get: () => settings.esp_.visibleNametags_ && settings.esp_.enabled_,
-    set: () => {},
+    set: () => { },
   });
 
   player.nameText.visible = true;
@@ -649,46 +649,48 @@ function renderFlashlights(localPlayer, players, graphics) {
 }
 
 function renderESP() {
-  const pixi = gameManager.pixi;
-  const localPlayer = gameManager.game[translations.activePlayer_];
-  const players = gameManager.game[translations.playerBarn_].playerPool[translations.pool_];
+  try {
+    const pixi = gameManager.pixi;
+    const localPlayer = gameManager.game[translations.activePlayer_];
+    const players = gameManager.game[translations.playerBarn_].playerPool[translations.pool_];
 
-  if (!pixi || !localPlayer || !localPlayer.container || !gameManager.game?.initialized) return;
+    if (!pixi || !localPlayer || !localPlayer.container || !gameManager.game?.initialized) return;
 
-  const lineGraphics = getGraphics(localPlayer.container, 'playerLines');
-  lineGraphics.clear();
-  if (settings.esp_.enabled_ && settings.esp_.players_) {
-    renderPlayerLines(localPlayer, players, lineGraphics);
-  }
+    const lineGraphics = getGraphics(localPlayer.container, 'playerLines');
+    lineGraphics.clear();
+    if (settings.esp_.enabled_ && settings.esp_.players_) {
+      renderPlayerLines(localPlayer, players, lineGraphics);
+    }
 
-  const grenadeGraphics = getGraphics(localPlayer.container, 'grenadeDangerZones');
-  grenadeGraphics.clear();
-  if (settings.esp_.enabled_ && settings.esp_.grenades_.explosions_) {
-    renderGrenadeZones(localPlayer, grenadeGraphics);
-  }
+    const grenadeGraphics = getGraphics(localPlayer.container, 'grenadeDangerZones');
+    grenadeGraphics.clear();
+    if (settings.esp_.enabled_ && settings.esp_.grenades_.explosions_) {
+      renderGrenadeZones(localPlayer, grenadeGraphics);
+    }
 
-  const trajectoryGraphics = getGraphics(localPlayer.container, 'grenadeTrajectory');
-  trajectoryGraphics.clear();
-  if (settings.esp_.enabled_ && settings.esp_.grenades_.trajectory_) {
-    renderGrenadeTrajectory(localPlayer, trajectoryGraphics);
-  }
+    const trajectoryGraphics = getGraphics(localPlayer.container, 'grenadeTrajectory');
+    trajectoryGraphics.clear();
+    if (settings.esp_.enabled_ && settings.esp_.grenades_.trajectory_) {
+      renderGrenadeTrajectory(localPlayer, trajectoryGraphics);
+    }
 
-  const flashlightGraphics = getGraphics(localPlayer.container, 'flashlights');
-  flashlightGraphics.clear();
-  if (
-    settings.esp_.enabled_ &&
-    (settings.esp_.flashlights_.others_ || settings.esp_.flashlights_.own_)
-  ) {
-    renderFlashlights(localPlayer, players, flashlightGraphics);
-  }
+    const flashlightGraphics = getGraphics(localPlayer.container, 'flashlights');
+    flashlightGraphics.clear();
+    if (
+      settings.esp_.enabled_ &&
+      (settings.esp_.flashlights_.others_ || settings.esp_.flashlights_.own_)
+    ) {
+      renderFlashlights(localPlayer, players, flashlightGraphics);
+    }
 
-  const trajectoryGraphics2 = getGraphics(localPlayer.container, 'bulletTrajectory');
-  trajectoryGraphics2.clear();
-  if (settings.esp_.enabled_ && settings.esp_.flashlights_.trajectory_) {
-    renderBulletTrajectory(localPlayer, trajectoryGraphics2);
-  }
+    const trajectoryGraphics2 = getGraphics(localPlayer.container, 'bulletTrajectory');
+    trajectoryGraphics2.clear();
+    if (settings.esp_.enabled_ && settings.esp_.flashlights_.trajectory_) {
+      renderBulletTrajectory(localPlayer, trajectoryGraphics2);
+    }
 
-  players.forEach(nameTag);
+    players.forEach(nameTag);
+  } catch { }
 }
 
 export default function () {
