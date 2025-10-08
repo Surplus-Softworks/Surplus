@@ -32,7 +32,6 @@
 .header {
   background: #181818;
   padding: 0.53125rem;
-  border-bottom: 0.0625rem solid #313131;
   user-select: none;
   transition: all 0.1s ease;
   display: flex;
@@ -252,12 +251,11 @@
   margin-top: 0.625rem;
 }
 .subgroup {
-  margin-left: 0.9375rem;
-  border-left: 0.125rem solid rgba(255, 255, 255, 0.1);
-  padding-left: 0.625rem;
-}
-.subgroup .checkbox-item {
-  margin-right: 0.375rem;
+  margin-left: 0.09375rem;
+  padding-left: 0.0625rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
 }
 .checkbox-item {
   border: var(--border-width) solid #2c2c2c;
@@ -329,7 +327,7 @@
   width: auto;
   height: 1.125rem;
   padding: 0 0.375rem;
-  background: linear-gradient(135deg, #2a2a2a 0%, #353535 100%);
+  background: radial-gradient(ellipse at 50% 30%, #555555, #4d4d4d, #3d3d3d, #2a2a2a);
   color: #ddd;
   font-size: 0.625rem;
   font-weight: 600;
@@ -337,11 +335,12 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--border-radius);
-  border: var(--border-width) solid #444;
-  border-top-width: calc(var(--border-width) * 0.5);
+  border: none;
   box-shadow:
     0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)),
-    inset 0 var(--shadow-size) 0 rgba(255, 255, 255, 0.1);
+    inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2)
+      rgba(0, 0, 0, var(--shadow-opacity)),
+    inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
 }
 .keybind-slot-container {
   display: inline-flex;
