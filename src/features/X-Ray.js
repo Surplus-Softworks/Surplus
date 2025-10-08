@@ -49,7 +49,7 @@ function processSmokes(isEnabled) {
 
 function processObstacles(isXrayEnabled) {
   if (isXrayEnabled) {
-    gameManager.game[translations.map][translations.obstaclePool_][translations.pool_].forEach(
+    gameManager.game[translations.map_][translations.obstaclePool_][translations.pool_].forEach(
       (obstacle) => {
         if (['tree', 'table', 'stairs'].some((type) => obstacle.type.includes(type))) {
           obstacle.sprite.alpha = settings.xray_.treeOpacity_ / 100;
