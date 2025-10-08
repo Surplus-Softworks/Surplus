@@ -46,7 +46,12 @@ const createNewTimer = () => {
 };
 
 const updateGrenadeTimer = () => {
-  if (!isGameInitialized() || !isHoldingNade()) return;
+  if (!isGameInitialized()) return;
+
+  if (!isHoldingNade()) {
+    resetTimer();
+    return;
+  }
 
   try {
     const game = gameManager.game;

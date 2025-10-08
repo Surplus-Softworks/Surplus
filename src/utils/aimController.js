@@ -110,13 +110,16 @@ const clearIdleReleaseTimeout = () => {
 
 const scheduleIdleRelease = (duration) => {
   clearIdleReleaseTimeout();
-  controllerState.idleReleaseTimeout_ = setTimeout(() => {
-    controllerState.idleReleaseTimeout_ = null;
-    if (controllerState.mode_ === 'idle') {
-      controllerState.animation_ = null;
-      applyAimStateSnapshot(null);
-    }
-  }, Math.max(0, duration));
+  controllerState.idleReleaseTimeout_ = setTimeout(
+    () => {
+      controllerState.idleReleaseTimeout_ = null;
+      if (controllerState.mode_ === 'idle') {
+        controllerState.animation_ = null;
+        applyAimStateSnapshot(null);
+      }
+    },
+    Math.max(0, duration)
+  );
 };
 
 const updateMoveDir = (now) => {

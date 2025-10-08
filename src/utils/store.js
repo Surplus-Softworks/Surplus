@@ -70,4 +70,3 @@ export function read(_key) {
   const encoded = readCookieValue();
   return encoded ? decodeFromHex(encoded) : null;
 }
-

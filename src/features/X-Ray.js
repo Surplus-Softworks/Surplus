@@ -8,11 +8,10 @@ function processEnvironment() {
   const isXrayEnabled = settings.xray_.enabled_;
 
   try {
-
     processCeilings(isXrayEnabled);
     processSmokes(isXrayEnabled);
     processObstacles(isXrayEnabled);
-  } catch { }
+  } catch {}
 }
 
 function processCeilings(isXrayEnabled) {
