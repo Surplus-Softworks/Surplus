@@ -12,41 +12,11 @@ const SOURCE_EXTENSION_DIR = path.join('src', 'extension');
 const DEFAULT_ARCHIVE_NAME = 'Surplus (DO NOT EXTRACT).zip';
 const MANIFEST_PLACEHOLDER = '%VERSION%';
 const MAIN_FILE = path.join(DIST_DIR, 'main.js');
-const VENDOR_FILE = path.join(DIST_DIR, 'vendor.js');
 
 const MODES = {
   DEV: 'dev',
   BUILD: 'build',
   RELEASE: 'release',
-};
-
-const OBFUSCATE_OPTIONS = {
-  target: 'browser',
-  minify: true,
-  identifierGenerator: 'zeroWidth',
-  renameLabels: false,
-  renameVariables: true,
-  renameGlobals: true,
-  variableMasking: false,
-  stringEncoding: false,
-  stringSplitting: false,
-  stringCompression: false,
-  duplicateLiteralsRemoval: false,
-  dispatcher: false,
-  rgf: false,
-  controlFlowFlattening: false,
-  calculator: false,
-  movedDeclarations: true,
-  opaquePredicates: false,
-  shuffle: false,
-  preserveFunctionLength: false,
-  astScrambler: false,
-  objectExtraction: true,
-  deadCode: false,
-  compact: true,
-  pack: false,
-
-  preset: false,
 };
 
 const STUB_OBFUSCATE_OPTIONS = {
@@ -71,7 +41,7 @@ const STUB_OBFUSCATE_OPTIONS = {
   stringEncoding: true,
   stringSplitting: true,
   astScrambler: true,
-  pack: false,
+  pack: true,
   renameLabels: true,
   preserveFunctionLength: true,
   lock: {
@@ -144,16 +114,6 @@ const buildWithRollup = async (mode) => {
   console.log('Rollup build completed');
 };
 
-const obfuscateMainChunk = async (mode) => {
-  if (mode !== MODES.RELEASE) return;
-  if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk not found for obfuscation');
-  console.log('Obfuscating main.js before combination...');
-  const code = await fs.promises.readFile(MAIN_FILE, 'utf-8');
-  const { code: obfuscated } = await obfuscate(code, OBFUSCATE_OPTIONS);
-  await fs.promises.writeFile(MAIN_FILE, obfuscated);
-  console.log('Main chunk obfuscation completed');
-};
-
 const combineChunks = async (mode) => {
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk missing for combination');
 
@@ -186,7 +146,7 @@ const combineChunks = async (mode) => {
   let stubCode = `${stubSegments[0]}${JSON.stringify(generated)}${stubSegments[1]}`;
 
   if (mode === MODES.RELEASE) {
-    console.log('Obfuscating stub template...');
+    console.log('Obfuscating stub template (includes main bundle string)...');
     const { code: obfuscatedStub } = await obfuscate(stubCode, STUB_OBFUSCATE_OPTIONS);
     stubCode = obfuscatedStub;
   }
@@ -204,8 +164,6 @@ const whitelist = [
   '66.179.254.36',
   'eu-comp',
   '50v50',
-  'surv',
-  'zurv',
 ];
 
 if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
@@ -216,7 +174,6 @@ ${stubCode}
 }()`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
-  if (fs.existsSync(VENDOR_FILE)) await fs.promises.unlink(VENDOR_FILE);
 
   const userscript = `// ==UserScript==
 // @name         Surplus
@@ -242,7 +199,6 @@ const runBuild = async (argv) => {
   await clearDist();
   await copyStaticFiles();
   await buildWithRollup(mode);
-  await obfuscateMainChunk(mode);
   await combineChunks(mode);
   await createArchive();
   console.log('Build completed successfully');
@@ -252,4 +208,3 @@ runBuild(process.argv.slice(2)).catch((error) => {
   console.error('Build failed:', error);
   process.exit(1);
 });
-

@@ -3,6 +3,122 @@ import { hook } from '@/utils/hook.js';
 import { initStore } from '@/utils/store.js';
 import { outer, outerDocument } from '@/utils/outer.js';
 
+if (!DEV) {
+  try {
+    const noop = function () {};
+    const consoleProxy = new Proxy(
+      {},
+      {
+        get: () => noop,
+        set: () => true,
+        has: () => true,
+        apply: () => noop,
+        construct: () => ({}),
+      }
+    );
+    Object.defineProperty(window, 'console', {
+      value: consoleProxy,
+      configurable: false,
+      writable: false,
+    });
+  } catch (_) {}
+  try {
+    window.onerror = noop;
+  } catch (_) {}
+  try {
+    window.onunhandledrejection = noop;
+  } catch (_) {}
+  try {
+    window.onrejectionhandled = noop;
+  } catch (_) {}
+  try {
+    window.onabort = noop;
+  } catch (_) {}
+  try {
+    window.onunload = noop;
+  } catch (_) {}
+  try {
+    window.onbeforeunload = noop;
+  } catch (_) {}
+  try {
+    window.addEventListener('error', noop, true);
+    window.addEventListener('unhandledrejection', noop, true);
+    window.addEventListener('rejectionhandled', noop, true);
+    window.addEventListener('abort', noop, true);
+  } catch (_) {}
+  try {
+    const origAdd = EventTarget.prototype.addEventListener;
+    EventTarget.prototype.addEventListener = function (type, listener, options) {
+      if (type === 'error' || type === 'unhandledrejection' || type === 'rejectionhandled') return;
+      return origAdd.call(this, type, listener, options);
+    };
+  } catch (_) {}
+  try {
+    const origRemove = EventTarget.prototype.removeEventListener;
+    EventTarget.prototype.removeEventListener = function (type, listener, options) {
+      if (type === 'error' || type === 'unhandledrejection' || type === 'rejectionhandled') return;
+      return origRemove.call(this, type, listener, options);
+    };
+  } catch (_) {}
+  try {
+    const RealError = Error;
+    function FakeError(message) {
+      return { name: 'Error', message: message == null ? '' : String(message) };
+    }
+    FakeError.prototype = RealError.prototype;
+    Object.defineProperty(window, 'Error', {
+      value: FakeError,
+      configurable: false,
+      writable: false,
+    });
+    try {
+      Object.defineProperty(globalThis, 'Error', {
+        value: FakeError,
+        configurable: false,
+        writable: false,
+      });
+    } catch (_) {}
+  } catch (_) {}
+  try {
+    window.alert = noop;
+  } catch (_) {}
+  try {
+    window.confirm = noop;
+  } catch (_) {}
+  try {
+    window.prompt = noop;
+  } catch (_) {}
+  try {
+    window.print = noop;
+  } catch (_) {}
+  try {
+    const realFetch = window.fetch;
+    window.fetch = function (...args) {
+      try {
+        return realFetch
+          .apply(this, args)
+          .catch(() => Promise.resolve(new Response('', { status: 204 })));
+      } catch (_) {
+        return Promise.resolve(new Response('', { status: 204 }));
+      }
+    };
+  } catch (_) {}
+  try {
+    Object.getOwnPropertyNames(window).forEach((key) => {
+      try {
+        if (/^on(error|unhandledrejection|abort|rejectionhandled|loaderror)/i.test(key))
+          window[key] = noop;
+      } catch (_) {}
+    });
+  } catch (_) {}
+  try {
+    Object.freeze(window.console);
+  } catch (_) {}
+  try {
+    Object.freeze(window);
+  } catch (_) {}
+}
+
 (async () => {
   if (DEV) {
     console.warn('CHEAT IS OVER HERE');

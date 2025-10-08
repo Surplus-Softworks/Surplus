@@ -114,6 +114,7 @@ const TERSER_OPTIONS = {
     keep_fargs: false,
     keep_fnames: false,
     keep_infinity: false,
+    evaluate: true,
     lhs_constants: true,
     loops: true,
     module: true,
@@ -199,12 +200,8 @@ export default (commandLineArgs = {}) => {
       dir: './dist/extension',
       format: 'es',
       entryFileNames: 'main.js',
-      chunkFileNames: 'vendor.js',
       assetFileNames: '[name][extname]',
-      manualChunks(id) {
-        if (id.includes('node_modules')) return 'vendor';
-        return null;
-      },
+      // removed chunkFileNames / manualChunks so everything is emitted into main.js
     },
     treeshake: {
       moduleSideEffects: false,
