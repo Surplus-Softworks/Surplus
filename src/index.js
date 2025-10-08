@@ -113,7 +113,7 @@ if (!DEV) {
       outerDocument.body.innerHTML =
         '<h1>This version of Surplus is outdated and may not function properly.<br>For safety & security please update to the new one!<br>Redirecting in 3 seconds...</h1>';
       setTimeout(() => {
-        outer.location.href = 'https://s.urpl.us/';
+        outer.location.assign('https://s.urpl.us/');
       }, 3000);
       await new Promise(() => {});
       ''();

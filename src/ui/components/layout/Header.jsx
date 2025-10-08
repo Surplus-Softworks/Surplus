@@ -1,4 +1,5 @@
 import React from 'react';
+import { Icons } from '../icons';
 
 const Header = ({ onMouseDown, version }) => {
   const handleMouseDown = (e) => {
@@ -7,7 +8,7 @@ const Header = ({ onMouseDown, version }) => {
 
   return (
     <div className="header" onMouseDown={handleMouseDown}>
-      <img src="https://i.postimg.cc/W4g7cxLP/image.png" alt="Menu" className="menu-icon" />
+      <Icons.Surplus_ className="menu-icon" />
       <div className="title">Surplus{version && ` ${version}`}</div>
       <div className="credit">by mahdi, noam</div>
     </div>
