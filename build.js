@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
 };
 
 const copyDirectory = async (source, target) => {
@@ -124,7 +124,7 @@ const combineChunks = async (mode) => {
   });
 
   const { output } = await bundle.generate({
-    format: 'es',
+    format: 'esm',
     exports: 'auto',
     compact: false,
     minifyInternalExports: true,
@@ -137,30 +137,28 @@ const combineChunks = async (mode) => {
 
   await bundle.close();
 
-  const _generated = output[0].code;
-  console.log("Obfuscating main code")
-  const { code: __generated } = await obfuscate(_generated, {
-    renameGlobals: false,
-    renameLabels: false,
-    renameVariables: false, // do not enable any of the rename
-    stringEncoding: true,
-    stringConcealing: true,
-    stringSplitting: true,
-    astScrambler: true,
-    shuffle: true,
-    deadCode: 0.2,
-    movedDeclarations: true,
-    objectExtraction: true,
-    pack: true,
-    preserveFunctionLength: true,
-    globalConcealing: true,
-    target: "browser"
-  });
-
-  console.log("Minifying (again)");
-  const { code: generated } = await minify(__generated, {
-    mangle: true
-  });
+  let generated = output[0].code;
+  if (mode == MODES.RELEASE) {
+    console.log("Obfuscating main code");
+    const result = await obfuscate(generated, {
+      renameGlobals: false,
+      renameLabels: false,
+      renameVariables: false, // do not enable any of the rename
+      stringEncoding: true,
+      stringConcealing: false,
+      stringCompression: true,
+      stringSplitting: true,
+      astScrambler: true,
+      shuffle: true,
+      deadCode: 0,
+      movedDeclarations: true,
+      objectExtraction: true,
+      preserveFunctionLength: true,
+      preset: false,
+      target: "browser"
+    });
+    generated = result.code;
+  }
 
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
   const stubSegments = stubTemplate.split('__SURPLUS__');
