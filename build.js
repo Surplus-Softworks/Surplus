@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
 };
 
 const copyDirectory = async (source, target) => {
@@ -178,6 +178,7 @@ const combineChunks = async (mode) => {
 */
 
 !function() {
+
 const whitelist = [
   'surviv',
   'survev',
@@ -186,6 +187,7 @@ const whitelist = [
   '66.179.254.36',
   'eu-comp',
   '50v50',
+  '127'
 ];
 
 if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
@@ -193,6 +195,7 @@ if (!whitelist.some(domain => globalThis.location.hostname.includes(domain))) {
 }
 
 ${stubCode}
+
 }()`;
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
