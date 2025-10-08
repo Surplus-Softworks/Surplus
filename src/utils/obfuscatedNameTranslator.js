@@ -306,24 +306,32 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.map != null && translated.obstaclePool_ == null) {
-          const objectProps = Object.getOwnPropertyNames(game[translated.map]).filter(
-            (v) => typeof game[translated.map][v] == 'object' && game[translated.map][v] != null
+        if (translated.map_ != null && translated.obstaclePool_ == null) {
+          /*
+          const objectProps = Object.getOwnPropertyNames(game[translated.map_]).filter(
+            (v) => typeof game[translated.map_][v] == 'object' && game[translated.map_][v] != null
           );
           translated.obstaclePool_ = objectProps
             .filter((v) => translated.pool_ in game[translated.map_][v])
             .find((v) => {
-              const pool = game[translated.map][v][translated.pool_];
+              const pool = game[translated.map_][v][translated.pool_];
               if (pool.some((V) => V.isBush != null)) {
                 return true;
               }
             });
+            */
+          game[translated.map_][translated.update_].call(new Proxy({
+            get(th, p) {
+              translated.obstaclePool_ = p;
+              throw null;
+            }
+          }));
         }
       } catch { }
 
       try {
         if (translated.obstaclePool_ != null && translated.pointToScreen_ == null) {
-          const pool = game[translated.map][translated.obstaclePool_][translated.pool_];
+          const pool = game[translated.map_][translated.obstaclePool_][translated.pool_];
           const proxyarg = new Proxy(
             {},
             {
