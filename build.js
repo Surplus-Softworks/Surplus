@@ -175,7 +175,7 @@ ${stubCode}
 
   await fs.promises.writeFile(MAIN_FILE, finalCode);
 
-  const userscript = `// ==UserScript==
+  const userscriptMetadata = `// ==UserScript==
 // @name         Surplus
 // @version      ${VERSION}
 // @description  A cheat for survev.io & more
@@ -187,7 +187,7 @@ ${stubCode}
 // ==/UserScript==
 
 ${finalCode}`;
-  await fs.promises.writeFile(path.join('dist', 'Surplus.user.js'), userscript);
+  await fs.promises.writeFile(path.join('dist', 'Surplus.user.js'), userscriptMetadata);
 };
 
 const runBuild = async (argv) => {

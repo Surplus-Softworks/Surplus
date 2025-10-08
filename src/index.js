@@ -61,23 +61,11 @@ if (!DEV) {
     };
   } catch (_) {}
   try {
-    const RealError = Error;
-    function FakeError(message) {
-      return { name: 'Error', message: message == null ? '' : String(message) };
-    }
-    FakeError.prototype = RealError.prototype;
     Object.defineProperty(window, 'Error', {
-      value: FakeError,
+      value: undefined,
       configurable: false,
       writable: false,
     });
-    try {
-      Object.defineProperty(globalThis, 'Error', {
-        value: FakeError,
-        configurable: false,
-        writable: false,
-      });
-    } catch (_) {}
   } catch (_) {}
   try {
     window.alert = noop;
@@ -90,18 +78,6 @@ if (!DEV) {
   } catch (_) {}
   try {
     window.print = noop;
-  } catch (_) {}
-  try {
-    const realFetch = window.fetch;
-    window.fetch = function (...args) {
-      try {
-        return realFetch
-          .apply(this, args)
-          .catch(() => Promise.resolve(new Response('', { status: 204 })));
-      } catch (_) {
-        return Promise.resolve(new Response('', { status: 204 }));
-      }
-    };
   } catch (_) {}
   try {
     Object.getOwnPropertyNames(window).forEach((key) => {
