@@ -306,7 +306,7 @@ export function translate(gameManager) {
       } catch { }
 
       try {
-        if (translated.map_ != null && translated.obstaclePool_ == null) {
+        if (translated.map_ != null && translated.update_ != null && translated.obstaclePool_ == null) {
           /*
           const objectProps = Object.getOwnPropertyNames(game[translated.map_]).filter(
             (v) => typeof game[translated.map_][v] == 'object' && game[translated.map_][v] != null
@@ -320,12 +320,14 @@ export function translate(gameManager) {
               }
             });
             */
-          game[translated.map_][translated.update_].call(new Proxy({
-            get(th, p) {
-              translated.obstaclePool_ = p;
-              throw null;
-            }
-          }));
+          try {
+            game[translated.map_][translated.update_].call(new Proxy({}, {
+              get(th, p) {
+                translated.obstaclePool_ = p;
+                throw null;
+              }
+            }));
+          } catch { }
         }
       } catch { }
 
