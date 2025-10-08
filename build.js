@@ -142,7 +142,7 @@ const combineChunks = async (mode) => {
   const { code: __generated } = await obfuscate(_generated, {
     renameGlobals: false,
     renameLabels: false,
-    renameVariables: false,
+    renameVariables: false, // do not enable any of the rename
     stringEncoding: true,
     stringConcealing: true,
     stringSplitting: true,
