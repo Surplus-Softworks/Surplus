@@ -20,7 +20,7 @@ let uiShadow;
 export let menuElement;
 
 let reactRoot = null;
-let setMenuVisible = () => {};
+let setMenuVisible = () => { };
 let menuVersion = '';
 let settingsLoaded = false;
 
