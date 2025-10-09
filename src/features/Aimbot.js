@@ -4,7 +4,7 @@ import { gameManager } from '@/state.js';
 import { translations } from '@/utils/obfuscatedNameTranslator.js';
 import { ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
-import { manageAimState, getCurrentAimPosition, getPing } from '@/utils/aimController.js';
+import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/utils/aimController.js';
 import { outerDocument, outer } from '@/utils/outer.js';
 
 const KEY_STICKY_TARGET = 'KeyN';
@@ -230,7 +230,7 @@ function aimbotTicker() {
       !(settings.aimbot_.enabled_ || settings.meleeLock_.enabled_) ||
       game[translations.uiManager_].spectating
     ) {
-      manageAimState({ mode: 'idle' });
+      setAimState(new AimState('idle'));
       if (aimbotDot) aimbotDot.style.display = 'none';
       state.lastTargetScreenPos_ = null;
       return;
@@ -301,12 +301,7 @@ function aimbotTicker() {
           x: enemyPos.x,
           y: enemyPos.y,
         });
-        manageAimState({
-          mode: 'meleeLock',
-          targetScreenPos: { x: screenPos.x, y: screenPos.y },
-          moveDir,
-          immediate: true,
-        });
+        setAimState(new AimState('meleeLock', { x: screenPos.x, y: screenPos.y }, moveDir, true));
         aimUpdated = true;
         if (aimbotDot) aimbotDot.style.display = 'none';
         state.lastTargetScreenPos_ = null;
@@ -318,7 +313,7 @@ function aimbotTicker() {
       }
 
       if (!settings.aimbot_.enabled_ || isMeleeEquipped || isGrenadeEquipped) {
-        manageAimState({ mode: 'idle' });
+        setAimState(new AimState('idle'));
         if (aimbotDot) aimbotDot.style.display = 'none';
         state.lastTargetScreenPos_ = null;
         return;
@@ -328,7 +323,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-        !state.focusedEnemy_[translations.netData_][translations.dead_]
+          !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
@@ -362,7 +357,7 @@ function aimbotTicker() {
 
         const predictedPos = predictPosition(enemy, me);
         if (!predictedPos) {
-          manageAimState({ mode: 'idle' });
+          setAimState(new AimState('idle'));
           if (aimbotDot) aimbotDot.style.display = 'none';
           state.lastTargetScreenPos_ = null;
           return;
@@ -376,11 +371,7 @@ function aimbotTicker() {
         ) {
           const currentAimPos = getCurrentAimPosition();
           const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
-          manageAimState({
-            mode: 'aimbot',
-            targetScreenPos: { x: predictedPos.x, y: predictedPos.y },
-            immediate: !shouldSmooth,
-          });
+          setAimState(new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth));
           state.lastTargetScreenPos_ = { x: predictedPos.x, y: predictedPos.y };
           aimUpdated = true;
           const aimSnapshot = aimState.lastAimPos_;
@@ -398,7 +389,7 @@ function aimbotTicker() {
       }
 
       if (!aimUpdated) {
-        manageAimState({ mode: 'idle' });
+        setAimState(new AimState('idle'));
         state.lastTargetScreenPos_ = previewTargetPos
           ? { x: previewTargetPos.x, y: previewTargetPos.y }
           : null;
@@ -422,14 +413,14 @@ function aimbotTicker() {
       }
     } catch (error) {
       if (aimbotDot) aimbotDot.style.display = 'none';
-      manageAimState({ mode: 'idle', immediate: true });
+      setAimState(new AimState('idle', null, null, true));
       state.meleeLockEnemy_ = null;
       state.focusedEnemy_ = null;
       state.currentEnemy_ = null;
       state.lastTargetScreenPos_ = null;
     }
   } catch (error) {
-    manageAimState({ mode: 'idle', immediate: true });
+    setAimState(new AimState({ mode: 'idle', immediate: true }));
     state.lastTargetScreenPos_ = null;
   }
 }
