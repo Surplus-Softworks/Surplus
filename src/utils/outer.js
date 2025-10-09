@@ -12,3 +12,8 @@ export const outerDocument = window.ou.document;
  * @type {typeof ShadowRoot}
  */
 export const shadowRoot = window.sr;
+
+/**
+ * @type {typeof Function}
+ */
+export const setLocation = window.sl;

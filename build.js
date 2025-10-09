@@ -118,9 +118,12 @@ const buildWithRollup = async (mode) => {
 const combineChunks = async (mode) => {
   if (!fs.existsSync(MAIN_FILE)) throw new Error('Main chunk missing for combination');
 
+  const { input, plugins, output2, ...rest } = getRollupConfig(mode);
+
   const bundle = await rollup.rollup({
     input: MAIN_FILE,
-    treeshake: false,
+    plugins,
+    ...rest
   });
 
   const { output } = await bundle.generate({
@@ -138,27 +141,6 @@ const combineChunks = async (mode) => {
   await bundle.close();
 
   let generated = output[0].code;
-  if (mode == MODES.RELEASE) {
-    console.log('Obfuscating main code');
-    const result = await obfuscate(generated, {
-      renameGlobals: false,
-      renameLabels: false,
-      renameVariables: false, // do not enable any of the rename
-      stringEncoding: true,
-      stringConcealing: false,
-      stringCompression: true,
-      stringSplitting: true,
-      astScrambler: true,
-      shuffle: true,
-      deadCode: 0,
-      movedDeclarations: true,
-      objectExtraction: true,
-      preserveFunctionLength: true,
-      preset: false,
-      target: 'browser',
-    });
-    generated = result.code;
-  }
 
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
   const stubSegments = stubTemplate.split('__SURPLUS__');
