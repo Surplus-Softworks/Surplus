@@ -23,6 +23,7 @@
     "@rollup/plugin-terser": "^0.4.4",
     "archiver": "*",
     "clean-css": "^5.3.3",
+    "google-closure-compiler": "^20251006.0.0",
     "js-confuser": "^2.0.0",
     "lzma-native": "^8.0.6",
     "prettier": "^3.6.2",

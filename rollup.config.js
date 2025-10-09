@@ -131,7 +131,7 @@ const TERSER_OPTIONS = {
     toplevel: true,
     typeofs: true,
     unsafe: false,
-    unsafe_arrows: false,
+    unsafe_arrows: true,
     unsafe_comps: true,
     unsafe_Function: false,
     unsafe_math: true,
