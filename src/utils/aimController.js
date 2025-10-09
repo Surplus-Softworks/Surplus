@@ -45,11 +45,11 @@ const positionsDiffer = (a, b) => {
 const cloneMoveDir = (dir) =>
   dir
     ? {
-      touchMoveActive: dir.touchMoveActive,
-      touchMoveLen: dir.touchMoveLen,
-      x: dir.x,
-      y: dir.y,
-    }
+        touchMoveActive: dir.touchMoveActive,
+        touchMoveLen: dir.touchMoveLen,
+        x: dir.x,
+        y: dir.y,
+      }
     : null;
 
 const moveDirsEqual = (a, b) => {
@@ -382,7 +382,7 @@ export function setAimState(aimStateObj) {
   }
 
   step(now);
-};
+}
 
 let lastPing;
 

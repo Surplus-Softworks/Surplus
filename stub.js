@@ -6,7 +6,6 @@ const appendChild = Element.prototype.appendChild;
 const call = Function.prototype.call;
 const addEventListener = Element.prototype.addEventListener;
 
-
 const iframe = document.createElement('iframe');
 
 const run = () => {
@@ -19,7 +18,11 @@ const run = () => {
   const inject = () => {
     iframe.contentWindow.ou = window;
     iframe.contentWindow.sr = shadowRoot;
-    iframe.contentWindow.sl = function (a) { WsetTimeout(() => { window.location.assign(a) }, 3000) }
+    iframe.contentWindow.sl = function (a) {
+      WsetTimeout(() => {
+        window.location.assign(a);
+      }, 3000);
+    };
 
     iframe.contentWindow.setTimeout(__SURPLUS__);
   };

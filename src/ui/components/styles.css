@@ -371,20 +371,6 @@
   margin-bottom: 0.75rem;
   border: var(--border-width) solid rgba(255, 255, 255, 0.08);
 }
-.keybind-button {
-  min-width: 4.5rem;
-  padding: 0.25rem 0.625rem;
-  background: linear-gradient(135deg, #2a2a2a 0%, #353535 100%);
-  color: #ddd;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: var(--border-radius);
-  border: var(--border-width) solid #444;
-  box-shadow:
-    0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)),
-    inset 0 var(--shadow-size) 0 rgba(255, 255, 255, 0.1);
-  display: inline-block;
-}
 .keybind-description {
   margin-left: 0.625rem;
   color: #fff;

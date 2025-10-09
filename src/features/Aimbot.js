@@ -323,7 +323,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-          !state.focusedEnemy_[translations.netData_][translations.dead_]
+        !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
@@ -371,7 +371,9 @@ function aimbotTicker() {
         ) {
           const currentAimPos = getCurrentAimPosition();
           const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
-          setAimState(new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth));
+          setAimState(
+            new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth)
+          );
           state.lastTargetScreenPos_ = { x: predictedPos.x, y: predictedPos.y };
           aimUpdated = true;
           const aimSnapshot = aimState.lastAimPos_;

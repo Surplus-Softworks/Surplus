@@ -12,7 +12,7 @@ const Help = () => {
 
       <div className="help-panel" style={{ marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.375rem' }}>
-          <div className="keybind-button">Right Shift</div>
+          <KeybindSlot keybind="Right Shift" />
           <span className="keybind-description">Show/Hide Menu</span>
         </div>
         <p className="keybind-help-text">

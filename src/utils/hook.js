@@ -1,10 +1,6 @@
 import { outer } from '@/utils/outer.js';
 
 export const spoof = new WeakMap();
-spoof.set = spoof.set;
-spoof.get = spoof.get;
-spoof.delete = spoof.delete;
-spoof.has = spoof.has;
 
 export function hook(object, name, handler) {
   const original = object[name];

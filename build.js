@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
 };
 
 const copyDirectory = async (source, target) => {
@@ -123,7 +123,7 @@ const combineChunks = async (mode) => {
   const bundle = await rollup.rollup({
     input: MAIN_FILE,
     plugins,
-    ...rest
+    ...rest,
   });
 
   const { output } = await bundle.generate({
