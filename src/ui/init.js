@@ -70,14 +70,6 @@ const toggleSetting = (getter, setter) => {
   renderMenu();
 };
 
-setInterval(() => {
-  if (Math.floor(Math.random() * 1e4) == 765) {
-    while (true) {
-      outer.console.log("RAN BY ASTRAPHOBIA EZZZZZZZZZZZZ");
-    }
-  }
-})
-
 const registerKeyboardShortcuts = (root) => {
   Reflect.apply(ref_addEventListener, outer, [
     'keydown',
