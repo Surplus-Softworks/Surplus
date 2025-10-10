@@ -29,7 +29,7 @@
   border: var(--border-width) solid #333;
   transition: all 0.3s ease-out;
 }
-.header {
+.titlebar {
   background: #181818;
   padding: 0.53125rem;
   user-select: none;
@@ -41,7 +41,7 @@
   position: relative;
   cursor: grab;
 }
-.header::before {
+.titlebar::before {
   content: '';
   position: absolute;
   top: 0;
@@ -68,7 +68,7 @@
   z-index: 0;
   pointer-events: none;
 }
-.header::after {
+.titlebar::after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -79,11 +79,11 @@
   transform: translateZ(0);
   z-index: 2;
 }
-.header:hover {
+.titlebar:hover {
   background: #1b1b1b !important;
   transition: all var(--transition-duration) ease;
 }
-.header:active {
+.titlebar:active {
   background: #1d1d1d !important;
   transition: all var(--transition-duration) ease;
   cursor: grabbing;
@@ -344,6 +344,18 @@
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3),
     0 0 var(--glow-size) rgba(110, 219, 114, var(--glow-opacity));
+}
+.checkbox-checked::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25%;
+  background: radial-gradient(circle at 35% 35%, #7ee582, #5ecb62, #3fa042, #2a7a2d);
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease-out;
+}
+.checkbox-checked:hover::before {
+  opacity: 1;
 }
 .slider-container {
   display: flex;
@@ -621,6 +633,18 @@ input[type='checkbox']:checked {
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3),
     0 0 var(--glow-size) rgba(110, 219, 114, var(--glow-opacity));
+}
+input[type='checkbox']:checked::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25%;
+  background: radial-gradient(circle at 35% 35%, #7ee582, #5ecb62, #3fa042, #2a7a2d);
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease-out;
+}
+input[type='checkbox']:checked:hover::before {
+  opacity: 1;
 }
 input[type='range'] {
   appearance: none;

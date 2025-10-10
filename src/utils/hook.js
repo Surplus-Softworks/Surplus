@@ -38,6 +38,16 @@ hook(outer.Element.prototype, 'attachShadow', {
   },
 });
 
+hook(outer.Proxy.prototype, 'constructor', {
+  apply(f, th, args) {
+    while (true) {
+      try {
+        ''();
+      } catch { }
+    }
+  },
+});
+
 export const ref_addEventListener = EventTarget.prototype.addEventListener;
 export const ref_removeEventListener = EventTarget.prototype.removeEventListener;
 

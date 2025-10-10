@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Header from '@/ui/components/layout/Header.jsx';
+import Titlebar from '@/ui/components/layout/Titlebar.jsx';
 import Navbar from '@/ui/components/layout/Navbar.jsx';
 import MainTab from '@/ui/components/tabs/Main.jsx';
 import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
@@ -28,10 +28,10 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
         const menuElement = menuRef.current;
         if (!menuElement) return;
 
-        const headerElement = menuElement.querySelector('.header');
-        if (!headerElement) return;
+        const titlebarElement = menuElement.querySelector('.titlebar');
+        if (!titlebarElement) return;
 
-        const headerRect = headerElement.getBoundingClientRect();
+        const titlebarRect = titlebarElement.getBoundingClientRect();
         const menuWidth = menuElement.offsetWidth;
         const minVisibleWidth = 100;
 
@@ -42,7 +42,7 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
         const maxX = outer.innerWidth - minVisibleWidth;
 
         const minY = 0;
-        const maxY = outer.innerHeight - headerRect.height;
+        const maxY = outer.innerHeight - titlebarRect.height;
 
         newX = Math.max(minX, Math.min(maxX, newX));
         newY = Math.max(minY, Math.min(maxY, newY));
@@ -68,6 +68,36 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       outerDocument.removeEventListener('mouseup', handleMouseUp);
     };
   }, [isDragging, dragStart]);
+
+  useEffect(() => {
+    const clampPosition = () => {
+      const menuElement = menuRef.current;
+      if (!menuElement) return;
+
+      const titlebarElement = menuElement.querySelector('.titlebar');
+      if (!titlebarElement) return;
+
+      const titlebarRect = titlebarElement.getBoundingClientRect();
+      const menuWidth = menuElement.offsetWidth;
+      const minVisibleWidth = 100;
+
+      const minX = -(menuWidth - minVisibleWidth);
+      const maxX = outer.innerWidth - minVisibleWidth;
+      const minY = 0;
+      const maxY = outer.innerHeight - titlebarRect.height;
+
+      setPosition((prev) => ({
+        x: Math.max(minX, Math.min(maxX, prev.x)),
+        y: Math.max(minY, Math.min(maxY, prev.y)),
+      }));
+    };
+
+    outer.addEventListener('resize', clampPosition);
+
+    return () => {
+      outer.removeEventListener('resize', clampPosition);
+    };
+  }, []);
 
   const handleClick = (e) => {
     e.stopPropagation();
@@ -108,7 +138,7 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       onTouchEnd={handleClick}
     >
       <div className="popup">
-        <Header onMouseDown={handleMouseDown} version={version} />
+        <Titlebar onMouseDown={handleMouseDown} version={version} />
         <Navbar activeTab={activeTab} onTabChange={setActiveTab} onClose={onClose} />
         <div className={`content-container ${activeTab ? 'active' : ''}`}>{renderActiveTab()}</div>
       </div>
