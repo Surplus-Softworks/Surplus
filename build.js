@@ -142,6 +142,19 @@ const combineChunks = async (mode) => {
 
   let generated = output[0].code;
 
+  // Create min.test.js with minimal beautification (only newlines)
+  const { code: beautifiedCode } = await minify(generated, {
+    compress: false,
+    mangle: false,
+    format: {
+      beautify: true,
+      indent_level: 0,
+      max_line_len: false,
+    }
+  });
+  await fs.promises.writeFile(path.join('dist', 'min.test.js'), beautifiedCode);
+  console.log('Created min.test.js with minimal beautification');
+
   const stubTemplate = await fs.promises.readFile(path.join('stub.js'), 'utf-8');
   const stubSegments = stubTemplate.split('__SURPLUS__');
   if (stubSegments.length !== 2)

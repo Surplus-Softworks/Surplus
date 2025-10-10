@@ -12,7 +12,7 @@ import { hook } from '@/utils/hook.js';
 import { PIXI, inputCommands, packetTypes } from '@/utils/constants.js';
 import { aimState, inputState, settings, gameManager, setGameManager } from '@/state.js';
 import { initializeAimController, isAimInterpolating, getAimMode } from '@/utils/aimController.js';
-import initUI from '@/ui/init.js';
+import initUI from '@/ui/index.jsx';
 import { outer } from '@/utils/outer.js';
 
 function injectGame(oninject) {
@@ -24,7 +24,7 @@ function injectGame(oninject) {
           setGameManager(args[0]);
           oninject();
         }
-      } catch {}
+      } catch { }
       return Reflect.apply(f, th, args);
     },
   });
