@@ -603,6 +603,44 @@ function renderBulletTrajectory(localPlayer, graphics) {
   const dir = v2.create_(Math.cos(aimAngle), -Math.sin(aimAngle));
   const gunPos = calculateGunPosition(playerPos, dir, localWeapon);
 
+  const BULLET_HEIGHT = 0.25;
+  const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
+  const trueLayer =
+    isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : localPlayer.layer;
+
+  let isBarrelBlocked = false;
+  if (idToObj) {
+    const obstacles = Object.values(idToObj).filter((obj) => {
+      if (!obj.collider) return false;
+      if (obj.dead) return false;
+      if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
+      if (obj.layer !== undefined && !sameLayer(obj.layer, trueLayer)) return false;
+      if (obj?.type.includes('decal')) return false;
+      return true;
+    });
+
+    for (const obstacle of obstacles) {
+      if (obstacle.collidable === false) continue;
+      const collision = collisionHelpers.intersectSegment_(obstacle.collider, playerPos, gunPos);
+      if (collision) {
+        isBarrelBlocked = true;
+        break;
+      }
+    }
+  }
+
+  if (isBarrelBlocked) {
+    graphics.lineStyle(3, trajectoryColor, 0.7);
+    const shortDist = 1;
+    const blockedEnd = v2.add_(playerPos, v2.mul_(dir, shortDist));
+    graphics.moveTo(0, 0);
+    graphics.lineTo(
+      (blockedEnd.x - playerPos.x) * 16,
+      (playerPos.y - blockedEnd.y) * 16
+    );
+    return;
+  }
+
   const segments = calculateTrajectory(
     gunPos,
     dir,
