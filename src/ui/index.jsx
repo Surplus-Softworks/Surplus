@@ -13,8 +13,6 @@ const FONT_URL =
 const SETTINGS_KEY = 'c';
 const VERSION_ENDPOINT =
   'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest';
-const KEY_TOGGLE_MENU = 'ShiftRight';
-const KEY_TOGGLE_AIMBOT = 'KeyB';
 
 let uiShadow;
 export let menuElement;
@@ -74,7 +72,7 @@ const registerKeyboardShortcuts = (root) => {
   Reflect.apply(ref_addEventListener, outer, [
     'keydown',
     (event) => {
-      if (event.code === KEY_TOGGLE_MENU) {
+      if (event.code === settings.keybinds_.toggleMenu_) {
         const menu = root.querySelector('#ui');
         if (!menu) return;
         const hidden = menu.style.display === 'none';
@@ -84,10 +82,24 @@ const registerKeyboardShortcuts = (root) => {
         };
         return;
       }
-      if (event.code === KEY_TOGGLE_AIMBOT) {
+      if (event.code === settings.keybinds_.toggleAimbot_) {
         toggleSetting(
           (s) => s.aimbot_.enabled_,
           (s, v) => (s.aimbot_.enabled_ = v)
+        );
+        return;
+      }
+      if (event.code === settings.keybinds_.toggleStickyTarget_) {
+        toggleSetting(
+          (s) => s.aimbot_.stickyTarget_,
+          (s, v) => (s.aimbot_.stickyTarget_ = v)
+        );
+        return;
+      }
+      if (event.code === settings.keybinds_.toggleLayerSpoof_) {
+        toggleSetting(
+          (s) => s.layerSpoof_.enabled_,
+          (s, v) => (s.layerSpoof_.enabled_ = v)
         );
         return;
       }

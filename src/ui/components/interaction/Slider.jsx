@@ -57,22 +57,6 @@ const Slider = ({ id, label, value, min = 0, max = 100, warning = false, onChang
     [stopDragging]
   );
 
-  useEffect(() => {
-    if (!isDragging) {
-      return undefined;
-    }
-
-    window.addEventListener('mouseup', handleMouseUp);
-    window.addEventListener('touchend', handleTouchEnd);
-    window.addEventListener('touchcancel', handleTouchEnd);
-
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('touchend', handleTouchEnd);
-      window.removeEventListener('touchcancel', handleTouchEnd);
-    };
-  }, [isDragging, handleMouseUp, handleTouchEnd]);
-
   return (
     <div className="checkbox-item slider-container" onClick={handleClick}>
       <label

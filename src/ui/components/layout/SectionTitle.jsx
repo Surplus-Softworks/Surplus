@@ -7,6 +7,8 @@ const SectionTitle = ({
   label,
   keybind,
   keybindMode,
+  keybindEditable,
+  onKeybindChange,
   enabled,
   onEnabledChange,
   warning = false,
@@ -22,7 +24,14 @@ const SectionTitle = ({
           </span>
         )}
       </div>
-      {keybind && <KeybindSlot keybind={keybind} mode={keybindMode} />}
+      {keybind && (
+        <KeybindSlot
+          keybind={keybind}
+          mode={keybindMode}
+          editable={keybindEditable}
+          onClick={onKeybindChange}
+        />
+      )}
       <Checkbox
         id={`${label.toLowerCase().replace(/\s+/g, '-')}-enable`}
         label="Enabled"

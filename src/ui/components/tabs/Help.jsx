@@ -2,7 +2,7 @@ import React from 'react';
 import KeybindSlot from '@/ui/components/interaction/KeybindSlot.jsx';
 import { Icons } from '@/ui/components/icons.jsx';
 
-const Help = () => {
+const Help = ({ settings, onSettingChange }) => {
   return (
     <div className="section help-section">
       <div className="help-title">
@@ -12,31 +12,31 @@ const Help = () => {
 
       <div className="help-panel" style={{ marginBottom: '0.75rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.375rem' }}>
-          <KeybindSlot keybind="Right Shift" />
+          <KeybindSlot keybind={settings?.keybinds_?.toggleMenu_ || 'ShiftRight'} />
           <span className="keybind-description">Show/Hide Menu</span>
         </div>
         <p className="keybind-help-text">
-          Press <strong>Right Shift</strong> at any time to toggle the entire menu visibility.
+          Toggle the menu visibility at any time using this keybind.
         </p>
       </div>
 
       <div className="section-subtitle">Feature Keybinds</div>
       <div className="help-panel">
         <p className="keybind-help-text" style={{ marginBottom: '0.5rem' }}>
-          Each feature's keybind is displayed next to its name in the menu:
+          Keybinds can be customized next to each feature in their respective tabs:
         </p>
         <div className="features-container">
           <div className="feature-item">
             <span className="feature-name">Aimbot</span>
-            <KeybindSlot keybind="B" />
+            <KeybindSlot keybind={settings?.keybinds_?.toggleAimbot_ || 'KeyB'} />
           </div>
           <div className="feature-item">
-            <span className="feature-name">Spinbot</span>
-            <KeybindSlot keybind="H" />
+            <span className="feature-name">Sticky Target</span>
+            <KeybindSlot keybind={settings?.keybinds_?.toggleStickyTarget_ || 'KeyH'} />
           </div>
           <div className="feature-item">
             <span className="feature-name">Layer Spoofer</span>
-            <KeybindSlot keybind="T" />
+            <KeybindSlot keybind={settings?.keybinds_?.toggleLayerSpoof_ || 'KeyT'} />
           </div>
         </div>
       </div>

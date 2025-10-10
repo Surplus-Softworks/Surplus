@@ -26,10 +26,18 @@ const v2 = {
     const len = Math.sqrt(v.x * v.x + v.y * v.y);
     return len > 0.0001 ? { x: v.x / len, y: v.y / len } : { x: 1, y: 0 };
   },
+  perp_: (v) => ({ x: -v.y, y: v.x }),
 };
 
 const sameLayer = (a, b) => {
   return (a & 0x1) === (b & 0x1) || (a & 0x2 && b & 0x2);
+};
+
+const calculateGunPosition = (playerPos, direction, weapon) => {
+  if (!weapon) return playerPos;
+
+  const barrelLength = weapon.barrelLength ?? 0;
+  return v2.add_(playerPos, v2.mul_(direction, barrelLength));
 };
 
 const collisionHelpers = {
@@ -153,7 +161,7 @@ function nameTag(player) {
 
   Reflect.defineProperty(player.nameText, 'visible', {
     get: () => settings.esp_.visibleNametags_ && settings.esp_.enabled_,
-    set: () => {},
+    set: () => { },
   });
 
   player.nameText.visible = true;
@@ -173,11 +181,6 @@ const drawFlashlight = (
   opacity = 0.1
 ) => {
   if (!bullet || !weapon) return;
-
-  const center = {
-    x: (player[translations.pos_].x - localPlayer[translations.pos_].x) * 16,
-    y: (localPlayer[translations.pos_].y - player[translations.pos_].y) * 16,
-  };
 
   const game = gameManager.game;
   const isLocalPlayer = player === localPlayer;
@@ -212,6 +215,14 @@ const drawFlashlight = (
   } else {
     aimAngle = Math.atan2(player[translations.dir_].x, player[translations.dir_].y) - Math.PI / 2;
   }
+
+  const dir = v2.create_(Math.cos(aimAngle), -Math.sin(aimAngle));
+  const gunPos = calculateGunPosition(player[translations.pos_], dir, weapon);
+
+  const center = {
+    x: (gunPos.x - localPlayer[translations.pos_].x) * 16,
+    y: (localPlayer[translations.pos_].y - gunPos.y) * 16,
+  };
 
   const spreadAngle = weapon.shotSpread * (Math.PI / 180);
   graphics.beginFill(color, opacity);
@@ -590,9 +601,10 @@ function renderBulletTrajectory(localPlayer, graphics) {
   }
 
   const dir = v2.create_(Math.cos(aimAngle), -Math.sin(aimAngle));
+  const gunPos = calculateGunPosition(playerPos, dir, localWeapon);
 
   const segments = calculateTrajectory(
-    playerPos,
+    gunPos,
     dir,
     localBullet.distance,
     localPlayer.layer,
@@ -690,7 +702,7 @@ function renderESP() {
     }
 
     players.forEach(nameTag);
-  } catch {}
+  } catch { }
 }
 
 export default function () {

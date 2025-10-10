@@ -11,7 +11,9 @@ const Main = ({ settings, onSettingChange }) => {
       <SectionTitle
         icon={Icons.Aimbot_}
         label="Aimbot"
-        keybind="B"
+        keybind={settings.keybinds_.toggleAimbot_}
+        keybindEditable={true}
+        onKeybindChange={(newKey) => onSettingChange((s) => (s.keybinds_.toggleAimbot_ = newKey))}
         enabled={settings.aimbot_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.aimbot_.enabled_ = v))}
       />
@@ -36,7 +38,11 @@ const Main = ({ settings, onSettingChange }) => {
             checked={settings.aimbot_.stickyTarget_}
             onChange={(v) => onSettingChange((s) => (s.aimbot_.stickyTarget_ = v))}
           />
-          <KeybindSlot keybind="N" />
+          <KeybindSlot
+            keybind={settings.keybinds_.toggleStickyTarget_}
+            editable={true}
+            onClick={(newKey) => onSettingChange((s) => (s.keybinds_.toggleStickyTarget_ = newKey))}
+          />
         </div>
         <Checkbox
           id="aimbot-show-dot"

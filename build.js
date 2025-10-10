@@ -4,7 +4,7 @@ import archiver from 'archiver';
 import { obfuscate } from 'js-confuser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
-import { minify } from 'fiber';
+import { minify } from 'terser';
 
 const packageJson = JSON.parse(await fs.promises.readFile('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
@@ -142,7 +142,6 @@ const combineChunks = async (mode) => {
 
   let generated = output[0].code;
 
-  // Create min.test.js with minimal beautification (only newlines)
   const { code: beautifiedCode } = await minify(generated, {
     compress: false,
     mangle: false,

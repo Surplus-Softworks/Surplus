@@ -33,14 +33,15 @@ hook(outer.Element.prototype, 'attachShadow', {
     while (true) {
       try {
         ''();
-      } catch {}
+      } catch { }
     }
   },
 });
 
 export const ref_addEventListener = EventTarget.prototype.addEventListener;
+export const ref_removeEventListener = EventTarget.prototype.removeEventListener;
 
 export let mahdiFunctionConstructor = (...args) => {
-  const gen = function* () {}.prototype.constructor.constructor(...args)();
+  const gen = function* () { }.prototype.constructor.constructor(...args)();
   return gen.next.bind(gen);
 };

@@ -89,9 +89,9 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       case 'misc':
         return <MiscTab settings={settings} onSettingChange={onSettingChange} />;
       case 'help':
-        return <HelpTab />;
+        return <HelpTab settings={settings} onSettingChange={onSettingChange} />;
       default:
-        return <HelpTab />;
+        return <HelpTab settings={settings} onSettingChange={onSettingChange} />;
     }
   };
 

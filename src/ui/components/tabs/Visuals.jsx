@@ -43,7 +43,11 @@ const Visuals = ({ settings, onSettingChange }) => {
       <SectionTitle
         icon={Icons.LayerSpoof_}
         label="Layer Spoofer"
-        keybind="Space"
+        keybind={settings.keybinds_.toggleLayerSpoof_}
+        keybindEditable={true}
+        onKeybindChange={(newKey) =>
+          onSettingChange((s) => (s.keybinds_.toggleLayerSpoof_ = newKey))
+        }
         enabled={settings.layerSpoof_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.layerSpoof_.enabled_ = v))}
       />
@@ -115,7 +119,7 @@ const Visuals = ({ settings, onSettingChange }) => {
       <SectionTitle
         icon={Icons.InfiniteZoom_}
         label="Infinite Zoom"
-        keybind={['Shift', 'Scroll']}
+        keybind={['Left Shift', 'Scroll']}
         keybindMode="multiple"
         enabled={settings.infiniteZoom_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.infiniteZoom_.enabled_ = v))}

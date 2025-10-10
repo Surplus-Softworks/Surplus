@@ -24,7 +24,7 @@ export const setGameManager = (gm) => {
   if (DEV) {
     try {
       outer.gameManager = gm;
-    } catch {}
+    } catch { }
   }
 };
 
@@ -84,6 +84,12 @@ export const defaultSettings = {
   },
   layerSpoof_: {
     enabled_: true,
+  },
+  keybinds_: {
+    toggleMenu_: 'ShiftRight',
+    toggleAimbot_: 'KeyB',
+    toggleStickyTarget_: 'KeyH',
+    toggleLayerSpoof_: 'KeyT',
   },
 };
 
@@ -157,6 +163,13 @@ const settingsKeys = {
     _k: '󠅁󠅁',
     enabled_: '󠅁',
   },
+  keybinds_: {
+    _k: 'a',
+    toggleMenu_: 'b',
+    toggleAimbot_: 'c',
+    toggleStickyTarget_: 'd',
+    toggleLayerSpoof_: 'e',
+  },
 };
 
 const createSettings = (keys, defaults) => {
@@ -175,6 +188,8 @@ const createSettings = (keys, defaults) => {
         const fullPath = storePath + '.' + prop;
         if (typeof defaultVal === 'number') {
           store[fullPath] = defaultVal;
+        } else if (typeof defaultVal === 'string') {
+          store[fullPath] = defaultVal;
         } else {
           store[fullPath] = Boolean(defaultVal);
         }
@@ -185,6 +200,8 @@ const createSettings = (keys, defaults) => {
           set(v) {
             if (typeof store[fullPath] === 'number') {
               store[fullPath] = typeof v === 'number' ? v : 0;
+            } else if (typeof store[fullPath] === 'string') {
+              store[fullPath] = typeof v === 'string' ? v : '';
             } else {
               store[fullPath] = Boolean(v);
             }
@@ -240,6 +257,8 @@ const createSettings = (keys, defaults) => {
             const fullPath = prefix + '.' + prop;
             if (typeof store[fullPath] === 'number') {
               store[fullPath] = typeof value === 'number' ? value : 0;
+            } else if (typeof store[fullPath] === 'string') {
+              store[fullPath] = typeof value === 'string' ? value : '';
             } else {
               store[fullPath] = Boolean(value);
             }

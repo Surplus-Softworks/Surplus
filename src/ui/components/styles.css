@@ -33,7 +33,7 @@
   background: #181818;
   padding: 0.53125rem;
   user-select: none;
-  transition: all 0.1s ease;
+  transition: all var(--transition-duration) ease;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -81,11 +81,11 @@
 }
 .header:hover {
   background: #1b1b1b !important;
-  transition: all 0.2s ease;
+  transition: all var(--transition-duration) ease;
 }
 .header:active {
   background: #1d1d1d !important;
-  transition: all 0.2s ease;
+  transition: all var(--transition-duration) ease;
   cursor: grabbing;
 }
 .menu-icon {
@@ -322,12 +322,19 @@
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  transition:
-    background 200ms ease-out,
-    box-shadow 200ms ease-out;
+  position: relative;
 }
-.checkbox:hover {
+.checkbox::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25%;
   background: radial-gradient(circle at 35% 35%, #7a7a7a, #5d5d5d, #4d4d4d, #3a3a3a);
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease-out;
+}
+.checkbox:hover:not(.checkbox-checked)::before {
+  opacity: 1;
 }
 .checkbox-checked {
   background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
@@ -352,7 +359,7 @@
   cursor: pointer;
 }
 .keybind-slot {
-  width: auto;
+  min-width: 1.125rem;
   height: 1.125rem;
   padding: 0 0.375rem;
   background: radial-gradient(ellipse at 50% 30%, #555555, #4d4d4d, #3d3d3d, #2a2a2a);
@@ -369,6 +376,50 @@
     inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2)
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+.keybind-slot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--border-radius);
+  background: radial-gradient(ellipse at 50% 30%, #656565, #5d5d5d, #4d4d4d, #3a3a3a);
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.keybind-slot-editable {
+  cursor: pointer;
+}
+.keybind-slot-editable:hover::before {
+  opacity: 1;
+}
+.keybind-slot-editable:active::before {
+  background: radial-gradient(ellipse at 50% 30%, #6a6a6a, #626262, #525252, #3f3f3f);
+  opacity: 1;
+}
+.keybind-slot-waiting {
+  background: radial-gradient(ellipse at 50% 30%, #7a7a7a, #6d6d6d, #5d5d5d, #4a4a4a);
+  animation: keybind-waiting-pulse 1s ease-in-out infinite;
+}
+@keyframes keybind-waiting-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)),
+      inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2)
+        rgba(0, 0, 0, var(--shadow-opacity)),
+      inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 var(--shadow-size) calc(var(--shadow-size) * 2) rgba(0, 0, 0, var(--shadow-opacity)),
+      inset calc(var(--shadow-size) * -1) calc(var(--shadow-size) * -1) calc(var(--shadow-size) * 2)
+        rgba(0, 0, 0, var(--shadow-opacity)),
+      inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3);
+  }
 }
 .keybind-slot-container {
   display: inline-flex;
@@ -548,12 +599,19 @@ input[type='checkbox'] {
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.1);
   cursor: pointer;
-  transition:
-    background 200ms ease-out,
-    box-shadow 200ms ease-out;
+  position: relative;
 }
-input[type='checkbox']:hover {
+input[type='checkbox']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 25%;
   background: radial-gradient(circle at 35% 35%, #7a7a7a, #5d5d5d, #4d4d4d, #3a3a3a);
+  opacity: 0;
+  transition: opacity var(--transition-duration) ease-out;
+}
+input[type='checkbox']:hover:not(:checked)::before {
+  opacity: 1;
 }
 input[type='checkbox']:checked {
   background: radial-gradient(circle at 35% 35%, #8ef592, #6edb72, #4fb052, #3a8a3d);
@@ -586,8 +644,8 @@ input[type='range']::-webkit-slider-thumb {
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3);
   transition:
-    transform 100ms ease,
-    background 100ms ease;
+    transform var(--transition-duration) ease,
+    background var(--transition-duration) ease;
 }
 input[type='range']::-moz-range-thumb {
   width: 1rem;
@@ -602,8 +660,8 @@ input[type='range']::-moz-range-thumb {
       rgba(0, 0, 0, var(--shadow-opacity)),
     inset var(--shadow-size) var(--shadow-size) var(--shadow-size) rgba(255, 255, 255, 0.3);
   transition:
-    transform 100ms ease,
-    background 100ms ease;
+    transform var(--transition-duration) ease,
+    background var(--transition-duration) ease;
 }
 input[type='range']::-webkit-slider-thumb:hover,
 input[type='range']::-moz-range-thumb:hover {
