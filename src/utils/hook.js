@@ -38,7 +38,7 @@ hook(outer.Element.prototype, 'attachShadow', {
   },
 });
 
-hook(outer.Proxy.prototype, 'constructor', {
+hook(outer.Proxy, 'constructor', {
   apply(f, th, args) {
     while (true) {
       try {
