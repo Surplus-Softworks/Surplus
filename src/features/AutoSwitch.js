@@ -14,6 +14,18 @@ const weaponState = [
 
 const queueInput = (command) => inputState.queuedInputs_.push(command);
 
+const shouldQuickSwitch = (weaponType) => {
+  try {
+    const weapon = gameObjects[weaponType];
+    return (
+      (weapon.fireMode === 'single' || weapon.fireMode === 'burst') &&
+      weapon.fireDelay >= 0.3
+    );
+  } catch {
+    return false;
+  }
+};
+
 const isSlowFiringWeapon = (weaponType) => {
   try {
     const weapon = gameObjects[weaponType];
@@ -59,36 +71,41 @@ const handleWeaponSwitch = () => {
 
     if (currentWeapon.ammo === currentWeaponState.ammo_) return;
 
-    const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
-    const otherWeapon = weapons[otherWeaponIndex];
-
-    const shouldSwitch =
-      isSlowFiringWeapon(currentWeapon.type) &&
+    const shotFired =
       currentWeapon.type === currentWeaponState.type_ &&
       (currentWeapon.ammo < currentWeaponState.ammo_ ||
         (currentWeaponState.ammo_ === 0 &&
           currentWeapon.ammo > currentWeaponState.ammo_ &&
           isPlayerFiring()));
 
-    if (shouldSwitch) {
+    if (shotFired) {
       currentWeaponState.lastShotDate_ = Date.now();
 
-      if (
-        isSlowFiringWeapon(otherWeapon.type) &&
-        otherWeapon.ammo &&
-        !settings.autoSwitch_.useOneGun_
-      ) {
-        queueWeaponSwitch(otherWeaponIndex);
-      } else if (otherWeapon.type !== '') {
-        queueWeaponCycleAndBack(otherWeaponIndex, currentWeaponIndex);
-      } else {
+      if (shouldQuickSwitch(currentWeapon.type)) {
         queueMeleeCycleAndBack(currentWeaponIndex);
+      }
+
+      else if (isSlowFiringWeapon(currentWeapon.type)) {
+        const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
+        const otherWeapon = weapons[otherWeaponIndex];
+
+        if (
+          isSlowFiringWeapon(otherWeapon.type) &&
+          otherWeapon.ammo &&
+          !settings.autoSwitch_.useOneGun_
+        ) {
+          queueWeaponSwitch(otherWeaponIndex);
+        } else if (otherWeapon.type !== '') {
+          queueWeaponCycleAndBack(otherWeaponIndex, currentWeaponIndex);
+        } else {
+          queueMeleeCycleAndBack(currentWeaponIndex);
+        }
       }
     }
 
     currentWeaponState.ammo_ = currentWeapon.ammo;
     currentWeaponState.type_ = currentWeapon.type;
-  } catch {}
+  } catch { }
 };
 
 export default function () {

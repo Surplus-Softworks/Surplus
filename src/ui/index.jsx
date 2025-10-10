@@ -96,13 +96,6 @@ const registerKeyboardShortcuts = (root) => {
         );
         return;
       }
-      if (event.code === settings.keybinds_.toggleLayerSpoof_) {
-        toggleSetting(
-          (s) => s.layerSpoof_.enabled_,
-          (s, v) => (s.layerSpoof_.enabled_ = v)
-        );
-        return;
-      }
     },
   ]);
 };
