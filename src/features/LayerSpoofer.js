@@ -7,8 +7,6 @@ import { outer } from '@/utils/outer.js';
 export let isLayerSpoofActive = false;
 export let originalLayerValue = null;
 
-const TOGGLE_KEY = 'Space';
-
 let originalLayerDescriptor = null;
 let activePlayerRef = null;
 let originalPlayerAlpha = 1;
@@ -94,7 +92,7 @@ const cleanup = () => {
 };
 
 const handleKeyDown = (event) => {
-  if (event.code !== TOGGLE_KEY || !settings.layerSpoof_.enabled_ || isLayerSpoofActive) return;
+  if (event.code !== settings.keybinds_.toggleLayerSpoof_ || !settings.layerSpoof_.enabled_ || isLayerSpoofActive) return;
 
   try {
     const player = gameManager.game?.[translations.activePlayer_];
@@ -116,7 +114,7 @@ const handleKeyDown = (event) => {
 };
 
 const handleKeyUp = (event) => {
-  if (event.code !== TOGGLE_KEY || !isLayerSpoofActive) return;
+  if (event.code !== settings.keybinds_.toggleLayerSpoof_ || !isLayerSpoofActive) return;
   cleanup();
 };
 
