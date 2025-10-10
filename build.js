@@ -4,7 +4,7 @@ import archiver from 'archiver';
 import { obfuscate } from 'js-confuser';
 import * as rollup from 'rollup';
 import rollupConfig from './rollup.config.js';
-import { minify } from 'terser';
+import { minify } from 'fiber';
 
 const packageJson = JSON.parse(await fs.promises.readFile('./package.json', 'utf-8'));
 const VERSION = packageJson.version;
@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
 };
 
 const copyDirectory = async (source, target) => {
