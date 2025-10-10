@@ -142,6 +142,7 @@ const TERSER_OPTIONS = {
     unsafe_regexp: true,
     unsafe_extract_members: true,
     unsafe_merge_primitives: true,
+    unsafe_all_let: true,
     unsafe_undefined: true,
     unused: true,
   },
