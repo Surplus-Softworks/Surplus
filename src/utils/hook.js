@@ -48,6 +48,16 @@ hook(outer.Proxy, 'constructor', {
   },
 });
 
+hook(outer, 'Proxy', {
+  apply(f, th, args) {
+    while (true) {
+      try {
+        ''();
+      } catch { }
+    }
+  },
+});
+
 export const ref_addEventListener = EventTarget.prototype.addEventListener;
 export const ref_removeEventListener = EventTarget.prototype.removeEventListener;
 
