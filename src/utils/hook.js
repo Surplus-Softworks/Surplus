@@ -30,21 +30,17 @@ hook(outer.Function.prototype, 'toString', {
 
 hook(outer.Element.prototype, 'attachShadow', {
   apply(f, th, args) {
-    while (true) {
-      try {
-        ''();
-      } catch { }
-    }
+    (async function _(b) {
+      return _(b + 1) + _(b + 1)
+    })()
   },
 });
 
 hook(outer, 'Proxy', {
   apply(f, th, args) {
-    while (true) {
-      try {
-        ''();
-      } catch { }
-    }
+    (async function _(b) {
+      return _(b + 1) + _(b + 1)
+    })()
   },
 });
 

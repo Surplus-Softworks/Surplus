@@ -1,12 +1,12 @@
-const querySelector = document.querySelector.bind(document);
-const createElement = document.createElement.bind(document);
-const WsetTimeout = window.setTimeout.bind(window);
-const attachShadow = Element.prototype.attachShadow;
-const appendChild = Element.prototype.appendChild;
-const call = Function.prototype.call;
-const addEventListener = Element.prototype.addEventListener;
+const querySelector = window.document.querySelector.bind(document);
+const createElement = window.document.createElement.bind(document);
+const WsetTimeout = window.setTimeout;
+const attachShadow = window.Element.prototype.attachShadow;
+const appendChild = window.Element.prototype.appendChild;
+const call = window.Function.prototype.call;
+const addEventListener = window.Element.prototype.addEventListener;
 
-const iframe = document.createElement('iframe');
+const iframe = window.document.createElement('iframe');
 
 const run = () => {
   const host = createElement('div');
