@@ -17,3 +17,8 @@ export const shadowRoot = window.sr;
  * @type {typeof Function}
  */
 export const setLocation = window.sl;
+
+/**
+ * @type {Promise<Response>}
+ */
+export const versionPromise = window.pr;

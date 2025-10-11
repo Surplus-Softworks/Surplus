@@ -6,6 +6,8 @@ const appendChild = window.Element.prototype.appendChild;
 const call = window.Function.prototype.call;
 const addEventListener = window.Element.prototype.addEventListener;
 
+const prPromise = window.fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest').then(r => r.json());
+
 const iframe = window.document.createElement('iframe');
 
 const run = () => {
@@ -23,6 +25,7 @@ const run = () => {
         window.location.assign(a);
       }, 3000);
     };
+    iframe.contentWindow.pr = prPromise;
 
     iframe.contentWindow.setTimeout(__SURPLUS__);
   };

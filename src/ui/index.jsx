@@ -6,16 +6,13 @@ import { ref_addEventListener } from '@/utils/hook.js';
 import { read, initStore } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.css';
-import { outer, outerDocument, shadowRoot } from '@/utils/outer.js';
+import { outer, outerDocument, shadowRoot, versionPromise } from '@/utils/outer.js';
 
 export const FONT_NAME = Array.from(
   { length: 12 },
   () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
 ).join('');
 const SETTINGS_KEY = 'c';
-const VERSION_ENDPOINT =
-  'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest';
-
 let uiShadow;
 export let menuElement;
 
@@ -132,7 +129,6 @@ const scheduleSettingsLoad = () => {
         settings._deserialize(parsed);
       }
     } catch {
-      // ignore cookie access issues
     } finally {
       markConfigLoaded();
       settingsLoaded = true;
@@ -142,11 +138,9 @@ const scheduleSettingsLoad = () => {
 };
 
 const fetchVersion = () => {
-  outer
-    .fetch(VERSION_ENDPOINT)
-    .then((response) => response.json())
-    .then((response) => {
-      const availableVersion = response.tag_name;
+  versionPromise
+    .then((data) => {
+      const availableVersion = data.tag_name;
       const suffix = VERSION !== availableVersion ? ' (update available!)' : '';
       menuVersion = VERSION + suffix;
       if (settingsLoaded) renderMenu();

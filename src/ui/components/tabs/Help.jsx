@@ -49,7 +49,7 @@ const Help = ({ settings, onSettingChange }) => {
       <div className="community-container">
         <div className="discord-panel">
           <div style={{ display: 'flex', marginBottom: '0.5rem' }}>
-            <Icons.Discord style={{ color: '#5865F2' }} />
+            <Icons.Discord_ style={{ width: '1rem', height: '1rem', color: '#5865F2' }} />
             <span
               style={{
                 marginLeft: '0.375rem',
