@@ -61,6 +61,7 @@ const handleKeydown = (event) => {
   if (event.code !== settings.keybinds_.toggleStickyTarget_) return;
   if (state.focusedEnemy_) {
     state.focusedEnemy_ = null;
+    setAimState(new AimState('idle', null, null, true));
     return;
   }
   if (settings.aimbot_.stickyTarget_) {
@@ -331,6 +332,7 @@ function aimbotTicker() {
         if (!meetsLayerCriteria(enemy.layer, localLayer, isLocalOnBypassLayer)) {
           enemy = null;
           state.focusedEnemy_ = null;
+          setAimState(new AimState('idle', null, null, true));
         } else if (aimbotDot) {
           aimbotDot.style.backgroundColor = 'rgb(190, 12, 185)';
         }
@@ -338,7 +340,10 @@ function aimbotTicker() {
 
       if (!enemy) {
         if (aimbotDot) aimbotDot.style.backgroundColor = 'red';
-        state.focusedEnemy_ = null;
+        if (state.focusedEnemy_) {
+          state.focusedEnemy_ = null;
+          setAimState(new AimState('idle', null, null, true));
+        }
         enemy = findTarget(players, me);
         state.currentEnemy_ = enemy;
       }

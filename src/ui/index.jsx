@@ -8,6 +8,10 @@ import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.css';
 import { outer, outerDocument, shadowRoot } from '@/utils/outer.js';
 
+const FONT_NAME = Array.from(
+  { length: 12 },
+  () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
+).join('');
 const FONT_URL =
   'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/gotham.css';
 const SETTINGS_KEY = 'c';
@@ -39,17 +43,35 @@ function handleSettingChange(updater) {
   renderMenu();
 }
 
-const attachFont = () => {
-  const link = document.createElement('link');
-  link.href = FONT_URL;
-  link.rel = 'stylesheet';
-  outerDocument.head.appendChild(link);
+const attachFont = async () => {
+  const base =
+    'https://cdn.rawgit.com/mfd/f3d96ec7f0e8f034cc22ea73b3797b59/raw/856f1dbb8d807aabceb80b6d4f94b464df461b3e/';
+  const fonts = [
+    { name: FONT_NAME, file: 'GothamPro.woff2', weight: 200, style: 'normal' },
+    { name: FONT_NAME, file: 'GothamPro-Italic.woff2', weight: 200, style: 'italic' },
+    { name: FONT_NAME, file: 'GothamPro-Medium.woff2', weight: 400, style: 'normal' },
+    { name: FONT_NAME, file: 'GothamPro-MediumItalic.woff2', weight: 400, style: 'italic' },
+    { name: FONT_NAME, file: 'GothamPro-Bold.woff2', weight: 600, style: 'normal' },
+  ];
+
+  const loadPromises = fonts.map(async (font) => {
+    try {
+      const fontFace = new FontFace(font.name, `url(${base}${font.file})`, {
+        weight: font.weight.toString(),
+        style: font.style,
+      });
+      await fontFace.load();
+      outerDocument.fonts.add(fontFace);
+    } catch {}
+  });
+
+  await Promise.all(loadPromises);
 };
 
 const createShadowRoot = () => {
   setUIRoot(shadowRoot);
   const styleElement = document.createElement('style');
-  styleElement.textContent = globalStylesheet;
+  styleElement.textContent = globalStylesheet.replace(/GothamPro/g, FONT_NAME);
   shadowRoot.appendChild(styleElement);
   return shadowRoot;
 };

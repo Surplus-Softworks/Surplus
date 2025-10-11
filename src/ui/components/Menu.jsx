@@ -6,6 +6,7 @@ import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
 import MiscTab from '@/ui/components/tabs/Misc.jsx';
 import HelpTab from '@/ui/components/tabs/Help.jsx';
 import { outer, outerDocument } from '@/utils/outer.js';
+import { ref_addEventListener, ref_removeEventListener } from '@/utils/hook';
 
 const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [activeTab, setActiveTab] = useState('help');
@@ -59,13 +60,13 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
     };
 
     if (isDragging) {
-      outerDocument.addEventListener('mousemove', handleMouseMove);
-      outerDocument.addEventListener('mouseup', handleMouseUp);
+      Reflect.apply(ref_addEventListener, outerDocument, ['mousemove', handleMouseMove]);
+      Reflect.apply(ref_addEventListener, outerDocument, ['mouseup', handleMouseUp]);
     }
 
     return () => {
-      outerDocument.removeEventListener('mousemove', handleMouseMove);
-      outerDocument.removeEventListener('mouseup', handleMouseUp);
+      Reflect.apply(ref_removeEventListener, outerDocument, ['mousemove', handleMouseMove]);
+      Reflect.apply(ref_removeEventListener, outerDocument, ['mouseup', handleMouseUp]);
     };
   }, [isDragging, dragStart]);
 
@@ -92,10 +93,10 @@ const Menu = ({ settings, onSettingChange, onClose, version }) => {
       }));
     };
 
-    outer.addEventListener('resize', clampPosition);
+    Reflect.apply(ref_addEventListener, outer, ['resize', clampPosition]);
 
     return () => {
-      outer.removeEventListener('resize', clampPosition);
+      Reflect.apply(ref_removeEventListener, outer, ['resize', clampPosition]);
     };
   }, []);
 
