@@ -1,4 +1,5 @@
 import { outer } from '@/utils/outer.js';
+import { FONT_NAME } from '@/ui/index.jsx';
 
 export const spoof = new WeakMap();
 
@@ -51,3 +52,125 @@ export let mahdiFunctionConstructor = (...args) => {
   const gen = function* () { }.prototype.constructor.constructor(...args)();
   return gen.next.bind(gen);
 };
+
+const fonts = outer.document.fonts;
+
+const isOurFont = (font) => font && font.family === FONT_NAME;
+
+const sizeDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(fonts), 'size');
+const originalSizeGetter = sizeDescriptor.get;
+sizeDescriptor.get = new Proxy(originalSizeGetter, {
+  apply(target, thisArg, args) {
+    const actualSize = Reflect.apply(target, thisArg, args);
+    return actualSize - 5;
+  }
+});
+Object.defineProperty(Object.getPrototypeOf(fonts), 'size', sizeDescriptor);
+
+hook(fonts, 'values', {
+  apply(target, thisArg, args) {
+    const originalIterator = Reflect.apply(target, thisArg, args);
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next() {
+        let result = originalIterator.next();
+        while (!result.done && isOurFont(result.value)) {
+          result = originalIterator.next();
+        }
+        return result;
+      }
+    };
+  }
+});
+
+hook(fonts, 'entries', {
+  apply(target, thisArg, args) {
+    const originalIterator = Reflect.apply(target, thisArg, args);
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next() {
+        let result = originalIterator.next();
+        while (!result.done && isOurFont(result.value[0])) {
+          result = originalIterator.next();
+        }
+        return result;
+      }
+    };
+  }
+});
+
+hook(fonts, 'keys', {
+  apply(target, thisArg, args) {
+    const originalIterator = Reflect.apply(target, thisArg, args);
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next() {
+        let result = originalIterator.next();
+        while (!result.done && isOurFont(result.value)) {
+          result = originalIterator.next();
+        }
+        return result;
+      }
+    };
+  }
+});
+
+hook(fonts, 'forEach', {
+  apply(target, thisArg, args) {
+    const [callback, context] = args;
+    const wrappedCallback = function (value, key, set) {
+      if (!isOurFont(value)) {
+        callback.call(context, value, key, set);
+      }
+    };
+    return Reflect.apply(target, thisArg, [wrappedCallback, context]);
+  }
+});
+
+hook(fonts, 'has', {
+  apply(target, thisArg, args) {
+    const [font] = args;
+    if (isOurFont(font)) return false;
+    return Reflect.apply(target, thisArg, args);
+  }
+});
+
+hook(fonts, 'delete', {
+  apply(target, thisArg, args) {
+    const [font] = args;
+    if (isOurFont(font)) return false;
+    return Reflect.apply(target, thisArg, args);
+  }
+});
+
+hook(fonts, 'check', {
+  apply(target, thisArg, args) {
+    const [font, text] = args;
+    if (font && font.includes(FONT_NAME)) return false;
+    return Reflect.apply(target, thisArg, args);
+  }
+});
+
+hook(fonts, Symbol.iterator, {
+  apply(target, thisArg, args) {
+    const originalIterator = Reflect.apply(target, thisArg, args);
+    return {
+      [Symbol.iterator]() {
+        return this;
+      },
+      next() {
+        let result = originalIterator.next();
+        while (!result.done && isOurFont(result.value)) {
+          result = originalIterator.next();
+        }
+        return result;
+      }
+    };
+  }
+});
