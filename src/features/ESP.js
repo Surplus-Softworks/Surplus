@@ -687,7 +687,7 @@ function renderBulletTrajectory(localPlayer, graphics) {
   const trueLayer =
     isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : localPlayer.layer;
 
-  let isBarrelBlocked = false;
+  let clipPoint = null;
   if (idToObj) {
     const obstacles = Object.values(idToObj).filter((obj) => {
       if (!obj.collider) return false;
@@ -698,27 +698,26 @@ function renderBulletTrajectory(localPlayer, graphics) {
       return true;
     });
 
+    let closestDist = Infinity;
     for (const obstacle of obstacles) {
       if (obstacle.collidable === false) continue;
       const collision = collisionHelpers.intersectSegment_(obstacle.collider, playerPos, gunPos);
       if (collision) {
-        isBarrelBlocked = true;
-        break;
+        const dist = v2.lengthSqr_(v2.sub_(collision.point, playerPos));
+        if (dist < closestDist) {
+          closestDist = dist;
+          // Offset the clip point slightly along the normal to avoid being inside the wall
+          clipPoint = v2.add_(collision.point, v2.mul_(collision.normal, 0.01));
+        }
       }
     }
   }
 
-  if (isBarrelBlocked) {
-    graphics.lineStyle(3, trajectoryColor, 0.7);
-    const shortDist = 1;
-    const blockedEnd = v2.add_(playerPos, v2.mul_(dir, shortDist));
-    graphics.moveTo(0, 0);
-    graphics.lineTo((blockedEnd.x - playerPos.x) * 16, (playerPos.y - blockedEnd.y) * 16);
-    return;
-  }
+  // If barrel is inside a wall, start trajectory from the wall edge
+  const trajectoryStart = clipPoint || gunPos;
 
   const segments = calculateTrajectory(
-    gunPos,
+    trajectoryStart,
     dir,
     localBullet.distance,
     localPlayer.layer,
