@@ -32,7 +32,7 @@ const Help = ({ settings, onSettingChange }) => {
           </div>
           <div className="feature-item">
             <span className="feature-name">Sticky Target</span>
-            <KeybindSlot keybind={settings?.keybinds_?.toggleStickyTarget_ || 'KeyH'} />
+            <KeybindSlot keybind={settings?.keybinds_?.toggleStickyTarget_ || 'KeyN'} />
           </div>
           <div className="feature-item">
             <span className="feature-name">Layer Spoofer</span>

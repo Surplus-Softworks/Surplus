@@ -7,7 +7,6 @@ import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.
 import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/utils/aimController.js';
 import { outerDocument, outer } from '@/utils/outer.js';
 
-const KEY_STICKY_TARGET = 'KeyN';
 const isBypassLayer = (layer) => layer === 2 || layer === 3;
 
 const state = {
@@ -59,7 +58,7 @@ const meetsLayerCriteria = (targetLayer, localLayer, isLocalOnBypass) => {
 const queueInput = (command) => inputState.queuedInputs_.push(command);
 
 const handleKeydown = (event) => {
-  if (event.code !== KEY_STICKY_TARGET) return;
+  if (event.code !== settings.keybinds_.toggleStickyTarget_) return;
   if (state.focusedEnemy_) {
     state.focusedEnemy_ = null;
     return;

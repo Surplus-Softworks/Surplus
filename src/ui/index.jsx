@@ -89,13 +89,6 @@ const registerKeyboardShortcuts = (root) => {
         );
         return;
       }
-      if (event.code === settings.keybinds_.toggleStickyTarget_) {
-        toggleSetting(
-          (s) => s.aimbot_.stickyTarget_,
-          (s, v) => (s.aimbot_.stickyTarget_ = v)
-        );
-        return;
-      }
     },
   ]);
 };

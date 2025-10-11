@@ -88,7 +88,7 @@ export const defaultSettings = {
   keybinds_: {
     toggleMenu_: 'ShiftRight',
     toggleAimbot_: 'KeyB',
-    toggleStickyTarget_: 'KeyH',
+    toggleStickyTarget_: 'KeyN',
     toggleLayerSpoof_: 'KeyT',
   },
 };

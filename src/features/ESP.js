@@ -156,6 +156,8 @@ const getGraphics = (container, key) => {
 };
 
 function nameTag(player) {
+  const playerWeapon = player[translations.netData_][translations.activeWeapon_];
+  const playerName = player.nameText._text
   const localPlayer = gameManager.game[translations.activePlayer_];
   const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
