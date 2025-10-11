@@ -95,9 +95,7 @@ const handleWeaponSwitch = () => {
 
       if (shouldQuickSwitch(currentWeapon.type)) {
         queueMeleeCycleAndBack(currentWeaponIndex);
-      }
-
-      else if (isSlowFiringWeapon(currentWeapon.type)) {
+      } else if (isSlowFiringWeapon(currentWeapon.type)) {
         const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
         const otherWeapon = weapons[otherWeaponIndex];
 
@@ -117,7 +115,7 @@ const handleWeaponSwitch = () => {
 
     currentWeaponState.ammo_ = currentWeapon.ammo;
     currentWeaponState.type_ = currentWeapon.type;
-  } catch { }
+  } catch {}
 };
 
 export default function () {

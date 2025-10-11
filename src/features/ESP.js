@@ -157,13 +157,13 @@ const getGraphics = (container, key) => {
 
 function nameTag(player) {
   const playerWeapon = player[translations.netData_][translations.activeWeapon_];
-  const playerName = player.nameText._text
+  const playerName = player.nameText._text;
   const localPlayer = gameManager.game[translations.activePlayer_];
   const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
   Reflect.defineProperty(player.nameText, 'visible', {
     get: () => settings.esp_.visibleNametags_ && settings.esp_.enabled_,
-    set: () => { },
+    set: () => {},
   });
 
   player.nameText.visible = true;
@@ -636,10 +636,7 @@ function renderBulletTrajectory(localPlayer, graphics) {
     const shortDist = 1;
     const blockedEnd = v2.add_(playerPos, v2.mul_(dir, shortDist));
     graphics.moveTo(0, 0);
-    graphics.lineTo(
-      (blockedEnd.x - playerPos.x) * 16,
-      (playerPos.y - blockedEnd.y) * 16
-    );
+    graphics.lineTo((blockedEnd.x - playerPos.x) * 16, (playerPos.y - blockedEnd.y) * 16);
     return;
   }
 
@@ -742,7 +739,7 @@ function renderESP() {
     }
 
     players.forEach(nameTag);
-  } catch { }
+  } catch {}
 }
 
 export default function () {

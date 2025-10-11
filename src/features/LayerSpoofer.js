@@ -92,7 +92,12 @@ const cleanup = () => {
 };
 
 const handleKeyDown = (event) => {
-  if (event.code !== settings.keybinds_.toggleLayerSpoof_ || !settings.layerSpoof_.enabled_ || isLayerSpoofActive) return;
+  if (
+    event.code !== settings.keybinds_.toggleLayerSpoof_ ||
+    !settings.layerSpoof_.enabled_ ||
+    isLayerSpoofActive
+  )
+    return;
 
   try {
     const player = gameManager.game?.[translations.activePlayer_];

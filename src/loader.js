@@ -24,7 +24,7 @@ function injectGame(oninject) {
           setGameManager(args[0]);
           oninject();
         }
-      } catch { }
+      } catch {}
       return Reflect.apply(f, th, args);
     },
   });

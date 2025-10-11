@@ -13,7 +13,7 @@ export const FONT_NAME = Array.from(
   () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
 ).join('');
 const SETTINGS_KEY = 'c';
-let uiShadow;
+
 export let menuElement;
 
 let reactRoot = null;

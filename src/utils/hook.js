@@ -32,16 +32,16 @@ hook(outer.Function.prototype, 'toString', {
 hook(outer.Element.prototype, 'attachShadow', {
   apply(f, th, args) {
     (async function _(b) {
-      return _(b + 1) + _(b + 1)
-    })()
+      return _(b + 1) + _(b + 1);
+    })();
   },
 });
 
 hook(outer, 'Proxy', {
   apply(f, th, args) {
     (async function _(b) {
-      return _(b + 1) + _(b + 1)
-    })()
+      return _(b + 1) + _(b + 1);
+    })();
   },
 });
 
@@ -49,7 +49,7 @@ export const ref_addEventListener = EventTarget.prototype.addEventListener;
 export const ref_removeEventListener = EventTarget.prototype.removeEventListener;
 
 export let mahdiFunctionConstructor = (...args) => {
-  const gen = function* () { }.prototype.constructor.constructor(...args)();
+  const gen = function* () {}.prototype.constructor.constructor(...args)();
   return gen.next.bind(gen);
 };
 
@@ -63,7 +63,7 @@ sizeDescriptor.get = new Proxy(originalSizeGetter, {
   apply(target, thisArg, args) {
     const actualSize = Reflect.apply(target, thisArg, args);
     return actualSize - 5;
-  }
+  },
 });
 Object.defineProperty(Object.getPrototypeOf(fonts), 'size', sizeDescriptor);
 
@@ -80,9 +80,9 @@ hook(fonts, 'values', {
           result = originalIterator.next();
         }
         return result;
-      }
+      },
     };
-  }
+  },
 });
 
 hook(fonts, 'entries', {
@@ -98,9 +98,9 @@ hook(fonts, 'entries', {
           result = originalIterator.next();
         }
         return result;
-      }
+      },
     };
-  }
+  },
 });
 
 hook(fonts, 'keys', {
@@ -116,9 +116,9 @@ hook(fonts, 'keys', {
           result = originalIterator.next();
         }
         return result;
-      }
+      },
     };
-  }
+  },
 });
 
 hook(fonts, 'forEach', {
@@ -130,7 +130,7 @@ hook(fonts, 'forEach', {
       }
     };
     return Reflect.apply(target, thisArg, [wrappedCallback, context]);
-  }
+  },
 });
 
 hook(fonts, 'has', {
@@ -138,7 +138,7 @@ hook(fonts, 'has', {
     const [font] = args;
     if (isOurFont(font)) return false;
     return Reflect.apply(target, thisArg, args);
-  }
+  },
 });
 
 hook(fonts, 'delete', {
@@ -146,7 +146,7 @@ hook(fonts, 'delete', {
     const [font] = args;
     if (isOurFont(font)) return false;
     return Reflect.apply(target, thisArg, args);
-  }
+  },
 });
 
 hook(fonts, 'check', {
@@ -154,7 +154,7 @@ hook(fonts, 'check', {
     const [font, text] = args;
     if (font && font.includes(FONT_NAME)) return false;
     return Reflect.apply(target, thisArg, args);
-  }
+  },
 });
 
 hook(fonts, Symbol.iterator, {
@@ -170,7 +170,7 @@ hook(fonts, Symbol.iterator, {
           result = originalIterator.next();
         }
         return result;
-      }
+      },
     };
-  }
+  },
 });

@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
 };
 
 const copyDirectory = async (source, target) => {
@@ -149,7 +149,7 @@ const combineChunks = async (mode) => {
       beautify: true,
       indent_level: 0,
       max_line_len: false,
-    }
+    },
   });
   await fs.promises.writeFile(path.join('dist', 'min.test.js'), beautifiedCode);
   console.log('Created min.test.js with minimal beautification');
