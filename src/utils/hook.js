@@ -1,5 +1,4 @@
 import { outer, outerDocument } from '@/utils/outer.js';
-import { FONT_NAME } from '@/ui/index.jsx';
 
 export const spoof = new WeakMap();
 
@@ -49,9 +48,14 @@ export const ref_addEventListener = EventTarget.prototype.addEventListener;
 export const ref_removeEventListener = EventTarget.prototype.removeEventListener;
 
 export let mahdiFunctionConstructor = (...args) => {
-  const gen = function* () {}.prototype.constructor.constructor(...args)();
+  const gen = function* () { }.prototype.constructor.constructor(...args)();
   return gen.next.bind(gen);
 };
+
+export const FONT_NAME = Array.from(
+  { length: 12 },
+  () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
+).join('');
 
 const fonts = outerDocument.fonts;
 

@@ -67,7 +67,7 @@ const Visuals = ({ settings, onSettingChange }) => {
         />
         <Checkbox
           id="player-esp"
-          label="Players"
+          label="Player Lines"
           checked={settings.esp_.players_}
           onChange={(v) => onSettingChange((s) => (s.esp_.players_ = v))}
         />

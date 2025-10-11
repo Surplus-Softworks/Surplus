@@ -7,12 +7,7 @@ import { read, initStore } from '@/utils/store.js';
 import { encryptDecrypt } from '@/utils/encryption.js';
 import { globalStylesheet } from '@/ui/components/styles.css';
 import { outer, outerDocument, shadowRoot, versionPromise } from '@/utils/outer.js';
-
-export const FONT_NAME = Array.from(
-  { length: 12 },
-  () => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 52)]
-).join('');
-const SETTINGS_KEY = 'c';
+import { FONT_NAME } from '@/utils/hook.js';
 
 export let menuElement;
 
@@ -122,7 +117,7 @@ const scheduleSettingsLoad = () => {
   setTimeout(() => {
     try {
       initStore();
-      const stored = read(SETTINGS_KEY);
+      const stored = read();
       if (stored !== null && stored !== undefined) {
         const decrypted = encryptDecrypt(stored);
         const parsed = parse(decrypted);

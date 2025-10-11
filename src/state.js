@@ -24,7 +24,7 @@ export const setGameManager = (gm) => {
   if (DEV) {
     try {
       outer.gameManager = gm;
-    } catch {}
+    } catch { }
   }
 };
 
@@ -311,7 +311,7 @@ const updateConfig = () => {
   const config = stringify(serialized);
   if (config !== lastConfig) {
     const encrypted = encryptDecrypt(config);
-    const success = write('c', encrypted);
+    const success = write(encrypted);
     if (success) {
       lastConfig = config;
     }

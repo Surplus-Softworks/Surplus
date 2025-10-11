@@ -56,7 +56,7 @@ const readCookieValue = () => {
   return null;
 };
 
-export function write(_key, value) {
+export function write(value) {
   initStore();
 
   const source = typeof value === 'string' ? value : String(value ?? '');
@@ -65,7 +65,7 @@ export function write(_key, value) {
   return true;
 }
 
-export function read(_key) {
+export function read() {
   initStore();
   const encoded = readCookieValue();
   return encoded ? decodeFromHex(encoded) : null;

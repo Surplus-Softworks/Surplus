@@ -70,7 +70,7 @@ const Main = ({ settings, onSettingChange }) => {
 
       <SectionTitle
         icon={Icons.AutoSwitch_}
-        label="Auto Switch"
+        label="Auto Switch (UPDATED!)"
         enabled={settings.autoSwitch_.enabled_}
         onEnabledChange={(v) => onSettingChange((s) => (s.autoSwitch_.enabled_ = v))}
       />
