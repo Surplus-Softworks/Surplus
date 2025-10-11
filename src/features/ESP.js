@@ -163,7 +163,7 @@ function nameTag(player) {
 
   Reflect.defineProperty(player.nameText, 'visible', {
     get: () => settings.esp_.visibleNametags_ && settings.esp_.enabled_,
-    set: () => {},
+    set: () => { },
   });
 
   player.nameText.visible = true;
@@ -172,6 +172,42 @@ function nameTag(player) {
   player.nameText.style.fontSize = 20;
   player.nameText.style.dropShadowBlur = 0.1;
 }
+
+const castRayWithObstacles = (startPos, dir, maxDist, layer, localPlayer) => {
+  const game = gameManager.game;
+  const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
+  if (!idToObj) return maxDist;
+
+  const BULLET_HEIGHT = 0.25;
+  const trueLayer =
+    isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : layer;
+
+  const endPos = v2.add_(startPos, v2.mul_(dir, maxDist));
+  let closestDist = maxDist;
+
+  const obstacles = Object.values(idToObj).filter((obj) => {
+    if (!obj.collider) return false;
+    if (obj.dead) return false;
+    if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
+    if (obj.layer !== undefined && !sameLayer(obj.layer, trueLayer)) return false;
+    if (obj?.type?.includes('decal')) return false;
+    return true;
+  });
+
+  for (const obstacle of obstacles) {
+    if (obstacle.collidable === false) continue;
+
+    const res = collisionHelpers.intersectSegment_(obstacle.collider, startPos, endPos);
+    if (res) {
+      const dist = v2.length_(v2.sub_(res.point, startPos));
+      if (dist < closestDist && dist > 0.0001) {
+        closestDist = dist;
+      }
+    }
+  }
+
+  return closestDist;
+};
 
 const drawFlashlight = (
   localPlayer,
@@ -227,15 +263,57 @@ const drawFlashlight = (
   };
 
   const spreadAngle = weapon.shotSpread * (Math.PI / 180);
-  graphics.beginFill(color, opacity);
-  graphics.moveTo(center.x, center.y);
-  graphics.arc(
-    center.x,
-    center.y,
-    bullet.distance * 16.25,
-    aimAngle - spreadAngle / 2,
-    aimAngle + spreadAngle / 2
-  );
+  const maxDistance = bullet.distance;
+  const rayCount = Math.max(30, Math.ceil(weapon.shotSpread * 2));
+
+  // Adjust color and opacity for enemies
+  let finalColor = color;
+  let finalOpacity = opacity;
+  if (!isLocalPlayer) {
+    finalColor = 0xff0000; // Red for enemies
+    finalOpacity = opacity * 1.2; // 20% more visible
+  } else {
+    finalOpacity = opacity * 0.75; // Decrease overlay opacity for local player
+  }
+
+  if (isLocalPlayer) {
+    const underlayColor = 0xaaaaaa; // Lighter gray underlay for local player
+    graphics.beginFill(underlayColor, opacity * 1.5); // Much more visible
+    graphics.moveTo(center.x, center.y);
+    graphics.arc(
+      center.x,
+      center.y,
+      maxDistance * 16.25,
+      aimAngle - spreadAngle / 2,
+      aimAngle + spreadAngle / 2
+    );
+    graphics.lineTo(center.x, center.y);
+    graphics.endFill();
+  }
+
+  graphics.beginFill(finalColor, finalOpacity);
+
+  for (let i = 0; i < rayCount; i++) {
+    const t = i / (rayCount - 1);
+    const rayAngle = aimAngle - spreadAngle / 2 + spreadAngle * t;
+    const rayDir = v2.create_(Math.cos(rayAngle), -Math.sin(rayAngle));
+
+    const hitDist = castRayWithObstacles(gunPos, rayDir, maxDistance, player.layer, localPlayer);
+
+    const endPos = v2.add_(gunPos, v2.mul_(rayDir, hitDist));
+    const endScreen = {
+      x: (endPos.x - localPlayer[translations.pos_].x) * 16,
+      y: (localPlayer[translations.pos_].y - endPos.y) * 16,
+    };
+
+    if (i === 0) {
+      graphics.moveTo(center.x, center.y);
+      graphics.lineTo(endScreen.x, endScreen.y);
+    } else {
+      graphics.lineTo(endScreen.x, endScreen.y);
+    }
+  }
+
   graphics.lineTo(center.x, center.y);
   graphics.endFill();
 };
@@ -650,7 +728,7 @@ function renderBulletTrajectory(localPlayer, graphics) {
 
   const hitPlayer = segments.some((segment) => segment.hitPlayer);
   const trajectoryColor = hitPlayer ? COLORS.RED_ : 0xff00ff;
-  const trajectoryWidth = hitPlayer ? 4 : 2;
+  const trajectoryWidth = hitPlayer ? 2 : 1;
 
   graphics.lineStyle(trajectoryWidth, trajectoryColor, 0.5);
 
@@ -739,7 +817,7 @@ function renderESP() {
     }
 
     players.forEach(nameTag);
-  } catch {}
+  } catch { }
 }
 
 export default function () {
