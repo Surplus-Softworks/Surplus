@@ -1,4 +1,4 @@
-import { outer } from '@/utils/outer.js';
+import { outer, outerDocument } from '@/utils/outer.js';
 import { FONT_NAME } from '@/ui/index.jsx';
 
 export const spoof = new WeakMap();
@@ -53,7 +53,7 @@ export let mahdiFunctionConstructor = (...args) => {
   return gen.next.bind(gen);
 };
 
-const fonts = outer.document.fonts;
+const fonts = outerDocument.fonts;
 
 const isOurFont = (font) => font && font.family === FONT_NAME;
 
