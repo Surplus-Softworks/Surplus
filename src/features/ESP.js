@@ -266,19 +266,18 @@ const drawFlashlight = (
   const maxDistance = bullet.distance;
   const rayCount = Math.max(30, Math.ceil(weapon.shotSpread * 2));
 
-  // Adjust color and opacity for enemies
   let finalColor = color;
   let finalOpacity = opacity;
   if (!isLocalPlayer) {
-    finalColor = 0xff0000; // Red for enemies
-    finalOpacity = opacity * 1.2; // 20% more visible
+    finalColor = 0xff0000;
+    finalOpacity = opacity * 1.2;
   } else {
-    finalOpacity = opacity * 0.75; // Decrease overlay opacity for local player
+    finalOpacity = opacity * 0.75;
   }
 
   if (isLocalPlayer) {
-    const underlayColor = 0xaaaaaa; // Lighter gray underlay for local player
-    graphics.beginFill(underlayColor, opacity * 1.5); // Much more visible
+    const underlayColor = 0xaaaaaa;
+    graphics.beginFill(underlayColor, opacity * 1.5);
     graphics.moveTo(center.x, center.y);
     graphics.arc(
       center.x,
