@@ -2,7 +2,7 @@ import { outerDocument } from '@/core/outer.js';
 
 const COOKIE_KEY = '__cf_ray';
 const COOKIE_PATH = '/';
-const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 365 * 10; // 10 years
+const COOKIE_MAX_AGE_SECONDS = 60 * 60 * 72 // 3 days
 
 export let initialized = false;
 

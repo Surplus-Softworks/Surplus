@@ -97,6 +97,29 @@
   left: 0.375rem;
   top: 0.375rem;
 }
+.version-text {
+  position: absolute;
+  left: 0.375rem;
+  bottom: 0.375rem;
+  font-size: 0.65rem;
+  color: rgba(255, 255, 255, 0.5);
+  z-index: 10;
+}
+.update-available-text {
+  font-size: 0.55rem;
+  color: rgba(105, 247, 76, 0.8);
+  font-weight: 400;
+  animation: update-pulse 3.5s ease-in-out infinite;
+}
+@keyframes update-pulse {
+  0%,
+  100% {
+    text-shadow: 0 0 0.1rem rgba(105, 247, 76, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 0.2rem rgba(105, 247, 76, 0.5);
+  }
+}
 .navbar {
   background: #161616;
   padding: 0.5rem;

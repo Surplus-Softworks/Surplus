@@ -136,7 +136,7 @@ const fetchVersion = () => {
   versionPromise
     .then((data) => {
       const availableVersion = data.tag_name;
-      const suffix = VERSION !== availableVersion ? ' (update available!)' : '';
+      const suffix = VERSION !== availableVersion ? ' update available!' : '';
       menuVersion = VERSION + suffix;
       if (settingsLoaded) renderMenu();
     })
