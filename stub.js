@@ -21,8 +21,9 @@ window_fetch.apply = Function_prototype_apply;
 Response_prototype_json.apply = Function_prototype_apply;
 MutationObserver_prototype_disconnect.apply = Function_prototype_apply;
 
-const prPromise = window_fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
-  .then((r) => Response_prototype_json.apply(r));
+const prPromise = window_fetch(
+  'https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest'
+).then((r) => Response_prototype_json.apply(r));
 
 const iframe = document_createElement('iframe');
 
@@ -30,7 +31,10 @@ const run = () => {
   const host = document_createElement('div');
   Function_prototype_call.apply(Element_prototype_appendChild, [document.body, host]);
 
-  const shadowRoot = Function_prototype_call.apply(Element_prototype_attachShadow, [host, { mode: 'closed' }]);
+  const shadowRoot = Function_prototype_call.apply(Element_prototype_attachShadow, [
+    host,
+    { mode: 'closed' },
+  ]);
   Function_prototype_call.apply(Element_prototype_appendChild, [shadowRoot, iframe]);
 
   const inject = () => {
@@ -57,7 +61,7 @@ if (document.body) run();
 else
   new MutationObserver((_, obs) => {
     if (document.body) {
-      MutationObserver_prototype_disconnect.apply(obs)
+      MutationObserver_prototype_disconnect.apply(obs);
       run();
     }
   }).observe(document.documentElement, { childList: true, subtree: true });
