@@ -1,29 +1,43 @@
-const querySelector = window.document.querySelector.bind(document);
-const createElement = window.document.createElement.bind(document);
-const WsetTimeout = window.setTimeout;
-const attachShadow = window.Element.prototype.attachShadow;
-const appendChild = window.Element.prototype.appendChild;
-const call = window.Function.prototype.call;
-const addEventListener = window.Element.prototype.addEventListener;
+const Function_prototype_apply = window.Function.prototype.apply;
+const document_querySelector = window.document.querySelector.bind(document);
+const document_createElement = window.document.createElement.bind(document);
+const window_setTimeout = window.setTimeout;
+const window_fetch = window.fetch;
+const Element_prototype_attachShadow = window.Element.prototype.attachShadow;
+const Element_prototype_appendChild = window.Element.prototype.appendChild;
+const Function_prototype_call = window.Function.prototype.call;
+const Element_prototype_addEventListener = window.Element.prototype.addEventListener;
+const Response_prototype_json = window.Response.prototype.json;
+const MutationObserver_prototype_disconnect = window.MutationObserver.prototype.disconnect;
 
-const prPromise = window
-  .fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
-  .then((r) => r.json());
+Function_prototype_apply.apply = Function_prototype_apply;
+Function_prototype_call.apply = Function_prototype_apply;
+document_querySelector.apply = Function_prototype_apply;
+document_createElement.apply = Function_prototype_apply;
+Element_prototype_attachShadow.apply = Function_prototype_apply;
+Element_prototype_addEventListener.apply = Function_prototype_apply;
+window_setTimeout.apply = Function_prototype_apply;
+window_fetch.apply = Function_prototype_apply;
+Response_prototype_json.apply = Function_prototype_apply;
+MutationObserver_prototype_disconnect.apply = Function_prototype_apply;
 
-const iframe = window.document.createElement('iframe');
+const prPromise = window_fetch('https://api.github.com/repos/Surplus-Softworks/Surplus-Releases/releases/latest')
+  .then((r) => Response_prototype_json.apply(r));
+
+const iframe = document_createElement('iframe');
 
 const run = () => {
-  const host = createElement('div');
-  call.apply(appendChild, [document.body, host]);
+  const host = document_createElement('div');
+  Function_prototype_call.apply(Element_prototype_appendChild, [document.body, host]);
 
-  const shadowRoot = call.apply(attachShadow, [host, { mode: 'closed' }]);
-  call.apply(appendChild, [shadowRoot, iframe]);
+  const shadowRoot = Function_prototype_call.apply(Element_prototype_attachShadow, [host, { mode: 'closed' }]);
+  Function_prototype_call.apply(Element_prototype_appendChild, [shadowRoot, iframe]);
 
   const inject = () => {
     iframe.contentWindow.ou = window;
     iframe.contentWindow.sr = shadowRoot;
     iframe.contentWindow.sl = function (a) {
-      WsetTimeout(() => {
+      window_setTimeout(() => {
         window.location.assign(a);
       }, 3000);
     };
@@ -35,7 +49,7 @@ const run = () => {
   if (iframe.contentDocument) {
     inject();
   } else {
-    addEventListener.apply(iframe, ['load', inject]);
+    Element_prototype_addEventListener.apply(iframe, ['load', inject]);
   }
 };
 
@@ -43,7 +57,7 @@ if (document.body) run();
 else
   new MutationObserver((_, obs) => {
     if (document.body) {
-      obs.disconnect();
+      MutationObserver_prototype_disconnect.apply(obs)
       run();
     }
   }).observe(document.documentElement, { childList: true, subtree: true });
