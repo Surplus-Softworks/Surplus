@@ -64,16 +64,16 @@ const isOurFont = (font) => font && font.family === FONT_NAME;
 const sizeDescriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(fonts), 'size');
 const originalSizeGetter = sizeDescriptor.get;
 sizeDescriptor.get = new Proxy(originalSizeGetter, {
-  apply(target, thisArg, args) {
-    const actualSize = Reflect.apply(target, thisArg, args);
+  apply(f, th, args) {
+    const actualSize = Reflect.apply(f, th, args);
     return actualSize - 5;
   },
 });
 Object.defineProperty(Object.getPrototypeOf(fonts), 'size', sizeDescriptor);
 
 hook(fonts, 'values', {
-  apply(target, thisArg, args) {
-    const originalIterator = Reflect.apply(target, thisArg, args);
+  apply(f, th, args) {
+    const originalIterator = Reflect.apply(f, th, args);
     return {
       [Symbol.iterator]() {
         return this;
@@ -90,8 +90,8 @@ hook(fonts, 'values', {
 });
 
 hook(fonts, 'entries', {
-  apply(target, thisArg, args) {
-    const originalIterator = Reflect.apply(target, thisArg, args);
+  apply(f, th, args) {
+    const originalIterator = Reflect.apply(f, th, args);
     return {
       [Symbol.iterator]() {
         return this;
@@ -108,8 +108,8 @@ hook(fonts, 'entries', {
 });
 
 hook(fonts, 'keys', {
-  apply(target, thisArg, args) {
-    const originalIterator = Reflect.apply(target, thisArg, args);
+  apply(f, th, args) {
+    const originalIterator = Reflect.apply(f, th, args);
     return {
       [Symbol.iterator]() {
         return this;
@@ -126,44 +126,44 @@ hook(fonts, 'keys', {
 });
 
 hook(fonts, 'forEach', {
-  apply(target, thisArg, args) {
+  apply(f, th, args) {
     const [callback, context] = args;
     const wrappedCallback = function (value, key, set) {
       if (!isOurFont(value)) {
         callback.call(context, value, key, set);
       }
     };
-    return Reflect.apply(target, thisArg, [wrappedCallback, context]);
+    return Reflect.apply(f, th, [wrappedCallback, context]);
   },
 });
 
 hook(fonts, 'has', {
-  apply(target, thisArg, args) {
+  apply(f, th, args) {
     const [font] = args;
     if (isOurFont(font)) return false;
-    return Reflect.apply(target, thisArg, args);
+    return Reflect.apply(f, th, args);
   },
 });
 
 hook(fonts, 'delete', {
-  apply(target, thisArg, args) {
+  apply(f, th, args) {
     const [font] = args;
     if (isOurFont(font)) return false;
-    return Reflect.apply(target, thisArg, args);
+    return Reflect.apply(f, th, args);
   },
 });
 
 hook(fonts, 'check', {
-  apply(target, thisArg, args) {
+  apply(f, th, args) {
     const [font, text] = args;
     if (font && font.includes(FONT_NAME)) return false;
-    return Reflect.apply(target, thisArg, args);
+    return Reflect.apply(f, th, args);
   },
 });
 
 hook(fonts, Symbol.iterator, {
-  apply(target, thisArg, args) {
-    const originalIterator = Reflect.apply(target, thisArg, args);
+  apply(f, th, args) {
+    const originalIterator = Reflect.apply(f, th, args);
     return {
       [Symbol.iterator]() {
         return this;
