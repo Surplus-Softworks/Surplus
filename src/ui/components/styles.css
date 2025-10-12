@@ -404,6 +404,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 0.15rem;
   border-radius: var(--border-radius);
   border: none;
   box-shadow:
@@ -414,6 +415,11 @@
   position: relative;
   z-index: 1;
   white-space: nowrap;
+}
+.keybind-pen-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+  color: #ddd;
 }
 .keybind-slot::before {
   content: '';

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ref_addEventListener, ref_removeEventListener } from '@/core/hook';
 import { outer } from '@/core/outer';
+import { Icons } from '@/ui/components/icons.jsx';
 
 const formatKeyCode = (code) => {
   const keyMap = {
@@ -62,6 +63,7 @@ const KeybindSlot = ({ keybind, mode = 'single', style = {}, onClick, editable =
   return (
     <div className={className} style={style} onClick={handleClick}>
       {displayText}
+      {editable && !isWaiting && <Icons.Pen_ className="keybind-pen-icon" />}
     </div>
   );
 };
