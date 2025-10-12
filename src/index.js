@@ -8,10 +8,10 @@ if (!DEV) {
     const consoleProxy = new Proxy(
       {},
       {
-        get: () => function () {},
+        get: () => function () { },
         set: () => true,
         has: () => true,
-        apply: () => function () {},
+        apply: () => function () { },
         construct: () => ({}),
       }
     );
@@ -20,53 +20,53 @@ if (!DEV) {
       configurable: false,
       writable: false,
     });
-  } catch (_) {}
+  } catch (_) { }
   try {
-    window.onerror = function () {};
-  } catch (_) {}
+    window.onerror = function () { };
+  } catch (_) { }
   try {
-    window.onunhandledrejection = function () {};
-  } catch (_) {}
+    window.onunhandledrejection = function () { };
+  } catch (_) { }
   try {
-    window.onrejectionhandled = function () {};
-  } catch (_) {}
+    window.onrejectionhandled = function () { };
+  } catch (_) { }
   try {
-    window.onabort = function () {};
-  } catch (_) {}
+    window.onabort = function () { };
+  } catch (_) { }
   try {
-    window.onunload = function () {};
-  } catch (_) {}
+    window.onunload = function () { };
+  } catch (_) { }
   try {
-    window.onbeforeunload = function () {};
-  } catch (_) {}
+    window.onbeforeunload = function () { };
+  } catch (_) { }
   try {
-    window.addEventListener('error', function () {}, true);
-    window.addEventListener('unhandledrejection', function () {}, true);
-    window.addEventListener('rejectionhandled', function () {}, true);
-    window.addEventListener('abort', function () {}, true);
-  } catch (_) {}
+    window.addEventListener('error', function () { }, true);
+    window.addEventListener('unhandledrejection', function () { }, true);
+    window.addEventListener('rejectionhandled', function () { }, true);
+    window.addEventListener('abort', function () { }, true);
+  } catch (_) { }
   try {
     Object.defineProperty(window, 'Error', {
       value: undefined,
       configurable: false,
       writable: false,
     });
-  } catch (_) {}
+  } catch (_) { }
   try {
-    window.alert = function () {};
-  } catch (_) {}
+    window.alert = function () { };
+  } catch (_) { }
   try {
-    window.confirm = function () {};
-  } catch (_) {}
+    window.confirm = function () { };
+  } catch (_) { }
   try {
-    window.prompt = function () {};
-  } catch (_) {}
+    window.prompt = function () { };
+  } catch (_) { }
   try {
     Object.freeze(window.console);
-  } catch (_) {}
+  } catch (_) { }
   try {
     Object.freeze(window);
-  } catch (_) {}
+  } catch (_) { }
 }
 
 (async () => {
@@ -84,10 +84,10 @@ if (!DEV) {
       outerDocument.head.innerHTML = '';
       outerDocument.body.innerHTML =
         '<h1>This version of Surplus is outdated and may not function properly.<br>For safety & security please update to the new one!<br>Redirecting in 3 seconds...</h1>';
-      await new Promise(() => {});
+      await new Promise(() => { });
       ''();
     }
-  } catch {}
+  } catch { }
 
   initStore();
   initialize();

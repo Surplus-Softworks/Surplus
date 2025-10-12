@@ -6,6 +6,7 @@ import { ref_addEventListener } from '@/utils/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
 import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/utils/aimController.js';
 import { outerDocument, outer } from '@/utils/outer.js';
+import { v2, collisionHelpers, sameLayer } from '@/utils/math.js';
 
 const isBypassLayer = (layer) => layer === 2 || layer === 3;
 
@@ -53,6 +54,171 @@ const getLocalLayer = (player) => {
 const meetsLayerCriteria = (targetLayer, localLayer, isLocalOnBypass) => {
   if (isBypassLayer(targetLayer) || isLocalOnBypass) return true;
   return targetLayer === localLayer;
+};
+
+const BLOCKING_OBSTACLE_PATTERNS = [
+  'metal_wall_',
+  'brick_wall_',
+  'concrete_wall_',
+  'stone_wall_',
+  'container_wall_',
+  '_wall_int_',
+  'bank_wall_',
+  'barn_wall_',
+  'cabin_wall_',
+  'hut_wall_',
+  'house_wall_',
+  'mansion_wall_',
+  'police_wall_',
+  'shack_wall_',
+  'outhouse_wall_',
+  'teahouse_wall_',
+  'warehouse_wall_',
+  'silo_',
+  'bollard_',
+  'sandbags_',
+  'hedgehog',
+];
+
+const NON_BLOCKING_OBSTACLE_PATTERNS = [
+  'tree_',
+  'bush_',
+  'brush_',
+  'crate_',
+  'barrel_',
+  'refrigerator_',
+  'control_panel_',
+  'chest_',
+  'case_',
+  'oven_',
+  'bed_',
+  'bookshelf_',
+  'couch_',
+  'table_',
+  'drawers_',
+  'window',
+  'glass_wall_',
+  'locker_',
+  'deposit_box_',
+  'toilet_',
+  'pot_',
+  'planter_',
+  'pumpkin_',
+  'potato_',
+  'egg_',
+  'woodpile_',
+  'decal',
+  'stone_01',
+  'stone_02',
+  'stone_03',
+  'stone_04',
+  'stone_05',
+  'stone_06',
+  'stone_07',
+  'stone_08',
+  'stone_09',
+  'stone_0'
+];
+
+const shouldObstacleBlockAimbot = (obstacle) => {
+  if (obstacle.collidable === false) return false;
+
+  const obstacleType = obstacle.type || '';
+
+  if (obstacle.isWall === true) return true;
+
+  if (obstacle.destructible === false) return true;
+
+  for (const pattern of BLOCKING_OBSTACLE_PATTERNS) {
+    if (obstacleType.includes(pattern)) return true;
+  }
+
+  for (const pattern of NON_BLOCKING_OBSTACLE_PATTERNS) {
+    if (obstacleType.includes(pattern)) return false;
+  }
+
+  if (obstacle.health !== undefined && obstacle.health > 200) {
+    return true;
+  }
+
+  return false;
+};
+
+const isPlayerVisibleThroughWalls = (localPlayer, targetPlayer, weapon, bullet) => {
+  if (!weapon || !bullet) {
+    return true;
+  }
+
+  const game = gameManager.game;
+  const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
+  if (!idToObj) {
+    return true;
+  }
+
+  const BULLET_HEIGHT = 0.25;
+  const trueLayer =
+    isLayerSpoofActive && originalLayerValue !== undefined
+      ? originalLayerValue
+      : localPlayer.layer;
+
+  const playerPos = localPlayer[translations.visualPos_];
+  const targetPos = targetPlayer[translations.visualPos_];
+
+  const dx = targetPos.x - playerPos.x;
+  const dy = targetPos.y - playerPos.y;
+  const aimAngle = Math.atan2(dy, dx);
+
+  const dir = v2.create_(Math.cos(aimAngle), Math.sin(aimAngle));
+
+  const baseSpread = (weapon.shotSpread || 0) * (Math.PI / 180);
+  const generousSpread = baseSpread * 1.5;
+
+  const barrelLength = weapon.barrelLength || 0;
+  const gunPos = v2.add_(playerPos, v2.mul_(dir, barrelLength));
+
+  const maxDistance = Math.hypot(dx, dy);
+
+  const rayCount = Math.max(15, Math.ceil((weapon.shotSpread || 0) * 1.5));
+
+  const allObstacles = Object.values(idToObj).filter((obj) => {
+    if (!obj.collider) return false;
+    if (obj.dead) return false;
+    if (obj.height !== undefined && obj.height < BULLET_HEIGHT) return false;
+    if (obj.layer !== undefined && !sameLayer(obj.layer, trueLayer)) return false;
+    return true;
+  });
+
+  const blockingObstacles = allObstacles.filter(shouldObstacleBlockAimbot);
+
+  if (blockingObstacles.length === 0) {
+    return true;
+  }
+
+  for (let i = 0; i < rayCount; i++) {
+    const t = rayCount === 1 ? 0.5 : i / (rayCount - 1);
+    const rayAngle = aimAngle - generousSpread / 2 + generousSpread * t;
+    const rayDir = v2.create_(Math.cos(rayAngle), Math.sin(rayAngle));
+
+    const endPos = v2.add_(gunPos, v2.mul_(rayDir, maxDistance));
+    let blocked = false;
+
+    for (const obstacle of blockingObstacles) {
+      const collision = collisionHelpers.intersectSegment_(obstacle.collider, gunPos, endPos);
+      if (collision) {
+        const distToCollision = v2.length_(v2.sub_(collision.point, gunPos));
+        if (distToCollision < maxDistance - 0.5) {
+          blocked = true;
+          break;
+        }
+      }
+    }
+
+    if (!blocked) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 const queueInput = (command) => inputState.queuedInputs_.push(command);
@@ -289,23 +455,31 @@ function aimbotTicker() {
       if (meleeLockActive) {
         const mePos = me[translations.visualPos_];
         const enemyPos = meleeEnemy[translations.visualPos_];
-        const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
-        const moveDir = {
-          touchMoveActive: true,
-          touchMoveLen: 255,
-          x: Math.cos(moveAngle),
-          y: Math.sin(moveAngle),
-        };
 
-        const screenPos = game[translations.camera_][translations.pointToScreen_]({
-          x: enemyPos.x,
-          y: enemyPos.y,
-        });
-        setAimState(new AimState('meleeLock', { x: screenPos.x, y: screenPos.y }, moveDir, true));
-        aimUpdated = true;
-        if (aimbotDot) aimbotDot.style.display = 'none';
-        state.lastTargetScreenPos_ = null;
-        return;
+        const weapon = findWeapon(me);
+        const bullet = findBullet(weapon);
+        const isMeleeTargetShootable = !settings.aimbot_.wallcheck_ ||
+          isPlayerVisibleThroughWalls(me, meleeEnemy, weapon, bullet);
+
+        if (isMeleeTargetShootable) {
+          const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
+          const moveDir = {
+            touchMoveActive: true,
+            touchMoveLen: 255,
+            x: Math.cos(moveAngle),
+            y: Math.sin(moveAngle),
+          };
+
+          const screenPos = game[translations.camera_][translations.pointToScreen_]({
+            x: enemyPos.x,
+            y: enemyPos.y,
+          });
+          setAimState(new AimState('meleeLock', { x: screenPos.x, y: screenPos.y }, moveDir, true));
+          aimUpdated = true;
+          if (aimbotDot) aimbotDot.style.display = 'none';
+          state.lastTargetScreenPos_ = null;
+          return;
+        }
       }
 
       if (wantsMeleeLock && !meleeTargetInRange) {
@@ -323,7 +497,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-        !state.focusedEnemy_[translations.netData_][translations.dead_]
+          !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
@@ -369,21 +543,31 @@ function aimbotTicker() {
 
         previewTargetPos = { x: predictedPos.x, y: predictedPos.y };
 
+        const weapon = findWeapon(me);
+        const bullet = findBullet(weapon);
+
+        const isTargetShootable =
+          !settings.aimbot_.wallcheck_ || isPlayerVisibleThroughWalls(me, enemy, weapon, bullet);
+
         if (
           canEngageAimbot &&
           (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8))
         ) {
-          const currentAimPos = getCurrentAimPosition();
-          const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
-          setAimState(
-            new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth)
-          );
-          state.lastTargetScreenPos_ = { x: predictedPos.x, y: predictedPos.y };
-          aimUpdated = true;
-          const aimSnapshot = aimState.lastAimPos_;
-          dotTargetPos = aimSnapshot
-            ? { x: aimSnapshot.clientX, y: aimSnapshot.clientY }
-            : { x: predictedPos.x, y: predictedPos.y };
+          if (isTargetShootable) {
+            const currentAimPos = getCurrentAimPosition();
+            const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
+            setAimState(
+              new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth)
+            );
+            state.lastTargetScreenPos_ = { x: predictedPos.x, y: predictedPos.y };
+            aimUpdated = true;
+            const aimSnapshot = aimState.lastAimPos_;
+            dotTargetPos = aimSnapshot
+              ? { x: aimSnapshot.clientX, y: aimSnapshot.clientY }
+              : { x: predictedPos.x, y: predictedPos.y };
+          } else {
+            dotTargetPos = { x: predictedPos.x, y: predictedPos.y };
+          }
         } else {
           dotTargetPos = { x: predictedPos.x, y: predictedPos.y };
         }

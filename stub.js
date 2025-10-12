@@ -42,7 +42,7 @@ const run = () => {
     iframe.contentWindow.sr = shadowRoot;
     iframe.contentWindow.sl = function (a) {
       window_setTimeout(() => {
-        window.location.assign(a);
+        window.location = a;
       }, 3000);
     };
     iframe.contentWindow.pr = prPromise;

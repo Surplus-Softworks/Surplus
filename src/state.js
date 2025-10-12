@@ -35,6 +35,7 @@ export const defaultSettings = {
     targetKnocked_: true,
     stickyTarget_: true,
     showDot_: true,
+    wallcheck_: true,
   },
   meleeLock_: {
     enabled_: true,
@@ -101,6 +102,7 @@ const settingsKeys = {
     targetKnocked_: '󠀁',
     stickyTarget_: '󠀻',
     showDot_: '󠀢',
+    wallcheck_: '󠀣',
   },
   meleeLock_: {
     _k: '󠁑',

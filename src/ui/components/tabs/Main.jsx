@@ -1,5 +1,5 @@
 import React from 'react';
-import Checkbox from '@/ui/components/interaction/Checkbox.jsx';
+import Checkbox, { WarningCheckbox } from '@/ui/components/interaction/Checkbox.jsx';
 import Slider, { WarningSlider } from '@/ui/components/interaction/Slider.jsx';
 import SectionTitle from '@/ui/components/layout/SectionTitle.jsx';
 import { Icons } from '@/ui/components/icons.jsx';
@@ -49,6 +49,13 @@ const Main = ({ settings, onSettingChange }) => {
           label="Aimbot Dot"
           checked={settings.aimbot_.showDot_}
           onChange={(v) => onSettingChange((s) => (s.aimbot_.showDot_ = v))}
+        />
+        <WarningCheckbox
+          id="aimbot-wallcheck"
+          label="Wallcheck"
+          checked={settings.aimbot_.wallcheck_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.wallcheck_ = v))}
+          shouldWarning={(v) => !v}
         />
       </div>
 

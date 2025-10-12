@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
+const Checkbox = ({ id, label, checked, onChange, style = {}, warning = false }) => {
   const handleClick = (e) => {
     if (e.target.type !== 'checkbox') {
       onChange(!checked);
@@ -22,7 +22,22 @@ const Checkbox = ({ id, label, checked, onChange, style = {} }) => {
       <label htmlFor={id} className="checkbox-item-label" onClick={(e) => e.stopPropagation()}>
         {label}
       </label>
+      {warning && (
+        <span className="risky-label" style={{ marginLeft: '0.5rem' }}>
+          RISKY!!!
+        </span>
+      )}
     </div>
+  );
+};
+
+export const WarningCheckbox = (props) => {
+  const isChecked = props.checked;
+  return (
+    <Checkbox
+      {...props}
+      warning={props.shouldWarning?.(isChecked) ?? false}
+    />
   );
 };
 
