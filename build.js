@@ -11,7 +11,7 @@ const VERSION = packageJson.version;
 const DIST_DIR = path.join('dist', 'extension');
 const SOURCE_EXTENSION_DIR = path.join('src', 'extension');
 const DEFAULT_ARCHIVE_NAME = 'Surplus (DO NOT EXTRACT).zip';
-const MANIFEST_PLACEHOLDER = '%VERSION%';
+const MANIFEST_VERSION_PLACEHOLDER = '%VERSION%';
 const MAIN_FILE = path.join(DIST_DIR, 'main.js');
 
 const MODES = {
@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
 };
 
 const copyDirectory = async (source, target) => {
@@ -78,7 +78,7 @@ const copyDirectory = async (source, target) => {
 const writeManifestVersion = async () => {
   const manifestPath = path.join(DIST_DIR, 'manifest.json');
   const manifest = await fs.promises.readFile(manifestPath, 'utf-8');
-  const updated = manifest.replace(MANIFEST_PLACEHOLDER, VERSION);
+  const updated = manifest.replace(MANIFEST_VERSION_PLACEHOLDER, VERSION);
   await fs.promises.writeFile(manifestPath, updated);
 };
 

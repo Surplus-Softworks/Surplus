@@ -1,13 +1,13 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Menu from '@/ui/components/Menu.jsx';
-import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/state.js';
-import { ref_addEventListener } from '@/utils/hook.js';
+import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/core/state.js';
+import { ref_addEventListener } from '@/core/hook.js';
 import { read, initStore } from '@/utils/store.js';
-import { encryptDecrypt } from '@/utils/encryption.js';
+import { encryptDecrypt } from '@/utils/crypto.js';
 import { globalStylesheet } from '@/ui/components/styles.css';
-import { outer, outerDocument, shadowRoot, versionPromise } from '@/utils/outer.js';
-import { FONT_NAME } from '@/utils/hook.js';
+import { outer, outerDocument, shadowRoot, versionPromise } from '@/core/outer.js';
+import { FONT_NAME } from '@/core/hook.js';
 
 export let menuElement;
 

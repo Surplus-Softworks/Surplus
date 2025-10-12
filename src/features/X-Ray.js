@@ -1,8 +1,8 @@
-import { gameManager } from '@/state.js';
-import { settings } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { gameManager } from '@/core/state.js';
+import { settings } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
 
-function processEnvironment() {
+function processAll() {
   if (!gameManager.game?.initialized) return;
 
   const isXrayEnabled = settings.xray_.enabled_;
@@ -66,7 +66,7 @@ let initialized = false;
 
 export default function () {
   if (!initialized) {
-    gameManager.pixi._ticker.add(processEnvironment);
+    gameManager.pixi._ticker.add(processAll);
     initialized = true;
   }
 }

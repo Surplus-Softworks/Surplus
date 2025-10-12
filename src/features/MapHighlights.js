@@ -1,6 +1,6 @@
-import { hook } from '@/utils/hook.js';
-import { settings } from '@/state.js';
-import { outer } from '@/utils/outer.js';
+import { hook } from '@/core/hook.js';
+import { settings } from '@/core/state.js';
+import { outer } from '@/core/outer.js';
 
 const HIGHLIGHTS = {
   container_06: 0xd6c313,

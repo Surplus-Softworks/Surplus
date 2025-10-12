@@ -1,8 +1,8 @@
-import { gameManager } from '@/state.js';
-import { settings } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { ref_addEventListener } from '@/utils/hook.js';
-import { outer } from '@/utils/outer.js';
+import { gameManager } from '@/core/state.js';
+import { settings } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
+import { ref_addEventListener } from '@/core/hook.js';
+import { outer } from '@/core/outer.js';
 
 export let isLayerSpoofActive = false;
 export let originalLayerValue = null;

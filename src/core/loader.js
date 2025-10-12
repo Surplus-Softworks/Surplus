@@ -7,13 +7,13 @@ import aimbot from '@/features/Aimbot.js';
 import mapHighlights from '@/features/MapHighlights.js';
 import autoSwitch from '@/features/AutoSwitch.js';
 import layerSpoof from '@/features/LayerSpoofer.js';
-import { translate } from '@/utils/obfuscatedNameTranslator.js';
-import { hook } from '@/utils/hook.js';
+import { translate } from '@/core/obfuscatedNameTranslator.js';
+import { hook } from '@/core/hook.js';
 import { PIXI, inputCommands, packetTypes } from '@/utils/constants.js';
-import { aimState, inputState, settings, gameManager, setGameManager } from '@/state.js';
-import { initializeAimController, isAimInterpolating, getAimMode } from '@/utils/aimController.js';
-import initUI from '@/ui/index.jsx';
-import { outer } from '@/utils/outer.js';
+import { aimState, inputState, settings, gameManager, setGameManager } from '@/core/state.js';
+import { initializeAimController, isAimInterpolating, getAimMode } from '@/core/aimController.js';
+import initUI from '@/ui/init.jsx';
+import { outer } from '@/core/outer.js';
 
 function injectGame(oninject) {
   hook(outer.Function.prototype, 'call', {

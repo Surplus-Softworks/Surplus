@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ref_addEventListener, ref_removeEventListener } from '@/utils/hook';
-import { outer } from '@/utils/outer';
+import { ref_addEventListener, ref_removeEventListener } from '@/core/hook';
+import { outer } from '@/core/outer';
 
 const formatKeyCode = (code) => {
   const keyMap = {

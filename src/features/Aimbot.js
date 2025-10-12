@@ -1,11 +1,11 @@
-import { settings, getUIRoot, inputState, aimState } from '@/state.js';
+import { settings, getUIRoot, inputState, aimState } from '@/core/state.js';
 import { findTeam, findBullet, findWeapon, inputCommands } from '@/utils/constants.js';
-import { gameManager } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { ref_addEventListener } from '@/utils/hook.js';
+import { gameManager } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
+import { ref_addEventListener } from '@/core/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
-import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/utils/aimController.js';
-import { outerDocument, outer } from '@/utils/outer.js';
+import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/core/aimController.js';
+import { outerDocument, outer } from '@/core/outer.js';
 import { v2, collisionHelpers, sameLayer } from '@/utils/math.js';
 
 const isBypassLayer = (layer) => layer === 2 || layer === 3;
@@ -117,10 +117,10 @@ const NON_BLOCKING_OBSTACLE_PATTERNS = [
   'stone_07',
   'stone_08',
   'stone_09',
-  'stone_0'
+  'stone_0',
 ];
 
-const shouldObstacleBlockAimbot = (obstacle) => {
+const isObstacleBlocking = (obstacle) => {
   if (obstacle.collidable === false) return false;
 
   const obstacleType = obstacle.type || '';
@@ -144,7 +144,7 @@ const shouldObstacleBlockAimbot = (obstacle) => {
   return false;
 };
 
-const isPlayerVisibleThroughWalls = (localPlayer, targetPlayer, weapon, bullet) => {
+const canCastToPlayer = (localPlayer, targetPlayer, weapon, bullet) => {
   if (!weapon || !bullet) {
     return true;
   }
@@ -157,9 +157,7 @@ const isPlayerVisibleThroughWalls = (localPlayer, targetPlayer, weapon, bullet) 
 
   const BULLET_HEIGHT = 0.25;
   const trueLayer =
-    isLayerSpoofActive && originalLayerValue !== undefined
-      ? originalLayerValue
-      : localPlayer.layer;
+    isLayerSpoofActive && originalLayerValue !== undefined ? originalLayerValue : localPlayer.layer;
 
   const playerPos = localPlayer[translations.visualPos_];
   const targetPos = targetPlayer[translations.visualPos_];
@@ -188,7 +186,7 @@ const isPlayerVisibleThroughWalls = (localPlayer, targetPlayer, weapon, bullet) 
     return true;
   });
 
-  const blockingObstacles = allObstacles.filter(shouldObstacleBlockAimbot);
+  const blockingObstacles = allObstacles.filter(isObstacleBlocking);
 
   if (blockingObstacles.length === 0) {
     return true;
@@ -458,8 +456,8 @@ function aimbotTicker() {
 
         const weapon = findWeapon(me);
         const bullet = findBullet(weapon);
-        const isMeleeTargetShootable = !settings.aimbot_.wallcheck_ ||
-          isPlayerVisibleThroughWalls(me, meleeEnemy, weapon, bullet);
+        const isMeleeTargetShootable =
+          !settings.aimbot_.wallcheck_ || canCastToPlayer(me, meleeEnemy, weapon, bullet);
 
         if (isMeleeTargetShootable) {
           const moveAngle = calcAngle(enemyPos, mePos) + Math.PI;
@@ -497,7 +495,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-          !state.focusedEnemy_[translations.netData_][translations.dead_]
+        !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
@@ -547,7 +545,7 @@ function aimbotTicker() {
         const bullet = findBullet(weapon);
 
         const isTargetShootable =
-          !settings.aimbot_.wallcheck_ || isPlayerVisibleThroughWalls(me, enemy, weapon, bullet);
+          !settings.aimbot_.wallcheck_ || canCastToPlayer(me, enemy, weapon, bullet);
 
         if (
           canEngageAimbot &&

@@ -1,7 +1,7 @@
-import { initialize } from '@/loader.js';
-import { hook } from '@/utils/hook.js';
+import { initialize } from '@/core/loader.js';
+import { hook } from '@/core/hook.js';
 import { initStore } from '@/utils/store.js';
-import { outer, outerDocument, setLocation } from '@/utils/outer.js';
+import { outer, outerDocument, setLocation } from '@/core/outer.js';
 
 if (!DEV) {
   try {

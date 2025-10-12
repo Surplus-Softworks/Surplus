@@ -1,7 +1,7 @@
-import { hook } from '@/utils/hook.js';
-import { outer } from '@/utils/outer.js';
-import { gameManager } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { hook } from '@/core/hook.js';
+import { outer } from '@/core/outer.js';
+import { gameManager } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
 
 export const inputCommands = {
   MoveLeft_: 0,

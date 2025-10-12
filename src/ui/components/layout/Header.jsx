@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icons } from '../icons';
+import { Icons } from '@/ui/components/icons.jsx';
 
 const Header = ({ onMouseDown, version }) => {
   const handleMouseDown = (e) => {

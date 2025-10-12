@@ -1,6 +1,7 @@
-import { aimState, gameManager, settings } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { outer } from './outer';
+import { aimState, gameManager, settings } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
+import { outer } from '@/core/outer.js';
+import { v2 } from '@/utils/math.js';
 
 export class AimState {
   constructor(mode = 'idle', targetScreenPos = null, moveDir = null, immediate = false) {
@@ -16,9 +17,6 @@ const MAX_EXTRA_DURATION_MS = 360;
 const EPSILON = 1e-3;
 const MIN_INTERPOLATION_DISTANCE = 6;
 const MIN_INTERPOLATION_ANGLE = Math.PI / 90;
-
-const easeOutCubic = (t) => 1 - (1 - t) ** 3;
-const clamp01 = (value) => Math.max(0, Math.min(1, value));
 
 const controllerState = {
   initialized_: false,
@@ -79,8 +77,8 @@ const computeDuration = (start, end) => {
   const endAngle = computeAngle(end, center);
   const angleDiff = angleDifference(startAngle, endAngle);
   const distance = Math.hypot(end.x - start.x, end.y - start.y);
-  const angleFactor = clamp01(angleDiff / Math.PI);
-  const distanceFactor = clamp01(distance / 450);
+  const angleFactor = v2.clamp01_(angleDiff / Math.PI);
+  const distanceFactor = v2.clamp01_(distance / 450);
   const factor = Math.max(angleFactor, distanceFactor);
   return MIN_DURATION_MS + factor * MAX_EXTRA_DURATION_MS * (settings.aimbot_.smooth_ / 100);
 };
@@ -135,8 +133,8 @@ const updateMoveDir = (now) => {
   const animation = controllerState.moveAnimation_;
   if (animation) {
     const { startDir, targetDir, startTime, duration } = animation;
-    const progress = duration <= 0 ? 1 : clamp01((now - startTime) / duration);
-    const eased = easeOutCubic(progress);
+    const progress = duration <= 0 ? 1 : v2.clamp01_((now - startTime) / duration);
+    const eased = v2.easeOutCubic_(progress);
     let working;
 
     if (!startDir && targetDir) {
@@ -191,8 +189,8 @@ const step = (now = performance.now()) => {
   let interpolationActive = false;
   if (animation) {
     const { startPos, targetPos, startTime, duration } = animation;
-    const progress = duration <= 0 ? 1 : clamp01((now - startTime) / duration);
-    const eased = easeOutCubic(progress);
+    const progress = duration <= 0 ? 1 : v2.clamp01_((now - startTime) / duration);
+    const eased = v2.easeOutCubic_(progress);
     let hasMovement = false;
     if (duration > 0 && startPos && targetPos) {
       const distance = Math.hypot(targetPos.x - startPos.x, targetPos.y - startPos.y);

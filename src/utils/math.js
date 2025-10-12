@@ -12,10 +12,13 @@ export const v2 = {
     return len > 0.0001 ? { x: v.x / len, y: v.y / len } : { x: 1, y: 0 };
   },
   perp_: (v) => ({ x: -v.y, y: v.x }),
+
+  easeOutCubic_: (t) => 1 - (1 - t) ** 3,
+  clamp01_: (value) => Math.max(0, Math.min(1, value)),
 };
 
 export const collisionHelpers = {
-  intersectSegmentAabb_: (a, b, min, max) => {
+  intersectSegmentAABB_: (a, b, min, max) => {
     const dir = v2.sub_(b, a);
     const invDir = { x: 1 / dir.x, y: 1 / dir.y };
 
@@ -80,7 +83,7 @@ export const collisionHelpers = {
     if (!collider) return null;
 
     if (collider.type === 1) {
-      return collisionHelpers.intersectSegmentAabb_(a, b, collider.min, collider.max);
+      return collisionHelpers.intersectSegmentAABB_(a, b, collider.min, collider.max);
     } else if (collider.type === 0) {
       return collisionHelpers.intersectSegmentCircle_(a, b, collider.pos, collider.rad);
     }

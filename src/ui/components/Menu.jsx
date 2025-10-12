@@ -5,8 +5,8 @@ import MainTab from '@/ui/components/tabs/Main.jsx';
 import VisualsTab from '@/ui/components/tabs/Visuals.jsx';
 import MiscTab from '@/ui/components/tabs/Misc.jsx';
 import HelpTab from '@/ui/components/tabs/Help.jsx';
-import { outer, outerDocument } from '@/utils/outer.js';
-import { ref_addEventListener, ref_removeEventListener } from '@/utils/hook';
+import { outer, outerDocument } from '@/core/outer.js';
+import { ref_addEventListener, ref_removeEventListener } from '@/core/hook';
 
 const Menu = ({ settings, onSettingChange, onClose, version }) => {
   const [activeTab, setActiveTab] = useState('help');

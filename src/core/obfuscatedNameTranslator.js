@@ -1,4 +1,4 @@
-import { outer } from '@/utils/outer.js';
+import { outer } from '@/core/outer.js';
 
 export let translations = {};
 
@@ -86,11 +86,11 @@ export function translate(gameManager) {
       if (!obj || typeof obj !== 'object' || obj instanceof Array) return null;
 
       let counts = {
-        v: 0,
-        t: 0,
-        j: 0,
-        y: 0,
-        l: 0,
+        others_: 0,
+        functions_: 0,
+        objects_: 0,
+        arrays_: 0,
+        total_: 0,
       };
       let allProps = new Set([
         ...Object.keys(obj),
@@ -99,11 +99,11 @@ export function translate(gameManager) {
 
       allProps.forEach((prop) => {
         let v = obj[prop];
-        if (Array.isArray(v)) counts.y++;
-        else if (typeof v === 'object' && v !== null) counts.j++;
-        else if (typeof v === 'function') counts.t++;
-        else counts.v++;
-        counts.l++;
+        if (Array.isArray(v)) counts.arrays_++;
+        else if (typeof v === 'object' && v !== null) counts.objects_++;
+        else if (typeof v === 'function') counts.functions_++;
+        else counts.others_++;
+        counts.total_++;
       });
 
       return Object.values(counts)
@@ -144,7 +144,7 @@ export function translate(gameManager) {
             } else if (game[prop].hasOwnProperty('airdropPool')) {
               translated.airdropBarn_ = prop;
             }
-          } catch {}
+          } catch { }
           try {
             if (game[prop].hasOwnProperty('bones')) {
               translated.activePlayer_ = prop;
@@ -152,7 +152,7 @@ export function translate(gameManager) {
               for (const pProp in newplr) {
                 try {
                   matchSignature(game[prop], pProp);
-                } catch {}
+                } catch { }
               }
               if (translated.localData_ != null) {
                 translated.weapons_ = Object.getOwnPropertyNames(
@@ -179,7 +179,7 @@ export function translate(gameManager) {
                       }
                     ),
                   });
-                } catch {}
+                } catch { }
                 try {
                   game[translated.activePlayer_].canInteract.call({
                     [translated.netData_]: new Proxy(
@@ -191,7 +191,7 @@ export function translate(gameManager) {
                       }
                     ),
                   });
-                } catch {}
+                } catch { }
               }
               (() => {
                 let nextIsVisual = false;
@@ -237,7 +237,7 @@ export function translate(gameManager) {
                       }
                     ),
                     null,
-                    { getPlayerById: () => {} },
+                    { getPlayerById: () => { } },
                     null,
                     { isSoundPlaying: () => false },
                     null,
@@ -257,7 +257,7 @@ export function translate(gameManager) {
                       }
                     )
                   );
-                } catch {}
+                } catch { }
                 if (!cameraInteracted) translated.visualPos_ = translated.pos_;
               })();
 
@@ -281,10 +281,10 @@ export function translate(gameManager) {
               });
               continue;
             }
-          } catch {}
+          } catch { }
           try {
             matchSignature(game, prop);
-          } catch (e) {}
+          } catch (e) { }
         }
       }
       try {
@@ -295,7 +295,7 @@ export function translate(gameManager) {
             }
           });
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.sendMessage_ == null) {
@@ -303,7 +303,7 @@ export function translate(gameManager) {
             .filter((v) => typeof game[v] == 'function')
             .find((v) => game[v].length == 3);
         }
-      } catch {}
+      } catch { }
 
       try {
         if (
@@ -336,9 +336,9 @@ export function translate(gameManager) {
                 }
               )
             );
-          } catch {}
+          } catch { }
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.obstaclePool_ != null && translated.pointToScreen_ == null) {
@@ -353,14 +353,14 @@ export function translate(gameManager) {
           );
           pool[0].render.call({}, proxyarg, proxyarg);
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.emoteBarn_ != null && translated.screenToPoint_ == null) {
           let emotebarn = new game[translated.emoteBarn_].constructor();
           emotebarn.activePlayer = 1;
           emotebarn.emoteSelector.ping = 'ping_danger';
-          emotebarn.uiManager = { getWorldPosFromMapPos: () => {} };
+          emotebarn.uiManager = { getWorldPosFromMapPos: () => { } };
           emotebarn.camera = new Proxy(
             {},
             {
@@ -371,7 +371,7 @@ export function translate(gameManager) {
           );
           emotebarn.triggerPing();
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.emoteBarn_ != null && translated.update_ == null) {
@@ -379,7 +379,7 @@ export function translate(gameManager) {
             game[translated.emoteBarn_].__proto__
           ).find((v) => game[translated.emoteBarn_][v].length == 10);
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.touch_ != null && translated.curWeapIdx_ == null) {
@@ -397,7 +397,7 @@ export function translate(gameManager) {
             }
           );
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.smokeBarn_ != null && translated.particles_ == null) {
@@ -405,7 +405,7 @@ export function translate(gameManager) {
             gameManager.game[translated.smokeBarn_]
           ).find((v) => gameManager.game[translated.smokeBarn_][v] instanceof outer.Array);
         }
-      } catch {}
+      } catch { }
 
       try {
         if (translated.objectCreator_ != null && translated.idToObj_ == null) {
@@ -429,7 +429,7 @@ export function translate(gameManager) {
             })
           );
         }
-      } catch {}
+      } catch { }
 
       return translated;
     }

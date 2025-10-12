@@ -1,8 +1,8 @@
-import { gameManager } from '@/state.js';
-import { ref_addEventListener } from '@/utils/hook.js';
-import { settings } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
-import { outer } from '@/utils/outer';
+import { gameManager } from '@/core/state.js';
+import { ref_addEventListener } from '@/core/hook.js';
+import { settings } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
+import { outer } from '@/core/outer';
 
 const ZOOM_IN_STEP = 20;
 const ZOOM_OUT_STEP = 30;

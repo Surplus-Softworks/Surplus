@@ -1,6 +1,6 @@
-import { gameManager } from '@/state.js';
-import { aimState, inputState, settings } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { gameManager } from '@/core/state.js';
+import { aimState, inputState, settings } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
 import {
   findTeam,
   findWeapon,
@@ -10,8 +10,8 @@ import {
   PIXI,
 } from '@/utils/constants.js';
 import { originalLayerValue, isLayerSpoofActive } from '@/features/LayerSpoofer.js';
-import { getCurrentAimPosition, isAimInterpolating } from '@/utils/aimController.js';
-import { outer } from '@/utils/outer.js';
+import { getCurrentAimPosition, isAimInterpolating } from '@/core/aimController.js';
+import { outer } from '@/core/outer.js';
 import { v2, collisionHelpers, sameLayer } from '@/utils/math.js';
 
 const calculateGunPosition = (playerPos, direction, weapon) => {
@@ -79,7 +79,7 @@ function nameTag(player) {
   player.nameText.style.dropShadowBlur = 0.1;
 }
 
-const castRayWithObstacles = (startPos, dir, maxDist, layer, localPlayer) => {
+const castRay = (startPos, dir, maxDist, layer, localPlayer) => {
   const game = gameManager.game;
   const idToObj = game?.[translations.objectCreator_]?.[translations.idToObj_];
   if (!idToObj) return maxDist;
@@ -203,7 +203,7 @@ const drawFlashlight = (
     const rayAngle = aimAngle - spreadAngle / 2 + spreadAngle * t;
     const rayDir = v2.create_(Math.cos(rayAngle), -Math.sin(rayAngle));
 
-    const hitDist = castRayWithObstacles(gunPos, rayDir, maxDistance, player.layer, localPlayer);
+    const hitDist = castRay(gunPos, rayDir, maxDistance, player.layer, localPlayer);
 
     const endPos = v2.add_(gunPos, v2.mul_(rayDir, hitDist));
     const endScreen = {
@@ -612,14 +612,12 @@ function renderBulletTrajectory(localPlayer, graphics) {
         const dist = v2.lengthSqr_(v2.sub_(collision.point, playerPos));
         if (dist < closestDist) {
           closestDist = dist;
-          // Offset the clip point slightly along the normal to avoid being inside the wall
           clipPoint = v2.add_(collision.point, v2.mul_(collision.normal, 0.01));
         }
       }
     }
   }
 
-  // If barrel is inside a wall, start trajectory from the wall edge
   const trajectoryStart = clipPoint || gunPos;
 
   const segments = calculateTrajectory(

@@ -1,5 +1,5 @@
-import { gameManager } from '@/state.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { gameManager } from '@/core/state.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
 
 const GRENADE_TYPES = ['frag', 'mirv', 'martyr_nade'];
 const MAX_TIMER_DURATION = 4;
@@ -18,14 +18,14 @@ const isGameInitialized = () => {
   );
 };
 
-const isHoldingNade = () => {
+const isHoldingGrenade = () => {
   const game = gameManager.game;
   return game[translations.activePlayer_][translations.localData_][translations.curWeapIdx_] === 3;
 };
 
-const isCooking = (player) => player.throwableState === 'cook';
+const isCookingGrenade = (player) => player.throwableState === 'cook';
 
-const isExplosiveGrenade = (weapon) => GRENADE_TYPES.some((type) => weapon.includes(type));
+const isGrenadeExplosive = (weapon) => GRENADE_TYPES.some((type) => weapon.includes(type));
 
 const resetTimer = () => {
   timerActive = false;
@@ -48,7 +48,7 @@ const createNewTimer = () => {
 const updateGrenadeTimer = () => {
   if (!isGameInitialized()) return;
 
-  if (!isHoldingNade()) {
+  if (!isHoldingGrenade()) {
     resetTimer();
     return;
   }
@@ -59,7 +59,7 @@ const updateGrenadeTimer = () => {
     const activeWeapon = player[translations.netData_][translations.activeWeapon_];
     const secondsElapsed = (Date.now() - lastTimestamp) / 1000;
 
-    if (!isCooking(player) || !isExplosiveGrenade(activeWeapon)) {
+    if (!isCookingGrenade(player) || !isGrenadeExplosive(activeWeapon)) {
       resetTimer();
       return;
     }

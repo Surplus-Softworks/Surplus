@@ -1,7 +1,7 @@
-import { gameManager } from '@/state.js';
-import { settings, inputState } from '@/state.js';
+import { gameManager } from '@/core/state.js';
+import { settings, inputState } from '@/core/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
-import { translations } from '@/utils/obfuscatedNameTranslator.js';
+import { translations } from '@/core/obfuscatedNameTranslator.js';
 import { autoFireEnabled } from '@/features/AutoFire.js';
 
 const WEAPON_COMMANDS = [inputCommands.EquipPrimary_, inputCommands.EquipSecondary_];
@@ -32,7 +32,7 @@ const shouldQuickSwitch = (weaponType) => {
   }
 };
 
-const isSlowFiringWeapon = (weaponType) => {
+const isWeaponSlowFiring = (weaponType) => {
   try {
     const weapon = gameObjects[weaponType];
     const isSemiAuto = weapon.fireMode === 'single' || weapon.fireMode === 'burst';
@@ -95,12 +95,12 @@ const handleWeaponSwitch = () => {
 
       if (shouldQuickSwitch(currentWeapon.type)) {
         queueMeleeCycleAndBack(currentWeaponIndex);
-      } else if (isSlowFiringWeapon(currentWeapon.type)) {
+      } else if (isWeaponSlowFiring(currentWeapon.type)) {
         const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
         const otherWeapon = weapons[otherWeaponIndex];
 
         if (
-          isSlowFiringWeapon(otherWeapon.type) &&
+          isWeaponSlowFiring(otherWeapon.type) &&
           otherWeapon.ammo &&
           !settings.autoSwitch_.useOneGun_
         ) {

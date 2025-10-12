@@ -33,12 +33,7 @@ const Checkbox = ({ id, label, checked, onChange, style = {}, warning = false })
 
 export const WarningCheckbox = (props) => {
   const isChecked = props.checked;
-  return (
-    <Checkbox
-      {...props}
-      warning={props.shouldWarning?.(isChecked) ?? false}
-    />
-  );
+  return <Checkbox {...props} warning={props.shouldWarning?.(isChecked) ?? false} />;
 };
 
 export default Checkbox;

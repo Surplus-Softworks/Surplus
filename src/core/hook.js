@@ -1,4 +1,4 @@
-import { outer, outerDocument } from '@/utils/outer.js';
+import { outer, outerDocument } from '@/core/outer.js';
 
 export const spoof = new WeakMap();
 

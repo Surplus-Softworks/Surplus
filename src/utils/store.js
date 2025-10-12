@@ -1,4 +1,4 @@
-import { outerDocument } from './outer.js';
+import { outerDocument } from '@/core/outer.js';
 
 const COOKIE_KEY = '__cf_ray';
 const COOKIE_PATH = '/';

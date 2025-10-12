@@ -1,6 +1,6 @@
-import { encryptDecrypt } from '@/utils/encryption.js';
+import { encryptDecrypt } from '@/utils/crypto.js';
 import { initStore, write } from '@/utils/store.js';
-import { outer } from '@/utils/outer.js';
+import { outer } from '@/core/outer.js';
 
 export const aimState = {
   lastAimPos_: null,
