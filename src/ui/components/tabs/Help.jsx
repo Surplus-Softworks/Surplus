@@ -73,7 +73,7 @@ const Help = ({ settings, onSettingChange }) => {
             Join for support, bug reports, suggestions, and announcements:
           </p>
           <a
-            href="https://discord.gg/Bc2FDqddmH"
+            href="https://discord.gg/4tXaeQfur8"
             target="_blank"
             rel="noopener noreferrer"
             className="discord-link"
