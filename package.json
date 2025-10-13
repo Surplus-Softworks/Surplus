@@ -29,8 +29,11 @@
     "prettier": "^3.6.2",
     "rollup": "^4.52.3",
     "rollup-plugin-string": "^3.0.0",
-    "terser": "github:Surplus-Softworks/terser",
+    "terser": "github:Surplus-Softworks/terser#main",
     "ws": "^8.18.1"
+  },
+  "overrides": {
+    "terser": "github:Surplus-Softworks/terser#main"
   },
   "prettier": {
     "useTabs": false,
