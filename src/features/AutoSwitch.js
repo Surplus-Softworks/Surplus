@@ -1,8 +1,6 @@
-import { gameManager } from '@/core/state.js';
-import { settings, inputState } from '@/core/state.js';
+import { gameManager, settings, inputState } from '@/core/state.js';
 import { gameObjects, inputCommands, isGameReady } from '@/utils/constants.js';
 import { translations } from '@/core/obfuscatedNameTranslator.js';
-import { autoFireEnabled } from '@/features/AutoFire.js';
 
 const WEAPON_COMMANDS = [inputCommands.EquipPrimary_, inputCommands.EquipSecondary_];
 
@@ -15,35 +13,12 @@ const weaponState = [
 
 const queueInput = (command) => inputState.queuedInputs_.push(command);
 
-const shouldQuickSwitch = (weaponType) => {
+const isSlowFiringWeapon = (weaponType) => {
   try {
     const weapon = gameObjects[weaponType];
-    const isSemiAuto = weapon.fireMode === 'single' || weapon.fireMode === 'burst';
-
-    if (!isSemiAuto) return false;
-
-    if (autoFireEnabled) {
-      return weapon.fireDelay >= 0.6;
-    }
-
-    return weapon.fireDelay >= 0.3;
-  } catch {
-    return false;
-  }
-};
-
-const isWeaponSlowFiring = (weaponType) => {
-  try {
-    const weapon = gameObjects[weaponType];
-    const isSemiAuto = weapon.fireMode === 'single' || weapon.fireMode === 'burst';
-
-    if (!isSemiAuto) return false;
-
-    if (autoFireEnabled) {
-      return weapon.fireDelay >= 0.75;
-    }
-
-    return weapon.fireDelay >= 0.45;
+    return (
+      (weapon.fireMode === 'single' || weapon.fireMode === 'burst') && weapon.fireDelay >= 0.45
+    );
   } catch {
     return false;
   }
@@ -83,39 +58,36 @@ const handleWeaponSwitch = () => {
 
     if (currentWeapon.ammo === currentWeaponState.ammo_) return;
 
-    const shotFired =
+    const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
+    const otherWeapon = weapons[otherWeaponIndex];
+
+    const shouldSwitch =
+      isSlowFiringWeapon(currentWeapon.type) &&
       currentWeapon.type === currentWeaponState.type_ &&
       (currentWeapon.ammo < currentWeaponState.ammo_ ||
         (currentWeaponState.ammo_ === 0 &&
           currentWeapon.ammo > currentWeaponState.ammo_ &&
           isPlayerFiring()));
 
-    if (shotFired) {
+    if (shouldSwitch) {
       currentWeaponState.lastShotDate_ = Date.now();
 
-      if (shouldQuickSwitch(currentWeapon.type)) {
+      if (
+        isSlowFiringWeapon(otherWeapon.type) &&
+        otherWeapon.ammo &&
+        !settings.autoSwitch_.useOneGun_
+      ) {
+        queueWeaponSwitch(otherWeaponIndex);
+      } else if (otherWeapon.type !== '') {
+        queueWeaponCycleAndBack(otherWeaponIndex, currentWeaponIndex);
+      } else {
         queueMeleeCycleAndBack(currentWeaponIndex);
-      } else if (isWeaponSlowFiring(currentWeapon.type)) {
-        const otherWeaponIndex = getAlternateWeaponIndex(currentWeaponIndex);
-        const otherWeapon = weapons[otherWeaponIndex];
-
-        if (
-          isWeaponSlowFiring(otherWeapon.type) &&
-          otherWeapon.ammo &&
-          !settings.autoSwitch_.useOneGun_
-        ) {
-          queueWeaponSwitch(otherWeaponIndex);
-        } else if (otherWeapon.type !== '') {
-          queueWeaponCycleAndBack(otherWeaponIndex, currentWeaponIndex);
-        } else {
-          queueMeleeCycleAndBack(currentWeaponIndex);
-        }
       }
     }
 
     currentWeaponState.ammo_ = currentWeapon.ammo;
     currentWeaponState.type_ = currentWeapon.type;
-  } catch {}
+  } catch { }
 };
 
 export default function () {

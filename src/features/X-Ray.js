@@ -11,7 +11,7 @@ function processAll() {
     processCeilings(isXrayEnabled);
     processSmokes(isXrayEnabled);
     processObstacles(isXrayEnabled);
-  } catch {}
+  } catch { }
 }
 
 function processCeilings(isXrayEnabled) {
@@ -50,12 +50,8 @@ function processObstacles(isXrayEnabled) {
   if (isXrayEnabled) {
     gameManager.game[translations.map_][translations.obstaclePool_][translations.pool_].forEach(
       (obstacle) => {
-        if (['tree', 'table', 'stairs'].some((type) => obstacle.type.includes(type))) {
+        if (['tree', 'table', 'stairs', 'bush'].some((type) => obstacle.type.includes(type))) {
           obstacle.sprite.alpha = settings.xray_.treeOpacity_ / 100;
-        }
-
-        if (obstacle.type.includes('bush')) {
-          obstacle.sprite.alpha = 0;
         }
       }
     );
