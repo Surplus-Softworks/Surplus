@@ -43,11 +43,11 @@ const positionsDiffer = (a, b) => {
 const cloneMoveDir = (dir) =>
   dir
     ? {
-        touchMoveActive: dir.touchMoveActive,
-        touchMoveLen: dir.touchMoveLen,
-        x: dir.x,
-        y: dir.y,
-      }
+      touchMoveActive: dir.touchMoveActive,
+      touchMoveLen: dir.touchMoveLen,
+      x: dir.x,
+      y: dir.y,
+    }
     : null;
 
 const moveDirsEqual = (a, b) => {
@@ -395,3 +395,99 @@ export function getPing() {
 export const getCurrentAimPosition = () => clonePoint(controllerState.currentPos_);
 export const isAimInterpolating = () => controllerState.isInterpolating_;
 export const getAimMode = () => controllerState.mode_;
+
+const overlayState = {
+  aimbotDot_: null,
+  fovCircle_: null,
+  initialized_: false,
+};
+
+const ensureOverlays = (uiRoot) => {
+  if (!uiRoot) return false;
+
+  if (!overlayState.aimbotDot_) {
+    const outerDocument = outer.document;
+    overlayState.aimbotDot_ = outerDocument.createElement('div');
+    overlayState.aimbotDot_.classList.add('aimbot-dot');
+    uiRoot.appendChild(overlayState.aimbotDot_);
+  }
+
+  if (!overlayState.fovCircle_) {
+    const outerDocument = outer.document;
+    overlayState.fovCircle_ = outerDocument.createElement('div');
+    overlayState.fovCircle_.classList.add('aimbot-fov-circle');
+    uiRoot.appendChild(overlayState.fovCircle_);
+  }
+
+  overlayState.initialized_ = true;
+  return true;
+};
+
+const updateAimbotDot = (displayPos, isDotTargetShootable, isFocusedEnemy) => {
+  if (!overlayState.aimbotDot_) return;
+
+  if (displayPos && settings.aimbot_.showDot_) {
+    const { x, y } = displayPos;
+
+    if (overlayState.aimbotDot_.style.left !== `${x}px` || overlayState.aimbotDot_.style.top !== `${y}px`) {
+      overlayState.aimbotDot_.style.left = `${x}px`;
+      overlayState.aimbotDot_.style.top = `${y}px`;
+    }
+
+    if (!isDotTargetShootable) {
+      overlayState.aimbotDot_.style.backgroundColor = 'gray';
+      overlayState.aimbotDot_.style.boxShadow = '0 0 0.5rem rgba(128, 128, 128, 0.5)';
+    } else if (isFocusedEnemy) {
+      overlayState.aimbotDot_.style.backgroundColor = 'rgb(190, 12, 185)';
+      overlayState.aimbotDot_.style.boxShadow = '0 0 0.5rem rgba(190, 12, 185, 0.5)';
+    } else {
+      overlayState.aimbotDot_.style.backgroundColor = 'red';
+      overlayState.aimbotDot_.style.boxShadow = '0 0 0.5rem rgba(255, 0, 0, 0.5)';
+    }
+
+    overlayState.aimbotDot_.style.display = 'block';
+  } else {
+    overlayState.aimbotDot_.style.display = 'none';
+  }
+};
+
+const updateFovCircle = () => {
+  if (!overlayState.fovCircle_) return;
+
+  const game = gameManager?.game;
+  if (!game?.initialized) {
+    overlayState.fovCircle_.style.display = 'none';
+    return;
+  }
+
+  if (settings.aimbot_.showFov_) {
+    const mouseX = game[translations.input_].mousePos._x;
+    const mouseY = game[translations.input_].mousePos._y;
+    const fovDiameter = settings.aimbot_.fov_ * 2;
+
+    overlayState.fovCircle_.style.left = `${mouseX}px`;
+    overlayState.fovCircle_.style.top = `${mouseY}px`;
+    overlayState.fovCircle_.style.width = `${fovDiameter}px`;
+    overlayState.fovCircle_.style.height = `${fovDiameter}px`;
+    overlayState.fovCircle_.style.display = 'block';
+  } else {
+    overlayState.fovCircle_.style.display = 'none';
+  }
+};
+
+const hideAllOverlays = () => {
+  if (overlayState.aimbotDot_) {
+    overlayState.aimbotDot_.style.display = 'none';
+  }
+  if (overlayState.fovCircle_) {
+    overlayState.fovCircle_.style.display = 'none';
+  }
+};
+
+export const aimOverlays = {
+  ensureInitialized: (uiRoot) => ensureOverlays(uiRoot),
+  updateDot: (displayPos, isShootable, isFocused) => updateAimbotDot(displayPos, isShootable, isFocused),
+  updateFovCircle: () => updateFovCircle(),
+  hideAll: () => hideAllOverlays(),
+  isInitialized: () => overlayState.initialized_,
+};

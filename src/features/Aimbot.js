@@ -4,7 +4,7 @@ import { gameManager } from '@/core/state.js';
 import { translations } from '@/core/obfuscatedNameTranslator.js';
 import { ref_addEventListener } from '@/core/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
-import { AimState, setAimState, getCurrentAimPosition, getPing } from '@/core/aimController.js';
+import { AimState, setAimState, getCurrentAimPosition, getPing, aimOverlays } from '@/core/aimController.js';
 import { outerDocument, outer } from '@/core/outer.js';
 import { v2, collisionHelpers, sameLayer } from '@/utils/math.js';
 
@@ -232,8 +232,6 @@ const handleKeydown = (event) => {
 
 Reflect.apply(ref_addEventListener, outer, ['keydown', handleKeydown]);
 
-let aimbotDot;
-let aimbotFovCircle;
 let tickerAttached = false;
 
 function getDistance(x1, y1, x2, y2) {
@@ -397,8 +395,7 @@ function aimbotTicker() {
       game[translations.uiManager_].spectating
     ) {
       setAimState(new AimState('idle'));
-      if (aimbotDot) aimbotDot.style.display = 'none';
-      if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
+      aimOverlays.hideAll();
       state.lastTargetScreenPos_ = null;
       return;
     }
@@ -478,8 +475,7 @@ function aimbotTicker() {
           });
           setAimState(new AimState('meleeLock', { x: screenPos.x, y: screenPos.y }, moveDir, true));
           aimUpdated = true;
-          if (aimbotDot) aimbotDot.style.display = 'none';
-          if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
+          aimOverlays.hideAll();
           state.lastTargetScreenPos_ = null;
           return;
         }
@@ -491,8 +487,7 @@ function aimbotTicker() {
 
       if (!settings.aimbot_.enabled_ || isMeleeEquipped || isGrenadeEquipped) {
         setAimState(new AimState('idle'));
-        if (aimbotDot) aimbotDot.style.display = 'none';
-        if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
+        aimOverlays.hideAll();
         state.lastTargetScreenPos_ = null;
         return;
       }
@@ -537,7 +532,7 @@ function aimbotTicker() {
         const predictedPos = predictPosition(enemy, me);
         if (!predictedPos) {
           setAimState(new AimState('idle'));
-          if (aimbotDot) aimbotDot.style.display = 'none';
+          aimOverlays.hideAll();
           state.lastTargetScreenPos_ = null;
           return;
         }
@@ -578,7 +573,6 @@ function aimbotTicker() {
       } else {
         previewTargetPos = null;
         dotTargetPos = null;
-        if (aimbotDot) aimbotDot.style.display = 'none';
         state.lastTargetScreenPos_ = null;
       }
 
@@ -588,53 +582,15 @@ function aimbotTicker() {
           ? { x: previewTargetPos.x, y: previewTargetPos.y }
           : null;
       }
-      if (aimbotDot) {
-        let displayPos = dotTargetPos;
-        if (!displayPos && previewTargetPos) {
-          displayPos = { x: previewTargetPos.x, y: previewTargetPos.y };
-        }
-
-        if (displayPos && settings.aimbot_.showDot_) {
-          const { x, y } = displayPos;
-          if (aimbotDot.style.left !== `${x}px` || aimbotDot.style.top !== `${y}px`) {
-            aimbotDot.style.left = `${x}px`;
-            aimbotDot.style.top = `${y}px`;
-          }
-          // Set dot color and glow based on whether target is shootable
-          if (!isDotTargetShootable) {
-            aimbotDot.style.backgroundColor = 'gray';
-            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(128, 128, 128, 0.5)';
-          } else if (state.focusedEnemy_) {
-            aimbotDot.style.backgroundColor = 'rgb(190, 12, 185)';
-            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(190, 12, 185, 0.5)';
-          } else {
-            aimbotDot.style.backgroundColor = 'red';
-            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(255, 0, 0, 0.5)';
-          }
-          aimbotDot.style.display = 'block';
-        } else {
-          aimbotDot.style.display = 'none';
-        }
+      // Update overlays
+      let displayPos = dotTargetPos;
+      if (!displayPos && previewTargetPos) {
+        displayPos = { x: previewTargetPos.x, y: previewTargetPos.y };
       }
-      // Update FOV circle
-      if (aimbotFovCircle) {
-        if (settings.aimbot_.showFov_) {
-          const mouseX = game[translations.input_].mousePos._x;
-          const mouseY = game[translations.input_].mousePos._y;
-          const fovDiameter = settings.aimbot_.fov_ * 2;
-
-          aimbotFovCircle.style.left = `${mouseX}px`;
-          aimbotFovCircle.style.top = `${mouseY}px`;
-          aimbotFovCircle.style.width = `${fovDiameter}px`;
-          aimbotFovCircle.style.height = `${fovDiameter}px`;
-          aimbotFovCircle.style.display = 'block';
-        } else {
-          aimbotFovCircle.style.display = 'none';
-        }
-      }
+      aimOverlays.updateDot(displayPos, isDotTargetShootable, !!state.focusedEnemy_);
+      aimOverlays.updateFovCircle();
     } catch (error) {
-      if (aimbotDot) aimbotDot.style.display = 'none';
-      if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
+      aimOverlays.hideAll();
       setAimState(new AimState('idle', null, null, true));
       state.meleeLockEnemy_ = null;
       state.focusedEnemy_ = null;
@@ -647,27 +603,10 @@ function aimbotTicker() {
   }
 }
 
-const ensureOverlay = () => {
-  const uiRoot = getUIRoot();
-  if (!uiRoot) {
-    return false;
-  }
-  if (!aimbotDot) {
-    aimbotDot = outerDocument.createElement('div');
-    aimbotDot.classList.add('aimbot-dot');
-    uiRoot.appendChild(aimbotDot);
-  }
-  if (!aimbotFovCircle) {
-    aimbotFovCircle = outerDocument.createElement('div');
-    aimbotFovCircle.classList.add('aimbot-fov-circle');
-    uiRoot.appendChild(aimbotFovCircle);
-  }
-  return true;
-};
-
 export default function () {
   const startTicker = () => {
-    if (ensureOverlay()) {
+    const uiRoot = getUIRoot();
+    if (aimOverlays.ensureInitialized(uiRoot)) {
       if (!tickerAttached) {
         gameManager.pixi._ticker.add(aimbotTicker);
         tickerAttached = true;
