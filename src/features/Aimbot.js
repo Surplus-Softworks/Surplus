@@ -171,9 +171,6 @@ const canCastToPlayer = (localPlayer, targetPlayer, weapon, bullet) => {
   const baseSpread = (weapon.shotSpread || 0) * (Math.PI / 180);
   const generousSpread = baseSpread * 1.5;
 
-  const barrelLength = weapon.barrelLength || 0;
-  const gunPos = v2.add_(playerPos, v2.mul_(dir, barrelLength));
-
   const maxDistance = Math.hypot(dx, dy);
 
   const rayCount = Math.max(15, Math.ceil((weapon.shotSpread || 0) * 1.5));
@@ -197,13 +194,13 @@ const canCastToPlayer = (localPlayer, targetPlayer, weapon, bullet) => {
     const rayAngle = aimAngle - generousSpread / 2 + generousSpread * t;
     const rayDir = v2.create_(Math.cos(rayAngle), Math.sin(rayAngle));
 
-    const endPos = v2.add_(gunPos, v2.mul_(rayDir, maxDistance));
+    const endPos = v2.add_(playerPos, v2.mul_(rayDir, maxDistance));
     let blocked = false;
 
     for (const obstacle of blockingObstacles) {
-      const collision = collisionHelpers.intersectSegment_(obstacle.collider, gunPos, endPos);
+      const collision = collisionHelpers.intersectSegment_(obstacle.collider, playerPos, endPos);
       if (collision) {
-        const distToCollision = v2.length_(v2.sub_(collision.point, gunPos));
+        const distToCollision = v2.length_(v2.sub_(collision.point, playerPos));
         if (distToCollision < maxDistance - 0.5) {
           blocked = true;
           break;
@@ -406,6 +403,7 @@ function aimbotTicker() {
     let aimUpdated = false;
     let dotTargetPos = null;
     let previewTargetPos = null;
+    let isDotTargetShootable = false;
 
     try {
       const currentWeaponIndex =
@@ -505,13 +503,10 @@ function aimbotTicker() {
           enemy = null;
           state.focusedEnemy_ = null;
           setAimState(new AimState('idle', null, null, true));
-        } else if (aimbotDot) {
-          aimbotDot.style.backgroundColor = 'rgb(190, 12, 185)';
         }
       }
 
       if (!enemy) {
-        if (aimbotDot) aimbotDot.style.backgroundColor = 'red';
         if (state.focusedEnemy_) {
           state.focusedEnemy_ = null;
           setAimState(new AimState('idle', null, null, true));
@@ -563,11 +558,14 @@ function aimbotTicker() {
             dotTargetPos = aimSnapshot
               ? { x: aimSnapshot.clientX, y: aimSnapshot.clientY }
               : { x: predictedPos.x, y: predictedPos.y };
+            isDotTargetShootable = true;
           } else {
             dotTargetPos = { x: predictedPos.x, y: predictedPos.y };
+            isDotTargetShootable = false;
           }
         } else {
           dotTargetPos = { x: predictedPos.x, y: predictedPos.y };
+          isDotTargetShootable = isTargetShootable;
         }
       } else {
         previewTargetPos = null;
@@ -593,6 +591,17 @@ function aimbotTicker() {
           if (aimbotDot.style.left !== `${x}px` || aimbotDot.style.top !== `${y}px`) {
             aimbotDot.style.left = `${x}px`;
             aimbotDot.style.top = `${y}px`;
+          }
+          // Set dot color and glow based on whether target is shootable
+          if (!isDotTargetShootable) {
+            aimbotDot.style.backgroundColor = 'gray';
+            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(128, 128, 128, 0.5)';
+          } else if (state.focusedEnemy_) {
+            aimbotDot.style.backgroundColor = 'rgb(190, 12, 185)';
+            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(190, 12, 185, 0.5)';
+          } else {
+            aimbotDot.style.backgroundColor = 'red';
+            aimbotDot.style.boxShadow = '0 0 0.5rem rgba(255, 0, 0, 0.5)';
           }
           aimbotDot.style.display = 'block';
         } else {
