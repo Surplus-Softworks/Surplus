@@ -4,7 +4,13 @@ import { gameManager } from '@/core/state.js';
 import { translations } from '@/core/obfuscatedNameTranslator.js';
 import { ref_addEventListener } from '@/core/hook.js';
 import { isLayerSpoofActive, originalLayerValue } from '@/features/LayerSpoofer.js';
-import { AimState, setAimState, getCurrentAimPosition, getPing, aimOverlays } from '@/core/aimController.js';
+import {
+  AimState,
+  setAimState,
+  getCurrentAimPosition,
+  getPing,
+  aimOverlays,
+} from '@/core/aimController.js';
 import { outerDocument, outer } from '@/core/outer.js';
 import { v2, collisionHelpers, sameLayer } from '@/utils/math.js';
 
@@ -496,7 +502,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-          !state.focusedEnemy_[translations.netData_][translations.dead_]
+        !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 

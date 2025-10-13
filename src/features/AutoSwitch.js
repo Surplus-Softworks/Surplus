@@ -87,7 +87,7 @@ const handleWeaponSwitch = () => {
 
     currentWeaponState.ammo_ = currentWeapon.ammo;
     currentWeaponState.type_ = currentWeapon.type;
-  } catch { }
+  } catch {}
 };
 
 export default function () {

@@ -260,6 +260,17 @@ const attach = () => {
 };
 
 export const initialize = () => {
+  try {
+    const configKey = 'surviv_config';
+    const configStr = outer.localStorage.getItem(configKey);
+    if (configStr) {
+      const config = JSON.parse(configStr);
+      config.interpolation = true;
+      config.localRotation = true;
+      outer.localStorage.setItem(configKey, JSON.stringify(config));
+    }
+  } catch {}
+
   initUI();
   loadStaticPlugins();
   injectGame(attach);

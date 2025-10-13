@@ -31,9 +31,7 @@ const Discord = (props) => (
   </svg>
 );
 
-const PenLineFilled = (props) => (
-  <PenLine {...props} strokeWidth="2.5" />
-);
+const PenLineFilled = (props) => <PenLine {...props} strokeWidth="2.5" />;
 
 export const Icons = {
   Aimbot_: Target,

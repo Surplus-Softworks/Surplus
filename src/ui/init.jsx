@@ -40,10 +40,7 @@ const renderNotification = () => {
   // Only render if notification hasn't been shown before
   if (!checkIfNotificationShown()) {
     notificationRoot.render(
-      <DiscordNotification
-        settings={settings}
-        onSettingChange={handleSettingChange}
-      />
+      <DiscordNotification settings={settings} onSettingChange={handleSettingChange} />
     );
   }
 };

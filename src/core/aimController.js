@@ -43,11 +43,11 @@ const positionsDiffer = (a, b) => {
 const cloneMoveDir = (dir) =>
   dir
     ? {
-      touchMoveActive: dir.touchMoveActive,
-      touchMoveLen: dir.touchMoveLen,
-      x: dir.x,
-      y: dir.y,
-    }
+        touchMoveActive: dir.touchMoveActive,
+        touchMoveLen: dir.touchMoveLen,
+        x: dir.x,
+        y: dir.y,
+      }
     : null;
 
 const moveDirsEqual = (a, b) => {
@@ -429,7 +429,10 @@ const updateAimbotDot = (displayPos, isDotTargetShootable, isFocusedEnemy) => {
   if (displayPos && settings.aimbot_.showDot_) {
     const { x, y } = displayPos;
 
-    if (overlayState.aimbotDot_.style.left !== `${x}px` || overlayState.aimbotDot_.style.top !== `${y}px`) {
+    if (
+      overlayState.aimbotDot_.style.left !== `${x}px` ||
+      overlayState.aimbotDot_.style.top !== `${y}px`
+    ) {
       overlayState.aimbotDot_.style.left = `${x}px`;
       overlayState.aimbotDot_.style.top = `${y}px`;
     }
@@ -486,7 +489,8 @@ const hideAllOverlays = () => {
 
 export const aimOverlays = {
   ensureInitialized: (uiRoot) => ensureOverlays(uiRoot),
-  updateDot: (displayPos, isShootable, isFocused) => updateAimbotDot(displayPos, isShootable, isFocused),
+  updateDot: (displayPos, isShootable, isFocused) =>
+    updateAimbotDot(displayPos, isShootable, isFocused),
   updateFovCircle: () => updateFovCircle(),
   hideAll: () => hideAllOverlays(),
   isInitialized: () => overlayState.initialized_,

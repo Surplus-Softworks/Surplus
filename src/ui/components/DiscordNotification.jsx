@@ -10,7 +10,6 @@ const DiscordNotification = ({ settings, onSettingChange }) => {
   const notificationRef = useRef(null);
 
   useEffect(() => {
-    // Set initial position to center of screen
     const initialX = outer.innerWidth / 2 - 200;
     const initialY = outer.innerHeight / 2 - 150;
     setPosition({ x: initialX, y: initialY });
@@ -140,7 +139,8 @@ const DiscordNotification = ({ settings, onSettingChange }) => {
                 flexGrow: 1,
               }}
             >
-              Join our new official Discord server to stay updated, get support, and connect with the community. Don't miss out on announcements, updates, and exclusive features!
+              Join our new official Discord server to stay updated, get support, and connect with
+              the community. Don't miss out on announcements, updates, and exclusive features!
             </p>
             <a
               href="https://discord.gg/4tXaeQfur8"

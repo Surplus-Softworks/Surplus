@@ -11,7 +11,7 @@ function processAll() {
     processCeilings(isXrayEnabled);
     processSmokes(isXrayEnabled);
     processObstacles(isXrayEnabled);
-  } catch { }
+  } catch {}
 }
 
 function processCeilings(isXrayEnabled) {
