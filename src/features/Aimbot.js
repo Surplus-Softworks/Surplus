@@ -233,6 +233,7 @@ const handleKeydown = (event) => {
 Reflect.apply(ref_addEventListener, outer, ['keydown', handleKeydown]);
 
 let aimbotDot;
+let aimbotFovCircle;
 let tickerAttached = false;
 
 function getDistance(x1, y1, x2, y2) {
@@ -325,6 +326,7 @@ function findTarget(players, me) {
   const localLayer = getLocalLayer(me);
   let enemy = null;
   let minDistance = Infinity;
+  const fovRadiusSquared = settings.aimbot_.fov_ ** 2;
 
   for (const player of players) {
     if (!player.active) continue;
@@ -345,6 +347,9 @@ function findTarget(players, me) {
       gameManager.game[translations.input_].mousePos._x,
       gameManager.game[translations.input_].mousePos._y
     );
+
+    // FOV check: only consider targets within the FOV circle
+    if (distance > fovRadiusSquared) continue;
 
     if (distance < minDistance) {
       minDistance = distance;
@@ -393,6 +398,7 @@ function aimbotTicker() {
     ) {
       setAimState(new AimState('idle'));
       if (aimbotDot) aimbotDot.style.display = 'none';
+      if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
       state.lastTargetScreenPos_ = null;
       return;
     }
@@ -473,6 +479,7 @@ function aimbotTicker() {
           setAimState(new AimState('meleeLock', { x: screenPos.x, y: screenPos.y }, moveDir, true));
           aimUpdated = true;
           if (aimbotDot) aimbotDot.style.display = 'none';
+          if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
           state.lastTargetScreenPos_ = null;
           return;
         }
@@ -485,6 +492,7 @@ function aimbotTicker() {
       if (!settings.aimbot_.enabled_ || isMeleeEquipped || isGrenadeEquipped) {
         setAimState(new AimState('idle'));
         if (aimbotDot) aimbotDot.style.display = 'none';
+        if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
         state.lastTargetScreenPos_ = null;
         return;
       }
@@ -608,8 +616,25 @@ function aimbotTicker() {
           aimbotDot.style.display = 'none';
         }
       }
+      // Update FOV circle
+      if (aimbotFovCircle) {
+        if (settings.aimbot_.showFov_) {
+          const mouseX = game[translations.input_].mousePos._x;
+          const mouseY = game[translations.input_].mousePos._y;
+          const fovDiameter = settings.aimbot_.fov_ * 2;
+
+          aimbotFovCircle.style.left = `${mouseX}px`;
+          aimbotFovCircle.style.top = `${mouseY}px`;
+          aimbotFovCircle.style.width = `${fovDiameter}px`;
+          aimbotFovCircle.style.height = `${fovDiameter}px`;
+          aimbotFovCircle.style.display = 'block';
+        } else {
+          aimbotFovCircle.style.display = 'none';
+        }
+      }
     } catch (error) {
       if (aimbotDot) aimbotDot.style.display = 'none';
+      if (aimbotFovCircle) aimbotFovCircle.style.display = 'none';
       setAimState(new AimState('idle', null, null, true));
       state.meleeLockEnemy_ = null;
       state.focusedEnemy_ = null;
@@ -631,6 +656,11 @@ const ensureOverlay = () => {
     aimbotDot = outerDocument.createElement('div');
     aimbotDot.classList.add('aimbot-dot');
     uiRoot.appendChild(aimbotDot);
+  }
+  if (!aimbotFovCircle) {
+    aimbotFovCircle = outerDocument.createElement('div');
+    aimbotFovCircle.classList.add('aimbot-fov-circle');
+    uiRoot.appendChild(aimbotFovCircle);
   }
   return true;
 };

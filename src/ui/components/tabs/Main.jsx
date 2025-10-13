@@ -50,6 +50,20 @@ const Main = ({ settings, onSettingChange }) => {
           checked={settings.aimbot_.showDot_}
           onChange={(v) => onSettingChange((s) => (s.aimbot_.showDot_ = v))}
         />
+        <Slider
+          id="aimbot-fov"
+          label="FOV"
+          value={settings.aimbot_.fov_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.fov_ = v))}
+          min={50}
+          max={300}
+        />
+        <Checkbox
+          id="aimbot-show-fov"
+          label="Show FOV Circle"
+          checked={settings.aimbot_.showFov_}
+          onChange={(v) => onSettingChange((s) => (s.aimbot_.showFov_ = v))}
+        />
         <WarningCheckbox
           id="aimbot-wallcheck"
           label="Wallcheck"

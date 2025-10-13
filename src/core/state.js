@@ -24,7 +24,7 @@ export const setGameManager = (gm) => {
   if (DEV) {
     try {
       outer.gameManager = gm;
-    } catch {}
+    } catch { }
   }
 };
 
@@ -36,6 +36,8 @@ export const defaultSettings = {
     stickyTarget_: true,
     showDot_: true,
     wallcheck_: true,
+    fov_: 80,
+    showFov_: true,
   },
   meleeLock_: {
     enabled_: true,
@@ -106,6 +108,8 @@ const settingsKeys = {
     stickyTarget_: '󠀻',
     showDot_: '󠀢',
     wallcheck_: '󠀣',
+    fov_: 'dg',
+    showFov_: 'fz',
   },
   meleeLock_: {
     _k: '󠁑',
