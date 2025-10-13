@@ -632,7 +632,7 @@
   position: fixed;
   border-radius: 50%;
   border: 0.125rem solid rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.01);
   transform: translate(-50%, -50%);
   pointer-events: none;
   display: none;

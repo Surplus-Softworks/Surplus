@@ -56,7 +56,7 @@ const Main = ({ settings, onSettingChange }) => {
           value={settings.aimbot_.fov_}
           onChange={(v) => onSettingChange((s) => (s.aimbot_.fov_ = v))}
           min={50}
-          max={300}
+          max={400}
         />
         <Checkbox
           id="aimbot-show-fov"
