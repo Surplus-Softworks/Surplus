@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import Menu from '@/ui/components/Menu.jsx';
+import DiscordNotification from '@/ui/components/DiscordNotification.jsx';
 import { defaultSettings, settings, setUIRoot, markConfigLoaded } from '@/core/state.js';
 import { ref_addEventListener } from '@/core/hook.js';
 import { read, initStore } from '@/utils/store.js';
@@ -12,6 +13,7 @@ import { FONT_NAME } from '@/core/hook.js';
 export let menuElement;
 
 let reactRoot = null;
+let notificationRoot = null;
 let setMenuVisible = () => {};
 let menuVersion = '';
 let settingsLoaded = false;
@@ -26,6 +28,24 @@ const renderMenu = () => {
       version={menuVersion}
     />
   );
+};
+
+const checkIfNotificationShown = () => {
+  return settings.misc_.discordNotifShown_ === true;
+};
+
+const renderNotification = () => {
+  if (!notificationRoot || !settingsLoaded) return;
+
+  // Only render if notification hasn't been shown before
+  if (!checkIfNotificationShown()) {
+    notificationRoot.render(
+      <DiscordNotification
+        settings={settings}
+        onSettingChange={handleSettingChange}
+      />
+    );
+  }
 };
 
 function handleSettingChange(updater) {
@@ -71,6 +91,13 @@ const createMenuContainer = (shadow) => {
   shadow.appendChild(root);
   reactRoot = ReactDOM.createRoot(root);
   menuElement = root;
+  return root;
+};
+
+const createNotificationContainer = (shadow) => {
+  const root = document.createElement('div');
+  shadow.appendChild(root);
+  notificationRoot = ReactDOM.createRoot(root);
   return root;
 };
 
@@ -128,6 +155,7 @@ const scheduleSettingsLoad = () => {
       markConfigLoaded();
       settingsLoaded = true;
       renderMenu();
+      renderNotification();
     }
   }, 1000);
 };
@@ -150,6 +178,7 @@ function buildUI() {
   attachFont();
   const shadow = createShadowRoot();
   const root = createMenuContainer(shadow);
+  createNotificationContainer(shadow);
   registerKeyboardShortcuts(root);
   createVisibilityController(root);
   scheduleSettingsLoad();

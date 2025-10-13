@@ -253,7 +253,7 @@ function predictPosition(enemy, currentPlayer) {
   const currentPlayerPos = currentPlayer[translations.visualPos_];
   const now = performance.now();
   const enemyId = enemy.__id;
-  //const ping = getPing();
+  const ping = getPing();
 
   const history = state.previousEnemies_[enemyId] ?? (state.previousEnemies_[enemyId] = []);
   history.push([now, { ...enemyPos }]);
@@ -288,7 +288,7 @@ function predictPosition(enemy, currentPlayer) {
   let t;
 
   if (Math.abs(a) < 1e-6) {
-    t = -c / b;
+    t = -c / b + ping;
   } else {
     const discriminant = b ** 2 - 4 * a * c;
     if (discriminant < 0) {
@@ -301,7 +301,7 @@ function predictPosition(enemy, currentPlayer) {
     const sqrtD = Math.sqrt(discriminant);
     const t1 = (-b - sqrtD) / (2 * a);
     const t2 = (-b + sqrtD) / (2 * a);
-    t = (Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2));
+    t = (Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2)) + ping;
 
     if (t < 0 || t > 5) {
       return gameManager.game[translations.camera_][translations.pointToScreen_]({

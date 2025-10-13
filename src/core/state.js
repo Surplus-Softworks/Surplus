@@ -92,6 +92,9 @@ export const defaultSettings = {
     toggleStickyTarget_: 'KeyN',
     toggleLayerSpoof_: 'KeyT',
   },
+  misc_: {
+    discordNotifShown_: false,
+  },
 };
 
 const settingsKeys = {
@@ -171,6 +174,10 @@ const settingsKeys = {
     toggleAimbot_: 'c',
     toggleStickyTarget_: 'd',
     toggleLayerSpoof_: 'e',
+  },
+  misc_: {
+    _k: 'z',
+    discordNotifShown_: 'z1',
   },
 };
 
