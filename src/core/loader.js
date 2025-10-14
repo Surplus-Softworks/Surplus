@@ -7,7 +7,7 @@ import aimbot from '@/features/Aimbot.js';
 import mapHighlights from '@/features/MapHighlights.js';
 import autoSwitch from '@/features/AutoSwitch.js';
 import layerSpoof from '@/features/LayerSpoofer.js';
-import { translate } from '@/core/obfuscatedNameTranslator.js';
+import { translate, translations } from '@/core/obfuscatedNameTranslator.js';
 import { hook } from '@/core/hook.js';
 import { PIXI, inputCommands, packetTypes } from '@/utils/constants.js';
 import { aimState, inputState, settings, gameManager, setGameManager } from '@/core/state.js';
@@ -274,4 +274,14 @@ export const initialize = () => {
   initUI();
   loadStaticPlugins();
   injectGame(attach);
+
+  (() => {
+    requestAnimationFrame(doubleInputs);
+    function doubleInputs() {
+      requestAnimationFrame(doubleInputs);
+      try {
+        gameManager.game?.[translations.sendMessage_]?.(gameManager.game?.[translations.prevInputMsg_]);
+      } catch { }
+    }
+  })();
 };
