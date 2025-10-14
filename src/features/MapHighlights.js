@@ -61,7 +61,7 @@ export default function () {
         if (settings.mapHighlights_.enabled_ && context.some((entry) => entry?.obj?.ori != null)) {
           colorize(context);
         }
-      } catch {}
+      } catch { }
 
       return Reflect.apply(original, context, args);
     },

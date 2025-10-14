@@ -72,7 +72,7 @@ const updateGrenadeTimer = () => {
     }
 
     timerUI.update(secondsElapsed - timerUI.elapsed, game[translations.camera_]);
-  } catch {}
+  } catch { }
 };
 
 export default function () {

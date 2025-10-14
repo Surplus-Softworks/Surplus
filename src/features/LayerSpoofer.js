@@ -33,7 +33,7 @@ const applyLayerSpoof = (player, targetLayer) => {
     Object.defineProperty(player, 'layer', {
       configurable: true,
       get: () => targetLayer,
-      set: () => {},
+      set: () => { },
     });
     return true;
   } catch {
@@ -63,7 +63,7 @@ const restoreOriginalLayer = (player) => {
     if (originalLayerValue !== null) {
       try {
         player.layer = originalLayerValue;
-      } catch {}
+      } catch { }
     }
   } finally {
     originalLayerDescriptor = null;
@@ -75,7 +75,7 @@ const setPlayerAlpha = (player, alpha) => {
   if (!player?.container) return;
   try {
     player.container.alpha = alpha;
-  } catch {}
+  } catch { }
 };
 
 const cleanup = () => {
@@ -84,7 +84,7 @@ const cleanup = () => {
       restoreOriginalLayer(activePlayerRef);
       setPlayerAlpha(activePlayerRef, originalPlayerAlpha);
     }
-  } catch {}
+  } catch { }
 
   isLayerSpoofActive = false;
   activePlayerRef = null;

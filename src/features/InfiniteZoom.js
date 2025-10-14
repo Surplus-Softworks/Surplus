@@ -24,12 +24,12 @@ const handleWheelEvent = (event) => {
     Object.defineProperty(localData, translations.zoom_, {
       configurable: true,
       get: () => zoom,
-      set: () => {},
+      set: () => { },
     });
 
     event.preventDefault();
     event.stopImmediatePropagation();
-  } catch {}
+  } catch { }
 };
 
 export default function () {

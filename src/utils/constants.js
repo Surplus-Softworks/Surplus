@@ -89,7 +89,7 @@ export function isGameReady() {
   return (
     gameManager.game?.[translations.ws_] &&
     gameManager.game?.[translations.activePlayer_]?.[translations.localData_]?.[
-      translations.curWeapIdx_
+    translations.curWeapIdx_
     ] != null &&
     gameManager.game?.initialized
   );

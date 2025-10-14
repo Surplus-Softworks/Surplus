@@ -24,7 +24,7 @@ function injectGame(oninject) {
           setGameManager(args[0]);
           oninject();
         }
-      } catch {}
+      } catch { }
       return Reflect.apply(f, th, args);
     },
   });
@@ -269,7 +269,7 @@ export const initialize = () => {
       config.localRotation = true;
       outer.localStorage.setItem(configKey, JSON.stringify(config));
     }
-  } catch {}
+  } catch { }
 
   initUI();
   loadStaticPlugins();

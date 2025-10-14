@@ -24,7 +24,7 @@ export const setGameManager = (gm) => {
   if (DEV) {
     try {
       outer.gameManager = gm;
-    } catch {}
+    } catch { }
   }
 };
 
