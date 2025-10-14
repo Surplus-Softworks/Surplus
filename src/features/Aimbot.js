@@ -502,7 +502,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-        !state.focusedEnemy_[translations.netData_][translations.dead_]
+          !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
