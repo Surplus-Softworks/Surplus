@@ -293,7 +293,7 @@ function predictPosition(enemy, currentPlayer) {
   let t;
 
   if (Math.abs(a) < 1e-6) {
-    t = -c / b;
+    t = -c / b + ping;
   } else {
     const discriminant = b ** 2 - 4 * a * c;
     if (discriminant < 0) {
@@ -306,7 +306,7 @@ function predictPosition(enemy, currentPlayer) {
     const sqrtD = Math.sqrt(discriminant);
     const t1 = (-b - sqrtD) / (2 * a);
     const t2 = (-b + sqrtD) / (2 * a);
-    t = Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2);
+    t = (Math.min(t1, t2) > 0 ? Math.min(t1, t2) : Math.max(t1, t2)) + ping;
 
     if (t < 0 || t > 5) {
       return gameManager.game[translations.camera_][translations.pointToScreen_]({
@@ -502,7 +502,7 @@ function aimbotTicker() {
 
       let enemy =
         state.focusedEnemy_?.active &&
-        !state.focusedEnemy_[translations.netData_][translations.dead_]
+          !state.focusedEnemy_[translations.netData_][translations.dead_]
           ? state.focusedEnemy_
           : null;
 
@@ -550,14 +550,14 @@ function aimbotTicker() {
 
         const isTargetShootable =
           !settings.aimbot_.wallcheck_ || canCastToPlayer(me, enemy, weapon, bullet);
-
+        console.log(canEngageAimbot);
         if (
           canEngageAimbot &&
           (settings.aimbot_.enabled_ || (settings.meleeLock_.enabled_ && distanceToEnemy <= 8))
         ) {
           if (isTargetShootable) {
             const currentAimPos = getCurrentAimPosition();
-            const shouldSmooth = shouldSmoothAim(currentAimPos, predictedPos);
+            const shouldSmooth = settings.aimbot_.smooth_ > 0 && shouldSmoothAim(currentAimPos, predictedPos);
             setAimState(
               new AimState('aimbot', { x: predictedPos.x, y: predictedPos.y }, null, !shouldSmooth)
             );
