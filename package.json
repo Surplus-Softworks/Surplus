@@ -1,6 +1,6 @@
 {
   "name": "surplus",
-  "version": "2.1.1",
+  "version": "2.1.3",
   "type": "module",
   "scripts": {
     "build": "node build.js",
