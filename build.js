@@ -56,7 +56,7 @@ const STUB_OBFUSCATE_OPTIONS = {
 };
 
 const clearDist = async () => {
-  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => {});
+  await fs.promises.rm('dist', { recursive: true, force: true }).catch(() => { });
 };
 
 const copyDirectory = async (source, target) => {
@@ -177,6 +177,7 @@ const whitelist = [
   'surviv',
   'survev',
   'resurviv',
+  'zurviv',
   'expandedwater',
   '66.179.254.36',
   'eu-comp',
