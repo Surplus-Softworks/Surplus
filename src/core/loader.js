@@ -280,7 +280,7 @@ export const initialize = () => {
     function doubleInputs() {
       requestAnimationFrame(doubleInputs);
       try {
-        gameManager.game?.[translations.sendMessage_]?.(gameManager.game?.[translations.prevInputMsg_]);
+        gameManager.game?.[translations.sendMessage_]?.(packetTypes.Input_, gameManager.game?.[translations.prevInputMsg_]);
       } catch { }
     }
   })();
