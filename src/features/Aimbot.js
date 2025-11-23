@@ -352,7 +352,6 @@ function findTarget(players, me) {
       gameManager.game[translations.input_].mousePos._y
     );
 
-    // FOV check: only consider targets within the FOV circle
     if (distance > fovRadiusSquared) continue;
 
     if (distance < minDistance) {
@@ -589,7 +588,6 @@ function aimbotTicker() {
           ? { x: previewTargetPos.x, y: previewTargetPos.y }
           : null;
       }
-      // Update overlays
       let displayPos = dotTargetPos;
       if (!displayPos && previewTargetPos) {
         displayPos = { x: previewTargetPos.x, y: previewTargetPos.y };
