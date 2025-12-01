@@ -274,14 +274,4 @@ export const initialize = () => {
   initUI();
   loadStaticPlugins();
   injectGame(attach);
-
-  (() => {
-    requestAnimationFrame(doubleInputs);
-    function doubleInputs() {
-      requestAnimationFrame(doubleInputs);
-      try {
-        gameManager.game?.[translations.sendMessage_]?.(packetTypes.Input_, gameManager.game?.[translations.prevInputMsg_]);
-      } catch { }
-    }
-  })();
 };
