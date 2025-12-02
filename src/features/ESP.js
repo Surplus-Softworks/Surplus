@@ -67,14 +67,15 @@ function nameTag(player) {
   const localPlayer = gameManager.game[translations.activePlayer_];
   const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
+  const enabled = settings.esp_.enabled_ && settings.esp_.visibleNametags_;
+
   Reflect.defineProperty(player.nameText, 'visible', {
-    get: () => (settings.esp_.visibleNametags_ && settings.esp_.enabled_) || (isSameTeam && player != localPlayer),
+    get: () => enabled || (isSameTeam && player != localPlayer),
     set: () => { },
   });
 
-  player.nameText.visible = true;
-  player.nameText.tint = !settings.esp_.visibleNameTags_ ? 0xffffff : (isSameTeam ? 0xcbddf5 : 0xff2828);
-  player.nameText.style.fill = !settings.esp_.visibleNameTags_ ? '#00ffff' : (isSameTeam ? '#3a88f4' : '#ff2828');
+  player.nameText.tint = !enabled ? 0xffffff : (isSameTeam ? 0xcbddf5 : 0xff2828);
+  player.nameText.style.fill = !enabled ? '#00ffff' : (isSameTeam ? '#3a88f4' : '#ff2828');
   player.nameText.style.fontSize = 20;
   player.nameText.style.dropShadowBlur = 0.1;
 }
