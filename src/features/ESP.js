@@ -73,8 +73,8 @@ function nameTag(player) {
   });
 
   player.nameText.visible = true;
-  player.nameText.tint = isSameTeam ? 0xcbddf5 : 0xff2828;
-  player.nameText.style.fill = isSameTeam ? '#3a88f4' : '#ff2828';
+  player.nameText.tint = !settings.esp_.visibleNameTags_ ? 0xffffff : (isSameTeam ? 0xcbddf5 : 0xff2828);
+  player.nameText.style.fill = !settings.esp_.visibleNameTags_ ? '#00ffff' : (isSameTeam ? '#3a88f4' : '#ff2828');
   player.nameText.style.fontSize = 20;
   player.nameText.style.dropShadowBlur = 0.1;
 }
