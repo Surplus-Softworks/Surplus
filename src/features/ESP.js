@@ -68,7 +68,7 @@ function nameTag(player) {
   const isSameTeam = findTeam(player) === findTeam(localPlayer);
 
   Reflect.defineProperty(player.nameText, 'visible', {
-    get: () => (settings.esp_.visibleNametags_ && settings.esp_.enabled_) || isSameTeam,
+    get: () => (settings.esp_.visibleNametags_ && settings.esp_.enabled_) || (isSameTeam && player != localPlayer),
     set: () => { },
   });
 
